@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Business\" />
     <Folder Include="Implements\" />
+    <Folder Include="MappingProfile\" />
   </ItemGroup>
 
   <ItemGroup>
