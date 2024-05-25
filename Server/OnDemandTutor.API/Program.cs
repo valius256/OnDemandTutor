@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Extensions;
-using System.Reflection;
 using System.Text;
-
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -17,6 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
+//builder.Services.UseCore(typeof(Program).Assembly, builder.Configuration);
+
 
 builder.Services.AddAuthentication(options =>
     {
@@ -36,7 +36,7 @@ builder.Services.AddAuthentication(options =>
     });
 
 
-
+InitSwagger(builder.Services);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -85,14 +85,15 @@ static void InitSwagger(IServiceCollection services) =>
         });
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "WA HRM API", Version = "v1" });
 
-        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        c.IncludeXmlComments(xmlPath);
+        //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        //c.IncludeXmlComments(xmlPath);
     });
 
 
 UseSwagger(app);
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()

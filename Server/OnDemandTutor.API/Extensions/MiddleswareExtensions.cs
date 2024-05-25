@@ -7,7 +7,7 @@ namespace OnDemandTutor.API.Extensions
         public static void RegisterMiddleware(this IApplicationBuilder app)
         {
             app.UseMiddleware<JwtMiddleware>();
-            app.UseMiddleware<ExceptionMiddleware>();
+            //app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
