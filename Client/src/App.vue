@@ -1,15 +1,17 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import CustomerLayout from './layouts/CustomerLayout.vue';
+
+export default {
+  name: "App",
+  components: { CustomerLayout }
+}
 </script>
 
 <template>
   <div>
-    <div class="text-3xl font-bold">
-      On Demand Tutor
-    </div>
-    <HelloWorld msg="Vite + Vue" />
+    <CustomerLayout />
   </div>
- 
+
 </template>
 
 <style></style>
