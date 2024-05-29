@@ -13,15 +13,33 @@ public partial class Class
 
     public int StudentId { get; set; }
 
-    public int? TeacherId { get; set; }
+    public int? TutorId { get; set; }
 
-    public int? NumberOfStudent { get; set; }
+    public int NumberOfStudent { get; set; }
 
     public DateOnly? StartDate { get; set; }
 
     public DateOnly? EndDate { get; set; }
 
-    public int? SubjectId { get; set; }
+    public int SubjectId { get; set; }
 
-    public string Address { get; set; }
+    public string TeachAddress { get; set; }
+
+    public int CreateBy { get; set; }
+
+    public double? TutorRating { get; set; }
+
+    public int Status { get; set; }
+
+    public virtual ICollection<ClassRequest> ClassRequests { get; set; } = new List<ClassRequest>();
+
+    public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
+
+    public virtual ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+
+    public virtual User Student { get; set; }
+
+    public virtual Subject Subject { get; set; }
+
+    public virtual User Tutor { get; set; }
 }

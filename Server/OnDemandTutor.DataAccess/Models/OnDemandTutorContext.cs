@@ -13,18 +13,187 @@ public partial class OnDemandTutorContext : DbContext
     {
     }
 
+    public virtual DbSet<Blog> Blogs { get; set; }
+
     public virtual DbSet<Class> Classes { get; set; }
+
+    public virtual DbSet<ClassRequest> ClassRequests { get; set; }
+
+    public virtual DbSet<ConsultationRequest> ConsultationRequests { get; set; }
+
+    public virtual DbSet<Faq> Faqs { get; set; }
+
+    public virtual DbSet<Invitation> Invitations { get; set; }
+
+    public virtual DbSet<Lesson> Lessons { get; set; }
+
+    public virtual DbSet<Medium> Media { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
+
+    public virtual DbSet<Subject> Subjects { get; set; }
+
+    public virtual DbSet<TutorVideo> TutorVideos { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Blog>(entity =>
+        {
+            entity.ToTable("Blog");
+
+            entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.Title).IsRequired();
+            entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreateByNavigation).WithMany(p => p.BlogCreateByNavigations)
+                .HasForeignKey(d => d.CreateBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Blog_User");
+
+            entity.HasOne(d => d.UpdateByNavigation).WithMany(p => p.BlogUpdateByNavigations)
+                .HasForeignKey(d => d.UpdateBy)
+                .HasConstraintName("FK_Blog_User1");
+        });
+
         modelBuilder.Entity<Class>(entity =>
         {
             entity.ToTable("Class");
 
-            entity.Property(e => e.Address).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.TeachAddress).HasMaxLength(100);
+
+            entity.HasOne(d => d.Student).WithMany(p => p.ClassStudents)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Class_User1");
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.Classes)
+                .HasForeignKey(d => d.SubjectId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Class_Subject");
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.ClassTutors)
+                .HasForeignKey(d => d.TutorId)
+                .HasConstraintName("FK_Class_User");
+        });
+
+        modelBuilder.Entity<ClassRequest>(entity =>
+        {
+            entity.ToTable("ClassRequest");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.RequestDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.ClassRequests)
+                .HasForeignKey(d => d.ClassId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClassRequest_Class");
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.ClassRequests)
+                .HasForeignKey(d => d.TutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClassRequest_User");
+        });
+
+        modelBuilder.Entity<ConsultationRequest>(entity =>
+        {
+            entity.ToTable("ConsultationRequest");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Phone)
+                .IsRequired()
+                .HasMaxLength(15)
+                .IsUnicode(false);
+            entity.Property(e => e.RequestDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Faq>(entity =>
+        {
+            entity.ToTable("FAQ");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.Question).IsRequired();
+
+            entity.HasOne(d => d.CreateByNavigation).WithMany(p => p.Faqs)
+                .HasForeignKey(d => d.CreateBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FAQ_User");
+        });
+
+        modelBuilder.Entity<Invitation>(entity =>
+        {
+            entity.ToTable("Invitation");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.RequestDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.Invitations)
+                .HasForeignKey(d => d.ClassId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Invitation_Class");
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.Invitations)
+                .HasForeignKey(d => d.TutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Invitation_User");
+        });
+
+        modelBuilder.Entity<Lesson>(entity =>
+        {
+            entity.ToTable("Lesson");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Class).WithMany(p => p.Lessons)
+                .HasForeignKey(d => d.ClassId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Lesson_Class");
+        });
+
+        modelBuilder.Entity<Medium>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.Url).IsRequired();
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.ToTable("Notification");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Content).IsRequired();
+
+            entity.HasOne(d => d.Receiver).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.ReceiverId)
+                .HasConstraintName("FK_Notification_User");
+        });
+
+        modelBuilder.Entity<Subject>(entity =>
+        {
+            entity.ToTable("Subject");
+
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<TutorVideo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_TutorVIdeo");
+
+            entity.ToTable("TutorVideo");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Tutor).WithMany(p => p.TutorVideos)
+                .HasForeignKey(d => d.TutorId)
+                .HasConstraintName("FK_TutorVIdeo_User");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -32,14 +201,36 @@ public partial class OnDemandTutorContext : DbContext
             entity.ToTable("User");
 
             entity.Property(e => e.Address).HasMaxLength(100);
+            entity.Property(e => e.Balance).HasColumnType("money");
             entity.Property(e => e.Dob).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(50);
+            entity.Property(e => e.IdCardImageId).HasColumnName("IdCardImageID");
             entity.Property(e => e.LastName).HasMaxLength(50);
             entity.Property(e => e.Password).HasMaxLength(100);
             entity.Property(e => e.Phone)
                 .HasMaxLength(10)
                 .IsFixedLength();
+
+            entity.HasOne(d => d.DegreeImage).WithMany(p => p.UserDegreeImages)
+                .HasForeignKey(d => d.DegreeImageId)
+                .HasConstraintName("FK_User_Media1");
+
+            entity.HasOne(d => d.IdCardImage).WithMany(p => p.UserIdCardImages)
+                .HasForeignKey(d => d.IdCardImageId)
+                .HasConstraintName("FK_User_Media");
+
+            base.OnModelCreating(modelBuilder);
+            // Bỏ tiền tố AspNet của các bảng: mặc định
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var tableName = entityType.GetTableName();
+                if (tableName.StartsWith("AspNet"))
+                {
+                    entityType.SetTableName(tableName.Substring(6));
+                }
+            }
+
         });
 
         OnModelCreatingPartial(modelBuilder);

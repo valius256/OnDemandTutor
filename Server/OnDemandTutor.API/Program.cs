@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Extensions;
+using OnDemandTutor.BusinessLogic;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,14 +10,13 @@ ConfigurationManager configuration = builder.Configuration;
 
 
 // Add services to the container.
-https://github.com/valius256
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 //builder.Services.UseCore(typeof(Program).Assembly, builder.Configuration);
-
+builder.Services.DIServices();
 
 builder.Services.AddAuthentication(options =>
     {

@@ -1,4 +1,4 @@
-﻿namespace OnDemandTutor.DataAccess.Models
+﻿namespace OnDemandTutor.DataAccess
 {
     public class JwtInfor
     {
@@ -13,7 +13,7 @@
         public string? Jwt { get; set; }
         public string? NextJwt { get; set; }
         public List<string>? Roles { get; set; }
-        public long TimeRemaining => (Expires - DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+        public long TimeRemaining => Expires - DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     }
 }

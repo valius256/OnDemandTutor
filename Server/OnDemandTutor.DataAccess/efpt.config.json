@@ -15,7 +15,47 @@
    "T4TemplatePath": null,
    "Tables": [
       {
+         "Name": "[dbo].[Blog]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Class]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ClassRequest]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ConsultationRequest]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FAQ]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Invitation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Lesson]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Media]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Notification]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Subject]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TutorVideo]",
          "ObjectType": 0
       },
       {

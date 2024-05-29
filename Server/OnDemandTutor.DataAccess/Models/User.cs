@@ -2,10 +2,11 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace OnDemandTutor.DataAccess.Models;
 
-public partial class User
+public partial class User : IdentityUser
 {
     public int Id { get; set; }
 
@@ -19,7 +20,7 @@ public partial class User
 
     public string Address { get; set; }
 
-    public string Avatar { get; set; }
+    public int? AvatarImageId { get; set; }
 
     public int? Status { get; set; }
 
@@ -30,4 +31,34 @@ public partial class User
     public int? Role { get; set; }
 
     public bool? RecordStatus { get; set; }
+
+    public decimal? Balance { get; set; }
+
+    public double? Rating { get; set; }
+
+    public int? DegreeImageId { get; set; }
+
+    public int? IdCardImageId { get; set; }
+
+    public virtual ICollection<Blog> BlogCreateByNavigations { get; set; } = new List<Blog>();
+
+    public virtual ICollection<Blog> BlogUpdateByNavigations { get; set; } = new List<Blog>();
+
+    public virtual ICollection<ClassRequest> ClassRequests { get; set; } = new List<ClassRequest>();
+
+    public virtual ICollection<Class> ClassStudents { get; set; } = new List<Class>();
+
+    public virtual ICollection<Class> ClassTutors { get; set; } = new List<Class>();
+
+    public virtual Medium DegreeImage { get; set; }
+
+    public virtual ICollection<Faq> Faqs { get; set; } = new List<Faq>();
+
+    public virtual Medium IdCardImage { get; set; }
+
+    public virtual ICollection<Invitation> Invitations { get; set; } = new List<Invitation>();
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    public virtual ICollection<TutorVideo> TutorVideos { get; set; } = new List<TutorVideo>();
 }
