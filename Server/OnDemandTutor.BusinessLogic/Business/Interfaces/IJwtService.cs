@@ -1,4 +1,5 @@
-﻿using OnDemandTutor.DataAccess.Models;
+﻿using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.Models;
 
 namespace OnDemandTutor.BusinessLogic.Business.Interfaces
 {

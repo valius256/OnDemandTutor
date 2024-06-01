@@ -1,6 +1,5 @@
 ﻿using OnDemandTutor.BusinessLogic.Business.Interfaces;
 using OnDemandTutor.Helper.Utils;
-
 namespace OnDemandTutor.API.Filters
 {
     public class JwtMiddleware
