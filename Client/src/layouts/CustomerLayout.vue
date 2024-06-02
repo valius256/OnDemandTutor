@@ -2,15 +2,17 @@
     <div>
         <Header/>
         <RouterView />
+        <Footer />
     </div>
 </template>
 
 <script>
 import Header from '../components/common/Header.vue';
+import Footer from '../components/common/Footer.vue';
 
 export default {
     name : "CustomerLayout",
-    components : {Header}
+    components : {Header, Footer}
 }
 </script>
 

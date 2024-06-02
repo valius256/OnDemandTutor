@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-md flex place-content-between">
+    <div class="shadow-md flex place-content-between bg-blue-50">
         <div class="text-3xl font-bold p-3 ">
             <span>On</span>
             <span class="text-blue-600">Demand</span>
