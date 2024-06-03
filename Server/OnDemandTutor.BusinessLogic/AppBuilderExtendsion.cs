@@ -13,7 +13,6 @@ namespace OnDemandTutor.BusinessLogic
             //services.AddScoped<IUserCourseService, UserCourseService>();
             //services.AddScoped<IUserLessonService, UserLessonService>();
             //services.AddScoped<IUserSectionService, UserSectionService>();
-            //services.AddScoped < ILocationService, Location
         }
     }
 }
