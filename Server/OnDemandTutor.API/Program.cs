@@ -31,6 +31,7 @@ builder.Services.AddSwaggerGen( options =>
 builder.Services.AddCors();
 builder.Services.DIServices();
 builder.Services.AddLogging();
+builder.Services.AddTransient<ExceptionMiddleware>();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
     .AddCookie(IdentityConstants.ApplicationScheme)
@@ -46,7 +47,6 @@ builder.Services.AddDbContext<OnDemandTutorContext>(options =>
 
 
 
-builder.Services.AddTransient<ExceptionMiddleware>();
 
 WebApplication app = builder.Build();
 

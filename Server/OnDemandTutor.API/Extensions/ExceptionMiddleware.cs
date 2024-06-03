@@ -16,20 +16,22 @@ namespace OnDemandTutor.API.Extensions
     public class ExceptionMiddleware : IMiddleware
     { 
         private readonly ILogger<ExceptionMiddleware> _logger;
-   
+        private readonly RequestDelegate _next;
 
         public ExceptionMiddleware(
-            ILogger<ExceptionMiddleware> logger
+            ILogger<ExceptionMiddleware> logger,
+            RequestDelegate next
             )
         {
             _logger = logger;
+            next = _next;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
              try
             {
-                await next(context);
+                await _next(context);
             }
             catch (Exception ex)
             {
@@ -44,10 +46,10 @@ namespace OnDemandTutor.API.Extensions
                 };
 
                 string json = JsonSerializer.Serialize(problem);
+                context.Response.ContentType = "application/json";
 
                 await context.Response.WriteAsync(json);
                 
-                context.Response.ContentType = "application/json";
             }
         }
 
