@@ -2,3 +2,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Styling for a table with the ID 'operator-table' */
+#operator-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#operator-table th, #operator-table td {
+    padding: 12px 15px;
+    border: 1px solid #eee;
+    border-top: none; /* Remove double border between th and td */
+}
+
+#operator-table th {
+    background-color: #d3d3d3;
+    color: #333;
+    font-weight: bold;
+}
+
+#operator-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#operator-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Remove border from table cells at the corners */
+#operator-table th:first-child {
+    border-top-left-radius: 10px;
+}
+
+#operator-table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+#operator-table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+#operator-table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}

@@ -4,15 +4,14 @@ import ClassesPage from '../pages/Student/ClassesPage.vue'
 import BlogsPage from '../pages/Student/BlogsPage.vue'
 import FaqsPage from '../pages/Student/FaqPage.vue'
 import StudentManagementPage from '../pages/Operators/StudentManagementPage.vue'
-import ClassManagementPage from '../pages/Operators/ClassManagementPage.vue'
+import OperatorManagementPage from '../pages/Operators/OperatorMangementPage.vue'
 import TutorManagementPage from '../pages/Operators/TutorManagementPage.vue'
 import SubjectManagementPage from '../pages/Operators/SubjectManagementPage.vue'
 import BlogManagementPage from '../pages/Operators/BlogManagementPage.vue'
 import FaqManagementPage from '../pages/Operators/FaqManagementPage.vue'
-import ClassRequestPage from '../pages/Operators/ClassRequestPage.vue'
+import ClassManagementPage from '../pages/Operators/ClassManagementPage.vue'
 import ConsultationPage from '../pages/Operators/ConsultationPage.vue'
 import {createRouter , createWebHistory} from 'vue-router';
-
 const routes = [
     {
         path: '/',
@@ -51,23 +50,17 @@ const routes = [
             {
               path: 'tutors',
               component: TutorManagementPage
+            },
+            {
+                path: 'operators',
+                component: OperatorManagementPage
             }
           ]
     },
     {
         path: '/admin/classes',
         name: 'ClassManagementPage',
-        redirect: '/admin/classes/list',
-        children: [
-            {
-              path: 'list',
-              component: ClassManagementPage
-            },
-            {
-              path: 'requests',
-              component: ClassRequestPage
-            }
-          ]
+        component : ClassManagementPage
     },
     {
         path: '/admin/subjects',
