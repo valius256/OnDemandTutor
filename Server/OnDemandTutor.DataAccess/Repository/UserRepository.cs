@@ -1,0 +1,18 @@
+﻿using OnDemandTutor.DataAccess.IRepository;
+using OnDemandTutor.Models;
+using OnDemandTutor.Models.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OnDemandTutor.DataAccess.Repository
+{
+    public class UserRepository : GenericRepository<User>, IUserRepository
+    {
+        public UserRepository(ApplicationDbContext context) : base(context)
+        {
+        }
+    }
+}

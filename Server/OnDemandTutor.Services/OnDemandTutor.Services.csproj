@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj" />
-    <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,93 +1,64 @@
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.BusinessLogic;
-using OnDemandTutor.DataAccess.Models;
-using Swashbuckle.AspNetCore.Filters;
-using System.Text;
+using OnDemandTutor.Helper;
+using OnDemandTutor.Models;
 
-var builder = WebApplication.CreateBuilder(args);
-ConfigurationManager configuration = builder.Configuration;
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen( options =>
+internal class Program
 {
-    options.AddSecurityDefinition("oath2", new OpenApiSecurityScheme
+    private static void Main(string[] args)
     {
-        Type = SecuritySchemeType.ApiKey,
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        //Description = "Bearer {token}"
-    });
+        var builder = WebApplication.CreateBuilder(args);
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-});
-builder.Services.AddCors();
-builder.Services.DIServices();
-builder.Services.AddLogging();
-builder.Services.AddTransient<ExceptionMiddleware>();
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-    .AddCookie(IdentityConstants.ApplicationScheme)
-    .AddBearerToken(IdentityConstants.BearerScheme);
+        // Add services to the container.
+
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddIdentityCore<User>()
-    .AddEntityFrameworkStores<OnDemandTutorContext>()
-    .AddApiEndpoints();
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        //builder.Services.UseCore(typeof(Program).Assembly, builder.Configuration);
 
-builder.Services.AddDbContext<OnDemandTutorContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddRepositories()
+                                 .AddGeneralServices();
+
+        builder.Services.AddAutoMapper(typeof(MapperConfig))
+                        .AddAuthenticationService(builder.Configuration);
+        builder.Services.AddMapster();
 
 
+        var app = builder.Build();
 
 
-WebApplication app = builder.Build();
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-static void UseSwagger(IApplicationBuilder app)
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.RoutePrefix = "v1";
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "On Demand Tutor API");
-    });
+            if (!dbContext.Database.CanConnect())
+            {
+                throw new NotImplementedException("Cannot connect to the database");
+            }
+        }
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseStatusCodePages();
+        app.UseExceptionHandler();
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-UseSwagger(app);
-
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-// for auto migration
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<OnDemandTutorContext>();
-//    db.Database.Migrate();
-//    Console.WriteLine("Database Migrated by Phats");
-//}
-app.UseCors(x => x
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed((origin) =>
-    {
-        var hosts = configuration["AllowedHosts"].Split(";").ToList();
-        return hosts.Any(h => origin.ToLower().Contains(h.ToLower()));
-    })
-    .WithExposedHeaders("*")
-    .AllowCredentials());
-app.UseHttpsRedirection();
-
-app.MapIdentityApi<User>();
-app.UseMiddleware<ExceptionMiddleware>();
-app.MapControllers();
-
-app.Run();

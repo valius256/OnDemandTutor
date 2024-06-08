@@ -1,22 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Folder Include="Implements\" />
-		<Folder Include="MappingProfile\" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+  </ItemGroup>
 
-	<ItemGroup>
-
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
+    <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
+  </ItemGroup>
 
 </Project>
