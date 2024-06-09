@@ -1,29 +1,35 @@
 <script>
+import Authorization from './components/common/Authorization.vue';
 import AdminLayout from './layouts/AdminLayout.vue';
 import CustomerLayout from './layouts/CustomerLayout.vue';
 
 export default {
   name: "App",
-  components: { CustomerLayout, AdminLayout },
-  data(){
+  inject : ['eventBus'],
+  components: { CustomerLayout, AdminLayout, Authorization },
+  data() {
     return {
-      user : {
-        role : "Admin"
-      }
+      user: null
     }
+  },
+  mounted() {
+    this.eventBus.emit("get-user", (user) => {
+      this.user = user;
+    });
   }
 }
 </script>
 
 <template>
   <div>
-
-    <div v-if='user.role == "Student"'>
-      <CustomerLayout />
-    </div>
-    <div v-if='user.role == "Admin"'>
-      <AdminLayout />
-    </div>
+    <Authorization>
+      <div v-if='user?.role == "Student"'>
+        <CustomerLayout />
+      </div>
+      <div v-if='user?.role == "Admin"'>
+        <AdminLayout />
+      </div>
+    </Authorization>
   </div>
 
 </template>

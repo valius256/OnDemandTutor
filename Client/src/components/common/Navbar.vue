@@ -16,7 +16,7 @@ export default {
 
 <style scoped>
 .router-link-active{
-  background: #7575e6;
+  background: #232369;
   color: white;
 }
 </style>
