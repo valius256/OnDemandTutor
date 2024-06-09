@@ -3,6 +3,7 @@ import TutorsPage from '../pages/Student/TutorsPage.vue'
 import ClassesPage from '../pages/Student/ClassesPage.vue'
 import BlogsPage from '../pages/Student/BlogsPage.vue'
 import FaqsPage from '../pages/Student/FaqPage.vue'
+import ClassDetailPage from '../pages/Student/ClassDetailPage.vue'
 import StudentManagementPage from '../pages/Operators/StudentManagementPage.vue'
 import OperatorManagementPage from '../pages/Operators/OperatorMangementPage.vue'
 import TutorManagementPage from '../pages/Operators/TutorManagementPage.vue'
@@ -37,6 +38,11 @@ const routes = [
         path: '/faqs',
         name: 'FaqsPage',
         component: FaqsPage
+    },
+    {
+        path: '/classDetail/:id',
+        name: 'ClassDetailPage',
+        component: ClassDetailPage
     },
     {
         path: '/admin/accounts',
