@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-blue-100">
     <main>
       <section class="bg-blue-500 text-white py-20 relative">
-        <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-70"></div>
+        <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-80"></div>
         <div class="container mx-auto text-center relative z-10">
           <h2 class="text-4xl font-bold mb-8">Tìm Gia Sư Hoàn Hảo Cho Bạn Ngay Hôm Nay</h2>
           <p class="text-xl mb-12">Các gia sư chuyên môn ở nhiều lĩnh vực khác nhau sẵn sàng giúp bạn đạt được mục tiêu

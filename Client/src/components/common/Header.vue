@@ -14,7 +14,24 @@ import Navbar from './Navbar.vue';
 
 export default {
     name: "Header",
-    components : {Navbar}
+    inject : ['eventBus'],
+    components : {Navbar},
+    data(){
+        return {
+            user : null
+        }
+    },
+    methods : {
+        async getUser(){
+            this.eventBus.emit("get-user", (user) => {
+                this.user = user;
+            });
+            console.log(this.user)
+        }
+    },
+    mounted() {
+        this.getUser()
+    }
 }
 </script>
 
