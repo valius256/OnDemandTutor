@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-blue-100">
+  <div class="min-h-screen bg-blue-50">
     <main>
       <section class="bg-blue-500 text-white py-20 relative">
         <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-80"></div>
@@ -37,7 +37,7 @@
         </div>
       </section>
 
-      <section id="how-it-works" class="bg-blue-200 py-20">
+      <section id="how-it-works" class="bg-blue-100 py-20">
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
           <div class="flex flex-wrap -mx-4">
@@ -82,7 +82,7 @@
         </div>
       </section>
 
-      <section id="how-to-tutor" class="bg-blue-200 py-20">
+      <section id="how-to-tutor" class="bg-blue-100 py-20">
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Bạn Muốn Trở Thành Gia Sư?</h2>
           <div class="flex flex-wrap -mx-4">
@@ -108,7 +108,7 @@
           </div>
         </div>
       </section>
-      <section id="contact" class="bg-blue-600 text-white py-20 relative">
+      <section id="contact" class="bg-blue-500 text-white py-20 relative">
         <div class="absolute inset-0 z-0 bg-contact-banner bg-cover bg-no-repeat opacity-50"></div>
         <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Liên Hệ Với Chúng Tôi</h2>
