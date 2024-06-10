@@ -1,7 +1,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API.Extensions;
-using OnDemandTutor.BusinessLogic;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models;
 
@@ -14,22 +13,32 @@ internal class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
+        builder.Services.AddLogging();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-
+        builder.Services.AddCors();
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         //builder.Services.UseCore(typeof(Program).Assembly, builder.Configuration);
 
         builder.Services.AddRepositories()
-                                 .AddGeneralServices();
+                        .AddGeneralServices()
+                        .AddFireBaseServices()
+                        .AddFireBaseHttpClient()
+                        .AddControllersWithConfiguration()
+                        .AddCorsWithConfigurations()
+                        .AddSwaggerWithConfigurations()
+                        ;
+
+
+
 
         builder.Services.AddAutoMapper(typeof(MapperConfig))
                         .AddAuthenticationService(builder.Configuration);
-        builder.Services.AddMapster();
 
+        builder.Services.AddMapster();
 
         var app = builder.Build();
 
@@ -55,7 +64,9 @@ internal class Program
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
+
 
         app.MapControllers();
 

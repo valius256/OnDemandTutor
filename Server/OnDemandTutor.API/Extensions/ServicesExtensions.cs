@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+﻿using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Filter;
+using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
+using OnDemandTutor.BusinessLogic.Services.Auth;
+using OnDemandTutor.BusinessLogic.Services.User;
+using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
 using Swashbuckle.AspNetCore.Filters;
-using System.Text;
-using OnDemandTutor.BusinessLogic;
-using OnDemandTutor.BusinessLogic.Services.Auth;
-using OnDemandTutor.BusinessLogic.Services.User;
-using OnDemandTutor.BusinessLogic.Interfaces.User;
-using OnDemandTutor.API.Middlesware;
 
 namespace OnDemandTutor.API.Extensions
 {
@@ -20,7 +21,7 @@ namespace OnDemandTutor.API.Extensions
         {
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandler>();
 
@@ -29,36 +30,48 @@ namespace OnDemandTutor.API.Extensions
 
         public static IServiceCollection AddGeneralServices(this IServiceCollection services)
         {
-            services.AddScoped<IUserServices, UserServices>().AddProblemDetails();
-            services.AddScoped<AuthServices, AuthServices>();
-          
-                services.AddProblemDetails();
+            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
+            services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandler>();
+            return services;
+        }
+
+
+
+        public static IServiceCollection AddFireBaseServices(this IServiceCollection services)
+        {
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile("firebase.json"),
+
+            });
             return services;
         }
 
 
         public static IServiceCollection AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAuthentication(options =>
+            services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false; // Set to true in production
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["JwtSettings:Issuer"],
-                    ValidAudience = configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]!))
-                };
+                jwtOptions.Authority = configuration["Authentication:Issuer"];
+                jwtOptions.Audience = configuration["Authentication:Audience"];
+                jwtOptions.TokenValidationParameters.ValidIssuer = configuration["Authentication:Issuer"];
             });
+            return services;
+        }
+
+
+
+        public static IServiceCollection AddFireBaseHttpClient(this IServiceCollection services)
+        {
+            services.AddHttpClient<IJwtProviderServices, JwtProviderServices>((sp, client) =>
+            {
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                client.BaseAddress = new Uri(configuration["Authentication:TokenUri"]);
+            });
+
             return services;
         }
 

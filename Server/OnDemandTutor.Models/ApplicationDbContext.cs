@@ -79,11 +79,5 @@ namespace OnDemandTutor.Models
             base.OnModelCreating(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseModel(ApplicationDbContextModel.Instance);
-        }
-
-
     }
 }

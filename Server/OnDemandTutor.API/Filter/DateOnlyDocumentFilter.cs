@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OnDemandTutor.API.Filter
 {
-   public class DateOnlyDocumentFilter : ISchemaFilter
+    public class DateOnlyDocumentFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {

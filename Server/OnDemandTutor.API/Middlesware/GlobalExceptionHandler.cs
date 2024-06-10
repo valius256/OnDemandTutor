@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using System.Diagnostics;
 
 namespace OnDemandTutor.API.Middlesware
@@ -16,7 +17,7 @@ namespace OnDemandTutor.API.Middlesware
             var (statusCode, title) = MapException(exception);
 
             await Results.Problem(
-                title: "dcm backend loi nua roi dcmmmmm",
+                title: "dcm backend nhu lol, loi nua roi dcmmmmm",
                 statusCode: StatusCodes.Status500InternalServerError,
                 extensions: new Dictionary<string, object?>
                 {
@@ -32,6 +33,11 @@ namespace OnDemandTutor.API.Middlesware
             return exception switch
             {
                 ArgumentOutOfRangeException => (StatusCodes.Status400BadRequest, exception.Message),
+                UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, exception.Message),
+                HttpRequestException => (StatusCodes.Status400BadRequest, exception.Message),
+                BadRequestException => (StatusCodes.Status400BadRequest, exception.Message),
+                ModelException => (StatusCodes.Status400BadRequest, exception.Message),
+                FirebaseAuthException => (StatusCodes.Status503ServiceUnavailable, "Failed to register user with Firebase"),
                 _ => (StatusCodes.Status500InternalServerError, "An unhandled exception has occurred")
             };
         }
