@@ -4,6 +4,7 @@ import ClassesPage from '../pages/Student/ClassesPage.vue'
 import BlogsPage from '../pages/Student/BlogsPage.vue'
 import FaqsPage from '../pages/Student/FaqPage.vue'
 import ClassDetailPage from '../pages/Student/ClassDetailPage.vue'
+import CreateClassPage from '../pages/Student/CreateClassPage.vue'
 import StudentManagementPage from '../pages/Operators/StudentManagementPage.vue'
 import OperatorManagementPage from '../pages/Operators/OperatorMangementPage.vue'
 import TutorManagementPage from '../pages/Operators/TutorManagementPage.vue'
@@ -44,6 +45,12 @@ const routes = [
         name: 'ClassDetailPage',
         component: ClassDetailPage
     },
+    {
+        path: '/editClass/:id',
+        name: 'CreateClassPage',
+        component: CreateClassPage
+    },
+    
     {
         path: '/admin/accounts',
         name: 'AccountManagement',
