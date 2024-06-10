@@ -10,22 +10,26 @@ namespace OnDemandTutor.Models.Models
         [Key]
         public int Id { get; set; }
 
-        [StringLength(50)]
-        public string FirstName { get; set; }
+        public string Uid { get; set; }
 
         [StringLength(50)]
-        public string LastName { get; set; }
+        [AllowNull]
+        public string? FirstName { get; set; }
+
+        [StringLength(50)]
+        [AllowNull]
+        public string? LastName { get; set; }
 
         [StringLength(10)]
         [AllowNull]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [StringLength(50)]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [StringLength(100)]
         [AllowNull]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         public int? AvatarImageId { get; set; }
 
@@ -43,9 +47,9 @@ namespace OnDemandTutor.Models.Models
         public double? Rating { get; set; }
         public int? DegreeImageId { get; set; }
         public int? IdCardImageID { get; set; }
-        public string ScheduleDesciption { get; set; }
+        public string? ScheduleDesciption { get; set; }
 
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         public virtual ICollection<Blog> BlogCreateByNavigations { get; set; } = new List<Blog>();
         public virtual ICollection<Blog> BlogUpdateByNavigations { get; set; } = new List<Blog>();

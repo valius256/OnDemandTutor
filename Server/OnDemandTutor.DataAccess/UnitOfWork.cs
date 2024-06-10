@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.DataAccess.IRepository;
+using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
 using System;
 using System.Collections.Generic;
@@ -15,14 +17,21 @@ namespace OnDemandTutor.DataAccess
         Task MigrateAsync();
     }
 
-    internal class UnitOfWorkRepository : IUnitOfWorkRepository
+    public class UnitOfWorkRepository : IUnitOfWorkRepository
     {
         private readonly ApplicationDbContext _context;
+        public IUserRepository Users {get; private set; }
+
+
 
         public UnitOfWorkRepository(ApplicationDbContext context)
         {
             _context = context;
+            Users = new UserRepository(_context);
+
         }
+
+      
 
         public Task MigrateAsync()
         {
@@ -32,6 +41,11 @@ namespace OnDemandTutor.DataAccess
         public int SaveChanges()
         {
             return _context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
 
         public Task<int> SaveChangesAsync()
