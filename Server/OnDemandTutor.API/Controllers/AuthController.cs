@@ -14,38 +14,63 @@ namespace OnDemandTutor.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthServices _authService;
-        private readonly IUserServices _userService;
+        private readonly IAuthServices _authServices;
+        private readonly IUserServices _userServices;
 
         public AuthController(IUserServices userService, IAuthServices authServices)
         {
-            _userService = userService;
-            _authService = authServices;
+            _userServices = userService;
+            _authServices = authServices;
         }
 
         [HttpPost("register")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-        public async Task<GetProfileUserDtos> Register([FromBody] RegisterDtos body)
+        public async Task<ActionResult<GetProfileUserDtos>> Register([FromBody] RegisterDtos body)
         {
-            return await _userService.RegisterUser(body);
+            return await _userServices.RegisterUser(body);
         }
 
-        [HttpPost("login")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(AuthResponseDto), 200)]
-        public async Task<AuthResponseDto> Login([FromBody] LoginDtos body)
-        {
-            return await _authService.Login(body);
-        }
 
-        [Authorize]
+        /// <summary>
+        ///  login with facebook , later
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        //[HttpPost("login")]
+        //[ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        //[ProducesResponseType(typeof(AuthResponseDto), 200)]
+        //public async Task<AuthResponseDto> Login([FromBody] LoginDtos body)
+        //{
+        //    return await _authService.Login(body);
+        //}
+
+
         [HttpPost("login-firebase")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<string> LoginFireBase([FromBody] LoginDtos body)
+        public async Task<ActionResult<string>> LoginFireBase([FromBody] LoginDtos body)
         {
-            return await _authService.LoginWithFireBase(body);
+            return await _authServices.LoginWithFireBase(body);
         }
+        [AllowAnonymous]
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(string), 200)]
+        public async Task<ActionResult<string>> ForgotPassword(ForgotPasswordRequest request)
+        {
+            return await _authServices.ForgotPassword(request.Email);
+
+        }
+
+        [Authorize]
+        [HttpGet("who-am-i")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
+        public async Task<ActionResult<GetProfileUserDtos>> GetProfile()
+        {
+            return await _authServices.GetUserProfileByClaim(HttpContext.User);
+        }
+
     }
 }

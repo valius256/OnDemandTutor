@@ -1,14 +1,10 @@
-﻿using OnDemandTutor.Models.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace OnDemandTutor.Models.Dtos.Authen
 {
     public class LoginDtos
     {
+        [EmailAddress(ErrorMessage = "The email format is not valid")]
         public required string Email { get; set; }
         public required string Password { get; set; }
     }

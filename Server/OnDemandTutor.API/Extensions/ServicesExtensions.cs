@@ -1,5 +1,7 @@
 ﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Hangfire;
+using MailKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Filter;
@@ -11,7 +13,10 @@ using OnDemandTutor.BusinessLogic.Services.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
+using OnDemandTutor.Models;
 using Swashbuckle.AspNetCore.Filters;
+using IMailService = OnDemandTutor.BusinessLogic.Interfaces.Sending.IMailService;
+using MailService = OnDemandTutor.BusinessLogic.Services.Sending.MailService;
 
 namespace OnDemandTutor.API.Extensions
 {
@@ -32,6 +37,7 @@ namespace OnDemandTutor.API.Extensions
         {
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IAuthServices, AuthServices>();
+            services.AddTransient<IMailService, MailService>();
             services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
             services.AddProblemDetails();
             services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -110,6 +116,26 @@ namespace OnDemandTutor.API.Extensions
         {
             services.AddCors(options =>
                 options.AddPolicy("AllowAll", b => b.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()));
+            return services;
+        }
+
+        public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services)
+        {
+            services.AddHangfire((sp, config) =>
+            {
+                var connectionStrings = sp.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
+                config.UseSqlServerStorage(connectionStrings);
+            });
+
+            services.AddHangfireServer();
+
+            return services;
+        }
+
+        public static IServiceCollection AddMailConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<SmtpSettings>(configuration.GetSection("MailSettings"));
+
             return services;
         }
 

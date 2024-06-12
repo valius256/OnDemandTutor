@@ -8,12 +8,19 @@
 
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="3.0.0" />
+    <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MimeKit" Version="4.6.0" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
     <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Sending\" />
   </ItemGroup>
 
 </Project>
