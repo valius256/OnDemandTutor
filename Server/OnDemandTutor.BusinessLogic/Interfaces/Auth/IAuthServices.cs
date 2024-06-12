@@ -1,5 +1,6 @@
 ﻿using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
 {
@@ -7,5 +8,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
     {
         Task<AuthResponseDto> Login(LoginDtos loginDto);
         Task<string> LoginWithFireBase(LoginDtos loginDto);
+        Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
+        Task<string> ForgotPassword(string email);
     }
 }

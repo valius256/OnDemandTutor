@@ -7,6 +7,7 @@ using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Register;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.BusinessLogic.Services.User
@@ -30,6 +31,18 @@ namespace OnDemandTutor.BusinessLogic.Services.User
             return userList.Adapt<List<GetProfileUserDtos>>();
         }
 
+        public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail)
+        {
+            var userModel = await _userRepository.FirstOrDefaultAsync(u => u.Id == userId || u.Email == userEmail);
+            if (userModel == null)
+            {
+                throw new BadRequestException("User not found");
+            }
+
+            return userModel.Adapt<GetProfileUserDtos>();
+        }
+
+
         public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
         {
             var userExist = await _userRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
@@ -42,7 +55,7 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
             var mappedUser = registerDtos.Adapt<Models.Models.User>();
             mappedUser.Role = RoleStatus.Customer;
-            mappedUser.Uid = fireBaseAuthId;
+            mappedUser.FireBaseid = fireBaseAuthId;
             var user = await _userRepository.AddAsync(mappedUser);
 
             await _unitOfWorkRepository.SaveChangesAsync();
@@ -73,5 +86,28 @@ namespace OnDemandTutor.BusinessLogic.Services.User
         }
 
 
+
+        public async Task<GetProfileUserDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos)
+        {
+            var userExist = await _userRepository.FirstOrDefaultAsync(us => us.Email == registerTutorDtos.Email);
+            if (userExist != null)
+            {
+                throw new ModelException(userExist.Email, "Email is already existed");
+            }
+
+            var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerTutorDtos);
+            var mappedUser = registerTutorDtos.Adapt<Models.Models.User>();
+            mappedUser.FireBaseid = fireBaseAuthId;
+            var user = await _userRepository.AddAsync(mappedUser);
+            await _unitOfWorkRepository.SaveChangesAsync();
+
+            var rs = user.Adapt<GetProfileUserDtos>();
+            return rs;
+        }
+
+        public async Task<GetProfileUserDtos> GetUserProfileById(int id)
+        {
+            return (await _userRepository.FirstOrDefaultAsync(u => u.Id == id)).Adapt<GetProfileUserDtos>();
+        }
     }
 }

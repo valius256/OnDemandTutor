@@ -78,6 +78,5 @@ namespace OnDemandTutor.Models
 
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.Models", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.DataAccess", "..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj", "{C6678ABD-3799-4C78-8BFE-575E7FF89A24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnDemandTutor.BusinessLogic", "..\OnDemandTutor.BusinessLogic\OnDemandTutor.BusinessLogic.csproj", "{3FB98DFE-F736-497D-AF44-10824B35BA2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.BusinessLogic", "..\OnDemandTutor.BusinessLogic\OnDemandTutor.BusinessLogic.csproj", "{3FB98DFE-F736-497D-AF44-10824B35BA2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnDemandTutor.Helper", "..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj", "{6E9413DE-CBA7-4416-A38F-2995D032F1B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.Helper", "..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj", "{6E9413DE-CBA7-4416-A38F-2995D032F1B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

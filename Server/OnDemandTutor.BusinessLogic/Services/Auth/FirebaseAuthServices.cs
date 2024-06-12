@@ -1,11 +1,6 @@
 ﻿using FirebaseAdmin.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.Models.Dtos.Register;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth
 {
@@ -20,9 +15,39 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
             };
 
             var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userForFireBaseAuth);
+
+            await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(userRecord.Email);
             return userRecord.Uid;
         }
-        
 
+
+        public async Task<UserRecord> GetUser(string? uid, string? email, string? phone)
+        {
+            if (!string.IsNullOrEmpty(uid))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+                return userRecord;
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
+                return userRecord;
+            }
+
+            if (!string.IsNullOrEmpty(phone))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserByPhoneNumberAsync(phone);
+                return userRecord;
+            }
+
+
+            throw new ArgumentException("At least one parameter (uid, email, or phone) must be provided.");
+        }
+
+        public async Task<string> ForgotPassword(string email)
+        {
+            return await FirebaseAuth.DefaultInstance.GeneratePasswordResetLinkAsync(email);
+        }
     }
 }

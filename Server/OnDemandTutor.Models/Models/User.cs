@@ -10,7 +10,7 @@ namespace OnDemandTutor.Models.Models
         [Key]
         public int Id { get; set; }
 
-        public string Uid { get; set; }
+        public string FireBaseid { get; set; }
 
         [StringLength(50)]
         [AllowNull]
@@ -39,8 +39,6 @@ namespace OnDemandTutor.Models.Models
         public DateTime? Dob { get; set; }
 
         public RoleStatus Role { get; set; }
-
-        public bool? RecordStatus { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? Balance { get; set; }

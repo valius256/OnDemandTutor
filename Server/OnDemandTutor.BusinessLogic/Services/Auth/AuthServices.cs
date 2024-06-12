@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,12 +17,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
         private readonly IConfiguration _configuration;
         private readonly IUserServices _userServices;
+        private readonly IFireBaseAuthServices _fireBaseAuthServices;
         private readonly IJwtProviderServices _jwtProviderServices;
-        public AuthServices(IUserServices userServices, IUnitOfWorkRepository unitOfWorkRepository, IJwtProviderServices jwtProviderServices)
+        public AuthServices(IUserServices userServices, IUnitOfWorkRepository unitOfWorkRepository, IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices)
         {
             _unitOfWorkRepository = unitOfWorkRepository;
             _userServices = userServices;
             _jwtProviderServices = jwtProviderServices;
+            _fireBaseAuthServices = fireBaseAuthServices;
         }
 
         public async Task<AuthResponseDto> Login(LoginDtos loginDto)
@@ -59,5 +62,35 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
         {
             return await _jwtProviderServices.GetForCredentialsAsync(loginDto.Email, loginDto.Password);
         }
+
+        public async Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal)
+        {
+            var userId = claimsPrincipal.FindFirst(c => c.Type == "uid")?.Value;
+            if (userId.IsNullOrEmpty())
+            {
+                throw new BadRequestException("User not found");
+            }
+
+
+            var user = await _userServices.GetUserProfileById(Int32.Parse(userId));
+            if (user == null)
+            {
+                throw new BadRequestException("User not found");
+            }
+
+            return user;
+        }
+
+        public async Task<string> ForgotPassword(string email)
+        {
+            var userExist = await _userServices.GetProfile(null, email);
+            if (userExist == null)
+            {
+                throw new BadRequestException("User not found");
+            }
+
+            return await _fireBaseAuthServices.ForgotPassword(email);
+        }
+
     }
 }

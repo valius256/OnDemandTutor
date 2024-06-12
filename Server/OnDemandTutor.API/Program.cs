@@ -1,4 +1,6 @@
+using Hangfire;
 using Mapster;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.Helper;
@@ -11,14 +13,13 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
+        
         builder.Services.AddControllers();
         builder.Services.AddLogging();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddCors();
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         //builder.Services.UseCore(typeof(Program).Assembly, builder.Configuration);
@@ -26,12 +27,12 @@ internal class Program
         builder.Services.AddRepositories()
                         .AddGeneralServices()
                         .AddFireBaseServices()
+                        .AddHangFireConfigurations()
                         .AddFireBaseHttpClient()
                         .AddControllersWithConfiguration()
                         .AddCorsWithConfigurations()
                         .AddSwaggerWithConfigurations()
                         ;
-
 
 
 
@@ -67,6 +68,12 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+        {
+            DashboardTitle = "OnDemandTutor",
+            DarkModeEnabled = true,
+            TimeZoneResolver = new DefaultTimeZoneResolver(),
+        });
 
         app.MapControllers();
 

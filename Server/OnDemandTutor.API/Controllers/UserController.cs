@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos;
+using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -27,5 +28,24 @@ namespace OnDemandTutor.API.Controllers
             return await _userService.GetAllUsers();
         }
 
+        [Authorize]
+        [HttpGet("profile")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
+        public async Task<ActionResult<GetProfileUserDtos>> GetProfile([FromBody] int userId)
+        {
+            return await _userService.GetProfile(userId, null);
+        }
+
+
+
+        [Authorize]
+        [HttpPost("register-tutor")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
+        public async Task<ActionResult<GetProfileUserDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
+        {
+            return await _userService.RegisterTutor(body);
+        }
     }
 }
