@@ -2,12 +2,10 @@ using Hangfire;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.API;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.DataAccess.ExceptionModels;
-using OnDemandTutor.Helper;
-using OnDemandTutor.Models;
-
 
 internal class Program
 {
@@ -19,6 +17,9 @@ internal class Program
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.InitializerDependencyInjection();
+        builder.Services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
