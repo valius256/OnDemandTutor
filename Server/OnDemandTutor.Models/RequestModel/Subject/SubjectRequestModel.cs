@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OnDemandTutor.Models.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnDemandTutor.Models.Models
+namespace OnDemandTutor.Models.RequestModel.Subject
 {
-    public class Subject : IBaseEntity
-    {
-        [Key]
+	public class SubjectRequestModel
+	{
+		
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -16,12 +18,13 @@ namespace OnDemandTutor.Models.Models
 
         public string Description { get; set; }
 
-        [Column(TypeName = "datetime")]
         public DateTime? CreateAt { get; set; }
 
         public bool Status { get; set; }
 
-        [InverseProperty("Subject")]
+
         public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
-    }
+    
+	}
 }
+

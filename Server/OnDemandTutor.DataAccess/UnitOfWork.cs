@@ -15,23 +15,31 @@ namespace OnDemandTutor.DataAccess
         int SaveChanges();
         Task<int> SaveChangesAsync();
         Task MigrateAsync();
+        public IUserRepository UserRepository { get; }
+        public ISubjectRepository SubjectRepository { get; }
     }
 
     public class UnitOfWorkRepository : IUnitOfWorkRepository
     {
         private readonly ApplicationDbContext _context;
-        public IUserRepository Users {get; private set; }
+        public IUserRepository Users { get; private set; }
 
+        private readonly IUserRepository _userRepository;
+        private readonly ISubjectRepository _subjectRepository;
 
+        public IUserRepository UserRepository => _userRepository;
+        public ISubjectRepository SubjectRepository => _subjectRepository;
 
-        public UnitOfWorkRepository(ApplicationDbContext context)
+        public UnitOfWorkRepository(ApplicationDbContext context, IUserRepository userRepository, ISubjectRepository subjectRepository)
         {
             _context = context;
-            Users = new UserRepository(_context);
+            _userRepository = userRepository;
+            _subjectRepository = subjectRepository;
 
         }
 
-      
+
+
 
         public Task MigrateAsync()
         {
@@ -52,5 +60,7 @@ namespace OnDemandTutor.DataAccess
         {
             return _context.SaveChangesAsync();
         }
+
+
     }
 }
