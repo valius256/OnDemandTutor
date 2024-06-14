@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -71,6 +72,14 @@ namespace OnDemandTutor.API.Controllers
         {
             return await _authServices.GetUserProfileByClaim(HttpContext.User);
         }
-
+        
+        [AllowAnonymous]
+        [HttpPost("delete")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(bool), 200)]
+        public async Task<ActionResult<bool>> DeleteUser([FromBody]string userEmail)
+        {
+            return await _authServices.DeleteUserAsync(userEmail);
+        }
     }
 }

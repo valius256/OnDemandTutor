@@ -18,8 +18,6 @@ namespace OnDemandTutor.Models.Models
         public DateTime? CreateAt { get; set; }
 
         public bool Status { get; set; }
-
-        [InverseProperty("Subject")]
-        public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+        public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
     }
 }

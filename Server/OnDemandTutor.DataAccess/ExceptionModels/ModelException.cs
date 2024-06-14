@@ -8,14 +8,13 @@ namespace OnDemandTutor.DataAccess.ExceptionModels
 {
    public class ModelException : Exception
     {
-        public string Field { get; set; }
-        public string[] Paras { get; set; }
+        public string PropertyName { get; }
+        public string ErrorCode { get; }
 
-        public ModelException(string field, string errorCode, params string[] paras)
-            : base(errorCode)
+        public ModelException(string propertyName, string message, string errorCode = null) : base(message)
         {
-            this.Field = field;
-            this.Paras = paras;
+            PropertyName = propertyName;
+            ErrorCode = errorCode;
         }
     }
 }

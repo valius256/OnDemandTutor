@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,11 +33,9 @@ namespace OnDemandTutor.Models.Models
         [InverseProperty("TransactionCreatedByNavigations")]
         public virtual User CreatedByNavigation { get; set; }
 
-
         [InverseProperty("TransactionReferences")]
         public virtual User ReferenceNavigation { get; set; }
-
-        [InverseProperty("SlotTransactionNavigation")]  
-        public virtual ICollection<Slot> TransactionNavigation { get; set; }
+        
+        public virtual Slot Slot { get; set; } 
     }
 }

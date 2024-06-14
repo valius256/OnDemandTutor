@@ -1,4 +1,5 @@
-﻿using OnDemandTutor.Models.Dtos.Register;
+﻿using FirebaseAdmin.Auth;
+using OnDemandTutor.Models.Dtos.Register;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
 {
@@ -6,5 +7,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
     {
         Task<string> RegisterUser(RegisterDtos registerDtos);
         Task<string> ForgotPassword(string email);
+        Task<UserRecord?> GetUserAsync(string? uid, string? email, string? phone);
+        Task<bool> DeleteUserAsync(string? email);
     }
 }

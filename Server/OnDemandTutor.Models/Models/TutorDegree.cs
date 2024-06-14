@@ -13,8 +13,6 @@ namespace OnDemandTutor.Models.Models
 
         public string Description { get; set; }
 
-        public virtual Medium DegreeImg { get; set; }
-
         public virtual User Tutor { get; set; }
     }
 }
