@@ -2,7 +2,9 @@ using Hangfire;
 using Mapster;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.API;
 using OnDemandTutor.API.Extensions;
+using OnDemandTutor.DataAccess;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models;
 
@@ -19,6 +21,9 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.InitializerDependencyInjection();
+        builder.Services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
