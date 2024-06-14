@@ -45,23 +45,29 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
         public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
         {
-            var userExist = await _userRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
-            if (userExist != null)
-            {
-                throw new ModelException(userExist.Email, "Email is already existed");
-            }
+                // var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
+                // if (userInFirebase != null)
+                // {
+                //     throw new ModelException("Email", $"{userInFirebase.Email} has already registered", "This Email is already registered");
+                // }
+                
+                var userExist = await _userRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
+                if (userExist != null)
+                {
+                    throw new ModelException("Email", $"{userExist.Email} already exists, try logging in", "This Email is already registered");
+                }
 
-            var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
+                var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
 
-            var mappedUser = registerDtos.Adapt<Models.Models.User>();
-            mappedUser.Role = RoleStatus.Customer;
-            mappedUser.FireBaseid = fireBaseAuthId;
-            var user = await _userRepository.AddAsync(mappedUser);
+                var mappedUser = registerDtos.Adapt<Models.Models.User>();
+                mappedUser.Role = RoleStatus.Customer;
+                mappedUser.FireBaseid = fireBaseAuthId;
+                await _userRepository.AddAsync(mappedUser);
+            
+                await _unitOfWorkRepository.SaveChangesAsync();
 
-            await _unitOfWorkRepository.SaveChangesAsync();
-
-            var rs = user.Adapt<GetProfileUserDtos>();
-            return rs;
+                var rs = mappedUser.Adapt<GetProfileUserDtos>();
+                return rs;
         }
 
 
@@ -108,6 +114,14 @@ namespace OnDemandTutor.BusinessLogic.Services.User
         public async Task<GetProfileUserDtos> GetUserProfileById(int id)
         {
             return (await _userRepository.FirstOrDefaultAsync(u => u.Id == id)).Adapt<GetProfileUserDtos>();
+        }
+
+        public async Task<bool> DeleteUserAsync(string? email)
+        {
+            var user = await _userRepository.FirstOrDefaultAsync(ld => ld.Email == email);
+            _userRepository.Remove(user);
+            
+            return true;
         }
     }
 }

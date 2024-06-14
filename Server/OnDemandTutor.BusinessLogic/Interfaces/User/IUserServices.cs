@@ -12,6 +12,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.User
         Task<GetProfileUserDtos> GetProfile(int? userId, string? email);
         Task<GetProfileUserDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos);
         Task<GetProfileUserDtos> GetUserProfileById(int id);
+        Task<bool> DeleteUserAsync(string? email);
         //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
     }
 }

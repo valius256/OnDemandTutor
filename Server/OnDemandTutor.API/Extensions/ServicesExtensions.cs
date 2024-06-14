@@ -1,11 +1,10 @@
 ﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
-using MailKit;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Filter;
-using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Auth;
@@ -28,7 +27,7 @@ namespace OnDemandTutor.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
             services.AddProblemDetails();
-            services.AddExceptionHandler<GlobalExceptionHandler>();
+
 
             return services;
         }
@@ -40,7 +39,6 @@ namespace OnDemandTutor.API.Extensions
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
             services.AddProblemDetails();
-            services.AddExceptionHandler<GlobalExceptionHandler>();
             return services;
         }
 
@@ -119,12 +117,20 @@ namespace OnDemandTutor.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services)
+        public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHangfire((sp, config) =>
             {
-                var connectionStrings = sp.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
-                config.UseSqlServerStorage(connectionStrings);
+                // var connectionStrings = sp.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
+                
+                    config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+                 {
+                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                     QueuePollInterval = TimeSpan.Zero,
+                     UseRecommendedIsolationLevel = true,
+                     DisableGlobalLocks = true,
+                 });
             });
 
             services.AddHangfireServer();
@@ -138,6 +144,21 @@ namespace OnDemandTutor.API.Extensions
 
             return services;
         }
+        
+        public static void InitializeBackgroundJobs(IServiceProvider services)
+        {
+            var backgroundJobs = services.GetRequiredService<IBackgroundJobClient>();
+            var recurringJobs = services.GetRequiredService<IRecurringJobManager>();
+            ConfigureBackgroundJobs(backgroundJobs, recurringJobs);
+        }
+        
+        
+        public static void ConfigureBackgroundJobs(IBackgroundJobClient backgroundJobs, IRecurringJobManager recurringJobs)
+        {
+            
+            // Example of enqueuing a job
+          
+        } 
 
 
     }

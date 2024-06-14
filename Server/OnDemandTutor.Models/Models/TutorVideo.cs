@@ -14,6 +14,7 @@ namespace OnDemandTutor.Models.Models
 
         public string Description { get; set; }
 
+
         [ForeignKey("TutorId")]
         [InverseProperty("TutorVideos")]
         public virtual User Tutor { get; set; }

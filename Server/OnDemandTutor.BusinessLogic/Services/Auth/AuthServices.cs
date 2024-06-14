@@ -92,5 +92,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
             return await _fireBaseAuthServices.ForgotPassword(email);
         }
 
+        public async Task<bool> DeleteUserAsync(string? email)
+        {
+            await _fireBaseAuthServices.DeleteUserAsync(email);
+            await _userServices.DeleteUserAsync(email);
+
+            await _unitOfWorkRepository.SaveChangesAsync();
+            return true;
+        }
     }
 }

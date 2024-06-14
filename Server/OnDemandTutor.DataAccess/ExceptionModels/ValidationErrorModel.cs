@@ -1,11 +1,4 @@
-﻿namespace OnDemandTutor.API.Middlesware;
-
-public class ApiErrorActionResult
-{
-    public string Title { get; set; }
-    public int Status { get; set; }
-    public List<ValidationErrorModel> Errors { get; set; }
-}
+﻿namespace OnDemandTutor.DataAccess.ExceptionModels;
 
 public class ValidationErrorModel
 {
@@ -19,4 +12,5 @@ public class ValidationErrorModel
         ErrorMessage = errorMessage;
         ErrorCode = errorCode;
     }
+
 }
