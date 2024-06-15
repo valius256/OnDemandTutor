@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.API.Models;
+using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.RequestModel.Subject;

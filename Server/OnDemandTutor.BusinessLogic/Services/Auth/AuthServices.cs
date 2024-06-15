@@ -65,7 +65,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
 
         public async Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal)
         {
-            var userId = claimsPrincipal.FindFirst(c => c.Type == "uid")?.Value;
+            var userId = claimsPrincipal.FindFirst(c => c.Type == "id")?.Value;
             if (userId.IsNullOrEmpty())
             {
                 throw new BadRequestException("User not found");

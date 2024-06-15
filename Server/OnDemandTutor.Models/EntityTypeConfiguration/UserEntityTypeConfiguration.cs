@@ -11,10 +11,10 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.FirstName).IsRequired().HasMaxLength(50);
-            builder.Property(x => x.LastName).IsRequired().HasMaxLength(50);
+            builder.Property(x => x.LastName).IsRequired(false).HasMaxLength(50);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(50);
             builder.Property(x => x.Password).IsRequired().HasMaxLength(50);
-            builder.Property(x => x.Phone).IsRequired().HasMaxLength(10);
+            builder.Property(x => x.Phone).IsRequired(false).HasMaxLength(10);
             builder.Property(x => x.Role).IsRequired();
             builder.HasIndex(x => x.FireBaseid).IsUnique();
 
@@ -28,7 +28,7 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
                 .WithOne(b => b.UpdateByUser)
                 .HasForeignKey(b => b.UpdateBy)
                 .OnDelete(DeleteBehavior.Restrict);
-        
+
             builder.HasMany(u => u.SlotStudents)
                 .WithOne(ss => ss.User)
                 .HasForeignKey(ss => ss.UserId)
@@ -46,7 +46,7 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
             builder.HasMany(u => u.Notifications)
                 .WithOne(n => n.Receiver)
                 .HasForeignKey(n => n.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(e => e.TransactionCreatedByNavigations)
                 .WithOne(t => t.CreatedByNavigation)
@@ -57,24 +57,24 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
                 .HasForeignKey(t => t.ReferenceId);
 
             builder.HasMany(u => u.TutorDegrees)
-                .WithOne(td => td.Tutor) 
-                .HasForeignKey(td => td.TutorId) 
-                .OnDelete(DeleteBehavior.Restrict); 
-            
+                .WithOne(td => td.Tutor)
+                .HasForeignKey(td => td.TutorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasMany(u => u.TutorDegrees)
                 .WithOne(td => td.Tutor)
-                .HasForeignKey(td => td.TutorId) 
+                .HasForeignKey(td => td.TutorId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             builder.HasMany(u => u.SlotStudents)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure relationship with Slots
             builder.HasMany(u => u.Slots)
                 .WithOne(s => s.CreatedByNavigation)
                 .OnDelete(DeleteBehavior.Restrict); // Adjust DeleteBehavior if needed
-            
+
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
-using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos;
@@ -58,26 +57,26 @@ namespace OnDemandTutor.API.Controllers
         [HttpPost("forgot-password")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(string), 200)]
-        public async Task<ActionResult<string>> ForgotPassword(ForgotPasswordRequest request)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
         {
-            return await _authServices.ForgotPassword(request.Email);
-
+            var result = await _authServices.ForgotPassword(request.Email);
+            return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("who-am-i")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-        public async Task<ActionResult<GetProfileUserDtos>> GetProfile()
+        public async Task<IActionResult> GetProfile()
         {
-            return await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var result = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            return Ok(result);
         }
-        
+
         [AllowAnonymous]
         [HttpPost("delete")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]
-        public async Task<ActionResult<bool>> DeleteUser([FromBody]string userEmail)
+        public async Task<ActionResult<bool>> DeleteUser([FromBody] string userEmail)
         {
             return await _authServices.DeleteUserAsync(userEmail);
         }

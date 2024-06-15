@@ -2,7 +2,7 @@
 {
     public class GetProfileRequestDtos
     {
-        public string Email { get; set; }
-        public string UserId { get; set; }
+        public required string Email { get; set; }
+        public required string UserId { get; set; }
     }
 }

@@ -24,6 +24,6 @@ public class NotificationEntityTypeConfiguration : IEntityTypeConfiguration<Noti
         builder.HasOne<User>(n => n.Receiver)
             .WithMany(u => u.Notifications)
             .HasForeignKey(n => n.ReceiverId)
-            .OnDelete(DeleteBehavior.NoAction); 
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

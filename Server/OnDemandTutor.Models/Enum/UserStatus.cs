@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnDemandTutor.Models.Enum
+﻿namespace OnDemandTutor.Models.Enum
 {
     public enum UserStatus
     {
-        Active,
-        Inactive,
-        Deleted,
+        Pending, // đang chờ duyệt bằng cấp
+        Approved, // đã được duyệt bằng cấp
+        Rejected, // bị từ chối bằng cấp
     }
 }

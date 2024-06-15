@@ -1,9 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.IRepository;
+﻿using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
-using OnDemandTutor.Models;
 
 namespace OnDemandTutor.API
 {
@@ -18,5 +14,5 @@ namespace OnDemandTutor.API
 
         }
     }
-}
 
+}

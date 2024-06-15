@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnDemandTutor.Models.Paging
+﻿namespace OnDemandTutor.Models.Paging
 {
-   public class PagingModel<T> : PagingSizeModel
+    public class PagingModel<T> : PagingSizeModel
     {
         public T Filter { get; set; }
         public List<SortItems> Sorts { get; set; }
@@ -15,10 +8,9 @@ namespace OnDemandTutor.Models.Paging
 
     public class PagingSizeModel
     {
-        [Required]
-        public int Page { get; set; }
-        [Required]
-        public int Limit { get; set; }
+        public required int Page { get; set; }
+
+        public required int Limit { get; set; }
     }
 
     public class SortItems

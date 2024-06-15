@@ -1,5 +1,4 @@
-﻿using FirebaseAdmin;
-using FirebaseAdmin.Auth;
+﻿using FirebaseAdmin.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Register;
@@ -8,6 +7,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
 {
     public class FirebaseAuthServices : IFireBaseAuthServices
     {
+
         public async Task<string> RegisterUser(RegisterDtos registerDtos)
         {
             var userForFireBaseAuth = new UserRecordArgs()
@@ -20,7 +20,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
             await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(userRecord.Email);
             return userRecord.Uid;
         }
-        
+
         public async Task<UserRecord?> GetUserAsync(string? uid, string? email, string? phone)
         {
             if (!string.IsNullOrEmpty(uid))
@@ -65,7 +65,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
             var user = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
             if (user == null)
                 throw new ModelException(user.ToString(), "not found", "");
-            
+
             await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.Uid);
             return true;
         }
@@ -73,6 +73,16 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
         public async Task<string> ForgotPassword(string email)
         {
             return await FirebaseAuth.DefaultInstance.GeneratePasswordResetLinkAsync(email);
+        }
+
+        public Task<string> LoginFireBase(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task SetCustomClaimsAsync(string userId, Dictionary<string, object> claims)
+        {
+            await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(userId, claims);
         }
     }
 }

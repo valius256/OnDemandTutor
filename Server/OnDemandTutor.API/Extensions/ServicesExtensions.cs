@@ -3,6 +3,7 @@ using Google.Apis.Auth.OAuth2;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Filter;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -13,7 +14,9 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
-using Swashbuckle.AspNetCore.Filters;
+using OnDemandTutor.Models.Enum;
+using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
+using System.Security.Claims;
 using IMailService = OnDemandTutor.BusinessLogic.Interfaces.Sending.IMailService;
 using MailService = OnDemandTutor.BusinessLogic.Services.Sending.MailService;
 
@@ -27,8 +30,6 @@ namespace OnDemandTutor.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
             services.AddProblemDetails();
-
-
             return services;
         }
 
@@ -37,36 +38,21 @@ namespace OnDemandTutor.API.Extensions
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IAuthServices, AuthServices>();
             services.AddTransient<IMailService, MailService>();
+            services.AddTransient<IJwtProviderServices, JwtProviderServices>();
             services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
             services.AddProblemDetails();
             return services;
         }
 
-
-
         public static IServiceCollection AddFireBaseServices(this IServiceCollection services)
         {
+            var firebaseJsonPath = Path.Combine(Directory.GetCurrentDirectory(), "firebase.json");
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile("firebase.json"),
-
+                Credential = GoogleCredential.FromFile(firebaseJsonPath),
             });
             return services;
         }
-
-
-        public static IServiceCollection AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
-            {
-                jwtOptions.Authority = configuration["Authentication:Issuer"];
-                jwtOptions.Audience = configuration["Authentication:Audience"];
-                jwtOptions.TokenValidationParameters.ValidIssuer = configuration["Authentication:Issuer"];
-            });
-            return services;
-        }
-
-
 
         public static IServiceCollection AddFireBaseHttpClient(this IServiceCollection services)
         {
@@ -74,6 +60,38 @@ namespace OnDemandTutor.API.Extensions
             {
                 var configuration = sp.GetRequiredService<IConfiguration>();
                 client.BaseAddress = new Uri(configuration["Authentication:TokenUri"]);
+            });
+            return services;
+        }
+
+        public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var projectId = configuration["Authentication:project_id"];
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = $"https://securetoken.google.com/{projectId}";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = $"https://securetoken.google.com/{projectId}",
+                    ValidateAudience = true,
+                    ValidAudience = projectId,
+                    ValidateLifetime = true
+                };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
+                options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
+                options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
             });
 
             return services;
@@ -121,16 +139,14 @@ namespace OnDemandTutor.API.Extensions
         {
             services.AddHangfire((sp, config) =>
             {
-                // var connectionStrings = sp.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
-                
-                    config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
-                 {
-                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                     QueuePollInterval = TimeSpan.Zero,
-                     UseRecommendedIsolationLevel = true,
-                     DisableGlobalLocks = true,
-                 });
+                config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true,
+                });
             });
 
             services.AddHangfireServer();
@@ -141,25 +157,19 @@ namespace OnDemandTutor.API.Extensions
         public static IServiceCollection AddMailConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<SmtpSettings>(configuration.GetSection("MailSettings"));
-
             return services;
         }
-        
+
         public static void InitializeBackgroundJobs(IServiceProvider services)
         {
             var backgroundJobs = services.GetRequiredService<IBackgroundJobClient>();
             var recurringJobs = services.GetRequiredService<IRecurringJobManager>();
             ConfigureBackgroundJobs(backgroundJobs, recurringJobs);
         }
-        
-        
+
         public static void ConfigureBackgroundJobs(IBackgroundJobClient backgroundJobs, IRecurringJobManager recurringJobs)
         {
-            
             // Example of enqueuing a job
-          
-        } 
-
-
+        }
     }
 }

@@ -1,12 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.IRepository;
-using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnDemandTutor.DataAccess
 {
@@ -26,6 +20,7 @@ namespace OnDemandTutor.DataAccess
 
         private readonly IUserRepository _userRepository;
         private readonly ISubjectRepository _subjectRepository;
+
 
         public IUserRepository UserRepository => _userRepository;
         public ISubjectRepository SubjectRepository => _subjectRepository;
