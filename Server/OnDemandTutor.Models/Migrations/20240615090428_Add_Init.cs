@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace OnDemandTutor.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Add_Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,31 +17,14 @@ namespace OnDemandTutor.Models.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    RequestDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ConsultationRequests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Subjects",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubjectType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateBy = table.Column<int>(type: "int", nullable: true),
-                    CreateAt = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subjects", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,10 +35,10 @@ namespace OnDemandTutor.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FireBaseid = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AvatarImageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: true),
                     Dob = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -80,23 +64,23 @@ namespace OnDemandTutor.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateBy = table.Column<int>(type: "int", nullable: false),
+                    CreateById = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateBy = table.Column<int>(type: "int", nullable: true),
+                    UpdateById = table.Column<int>(type: "int", nullable: true),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Blogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Blogs_Users_CreateBy",
-                        column: x => x.CreateBy,
+                        name: "FK_Blogs_Users_CreateById",
+                        column: x => x.CreateById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Blogs_Users_UpdateBy",
-                        column: x => x.UpdateBy,
+                        name: "FK_Blogs_Users_UpdateById",
+                        column: x => x.UpdateById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -109,16 +93,16 @@ namespace OnDemandTutor.Models.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreateBy = table.Column<int>(type: "int", nullable: false),
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateById = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Faqs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Faqs_Users_CreateBy",
-                        column: x => x.CreateBy,
+                        name: "FK_Faqs_Users_CreateById",
+                        column: x => x.CreateById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -132,8 +116,8 @@ namespace OnDemandTutor.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReceiverId = table.Column<int>(type: "int", nullable: true),
-                    RefUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RefImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -147,32 +131,25 @@ namespace OnDemandTutor.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Slots",
+                name: "Subjects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StartTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    CreateBy = table.Column<int>(type: "int", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    TeachAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    SubjectId = table.Column<int>(type: "integer", nullable: true),
-                    IsOnline = table.Column<bool>(type: "bit", nullable: false),
-                    NumberOfStudents = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    ActualEndTime = table.Column<DateTime>(type: "datetime", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SubjectType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreateById = table.Column<int>(type: "int", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    ClassId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Slots", x => x.Id);
+                    table.PrimaryKey("PK_Subjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Slots_Subjects_SubjectId",
-                        column: x => x.SubjectId,
-                        principalTable: "Subjects",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Slots_Users_CreateBy",
-                        column: x => x.CreateBy,
+                        name: "FK_Subjects_Users_CreateById",
+                        column: x => x.CreateById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -220,6 +197,99 @@ namespace OnDemandTutor.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Classes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TutorId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    StudentName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    SlotId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Classes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Classes_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Classes_Users_TutorId",
+                        column: x => x.TutorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Slots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    CreateById = table.Column<int>(type: "int", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime", nullable: false),
+                    TeachAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ClassId = table.Column<int>(type: "int", nullable: true),
+                    SubjectId = table.Column<int>(type: "integer", nullable: true),
+                    IsOnline = table.Column<bool>(type: "bit", nullable: false),
+                    NumberOfStudents = table.Column<int>(type: "int", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    ActualEndTime = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Slots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Slots_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Slots_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Slots_Users_CreateById",
+                        column: x => x.CreateById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentClasses",
+                columns: table => new
+                {
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    ClassId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentClasses", x => new { x.StudentId, x.ClassId });
+                    table.ForeignKey(
+                        name: "FK_StudentClasses_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_StudentClasses_Users_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SlotStudents",
                 columns: table => new
                 {
@@ -256,20 +326,20 @@ namespace OnDemandTutor.Models.Migrations
                     Status = table.Column<int>(type: "int", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReferenceId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false)
+                    CreatedById = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_Slots_ReferenceId",
-                        column: x => x.ReferenceId,
+                        name: "FK_Transactions_Slots_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "Slots",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Transactions_Users_CreatedBy",
-                        column: x => x.CreatedBy,
+                        name: "FK_Transactions_Users_CreatedById",
+                        column: x => x.CreatedById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -282,19 +352,29 @@ namespace OnDemandTutor.Models.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Blogs_CreateBy",
+                name: "IX_Blogs_CreateById",
                 table: "Blogs",
-                column: "CreateBy");
+                column: "CreateById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Blogs_UpdateBy",
+                name: "IX_Blogs_UpdateById",
                 table: "Blogs",
-                column: "UpdateBy");
+                column: "UpdateById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Faqs_CreateBy",
+                name: "IX_Classes_SubjectId",
+                table: "Classes",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Classes_TutorId",
+                table: "Classes",
+                column: "TutorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Faqs_CreateById",
                 table: "Faqs",
-                column: "CreateBy");
+                column: "CreateById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_ReceiverId",
@@ -302,9 +382,14 @@ namespace OnDemandTutor.Models.Migrations
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Slots_CreateBy",
+                name: "IX_Slots_ClassId",
                 table: "Slots",
-                column: "CreateBy");
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Slots_CreateById",
+                table: "Slots",
+                column: "CreateById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Slots_SubjectId",
@@ -317,9 +402,19 @@ namespace OnDemandTutor.Models.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_CreatedBy",
+                name: "IX_StudentClasses_ClassId",
+                table: "StudentClasses",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subjects_CreateById",
+                table: "Subjects",
+                column: "CreateById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_CreatedById",
                 table: "Transactions",
-                column: "CreatedBy");
+                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_ReferenceId",
@@ -362,6 +457,9 @@ namespace OnDemandTutor.Models.Migrations
                 name: "SlotStudents");
 
             migrationBuilder.DropTable(
+                name: "StudentClasses");
+
+            migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
@@ -372,6 +470,9 @@ namespace OnDemandTutor.Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "Slots");
+
+            migrationBuilder.DropTable(
+                name: "Classes");
 
             migrationBuilder.DropTable(
                 name: "Subjects");

@@ -47,9 +47,9 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
                 .HasForeignKey(ss => ss.SlotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(s => s.SlotTransactionNavigation)
+            builder.HasMany(s => s.SlotTransaction)
                 .WithOne(t => t.Slot)
-                .HasForeignKey(t => t.ReferenceId)
+                .HasForeignKey(t => t.SlotId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

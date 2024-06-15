@@ -8,16 +8,16 @@
 
         public string? Content { get; set; }
 
-        public int CreateBy { get; set; }
+        public int CreateById { get; set; }
 
         public DateTime CreateAt { get; set; }
 
-        public int? UpdateBy { get; set; }
+        public int? UpdateById { get; set; }
 
         public DateTime? UpdateAt { get; set; }
 
-        public virtual User CreateByUser { get; set; }
+        public virtual User? CreateBy { get; set; }
 
-        public virtual User UpdateByUser { get; set; }
+        public virtual User? UpdateBy { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace OnDemandTutor.DataAccess.Repository
                 Id = subject.Id,
                 Name = subject.Name,
                 SubjectType = subject.SubjectType,
-                CreateBy = subject.CreateBy,
+                CreateBy = subject.CreateById,
                 Description = subject.Description,
                 CreateAt = subject.CreateAt,
                 Status = subject.Status,

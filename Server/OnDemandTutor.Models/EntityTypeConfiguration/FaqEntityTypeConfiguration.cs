@@ -20,9 +20,9 @@ public class FaqEntityTypeConfiguration : IEntityTypeConfiguration<FAQ>
             .HasColumnType("datetime");
 
         // Define relationships
-        builder.HasOne<User>(f => f.CreateByNavigation)
+        builder.HasOne<User>(f => f.CreateBy)
             .WithMany(u => u.FAQs)
-            .HasForeignKey(f => f.CreateBy)
+            .HasForeignKey(f => f.CreateById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
