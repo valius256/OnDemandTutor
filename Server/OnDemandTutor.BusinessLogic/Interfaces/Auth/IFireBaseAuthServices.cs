@@ -11,5 +11,6 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
         Task<bool> DeleteUserAsync(string? email);
         Task<string> LoginFireBase(string email, string password);
         Task SetCustomClaimsAsync(string userId, Dictionary<string, object> claims);
+        Task<List<ExportedUserRecord>> GetAllUserRecord();
     }
 }
