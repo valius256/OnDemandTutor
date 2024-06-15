@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using FirebaseAdmin.Auth;
+using Mapster;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -120,6 +121,13 @@ namespace OnDemandTutor.BusinessLogic.Services.User
         {
             var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Email == email);
             _unitOfWorkRepository.UserRepository.Remove(user);
+            return true;
+        }
+
+        public async Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData)
+        {
+            await _unitOfWorkRepository.UserRepository.AddRangeAsync(listUserFireData.Adapt<List<Models.Models.User>>());
+            await _unitOfWorkRepository.SaveChangesAsync();
             return true;
         }
     }

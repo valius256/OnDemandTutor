@@ -1,4 +1,5 @@
-﻿using OnDemandTutor.Models.Dtos;
+﻿using FirebaseAdmin.Auth;
+using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 
@@ -14,5 +15,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.User
         Task<GetProfileUserDtos> GetUserProfileById(int id);
         Task<bool> DeleteUserAsync(string? email);
         //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
+        Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
+
     }
 }

@@ -60,6 +60,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
 
         public async Task<string> LoginWithFireBase(LoginDtos loginDto)
         {
+            var listUser = await _fireBaseAuthServices.GetAllUserRecord();
+            await _userServices.SyncUserAsync(listUser);
             return await _jwtProviderServices.GetForCredentialsAsync(loginDto.Email, loginDto.Password);
         }
 

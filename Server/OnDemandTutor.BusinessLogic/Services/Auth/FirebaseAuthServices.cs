@@ -84,5 +84,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
         {
             await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(userId, claims);
         }
+
+        public async Task<List<ExportedUserRecord>> GetAllUserRecord()
+        {
+            var users = new List<ExportedUserRecord>();
+            var pagedEnumerable = FirebaseAuth.DefaultInstance.ListUsersAsync(null);
+
+            await foreach (var user in pagedEnumerable)
+            {
+                users.Add(user);
+            }
+
+            return users;
+        }
     }
 }

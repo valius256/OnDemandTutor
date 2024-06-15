@@ -22,18 +22,20 @@ namespace OnDemandTutor.API.Controllers
         [HttpGet("all")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
-        public async Task<List<GetProfileUserDtos>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return await _userService.GetAllUsers();
+            var result = await _userService.GetAllUsers();
+            return Ok(result);
         }
 
         //[Authorize]
         [HttpGet("profile")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-        public async Task<ActionResult<GetProfileUserDtos>> GetProfile([FromBody] int userId)
+        public async Task<IActionResult> GetProfile([FromBody] int userId)
         {
-            return await _userService.GetProfile(userId, null);
+            var result = await _userService.GetProfile(userId, null);
+            return Ok(result);
         }
 
 
@@ -42,9 +44,10 @@ namespace OnDemandTutor.API.Controllers
         [HttpPost("register-tutor")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-        public async Task<ActionResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
+        public async Task<IActionResult> RegisterTutor([FromBody] RegisterTutorDtos body)
         {
-            return await _userService.RegisterTutor(body);
+            var result = await _userService.RegisterTutor(body);
+            return Ok(result);
         }
     }
 }
