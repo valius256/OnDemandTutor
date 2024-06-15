@@ -14,10 +14,8 @@ namespace OnDemandTutor.Models
       : base(options)
         {
         }
-
-        public DbSet<User> Users { get; set; }
         public DbSet<Blog> Blogs { get; set; }
-
+        public DbSet<User> Users { get; set; }
         public DbSet<ConsultationRequest> ConsultationRequests { get; set; }
 
         public DbSet<FAQ> Faqs { get; set; }
@@ -34,6 +32,8 @@ namespace OnDemandTutor.Models
 
         public DbSet<TutorVideo> TutorVideos { get; set; }
         public DbSet<SlotStudent> SlotStudents { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<StudentClass> StudentClasses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,9 @@ namespace OnDemandTutor.Models
             modelBuilder.ApplyConfiguration(new FaqEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new BlogEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new NotificationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ClassEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new SubjectEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new StudentClassEntityTypeConfiguration());
         }
     }
 }

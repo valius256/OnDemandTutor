@@ -14,14 +14,16 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
             builder.Property(x => x.Content).IsRequired();
 
 
-            builder.HasOne(e => e.CreateByUser)
-                .WithMany(u => u.BlogCreateBy)
-                .HasForeignKey(e => e.CreateBy)
-                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(e => e.UpdateByUser)
+
+            builder.HasOne(b => b.CreateBy)
+                 .WithMany(u => u.BlogCreateBy)
+                 .HasForeignKey(b => b.CreateById)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.UpdateBy)
                 .WithMany(u => u.BlogUpdateBy)
-                .HasForeignKey(e => e.UpdateBy)
+                .HasForeignKey(b => b.UpdateById)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

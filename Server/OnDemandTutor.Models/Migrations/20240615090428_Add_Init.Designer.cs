@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnDemandTutor.Models;
 
@@ -11,9 +12,11 @@ using OnDemandTutor.Models;
 namespace OnDemandTutor.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240615090428_Add_Init")]
+    partial class Add_Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,7 +328,7 @@ namespace OnDemandTutor.Models.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("SlotId")
+                    b.Property<int>("ReferenceId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Status")
@@ -339,7 +342,7 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("SlotId");
+                    b.HasIndex("ReferenceId");
 
                     b.ToTable("Transactions");
                 });
@@ -604,19 +607,27 @@ namespace OnDemandTutor.Models.Migrations
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Transaction", b =>
                 {
+                    b.HasOne("OnDemandTutor.Models.Models.Slot", "Slot")
+                        .WithMany("SlotTransaction")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("OnDemandTutor.Models.Models.User", "CreatedBy")
                         .WithMany("TransactionCreatedBy")
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnDemandTutor.Models.Models.Slot", "Slot")
-                        .WithMany("SlotTransaction")
-                        .HasForeignKey("SlotId")
+                    b.HasOne("OnDemandTutor.Models.Models.User", "Reference")
+                        .WithMany("TransactionReferences")
+                        .HasForeignKey("ReferenceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Reference");
 
                     b.Navigation("Slot");
                 });
@@ -680,6 +691,8 @@ namespace OnDemandTutor.Models.Migrations
                     b.Navigation("SubjectCreateBy");
 
                     b.Navigation("TransactionCreatedBy");
+
+                    b.Navigation("TransactionReferences");
 
                     b.Navigation("TutorDegrees");
 

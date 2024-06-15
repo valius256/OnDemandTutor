@@ -114,6 +114,9 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
         public async Task<GetProfileUserDtos> GetUserProfileById(int id)
         {
+
+
+
             return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id)).Adapt<GetProfileUserDtos>();
         }
 

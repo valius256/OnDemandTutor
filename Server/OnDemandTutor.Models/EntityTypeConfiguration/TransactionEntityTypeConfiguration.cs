@@ -32,14 +32,9 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(t => t.Notes)
             .IsRequired(false);
 
-        builder.HasOne(t => t.CreatedByNavigation)
-            .WithMany(u => u.TransactionCreatedByNavigations)
-            .HasForeignKey(t => t.CreatedBy)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(t => t.ReferenceNavigation)
-            .WithMany(u => u.TransactionReferences)
-            .HasForeignKey(t => t.ReferenceId)
+        builder.HasOne(t => t.CreatedBy)
+            .WithMany(u => u.TransactionCreatedBy)
+            .HasForeignKey(t => t.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

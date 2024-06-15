@@ -1,25 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace OnDemandTutor.Models.Models
+﻿namespace OnDemandTutor.Models.Models
 {
     public class FAQ : IBaseEntity
     {
-        [Key]
         public int Id { get; set; }
-
-        [Required]
         public string Question { get; set; }
-
         public string? Answer { get; set; }
-
-        public int CreateBy { get; set; }
-
-        [Column(TypeName = "datetime")]
+        public int CreateById { get; set; }
         public DateTime CreateAt { get; set; }
-
-        [ForeignKey("CreateBy")]
-        [InverseProperty("FAQs")]
-        public virtual User CreateByNavigation { get; set; }
+        public virtual User CreateBy { get; set; }
     }
 }
