@@ -11,7 +11,7 @@ namespace OnDemandTutor.Models.Models
         [Required]
         public string Question { get; set; }
 
-        public string Answer { get; set; }
+        public string? Answer { get; set; }
 
         public int CreateBy { get; set; }
 

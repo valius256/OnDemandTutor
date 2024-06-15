@@ -9,8 +9,8 @@ public class TutorVideoEntityTypeConfiguration : IEntityTypeConfiguration<TutorV
     public void Configure(EntityTypeBuilder<TutorVideo> builder)
     {
         builder.HasKey(u => u.Id);
-        
-        
-        
+
+
+
     }
 }

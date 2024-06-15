@@ -1,13 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OnDemandTutor.Models.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace OnDemandTutor.Models.RequestModel.User
+﻿namespace OnDemandTutor.Models.RequestModel.User
 {
-	public class SubjectRequestModel
-	{
+    public class SubjectRequestModel
+    {
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -17,12 +11,12 @@ namespace OnDemandTutor.Models.RequestModel.User
         public int? CreateBy { get; set; }
 
         public string Description { get; set; }
-       
+
         public DateTime? CreateAt { get; set; }
 
         public bool Status { get; set; }
 
-        public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+        //public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
     }
 }
 

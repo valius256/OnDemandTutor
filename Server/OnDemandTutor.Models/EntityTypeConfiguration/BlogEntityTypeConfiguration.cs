@@ -12,8 +12,8 @@ namespace OnDemandTutor.Models.EntityTypeConfiguration
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.Title).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Content).IsRequired();
-          
-            
+
+
             builder.HasOne(e => e.CreateByUser)
                 .WithMany(u => u.BlogCreateBy)
                 .HasForeignKey(e => e.CreateBy)

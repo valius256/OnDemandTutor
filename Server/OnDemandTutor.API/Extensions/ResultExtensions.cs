@@ -1,6 +1,4 @@
-﻿using SharedKernel.Domain.RailwayOrientedProgramming;
-
-namespace OnDemandTutor.API.Extensions;
+﻿namespace OnDemandTutor.API.Extensions;
 
 public static class ResultExtensions
 {
@@ -11,7 +9,7 @@ public static class ResultExtensions
             title: "Bad Request",
             extensions: new Dictionary<string, object?>
             {
-                { "error", result.ToString() } 
+                { "error", result.ToString() }
             });
     }
 }

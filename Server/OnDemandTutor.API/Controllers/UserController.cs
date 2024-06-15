@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos;
@@ -19,7 +18,7 @@ namespace OnDemandTutor.API.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
@@ -28,7 +27,7 @@ namespace OnDemandTutor.API.Controllers
             return await _userService.GetAllUsers();
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("profile")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
@@ -39,11 +38,11 @@ namespace OnDemandTutor.API.Controllers
 
 
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("register-tutor")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-        public async Task<ActionResult<GetProfileUserDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
+        [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
+        public async Task<ActionResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
         {
             return await _userService.RegisterTutor(body);
         }

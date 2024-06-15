@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnDemandTutor.Models.Models
@@ -11,7 +9,7 @@ namespace OnDemandTutor.Models.Models
         public int Id { get; set; }
 
         [StringLength(50)]
-        public string TransactionCode { get; set; }
+        public required string TransactionCode { get; set; }
 
         [StringLength(50)]
         public string PaymentMethod { get; set; }
@@ -24,7 +22,7 @@ namespace OnDemandTutor.Models.Models
 
         public int? Status { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         public int ReferenceId { get; set; }
 
@@ -35,7 +33,7 @@ namespace OnDemandTutor.Models.Models
 
         [InverseProperty("TransactionReferences")]
         public virtual User ReferenceNavigation { get; set; }
-        
-        public virtual Slot Slot { get; set; } 
+
+        public virtual Slot Slot { get; set; }
     }
 }

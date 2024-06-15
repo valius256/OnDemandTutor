@@ -9,5 +9,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
         Task<string> ForgotPassword(string email);
         Task<UserRecord?> GetUserAsync(string? uid, string? email, string? phone);
         Task<bool> DeleteUserAsync(string? email);
+        Task<string> LoginFireBase(string email, string password);
+        Task SetCustomClaimsAsync(string userId, Dictionary<string, object> claims);
     }
 }

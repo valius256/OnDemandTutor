@@ -1,6 +1,4 @@
 ﻿using OnDemandTutor.Models.Enum;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,7 +18,7 @@ namespace OnDemandTutor.Models.Models
         public DateTime EndTime { get; set; }
 
         [StringLength(100)]
-        public string TeachAddress { get; set; }
+        public string? TeachAddress { get; set; }
         public int? SubjectId { get; set; }
         public bool IsOnline { get; set; }
 
@@ -34,7 +32,7 @@ namespace OnDemandTutor.Models.Models
         // Navigation properties
         [ForeignKey("CreateBy")]
         public virtual User CreatedByNavigation { get; set; }
-        public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>(); 
-        public virtual ICollection<Transaction> SlotTransactionNavigation { get; set; } = new List<Transaction>(); 
+        public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>();
+        public virtual ICollection<Transaction> SlotTransactionNavigation { get; set; } = new List<Transaction>();
     }
 }

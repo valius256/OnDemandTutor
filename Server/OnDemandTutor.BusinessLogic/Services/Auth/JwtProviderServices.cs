@@ -1,4 +1,7 @@
 ﻿using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
+using OnDemandTutor.DataAccess;
+using OnDemandTutor.Models.Enum;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -8,46 +11,83 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
     public class JwtProviderServices : IJwtProviderServices
     {
         private readonly HttpClient _httpClient;
-        public JwtProviderServices(HttpClient httpClient)
+        private readonly IFireBaseAuthServices _fireBaseAuthServices;
+        private readonly IUserServices _userServices;
+        private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+        public JwtProviderServices(HttpClient httpClient, IUnitOfWorkRepository unitOfWorkRepository, IUserServices userServices, IFireBaseAuthServices fireBaseAuthServices)
         {
             _httpClient = httpClient;
+            _unitOfWorkRepository = unitOfWorkRepository;
+            _userServices = userServices;
+            _fireBaseAuthServices = fireBaseAuthServices;
         }
 
         public async Task<string> GetForCredentialsAsync(string email, string password)
         {
-            var request = new
+            try
             {
-                email,
-                password,
-                returnSecureToken = true
-            };
 
-            var response = await _httpClient.PostAsJsonAsync("", request);
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                var request = new
                 {
-                    throw new UnauthorizedAccessException("Invalid credentials provided");
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    email,
+                    password,
+                    returnSecureToken = true
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("", request);
+                if (!response.IsSuccessStatusCode)
                 {
-                    throw new HttpRequestException($"Bad request: {errorContent}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new UnauthorizedAccessException("Invalid credentials provided");
+                    }
+                    else if (response.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        throw new HttpRequestException($"Bad request: {errorContent}");
+                    }
+                    else
+                    {
+                        throw new HttpRequestException($"Request failed with status code {response.StatusCode}: {errorContent}");
+                    }
                 }
-                else
+
+                var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
+                var userInDb = _unitOfWorkRepository.UserRepository.FirstOrDefault(x => x.FireBaseid == authToken.LocalId);
+                if (userInDb == null)
                 {
-                    throw new HttpRequestException($"Request failed with status code {response.StatusCode}: {errorContent}");
+                    _unitOfWorkRepository.UserRepository.Add(new Models.Models.User
+                    {
+                        Email = authToken.Email,
+                        Password = password,
+                        FireBaseid = authToken.LocalId,
+                        FirstName = authToken.DisplayName,
+                        Role = RoleStatus.Customer,
+                    });
+                    await _unitOfWorkRepository.SaveChangesAsync();
                 }
+
+                if (authToken == null)
+                {
+                    throw new InvalidOperationException("Authentication token is null");
+                }
+
+                var user = await _userServices.GetProfile(null, authToken.Email);
+                var customClaims = new Dictionary<string, object>
+                {
+                    { "role", user.Role.ToString() },
+                    { "id", user.Id.ToString() },
+                };
+
+                await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
+
+
+                return authToken.IdToken;
             }
-
-            var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
-
-            if (authToken == null)
+            catch (Exception exception)
             {
-                throw new InvalidOperationException("Authentication token is null");
+                return exception.Message;
             }
-
-            return authToken.IdToken;
         }
 
         public class AuthToken
@@ -68,6 +108,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
             public string RefreshToken { get; set; }
             [JsonPropertyName("expiresIn")]
             public long ExpiresIn { get; set; }
+            [JsonPropertyName("role")]
+            public string Role { get; set; }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Subject;
@@ -71,7 +70,7 @@ namespace OnDemandTutor.DataAccess.Repository
                 Description = subject.Description,
                 CreateAt = subject.CreateAt,
                 Status = subject.Status,
-                Classes = subject.Classes
+                //Classes = subject.Classes
             };
         }
     }

@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Helper;
+using OnDemandTutor.Models;
 
 internal class Program
 {
@@ -17,12 +20,14 @@ internal class Program
         builder.Services.AddLogging();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddHttpClient();
 
         builder.Services.InitializerDependencyInjection();
         builder.Services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+            ld => ld.MigrationsAssembly("OnDemandTutor.Models")));
 
         builder.Services.AddRepositories()
                         .AddGeneralServices()
@@ -31,6 +36,7 @@ internal class Program
                         .AddControllersWithConfiguration()
                         .AddCorsWithConfigurations()
                         .AddSwaggerWithConfigurations()
+                        .AddFirebaseAuthentication(builder.Configuration)
                         .AddMailConfiguration(builder.Configuration)
                         .AddHangFireConfigurations(builder.Configuration);
 
@@ -38,7 +44,7 @@ internal class Program
         builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 
         builder.Services.AddAutoMapper(typeof(MapperConfig))
-                        .AddAuthenticationService(builder.Configuration)
+                        //.AddAuthenticationService(builder.Configuration)
                         .AddMapster();
 
         var app = builder.Build();
