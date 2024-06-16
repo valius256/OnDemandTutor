@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header />
+    <Header class="sticky top-0 z-[100]"/>
     <RouterView />
     <Footer />
   </div>

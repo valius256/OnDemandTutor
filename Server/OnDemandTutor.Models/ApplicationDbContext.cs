@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models
@@ -41,7 +42,18 @@ namespace OnDemandTutor.Models
 
         public DbSet<TutorVideo> TutorVideos { get; set; }
 
+        public static string GetConnectionString(string connectionStringName)
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
 
+            string connectionString = config.GetConnectionString(connectionStringName);
+            return connectionString;
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.UseSqlServer(GetConnectionString("DefaultConnection"));
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Class>()
