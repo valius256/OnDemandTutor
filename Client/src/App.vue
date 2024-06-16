@@ -4,13 +4,13 @@
       <div v-if="user?.role == 'Student'">
         <StudentLayout />
       </div>
-      <div v-if="user?.role == 'Tutor'">
+      <div v-else-if="user?.role == 'Tutor'">
         <TutorLayout />
       </div>
-      <div v-if="user?.role == 'Operator'">
+      <div v-else-if="user?.role == 'Operator'">
         <OperatorLayout />
       </div>
-      <div v-if="user?.role == 'Admin'">
+      <div v-else-if="user?.role == 'Admin'">
         <AdminLayout />
       </div>
       <div v-else>
@@ -39,6 +39,7 @@ export default {
     TutorLayout,
     OperatorLayout,
     GuestLayout,
+    UnexpectedLayout
   },
   data() {
     return {

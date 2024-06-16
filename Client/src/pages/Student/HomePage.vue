@@ -3,7 +3,7 @@
     <main>
       <section class="bg-blue-500 text-white py-20 relative">
         <div
-          class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-80"
+          class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"
         ></div>
         <div class="container mx-auto text-center relative z-10">
           <h2 class="text-4xl font-bold mb-8">

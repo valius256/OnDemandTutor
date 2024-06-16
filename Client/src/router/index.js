@@ -6,8 +6,9 @@ import RegisterPage from "../pages/Auth/RegisterPage.vue";
 // import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage.vue";
 import BlogsPage from "../pages/Student/BlogsPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
-import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
-import CreateClassPage from "../pages/Student/CreateClassPage.vue";
+import StudentProfile from "../pages/Student/ProfilePage.vue";
+// import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
+// import CreateClassPage from "../pages/Student/CreateClassPage.vue";
 import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue";
 import OperatorManagementPage from "../pages/Operators/OperatorMangementPage.vue";
 import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
@@ -58,17 +59,35 @@ const routes = [
     name: "FaqsPage",
     component: FaqsPage,
   },
+  // {
+  //   path: "/classDetail/:id",
+  //   name: "ClassDetailPage",
+  //   component: ClassDetailPage,
+  // },
+  // {
+  //   path: "/editClass/:id",
+  //   name: "CreateClassPage",
+  //   component: CreateClassPage,
+  // },
   {
-    path: "/classDetail/:id",
-    name: "ClassDetailPage",
-    component: ClassDetailPage,
+    path: "/student",
+    name: "StudentProfilePage",
+    redirect : "/student/profile",
+    children: [
+      {
+        path: "profile",
+        component: StudentProfile,
+      },
+      {
+        path: "schedule",
+        component: StudentProfile,
+      },
+      {
+        path: "payment",
+        component: StudentProfile,
+      },
+    ],
   },
-  {
-    path: "/editClass/:id",
-    name: "CreateClassPage",
-    component: CreateClassPage,
-  },
-
   {
     path: "/admin/accounts",
     name: "AccountManagement",
@@ -76,7 +95,7 @@ const routes = [
     children: [
       {
         path: "students",
-        component: StudentManagementPage,
+        component: StudentProfile,
       },
       {
         path: "tutors",

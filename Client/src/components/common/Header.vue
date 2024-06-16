@@ -1,11 +1,11 @@
 <template>
-    <div class="shadow-md flex place-content-between bg-blue-50">
+    <div class="shadow-md flex place-content-between bg-blue-50 ">
         <div class="text-3xl font-bold p-3 ">
             <span>On</span>
             <span class="text-blue-600">Demand</span>
             <span>Tutor</span>
         </div>
-        <Navbar/>
+        <Navbar />
     </div>
 </template>
 
@@ -14,20 +14,19 @@ import Navbar from './Navbar.vue';
 
 export default {
     name: "Header",
-    inject : ['eventBus'],
-    components : {Navbar},
-    data(){
-        return {
-            user : null
-        }
+    inject: ['eventBus'],
+    components: { Navbar },
+    data() {
+        
     },
-    methods : {
-        async getUser(){
-            this.eventBus.emit("get-user", (user) => {
-                this.user = user;
+    methods: {
+        async getUser() {
+            const userPromise = new Promise((resolve) => {
+                this.eventBus.emit("get-user", resolve);
             });
-            console.log(this.user)
-        }
+            const user = await userPromise;
+            this.user = user;
+        },
     },
     mounted() {
         this.getUser()

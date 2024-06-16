@@ -12,12 +12,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
 	public class SubjectService : ISubjectService
     {
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-        private readonly IFireBaseAuthServices _fireBaseAuthServices;
 
-        public SubjectService( IUnitOfWorkRepository unitOfWorkRepository, IFireBaseAuthServices fireBaseAuthServices)
+        public SubjectService( IUnitOfWorkRepository unitOfWorkRepository)
         {
-            unitOfWorkRepository = _unitOfWorkRepository;
-            fireBaseAuthServices = _fireBaseAuthServices;
+            _unitOfWorkRepository = unitOfWorkRepository;
         }
 
         public async Task<bool> CheckSubjectExists(string subjectName)
