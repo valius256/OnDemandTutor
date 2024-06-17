@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.StartupExtension;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
@@ -47,7 +48,12 @@ internal class Program
                         //.AddAuthenticationService(builder.Configuration)
                         .AddMapster();
 
+        // Register Mapster configurations
+        var config = TypeAdapterConfig.GlobalSettings;
+        new MapsterConfig().Register(config);
+
         var app = builder.Build();
+
 
         // Database connection check
         using (var scope = app.Services.CreateScope())

@@ -12,7 +12,7 @@ public class EmailJob
         _emailService = emailService;
     }
 
-    public async Task SendEmailAsync(string jobType ,string startTime,MailRequest mailRequest)
+    public async Task SendEmailAsync(string jobType, string startTime, MailRequest mailRequest)
     {
         Console.WriteLine(jobType + "-" + startTime + "- Email Successfully Sent" + DateTime.UtcNow.ToLongTimeString());
         await _emailService.SendEmailAsync(mailRequest);

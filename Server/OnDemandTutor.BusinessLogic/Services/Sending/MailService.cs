@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MailKit;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -13,8 +7,8 @@ using IMailService = OnDemandTutor.BusinessLogic.Interfaces.Sending.IMailService
 
 namespace OnDemandTutor.BusinessLogic.Services.Sending
 {
-   public class MailService : IMailService
-   {
+    public class MailService : IMailService
+    {
         private readonly SmtpSettings _mailSettings;
         public MailService(IOptions<SmtpSettings> mailSettings)
         {
@@ -51,5 +45,5 @@ namespace OnDemandTutor.BusinessLogic.Services.Sending
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
-   }
+    }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnDemandTutor.DataAccess.ExceptionModels
+﻿namespace OnDemandTutor.DataAccess.ExceptionModels
 {
-   public class ModelException : Exception
+    public class ModelException : Exception
     {
         public string PropertyName { get; }
         public string ErrorCode { get; }

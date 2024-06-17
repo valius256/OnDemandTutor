@@ -1,19 +1,15 @@
-﻿using System;
-using OnDemandTutor.BusinessLogic.Interfaces;
-using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Interfaces.User;
+﻿using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.RequestModel.Subject;
 
 namespace OnDemandTutor.BusinessLogic.Services.Subject
 {
-	public class SubjectService : ISubjectService
+    public class SubjectService : ISubjectService
     {
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
 
-        public SubjectService( IUnitOfWorkRepository unitOfWorkRepository)
+        public SubjectService(IUnitOfWorkRepository unitOfWorkRepository)
         {
             _unitOfWorkRepository = unitOfWorkRepository;
         }
@@ -55,7 +51,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
             await _unitOfWorkRepository.SaveChangesAsync();
         }
 
-     
+
     }
 }
 
