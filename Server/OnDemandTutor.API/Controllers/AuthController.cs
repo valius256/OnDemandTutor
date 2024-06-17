@@ -64,6 +64,7 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [HttpGet("who-am-i")]
+        [Authorize]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
         public async Task<IActionResult> GetProfile()
@@ -72,7 +73,8 @@ namespace OnDemandTutor.API.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize]
         [HttpPost("delete")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]

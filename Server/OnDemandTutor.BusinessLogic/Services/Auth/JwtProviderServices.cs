@@ -72,16 +72,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
                     throw new InvalidOperationException("Authentication token is null");
                 }
 
-                var user = await _userServices.GetProfile(null, authToken.Email);
                 var customClaims = new Dictionary<string, object>
                 {
-                    { "role", user.Role.ToString() },
-                    { "id", user.Id.ToString() },
+                    { "role", userInDb.Role.ToString() },
+                    { "id", userInDb.Id.ToString() },
                 };
 
                 await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
-
-
                 return authToken.IdToken;
             }
             catch (Exception exception)

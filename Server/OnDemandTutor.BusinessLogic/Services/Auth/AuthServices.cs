@@ -67,6 +67,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth
 
         public async Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal)
         {
+            if (claimsPrincipal.Identities == null)
+            {
+                throw new BadRequestException("User not Authenticate");
+            }
+
             var userId = claimsPrincipal.FindFirst(c => c.Type == "id")?.Value;
             if (userId.IsNullOrEmpty())
             {

@@ -22,7 +22,7 @@ namespace OnDemandTutor.DataAccess
                 options.EnableSensitiveDataLogging(true);
             });
             services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
-             services.RegisterDataServices();
+            services.RegisterDataServices();
             return services;
         }
 

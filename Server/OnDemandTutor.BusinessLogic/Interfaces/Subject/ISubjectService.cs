@@ -1,12 +1,10 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.Subject;
-using OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.RequestModel.Subject;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces
 {
-	public interface ISubjectService
-	{
+    public interface ISubjectService
+    {
         Task<bool> CheckSubjectExists(string subjectName);
         Task<GetSubjectDtos> GetSubjectByCode(int code);
         Task<GetSubjectDtos> GetSubjectByName(string name);

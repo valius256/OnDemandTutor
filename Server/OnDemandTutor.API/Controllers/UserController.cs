@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos;
@@ -18,7 +19,7 @@ namespace OnDemandTutor.API.Controllers
             _userService = userService;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
@@ -28,7 +29,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(result);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("profile")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
@@ -40,7 +41,7 @@ namespace OnDemandTutor.API.Controllers
 
 
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("register-tutor")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]

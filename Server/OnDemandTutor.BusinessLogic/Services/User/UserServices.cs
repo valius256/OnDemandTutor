@@ -129,7 +129,22 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
         public async Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData)
         {
-            await _unitOfWorkRepository.UserRepository.AddRangeAsync(listUserFireData.Adapt<List<Models.Models.User>>());
+            var usersToSync = listUserFireData.Adapt<List<Models.Models.User>>();
+
+            // Fetch existing users' Firebase IDs
+            var existingUsers = await _unitOfWorkRepository.UserRepository.ToListAsync();
+            var existingUserIds = new HashSet<string>(existingUsers.Select(u => u.FireBaseid));
+
+            // Filter out users that already exist
+            var newUsers = usersToSync.Where(u => !existingUserIds.Contains(u.FireBaseid)).ToList();
+
+            // Add new users
+            if (newUsers.Any())
+            {
+                await _unitOfWorkRepository.UserRepository.AddRangeAsync(newUsers);
+                await _unitOfWorkRepository.SaveChangesAsync();
+            }
+
             await _unitOfWorkRepository.SaveChangesAsync();
             return true;
         }
