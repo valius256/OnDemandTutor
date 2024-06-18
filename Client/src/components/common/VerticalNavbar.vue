@@ -25,9 +25,9 @@
                     <router-link to="/admin/subjects" class="px-2 py-4 hover:bg-blue-800">
                         <i class="fa fa-bookmark text-2xl mr-2"></i>Quản lý môn học
                     </router-link>
-                    <router-link to="/admin/classes" class="px-2 py-4 hover:bg-blue-800">
+                    <!-- <router-link to="/admin/classes" class="px-2 py-4 hover:bg-blue-800">
                         <i class="fa fa-calendar text-2xl mr-2"></i>Quản lý lớp học
-                    </router-link>
+                    </router-link> -->
                     <router-link to="/admin/blogs" class="px-2 py-4 hover:bg-blue-800">
                         <i class="fa fa-pencil-square-o text-2xl mr-2"></i>Quản lý Blog
                     </router-link>
