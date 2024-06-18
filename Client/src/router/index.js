@@ -95,11 +95,21 @@ const routes = [
     children: [
       {
         path: "students",
-        component: StudentProfile,
+        component: StudentManagementPage,
       },
       {
         path: "tutors",
-        component: TutorManagementPage,
+        redirect: "/admin/accounts/tutors/list",
+        children : [
+          {
+            path : "list",
+            component: TutorManagementPage,
+          },
+          {
+            path : "registration",
+            component: TutorManagementPage,
+          }
+        ]
       },
       {
         path: "operators",
@@ -107,11 +117,11 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/admin/classes",
-    name: "ClassManagementPage",
-    component: ClassManagementPage,
-  },
+  // {
+  //   path: "/admin/classes",
+  //   name: "ClassManagementPage",
+  //   component: ClassManagementPage,
+  // },
   {
     path: "/admin/subjects",
     name: "SubjectManagementPage",
