@@ -61,15 +61,15 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Thời khóa biểu
         </div>
-        <div class="p-16 bg-slate-400 rounded-lg mx-8 mb-8">
-            Comming soon...
-        </div>
+        <time-table :slots="slots"/>
     </div>
 
 </template>
 
 <script>
+import TimeTable from './TimeTable.vue'
 export default {
+    components: { TimeTable },
     name: "StudentProfileSchedule",
     data() {
         return {
@@ -78,17 +78,33 @@ export default {
             },
             slots: [
                 {
-                    startTime: "2024-06-09 16:47:00",
-                    endTime: "2024-06-09 16:48:00",
+                    startTime: "2024-06-22 16:50:00",
+                    endTime: "2024-06-22 17:30:00",
                     paidStatus: "NotCharged",
                     user: {
                         salary: 80000
                     }
                 },
                 {
-                    startTime: "2024-06-16 10:00:00",
-                    endTime: "2024-06-16 11:30:00",
+                    startTime: "2024-06-18 10:00:00",
+                    endTime: "2024-06-18 11:30:00",
                     paidStatus: "Charged",
+                    user: {
+                        salary: 120000
+                    }
+                },
+                {
+                    startTime: "2024-06-17 7:00:00",
+                    endTime: "2024-06-17 9:30:00",
+                    paidStatus: "InDebt",
+                    user: {
+                        salary: 120000
+                    }
+                },
+                {
+                    startTime: "2024-06-19 18:30:00",
+                    endTime: "2024-06-19 20:00:00",
+                    paidStatus: "NotCharged",
                     user: {
                         salary: 120000
                     }
