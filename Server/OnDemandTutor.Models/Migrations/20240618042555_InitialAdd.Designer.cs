@@ -12,8 +12,8 @@ using OnDemandTutor.Models;
 namespace OnDemandTutor.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240612100017_Add_FireBase_Id")]
-    partial class Add_FireBase_Id
+    [Migration("20240618042555_InitialAdd")]
+    partial class InitialAdd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,26 +38,27 @@ namespace OnDemandTutor.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("CreateBy")
+                    b.Property<int>("CreateById")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdateBy")
+                    b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreateBy");
+                    b.HasIndex("CreateById");
 
-                    b.HasIndex("UpdateBy");
+                    b.HasIndex("UpdateById");
 
                     b.ToTable("Blogs");
                 });
@@ -70,52 +71,24 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CreateBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("NumberOfStudent")
+                    b.Property<int>("SlotId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PriceRatio")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Salary")
-                        .HasColumnType("money");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TeachAddress")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("TutorId")
+                    b.Property<int>("TutorId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("TutorRating")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
 
                     b.HasIndex("SubjectId");
 
@@ -133,16 +106,14 @@ namespace OnDemandTutor.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -161,13 +132,12 @@ namespace OnDemandTutor.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Answer")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("CreateBy")
+                    b.Property<int>("CreateById")
                         .HasColumnType("int");
 
                     b.Property<string>("Question")
@@ -176,58 +146,9 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreateBy");
+                    b.HasIndex("CreateById");
 
-                    b.ToTable("FAQs");
-                });
-
-            modelBuilder.Entity("OnDemandTutor.Models.Models.Invitation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TutorId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassId");
-
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("Invitations");
-                });
-
-            modelBuilder.Entity("OnDemandTutor.Models.Models.Medium", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Media");
+                    b.ToTable("Faqs");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Notification", b =>
@@ -246,11 +167,9 @@ namespace OnDemandTutor.Models.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RefImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ViewStatus")
@@ -271,14 +190,23 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("ActualEndtime")
+                    b.Property<DateTime?>("ActualEndTime")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("ClassId")
+                    b.Property<int?>("ClassId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreateById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NumberOfStudents")
+                        .HasColumnType("int");
 
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
@@ -286,14 +214,52 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("TransactionId")
-                        .HasColumnType("int");
+                    b.Property<int?>("SubjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TeachAddress")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
 
+                    b.HasIndex("CreateById");
+
+                    b.HasIndex("SubjectId");
+
                     b.ToTable("Slots");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.SlotStudent", b =>
+                {
+                    b.Property<int>("SlotId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SlotId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SlotStudents");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.StudentClass", b =>
+                {
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.HasKey("StudentId", "ClassId");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("StudentClasses");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Subject", b =>
@@ -304,24 +270,36 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("CreateBy")
+                    b.Property<int?>("ClassId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreateById")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
                     b.Property<string>("SubjectType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreateById");
 
                     b.ToTable("Subjects");
                 });
@@ -337,37 +315,34 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("money");
 
-                    b.Property<int>("CreatedBy")
+                    b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentMethod")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ReferenceId")
+                    b.Property<int>("SlotId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("TransactionCode")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
+                    b.HasIndex("CreatedById");
 
-                    b.HasIndex("ReferenceId");
+                    b.HasIndex("SlotId");
 
                     b.ToTable("Transactions");
                 });
@@ -392,41 +367,24 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DegreeImgID");
-
                     b.HasIndex("TutorId");
 
                     b.ToTable("TutorDegrees");
                 });
 
-            modelBuilder.Entity("OnDemandTutor.Models.Models.TutorTeachTimeSchedule", b =>
+            modelBuilder.Entity("OnDemandTutor.Models.Models.TutorSubject", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly?>("DayOfWeek")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly?>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly?>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<int?>("Status")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TutorId")
-                        .HasColumnType("int");
+                    b.HasKey("SubjectId", "UserId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("TutorTeachTimeSchedules");
+                    b.ToTable("TutorSubjects");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorVideo", b =>
@@ -464,17 +422,16 @@ namespace OnDemandTutor.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("AvatarImageId")
-                        .HasColumnType("int");
+                    b.Property<string>("AvatarImageId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Balance")
                         .HasColumnType("money");
 
-                    b.Property<int?>("DegreeImageId")
-                        .HasColumnType("int");
+                    b.Property<string>("DegreeImageId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Dob")
                         .HasColumnType("datetime2");
@@ -486,14 +443,15 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.Property<string>("FireBaseid")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("IdCardImageID")
-                        .HasColumnType("int");
+                    b.Property<string>("IdCardImageID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
@@ -501,7 +459,8 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(10)
@@ -519,164 +478,194 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("TutorFeePerHour")
+                        .HasColumnType("money");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DegreeImageId");
-
-                    b.HasIndex("IdCardImageID");
+                    b.HasIndex("FireBaseid")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SlotTransaction", b =>
-                {
-                    b.Property<int>("SlotTransactionNavigationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TransactionNavigationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SlotTransactionNavigationId", "TransactionNavigationId");
-
-                    b.HasIndex("TransactionNavigationId");
-
-                    b.ToTable("SlotTransaction");
-                });
-
             modelBuilder.Entity("OnDemandTutor.Models.Models.Blog", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.User", "CreateByNavigation")
-                        .WithMany("BlogCreateByNavigations")
-                        .HasForeignKey("CreateBy")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("OnDemandTutor.Models.Models.User", "CreateBy")
+                        .WithMany("BlogCreateBy")
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnDemandTutor.Models.Models.User", "UpdateByNavigation")
-                        .WithMany("BlogUpdateByNavigations")
-                        .HasForeignKey("UpdateBy");
+                    b.HasOne("OnDemandTutor.Models.Models.User", "UpdateBy")
+                        .WithMany("BlogUpdateBy")
+                        .HasForeignKey("UpdateById")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("CreateByNavigation");
+                    b.Navigation("CreateBy");
 
-                    b.Navigation("UpdateByNavigation");
+                    b.Navigation("UpdateBy");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Class", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.User", "Student")
-                        .WithMany("ClassStudents")
-                        .HasForeignKey("StudentId")
+                    b.HasOne("OnDemandTutor.Models.Models.Subject", "Subject")
+                        .WithMany("Class")
+                        .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnDemandTutor.Models.Models.Subject", "Subject")
-                        .WithMany("Classes")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnDemandTutor.Models.Models.User", "Tutor")
-                        .WithMany("ClassTutors")
+                    b.HasOne("OnDemandTutor.Models.Models.User", "User")
+                        .WithMany()
                         .HasForeignKey("TutorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Student");
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Subject");
 
-                    b.Navigation("Tutor");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.FAQ", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.User", "CreateByNavigation")
+                    b.HasOne("OnDemandTutor.Models.Models.User", "CreateBy")
                         .WithMany("FAQs")
-                        .HasForeignKey("CreateBy")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("CreateByNavigation");
-                });
-
-            modelBuilder.Entity("OnDemandTutor.Models.Models.Invitation", b =>
-                {
-                    b.HasOne("OnDemandTutor.Models.Models.Class", "Class")
-                        .WithMany("Invitations")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnDemandTutor.Models.Models.User", "Tutor")
-                        .WithMany("Invitations")
-                        .HasForeignKey("TutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Class");
-
-                    b.Navigation("Tutor");
+                    b.Navigation("CreateBy");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Notification", b =>
                 {
                     b.HasOne("OnDemandTutor.Models.Models.User", "Receiver")
                         .WithMany("Notifications")
-                        .HasForeignKey("ReceiverId");
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Slot", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.Class", "Class")
+                    b.HasOne("OnDemandTutor.Models.Models.Class", "Classes")
                         .WithMany("Slots")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("OnDemandTutor.Models.Models.User", "CreatedBy")
+                        .WithMany("Slots")
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnDemandTutor.Models.Models.Subject", "Subject")
+                        .WithMany("Slots")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Classes");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.SlotStudent", b =>
+                {
+                    b.HasOne("OnDemandTutor.Models.Models.Slot", "Slot")
+                        .WithMany("SlotStudents")
+                        .HasForeignKey("SlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnDemandTutor.Models.Models.User", "User")
+                        .WithMany("SlotStudents")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Slot");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.StudentClass", b =>
+                {
+                    b.HasOne("OnDemandTutor.Models.Models.Class", "Class")
+                        .WithMany("StudentClasses")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("OnDemandTutor.Models.Models.User", "Student")
+                        .WithMany("StudentClasses")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Class");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.Subject", b =>
+                {
+                    b.HasOne("OnDemandTutor.Models.Models.User", "CreateBy")
+                        .WithMany("SubjectCreateBy")
+                        .HasForeignKey("CreateById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreateBy");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Transaction", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.User", "CreatedByNavigation")
-                        .WithMany("TransactionCreatedByNavigations")
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("OnDemandTutor.Models.Models.User", "CreatedBy")
+                        .WithMany("TransactionCreatedBy")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnDemandTutor.Models.Models.User", "ReferenceNavigation")
-                        .WithMany("TransactionReferences")
-                        .HasForeignKey("ReferenceId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("OnDemandTutor.Models.Models.Slot", "Slot")
+                        .WithMany("SlotTransaction")
+                        .HasForeignKey("SlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("CreatedByNavigation");
+                    b.Navigation("CreatedBy");
 
-                    b.Navigation("ReferenceNavigation");
+                    b.Navigation("Slot");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorDegree", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.Medium", "DegreeImg")
-                        .WithMany("TutorDegrees")
-                        .HasForeignKey("DegreeImgID");
-
                     b.HasOne("OnDemandTutor.Models.Models.User", "Tutor")
                         .WithMany("TutorDegrees")
-                        .HasForeignKey("TutorId");
-
-                    b.Navigation("DegreeImg");
+                        .HasForeignKey("TutorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Tutor");
                 });
 
-            modelBuilder.Entity("OnDemandTutor.Models.Models.TutorTeachTimeSchedule", b =>
+            modelBuilder.Entity("OnDemandTutor.Models.Models.TutorSubject", b =>
                 {
-                    b.HasOne("OnDemandTutor.Models.Models.User", "Tutor")
-                        .WithMany("TutorTeachTimeSchedules")
-                        .HasForeignKey("TutorId");
+                    b.HasOne("OnDemandTutor.Models.Models.Subject", "Subject")
+                        .WithMany("TutorSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Tutor");
+                    b.HasOne("OnDemandTutor.Models.Models.User", "User")
+                        .WithMany("TutorSubjects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorVideo", b =>
@@ -688,80 +677,52 @@ namespace OnDemandTutor.Models.Migrations
                     b.Navigation("Tutor");
                 });
 
-            modelBuilder.Entity("OnDemandTutor.Models.Models.User", b =>
-                {
-                    b.HasOne("OnDemandTutor.Models.Models.Medium", "DegreeImage")
-                        .WithMany("UserDegreeImages")
-                        .HasForeignKey("DegreeImageId");
-
-                    b.HasOne("OnDemandTutor.Models.Models.Medium", "IdCardImage")
-                        .WithMany("UserIdCardImages")
-                        .HasForeignKey("IdCardImageID");
-
-                    b.Navigation("DegreeImage");
-
-                    b.Navigation("IdCardImage");
-                });
-
-            modelBuilder.Entity("SlotTransaction", b =>
-                {
-                    b.HasOne("OnDemandTutor.Models.Models.Transaction", null)
-                        .WithMany()
-                        .HasForeignKey("SlotTransactionNavigationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OnDemandTutor.Models.Models.Slot", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionNavigationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("OnDemandTutor.Models.Models.Class", b =>
                 {
-                    b.Navigation("Invitations");
-
                     b.Navigation("Slots");
+
+                    b.Navigation("StudentClasses");
                 });
 
-            modelBuilder.Entity("OnDemandTutor.Models.Models.Medium", b =>
+            modelBuilder.Entity("OnDemandTutor.Models.Models.Slot", b =>
                 {
-                    b.Navigation("TutorDegrees");
+                    b.Navigation("SlotStudents");
 
-                    b.Navigation("UserDegreeImages");
-
-                    b.Navigation("UserIdCardImages");
+                    b.Navigation("SlotTransaction");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Subject", b =>
                 {
-                    b.Navigation("Classes");
+                    b.Navigation("Class");
+
+                    b.Navigation("Slots");
+
+                    b.Navigation("TutorSubjects");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.User", b =>
                 {
-                    b.Navigation("BlogCreateByNavigations");
+                    b.Navigation("BlogCreateBy");
 
-                    b.Navigation("BlogUpdateByNavigations");
-
-                    b.Navigation("ClassStudents");
-
-                    b.Navigation("ClassTutors");
+                    b.Navigation("BlogUpdateBy");
 
                     b.Navigation("FAQs");
 
-                    b.Navigation("Invitations");
-
                     b.Navigation("Notifications");
 
-                    b.Navigation("TransactionCreatedByNavigations");
+                    b.Navigation("SlotStudents");
 
-                    b.Navigation("TransactionReferences");
+                    b.Navigation("Slots");
+
+                    b.Navigation("StudentClasses");
+
+                    b.Navigation("SubjectCreateBy");
+
+                    b.Navigation("TransactionCreatedBy");
 
                     b.Navigation("TutorDegrees");
 
-                    b.Navigation("TutorTeachTimeSchedules");
+                    b.Navigation("TutorSubjects");
 
                     b.Navigation("TutorVideos");
                 });

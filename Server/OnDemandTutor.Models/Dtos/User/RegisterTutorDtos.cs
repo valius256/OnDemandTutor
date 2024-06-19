@@ -8,5 +8,7 @@ namespace OnDemandTutor.Models.Dtos.User
         public string? AvatarImageId { get; set; }
         public string? IdentityCardId { get; set; }
         public string? ScheduleDescription { get; set; }
+        public string diplomaNumber { get; set; }
+        public DateOnly issuanceDate { get; set; }
     }
 }

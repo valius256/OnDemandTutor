@@ -16,6 +16,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.User
         Task<bool> DeleteUserAsync(string? email);
         //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
         Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
-
+        Task<bool> ApprovedTutorAsync(List<TutorRegistrationRequestDtos> tutorsRequest);
+        Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     }
 }

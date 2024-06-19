@@ -50,5 +50,25 @@ namespace OnDemandTutor.API.Controllers
             var result = await _userService.RegisterTutor(body);
             return Ok(result);
         }
+        
+        [Authorize]
+        [HttpPost("approve-tutor-registration")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
+        public async Task<IActionResult> ApprovedTutorRegis([FromBody] RegisterTutorDtos body)
+        {
+            var result = await _userService.RegisterTutor(body);
+            return Ok(result);
+        }
+        
+        [Authorize]
+        [HttpPost("update-profile")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
+        public async Task<IActionResult> UpdateProfile([FromBody] RegisterTutorDtos body)
+        {
+            var result = await _userService.RegisterTutor(body);
+            return Ok(result);
+        }
     }
 }

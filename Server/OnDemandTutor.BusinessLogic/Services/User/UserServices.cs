@@ -114,9 +114,6 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
         public async Task<GetProfileUserDtos> GetUserProfileById(int id)
         {
-
-
-
             return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id)).Adapt<GetProfileUserDtos>();
         }
 
@@ -147,6 +144,22 @@ namespace OnDemandTutor.BusinessLogic.Services.User
 
             await _unitOfWorkRepository.SaveChangesAsync();
             return true;
+        }
+
+        public Task<bool> ApprovedTutorAsync(List<TutorRegistrationRequestDtos> tutorsRequest)
+        {
+            foreach (var tutorReq in tutorsRequest)
+            {
+                
+            }
+            
+            return Task.FromResult(true);
+        }
+
+        public async Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList()
+        {
+            var listTutorWithDegree = await _unitOfWorkRepository.UserRepository.GetUsersListDegreeData();
+            return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
         }
     }
 }
