@@ -23,9 +23,6 @@ internal class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddHttpClient();
 
-        builder.Services.InitializerDependencyInjection();
-        builder.Services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
-
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
             ld => ld.MigrationsAssembly("OnDemandTutor.Models")));

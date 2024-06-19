@@ -34,7 +34,7 @@ namespace OnDemandTutor.Models
         public DbSet<SlotStudent> SlotStudents { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<StudentClass> StudentClasses { get; set; }
-
+        public DbSet<TutorSubject> TutorSubjects { get; set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -50,6 +50,7 @@ namespace OnDemandTutor.Models
             modelBuilder.ApplyConfiguration(new ClassEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SubjectEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StudentClassEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TutorSubjectEntityTypeConfiguration());
         }
     }
 }

@@ -38,5 +38,6 @@ namespace OnDemandTutor.Models.Models
         public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
         public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
         public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
+        public virtual ICollection<TutorSubject> TutorSubjects { get; set; } = new List<TutorSubject>();
     }
 }

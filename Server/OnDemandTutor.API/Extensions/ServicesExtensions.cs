@@ -7,8 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnDemandTutor.API.Filter;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Auth;
+using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.IRepository;
@@ -27,8 +29,11 @@ namespace OnDemandTutor.API.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
+
             services.AddProblemDetails();
             return services;
         }
@@ -37,6 +42,7 @@ namespace OnDemandTutor.API.Extensions
         {
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IAuthServices, AuthServices>();
+            services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<IJwtProviderServices, JwtProviderServices>();
             services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
@@ -50,6 +56,7 @@ namespace OnDemandTutor.API.Extensions
             FirebaseApp.Create(new AppOptions
             {
                 Credential = GoogleCredential.FromFile(firebaseJsonPath),
+                ProjectId = "ondemandtutor-a049e"
             });
             return services;
         }
@@ -171,5 +178,6 @@ namespace OnDemandTutor.API.Extensions
         {
             // Example of enqueuing a job
         }
+
     }
 }
