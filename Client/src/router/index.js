@@ -7,6 +7,7 @@ import RegisterPage from "../pages/Auth/RegisterPage.vue";
 import BlogsPage from "../pages/Student/BlogsPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
 import StudentProfile from "../pages/Student/ProfilePage.vue";
+import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
 // import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
 // import CreateClassPage from "../pages/Student/CreateClassPage.vue";
 import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue";
@@ -72,7 +73,7 @@ const routes = [
   {
     path: "/student",
     name: "StudentProfilePage",
-    redirect : "/student/profile",
+    redirect: "/student/profile",
     children: [
       {
         path: "profile",
@@ -88,6 +89,27 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: "/tutor",
+    name: "TutorProfilePage",
+    redirect: "/tutor/profile",
+    children: [
+      {
+        path: "profile",
+        component: TutorProfile,
+      },
+      {
+        path: "schedule",
+        component: TutorProfile,
+      },
+      {
+        path: "payment",
+        component: TutorProfile,
+      },
+    ],
+  },
+
   {
     path: "/admin/accounts",
     name: "AccountManagement",
@@ -100,16 +122,16 @@ const routes = [
       {
         path: "tutors",
         redirect: "/admin/accounts/tutors/list",
-        children : [
+        children: [
           {
-            path : "list",
+            path: "list",
             component: TutorManagementPage,
           },
           {
-            path : "registration",
+            path: "registration",
             component: TutorManagementPage,
-          }
-        ]
+          },
+        ],
       },
       {
         path: "operators",

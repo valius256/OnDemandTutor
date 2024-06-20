@@ -63,8 +63,8 @@ export default {
       rsType: "",
       ldMessage: "",
       user: {
-        name : "Hello World",
-        avatar : "/src/assets/noavatar.jpg",
+        name: "Student profile",
+        avatar: "/src/assets/noavatar.jpg",
         role: "Student",
       },
     };
