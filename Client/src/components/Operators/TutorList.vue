@@ -1,8 +1,11 @@
 <template>
     <div class="p-4 w-full" @click="setSelectId(0)">
         <div class="flex justify-end gap-2">
+            <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
+                Reset bộ lọc
+            </button>
             <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
-                @click="handleFilter">
+                @click="toggleFilterPopup">
                 <i class="fa fa-search	"></i> Filter
             </button>
         </div>
@@ -40,16 +43,18 @@
                         <div v-if="selectId == tutor.id"
                             class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-48 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
                             <!-- Content of your menu -->
-                                <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left">
-                                    <i class="fa fa-user mr-4"></i>Xem hồ sơ
-                                </button>
-                                <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                                <button v-if="tutor.status == 'Active'" class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
-                                    <i class="fa fa-remove mr-4"></i>Đình chỉ
-                                </button>
-                                <button v-if="tutor.status == 'Fired'" class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
-                                    <i class="fa fa fa-check mr-4"></i>Kích hoạt
-                                </button>
+                            <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left">
+                                <i class="fa fa-user mr-4"></i>Xem hồ sơ
+                            </button>
+                            <!-- <li class="hover:bg-slate-200 p-2"></li> -->
+                            <button v-if="tutor.status == 'Active'"
+                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
+                                <i class="fa fa-remove mr-4"></i>Đình chỉ
+                            </button>
+                            <button v-if="tutor.status == 'Fired'"
+                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
+                                <i class="fa fa fa-check mr-4"></i>Kích hoạt
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -68,8 +73,9 @@
                 <i class="fa fa-arrow-right text-2xl"></i>
             </button>
         </div>
-        <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc gia sư" :notOverflow="true">
-            <tutor-filter-popup :close="toggleFilterPopup" />
+        <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc gia sư"
+            :notOverflow="true">
+            <tutor-filter-popup :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter" />
         </generic-popup>
     </div>
 </template>
@@ -78,7 +84,7 @@
 import GenericPopup from '../common/GenericPopup.vue'
 import TutorFilterPopup from './TutorFilterPopup.vue'
 export default {
-  components: { GenericPopup, TutorFilterPopup },
+    components: { GenericPopup, TutorFilterPopup },
     name: "AdminTutorList",
     data() {
         return {
@@ -87,7 +93,7 @@ export default {
             currentPage: 1,
             selectId: 0,
             isShowPopup: false,
-            isOpenFilterPopup : false,
+            isOpenFilterPopup: false,
             tutors: [
                 {
                     id: 1,
@@ -160,13 +166,45 @@ export default {
                     ]
                 },
             ],
+            filterDto: {
+                gender: "All",
+                status: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate : null,
+                toJoinDate : null,
+                selectedSubjects: [],
+                isChanged : false
+            }
         }
     },
     methods: {
-        handleFilter(){
-            this.toggleFilterPopup()
+        resetFilter(){
+            this.filterDto = {
+                gender: "All",
+                status: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate : null,
+                toJoinDate : null,
+                selectedSubjects: [],
+                isChanged : false
+            }
         },
-        toggleFilterPopup(){
+        handleFilter(filterDto, selectedSubjects) {
+            console.log(filterDto)
+            this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            this.filterDto.selectedSubjects = selectedSubjects
+        },
+        toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
         },
         clearSelectId() {

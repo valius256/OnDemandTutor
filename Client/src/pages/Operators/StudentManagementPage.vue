@@ -5,8 +5,11 @@
             Quản lý học sinh
         </div>
         <div class="flex justify-end gap-2">
+            <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
+                Reset bộ lọc
+            </button>
             <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
-                @click="handleSearch">
+                @click="toggleFilterPopup">
                 <i class="fa fa-search	"></i> Filter
             </button>
         </div>
@@ -71,21 +74,26 @@
                 <i class="fa fa-arrow-right text-2xl"></i>
             </button>
         </div>
-        
+        <generic-popup v-if="isOpenFilterPopup" title="Bộ lọc học viên" :closeFunction="toggleFilterPopup">
+            <student-filter-popup :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter" />
+        </generic-popup>
     </div>
     
 </template>
 
 <script>
+import GenericPopup from '../../components/common/GenericPopup.vue';
+import StudentFilterPopup from '../../components/Operators/StudentFilterPopup.vue';
 export default {
     name: "StudentManagementPage",
+    components : {GenericPopup, StudentFilterPopup},
     data() {
         return {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
             selectId: 0,
-            isShowPopup: false,
+            isOpenFilterPopup : false,
             students: [
                 {
                     id: 1,
@@ -129,9 +137,43 @@ export default {
                     status: "Inactive",
                 },
             ],
+            filterDto: {
+                gender: "All",
+                status: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate: null,
+                toJoinDate: null,
+                isChanged : false
+            },
         }
     },
     methods: {
+        resetFilter(){
+            this.filterDto = {
+                gender: "All",
+                status: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate : null,
+                toJoinDate : null,
+                isChanged : false
+            }
+        },
+        handleFilter(filterDto) {
+            this.filterDto = JSON.parse(JSON.stringify(filterDto));
+        },
+        toggleFilterPopup() {
+            this.isOpenFilterPopup = !this.isOpenFilterPopup
+        },
         clearSelectId() {
             if (this.isShowPopup) {
                 this.selectId = 0
