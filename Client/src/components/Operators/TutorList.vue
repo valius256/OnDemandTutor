@@ -2,7 +2,7 @@
     <div class="p-4 w-full" @click="setSelectId(0)">
         <div class="flex justify-end gap-2">
             <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
-                @click="handleSearch">
+                @click="handleFilter">
                 <i class="fa fa-search	"></i> Filter
             </button>
         </div>
@@ -44,8 +44,11 @@
                                     <i class="fa fa-user mr-4"></i>Xem hồ sơ
                                 </button>
                                 <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                                <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
+                                <button v-if="tutor.status == 'Active'" class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                     <i class="fa fa-remove mr-4"></i>Đình chỉ
+                                </button>
+                                <button v-if="tutor.status == 'Fired'" class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
+                                    <i class="fa fa fa-check mr-4"></i>Kích hoạt
                                 </button>
                         </div>
                     </td>
@@ -65,11 +68,17 @@
                 <i class="fa fa-arrow-right text-2xl"></i>
             </button>
         </div>
+        <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc gia sư" :notOverflow="true">
+            <tutor-filter-popup :close="toggleFilterPopup" />
+        </generic-popup>
     </div>
 </template>
 
 <script>
+import GenericPopup from '../common/GenericPopup.vue'
+import TutorFilterPopup from './TutorFilterPopup.vue'
 export default {
+  components: { GenericPopup, TutorFilterPopup },
     name: "AdminTutorList",
     data() {
         return {
@@ -78,6 +87,7 @@ export default {
             currentPage: 1,
             selectId: 0,
             isShowPopup: false,
+            isOpenFilterPopup : false,
             tutors: [
                 {
                     id: 1,
@@ -153,6 +163,12 @@ export default {
         }
     },
     methods: {
+        handleFilter(){
+            this.toggleFilterPopup()
+        },
+        toggleFilterPopup(){
+            this.isOpenFilterPopup = !this.isOpenFilterPopup
+        },
         clearSelectId() {
             if (this.isShowPopup) {
                 this.selectId = 0
