@@ -1,7 +1,10 @@
 <template>
     <div class="p-4 w-full">
         <div class="flex justify-end gap-2">
-            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg" @click="handleSearch">
+            <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
+                Reset bộ lọc
+            </button>
+            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg" @click="toggleFilterPopup">
                 <i class="fa fa-search	"></i> Filter
             </button>
         </div>
@@ -13,7 +16,8 @@
                     <th class="w-2/12">Ảnh</th>
                     <th class="w-2/12">Email</th>
                     <th class="w-2/12">SDT</th>
-                    <th class="w-1/12">Hành động</th>
+                    <th class="w-1/12">Tạo ngày</th>
+                    <th class="w-2/12">Hành động</th>
                 </tr>
             </thead>
             <tbody>                
@@ -23,6 +27,7 @@
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
+                    <td>{{ this.sqlDateStringToSlashFormat(tutor.createdAt) }}</td>
                     <td class="flex flex-col gap-2">
                         <button class="text-white rounded-lg bg-blue-500 hover:bg-blue-200 font-bold text-lg p-2"  @click="handleAccept(registration.id)">
                             Chi Tiết
@@ -50,18 +55,24 @@
                 <i class="fa fa-arrow-right text-2xl"></i>
             </button>
         </div>
+        <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc gia sư">
+            <tutor-registration-filter-popup :filter-dto="filterDto" :action="handleFilter" :close="toggleFilterPopup"/>
+        </generic-popup>
     </div>
 </template>
 
 <script>
+import GenericPopup from '../common/GenericPopup.vue';
+import TutorRegistrationFilterPopup from './TutorRegistrationFilterPopup.vue';
 export default {
+  components: { GenericPopup, TutorRegistrationFilterPopup },
     name: "TutorRegistration",
     data() {
         return {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
-            keyword_name: "",
+            isOpenFilterPopup: false,
             tutors: [
                 {
                     id: 1,
@@ -69,6 +80,7 @@ export default {
                     email: "abc@gmail.com",
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
+                    createdAt: "2024-01-01",
                 },
                 {
                     id: 2,
@@ -77,6 +89,7 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Active",
+                    createdAt: "2024-01-01",
                 },
                 {
                     id: 3,
@@ -85,6 +98,7 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Fired",
+                    createdAt: "2024-01-01",
                 },
                 {
                     id: 4,
@@ -93,11 +107,44 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Left",
+                    createdAt: "2024-01-01",
                 },
             ],
+            filterDto: {
+                gender: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate : null,
+                toJoinDate : null,
+                isChanged : false
+            }
         }
     },
     methods: {
+        resetFilter(){
+            this.filterDto = {
+                gender: "All",
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                fromDob: null,
+                toDob: null,
+                fromJoinDate : null,
+                toJoinDate : null,
+                isChanged : false
+            }
+        },
+        handleFilter(filterDto) {
+            this.filterDto = JSON.parse(JSON.stringify(filterDto));
+        },
+        toggleFilterPopup() {
+            this.isOpenFilterPopup = !this.isOpenFilterPopup
+        },
         displaySubjects(subjects){
             let color = "gray"
             let html = ""
