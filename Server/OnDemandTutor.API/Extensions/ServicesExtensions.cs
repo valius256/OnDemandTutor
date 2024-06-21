@@ -8,10 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using OnDemandTutor.API.Filter;
+using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Auth;
+using OnDemandTutor.BusinessLogic.Services.Subject;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
 using OnDemandTutor.DataAccess;
@@ -32,8 +34,8 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUnitOfWorkRepository, UnitOfWorkRepository>();
         services.AddScoped<ISubjectRepository, SubjectRepository>();
+        services.AddScoped<ISlotRepository, SlotRepository>();
 
         services.AddProblemDetails();
         return services;
@@ -42,6 +44,7 @@ public static class ServiceExtensions
     public static IServiceCollection AddGeneralServices(this IServiceCollection services)
     {
         services.AddScoped<IUserServices, UserServices>();
+        services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<IAuthServices, AuthServices>();
         services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
         services.AddTransient<IMailService, MailService>();
