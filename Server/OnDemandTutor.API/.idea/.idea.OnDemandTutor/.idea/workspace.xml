@@ -10,56 +10,114 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37e24376-6cb6-45ff-804f-a712fdb0ea1b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/TutorSimpleProfileDtos.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/TutorSimpleProfileRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/20240619055835_Tutor_Degree_Subject_link.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/20240619055835_Tutor_Degree_Subject_link.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Client/src/pages/Student/HomePage.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../../Client/src/pages/Student/HomePage.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/dataSources/5c0cfa79-94e0-4f60-ac69-86c642824bb8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/dataSources/5c0cfa79-94e0-4f60-ac69-86c642824bb8.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AuthController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/BackgroundJobController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/BackgroundJobController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/BaseController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/BaseController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/SlotController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SlotController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/SubjectController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SubjectController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/UploadController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/UploadController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/UserController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/UserController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DependencyInjectionResolverGen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/DependencyInjectionResolverGen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Extensions/FireBaseAuthenticationHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Extensions/FireBaseAuthenticationHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Extensions/GlobalExceptionHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Extensions/GlobalExceptionHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Extensions/ResultExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Extensions/ResultExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Extensions/ServicesExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Extensions/ServicesExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Filter/DateOnlyDocumentFilter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Filter/DateOnlyDocumentFilter.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Middlesware/ExceptionHandlingMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Middlesware/ExceptionHandlingMiddleware.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/ApiErrorActionResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/ApiErrorActionResult.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/ApiResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/ApiResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/OnDemandTutor.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/OnDemandTutor.API.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IAuthServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IAuthServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IFireBaseAuthServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IFireBaseAuthServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IJwtProviderServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Auth/IJwtProviderServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Sending/IMailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Sending/IMailService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Slot/ISlotServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Slot/ISlotServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Subject/ISubjectService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Subject/ISubjectService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Upload/IFirebaseUpload.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Upload/IFirebaseUpload.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/User/IUserServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/User/IUserServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/OnDemandTutor.BusinessLogic.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/OnDemandTutor.BusinessLogic.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/AuthServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/AuthServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/FirebaseAuthServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/FirebaseAuthServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/JwtProviderServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/JwtProviderServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Sending/MailService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Sending/MailService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Subject/SubjectService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Subject/SubjectService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Upload/FirebaseUpload.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Upload/FirebaseUpload.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/User/UserServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/User/UserServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/StartupExtension/MapsterConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/StartupExtension/MapsterConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/AppBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/AppBuilderExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/BadRequestException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/BadRequestException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/DataNotFoundException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/DataNotFoundException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/FirebaseAuthException .cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/FirebaseAuthException .cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/ModelException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/ModelException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/NotFoundException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/NotFoundException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/ValidationErrorModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/ExceptionModels/ValidationErrorModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Helper/IQueryableExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Helper/IQueryableExtensions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IGenericRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IGenericRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISubjectRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISubjectRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/OnDemandTutor.DataAccess.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/OnDemandTutor.DataAccess.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/GenericRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/GenericRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SubjectRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SubjectRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/UserRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/UnitOfWork.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/UnitOfWork.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Helper/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Helper/Config.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Helper/ConverterHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Helper/ConverterHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Helper/OnDemandTutor.Helper.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Helper/OnDemandTutor.Helper.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/ApplicationDbContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/AuthResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/AuthResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/ForgotPasswordRequestDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/ForgotPasswordRequestDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/GetProfileRequestDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/GetProfileRequestDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/LoginDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/LoginDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/RegisterDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Authen/RegisterDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/CreateSubjectDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/CreateSubjectDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/GetSubjectDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/GetSubjectDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/UpdateClassDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/UpdateClassDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Upload/UploadImageDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Upload/UploadImageDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileTutorDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileTutorDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileUserDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileUserDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/RegisterTutorDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/RegisterTutorDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/TutorRegistrationRequestDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/TutorRegistrationRequestDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/UpdateUserDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/UpdateUserDtos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/UserFireBaseDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/UserFireBaseDtos.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/BlogEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/BlogEntityTypeConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/NotificationEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/NotificationEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/ClassEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/ClassEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/FaqEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/FaqEntityTypeConfiguration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SlotEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SlotEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/StudentClassEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/StudentClassEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SubjectEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SubjectEntityTypeConfiguration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorDegreeEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorDegreeEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorSubjectEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorSubjectEntityTypeConfiguration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorVideoEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/TutorVideoEntityTypeConfiguration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/UserEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/UserEntityTypeConfiguration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/PaymentStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/PaymentStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/Role.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/Role.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/UserStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/UserStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/UserStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/TutorSubjectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/IBaseEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/IBaseEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/MailRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/MailRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/20240614012218_Initial.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/20240614012218_Initial.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Blog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Blog.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Class.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Class.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/ConsultationRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/ConsultationRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Faq.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Faq.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Notification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Notification.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Slot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Slot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/SlotStudent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/SlotStudent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/StudentClass.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/StudentClass.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Subject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Subject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Transaction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Transaction.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorDegree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorDegree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorRegistration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorSubject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorSubject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorVideo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/TutorVideo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/OnDemandTutor.Models.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/OnDemandTutor.Models.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Paging/PagedResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Paging/PagedResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Paging/PagingModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Paging/PagingModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/RequestModel/Subject/SubjectRequestModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/RequestModel/Subject/SubjectRequestModel.cs" afterDir="false" />
@@ -89,6 +147,25 @@
   }
 }</component>
   <component name="GitToolBoxStore">
+    <option name="branchesCleanupHistory">
+      <BranchesCleanupHistory>
+        <option name="history">
+          <list>
+            <BranchCleanupEntry>
+              <option name="deletions">
+                <list>
+                  <BranchDeletion>
+                    <option name="hash" value="7582774478b597b626f956d1e4bfe21513b54f17" />
+                    <option name="name" value="Phat_Fix_Login_Issue2" />
+                  </BranchDeletion>
+                </list>
+              </option>
+              <option name="timestamp" value="1718684400334" />
+            </BranchCleanupEntry>
+          </list>
+        </option>
+      </BranchesCleanupHistory>
+    </option>
     <option name="recentBranches">
       <RecentBranches>
         <option name="branchesForRepo">
@@ -121,6 +198,9 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b8139c5ee58f1708b0e3368a1b241400edd6cbc4/src/Middleware/Diagnostics/src/ExceptionHandler/ExceptionHandlerMiddlewareImpl.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b8139c5ee58f1708b0e3368a1b241400edd6cbc4/src/Mvc/Mvc.Core/src/Infrastructure/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/efcore/6a2be34d045329d9eff9536ec824226696d53e00/src/EFCore/Infrastructure/ModelValidator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/coreclr/System.Private.CoreLib/src/System/Threading/Monitor.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/ApplicationException.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Array.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Exception.cs" root0="SKIP_HIGHLIGHTING" />
@@ -130,10 +210,19 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Threading/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Threading/Tasks/TaskContinuation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/05490158a17440cdbb77cdfa1390ba025200/45/7d3bcb0b/FirebaseStorageReference.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/05490158a17440cdbb77cdfa1390ba025200/6f/8d9fc420/FirebaseStorage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2e9cda094f2549d1b29a5c587f060d6912e20/6b/4d0817cf/JwtSecurityTokenHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/31dbe07f1fd14994958081443b13244c4e8a0/49/e5ff00f9/ProblemDetails.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55fc124deeb24cf0a4167aeed205d86d408a0/26/0817646d/IActionResult.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/649f9a5315084d038b64e29ea11b1fb56d20/ae/0b540bc9/IConfiguration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/83d0691b2ff94d50bae98091380d202e27e00/67/49f94715/StorageClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9d84c715e2b240da95e2850c6b32ae171de8a0/a9/9f22de4e/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c0b37c0e54164b0e89dbb614ddf6d1b748800/ce/9be207c0/AbstractFirebaseAuth.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2813f16dfae791865ab77daff01fdc41fe1d1ff9b5ba56dc6579d5175f1c/SwaggerUIMiddleware.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8544f5f5a8417a1ea65d75a84f6072d9c1a8488ecd22bfb794a62b3c2181c1c5/StorageClient.GetObject.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f571478baa8d1556e575d64b575a7cadf5f5f083c5c850a2f0258c34f8ee1c/UpdateObjectOptions.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -158,16 +247,18 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;.NET Launch Settings Profile.OnDemandTutor.API: http.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Launch Settings Profile.OnDemandTutor.API: https.executor&quot;: &quot;Run&quot;,
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5007874&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Phat__Implement__Upload__API&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -181,7 +272,7 @@
     ]
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.OnDemandTutor.API: http">
+  <component name="RunManager" selected=".NET Launch Settings Profile.OnDemandTutor.API: https">
     <configuration name="OnDemandTutor.API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/OnDemandTutor.API.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
@@ -253,6 +344,21 @@
       <workItem from="1718414166209" duration="275000" />
       <workItem from="1718428149033" duration="48000" />
       <workItem from="1718429350601" duration="575000" />
+      <workItem from="1718584359316" duration="348000" />
+      <workItem from="1718587864930" duration="7000" />
+      <workItem from="1718631028989" duration="2255000" />
+      <workItem from="1718673935770" duration="20000" />
+      <workItem from="1718673971213" duration="3627000" />
+      <workItem from="1718681900753" duration="2412000" />
+      <workItem from="1718684542248" duration="1557000" />
+      <workItem from="1718693874285" duration="16712000" />
+      <workItem from="1718757681564" duration="5914000" />
+      <workItem from="1718774876681" duration="8096000" />
+      <workItem from="1718856150790" duration="4000" />
+      <workItem from="1718867893433" duration="1585000" />
+      <workItem from="1718870176371" duration="6046000" />
+      <workItem from="1718876449422" duration="992000" />
+      <workItem from="1718937274875" duration="907000" />
     </task>
     <servers />
   </component>
@@ -266,7 +372,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -275,5 +393,26 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Upload/FirebaseUploadServices.cs</url>
+          <line>37</line>
+          <properties documentPath="D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.BusinessLogic\Services\Upload\FirebaseUploadServices.cs" containingFunctionPresentation="Method 'UploadImageToFirebaseStorage'" />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Type#Google.Cloud.Storage.V1.StorageClientImpl+ObjectPageManager" memberName="Instance" />
+        <PinnedItemInfo parentTag="Type#OnDemandTutor.Models.Dtos.GetProfileUserDtos" memberName="Role" />
+        <PinnedItemInfo parentTag="Type#Google.Apis.Storage.v1.Data.Object" memberName="MediaLink" />
+        <PinnedItemInfo parentTag="Type#OnDemandTutor.Models.Paging.PagedResult`1" memberName="Items" />
+        <PinnedItemInfo parentTag="Type#Firebase.Storage.FirebaseStorage" memberName="StorageBucket" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>

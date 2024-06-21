@@ -1,9 +1,8 @@
-﻿namespace OnDemandTutor.DataAccess.ExceptionModels
+﻿namespace OnDemandTutor.DataAccess.ExceptionModels;
+
+public class DataNotFoundException : Exception
 {
-    public class DataNotFoundException : Exception
+    public DataNotFoundException(string value) : base(value)
     {
-        public DataNotFoundException(string value) : base(value)
-        {
-        }
     }
 }

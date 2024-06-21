@@ -1,38 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Models;
 
-namespace OnDemandTutor.API.Controllers
+namespace OnDemandTutor.API.Controllers;
+
+public class BaseController<T> : ControllerBase
 {
-    public class BaseController<T> : ControllerBase
+    protected readonly ILogger<T> _logger;
+
+    public BaseController(ILogger<T> logger)
     {
-        protected readonly ILogger<T> _logger;
+        _logger = logger;
+    }
 
-        public BaseController(ILogger<T> logger)
+    protected async Task<IApiResult<F>> OKAsync<F>(Task<F> action, string? op = null)
+    {
+        var result = await Task.Run(() => action);
+
+        return new ApiResult<F>
         {
-            _logger = logger;
-        }
+            Op = op,
+            Status = "OK",
+            Data = result
+        };
+    }
 
-        protected async Task<IApiResult<F>> OKAsync<F>(Task<F> action, string? op = null)
+    protected IApiResult<F> OKAsync<F>(F data, string? op = null)
+    {
+        return new ApiResult<F>
         {
-            var result = await Task.Run(() => action);
-
-            return new ApiResult<F>()
-            {
-                Op = op,
-                Status = "OK",
-                Data = result
-            };
-        }
-
-        protected IApiResult<F> OKAsync<F>(F data, string? op = null)
-        {
-
-            return new ApiResult<F>()
-            {
-                Op = op,
-                Status = "OK",
-                Data = data
-            };
-        }
+            Op = op,
+            Status = "OK",
+            Data = data
+        };
     }
 }

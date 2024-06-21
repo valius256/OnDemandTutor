@@ -1,7 +1,6 @@
-﻿namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
+﻿namespace OnDemandTutor.BusinessLogic.Interfaces.Auth;
+
+public interface IJwtProviderServices
 {
-    public interface IJwtProviderServices
-    {
-        Task<string> GetForCredentialsAsync(string email, string password);
-    }
+    Task<string> GetForCredentialsAsync(string email, string password);
 }

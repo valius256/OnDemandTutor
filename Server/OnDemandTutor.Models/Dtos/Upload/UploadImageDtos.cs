@@ -1,9 +1,9 @@
-﻿namespace OnDemandTutor.Models.Dtos.Upload
+﻿namespace OnDemandTutor.Models.Dtos.Upload;
+
+public class UploadImageDtos
 {
-    public class UploadImageDtos
-    {
-        public string Uid;
-        public string FileType;
-        //public IFormFile File;
-    }
+    public string FileType;
+
+    public string Uid;
+    //public IFormFile File;
 }

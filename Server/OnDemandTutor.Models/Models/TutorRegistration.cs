@@ -2,15 +2,15 @@
 
 public class TutorRegistration : IBaseEntity
 {
-    public int Id { get; set; }
-    public int userId;
-    public string tutorName;
-    public string tutorEmail;
-    public string? tutorPhoneNumber;
-    public string? tutorAddress;
-    public string IdCardNumber;
     public string diplomaNumber;
-    public DateOnly issuanceDate; 
-    
+    public string IdCardNumber;
+    public DateOnly issuanceDate;
+    public string? tutorAddress;
+    public string tutorEmail;
+    public string tutorName;
+    public string? tutorPhoneNumber;
+    public int userId;
+    public int Id { get; set; }
+
     public virtual User Tutor { get; set; }
 }

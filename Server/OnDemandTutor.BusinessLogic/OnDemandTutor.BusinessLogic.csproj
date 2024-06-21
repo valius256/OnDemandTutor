@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FirebaseAdmin" Version="3.0.0" />
-    <PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
-    <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-    <PackageReference Include="Google.Cloud.Firestore" Version="3.7.0" />
-    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-    <PackageReference Include="MailKit" Version="4.6.0" />
-    <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="MimeKit" Version="4.6.0" />
-    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FirebaseAdmin" Version="3.0.0"/>
+        <PackageReference Include="FirebaseDatabase.net" Version="4.2.0"/>
+        <PackageReference Include="FirebaseStorage.net" Version="1.0.3"/>
+        <PackageReference Include="Google.Cloud.Firestore" Version="3.7.0"/>
+        <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0"/>
+        <PackageReference Include="MailKit" Version="4.6.0"/>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
+        <PackageReference Include="MimeKit" Version="4.6.0"/>
+        <PackageReference Include="NETCore.MailKit" Version="2.1.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
-    <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj"/>
+        <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Slot\" />
-    <Folder Include="Services\Sending\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Services\Slot\"/>
+        <Folder Include="Services\Sending\"/>
+    </ItemGroup>
 
 </Project>

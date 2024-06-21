@@ -1,9 +1,8 @@
 ﻿using OnDemandTutor.Models;
 
-namespace OnDemandTutor.BusinessLogic.Interfaces.Sending
+namespace OnDemandTutor.BusinessLogic.Interfaces.Sending;
+
+public interface IMailService
 {
-    public interface IMailService
-    {
-        Task SendEmailAsync(MailRequest mailRequest);
-    }
+    Task SendEmailAsync(MailRequest mailRequest);
 }
