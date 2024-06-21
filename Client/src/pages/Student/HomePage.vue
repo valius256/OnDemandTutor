@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-blue-50">
     <main>
-      <img src="https://storage.googleapis.com/ondemandtutor-a049e.appspot.com/images/pa5fVYIUTUQtwjnb6kucgWPd8fz1/Image%20test?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-rch0l%40ondemandtutor-a049e.iam.gserviceaccount.com%2F20240619%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240619T053541Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=60dfe787d8afb2da418200769454cf54b43a11c15fab2c4e796bfa82614c0586c2802a0f61ae956259a3045f73c6c0a864ee26fea9720015a5f4d495f43667f3dab50df1eb278cb23decfcb971ac31435189c3e46f616a2a986b34bae3637ea4c8392e1a419fd1c536568bca01549d3d406214f23366f59222616bad49f2808e8935888258935b828ddc66ead307ff6acb5ae7f5f487296c02b6a48649551b64b2cf6a43cecaf1ae83097e50cec3ab177da0a8f4b7ba698e5a019aefd72d6ab2a6a8b1a83a21212cfe518b65cbc8a97a022cc6a177bec25452d59ed126cd1f253485e9290080785d11071c0c6149bb55564ee4742ba90220592f56e88c4a347b"/>
       <section class="bg-blue-500 text-white py-20 relative">
         <div
           class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"
