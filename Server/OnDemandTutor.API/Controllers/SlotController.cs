@@ -14,8 +14,4 @@ public class SlotController : ControllerBase
     //    var result = await _authServices.GetUserProfileByClaim(HttpContext.User);
     //    return Ok(result);
     //}
-
-
-
 }
-

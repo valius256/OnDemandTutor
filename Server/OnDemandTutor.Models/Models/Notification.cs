@@ -1,13 +1,12 @@
-﻿namespace OnDemandTutor.Models.Models
+﻿namespace OnDemandTutor.Models.Models;
+
+public class Notification : IBaseEntity
 {
-    public class Notification : IBaseEntity
-    {
-        public int Id { get; set; }
-        public string? Content { get; set; }
-        public int? ReceiverId { get; set; }
-        public string? RefUrl { get; set; }
-        public string? RefImageUrl { get; set; }
-        public int ViewStatus { get; set; }
-        public virtual User Receiver { get; set; }
-    }
+    public int Id { get; set; }
+    public string? Content { get; set; }
+    public int? ReceiverId { get; set; }
+    public string? RefUrl { get; set; }
+    public string? RefImageUrl { get; set; }
+    public int ViewStatus { get; set; }
+    public virtual User Receiver { get; set; }
 }

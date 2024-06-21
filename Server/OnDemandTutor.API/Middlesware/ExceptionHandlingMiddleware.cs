@@ -1,13 +1,14 @@
-﻿using Hangfire;
-using OnDemandTutor.DataAccess.ExceptionModels;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
+using Hangfire;
+using OnDemandTutor.DataAccess.ExceptionModels;
 
 namespace OnDemandTutor.API.Middlesware;
+
 public class ExceptionHandlingMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
@@ -50,9 +51,9 @@ public class ExceptionHandlingMiddleware
                     Title = "Bad Request",
                     Status = (int)status,
                     Errors = new List<ValidationErrorModel>
-                        {
-                            new ValidationErrorModel(badRequestException.Message)
-                        }
+                    {
+                        new(badRequestException.Message)
+                    }
                 };
                 break;
             case ModelException modelException:
@@ -62,9 +63,9 @@ public class ExceptionHandlingMiddleware
                     Title = "Conflict",
                     Status = (int)status,
                     Errors = new List<ValidationErrorModel>
-                        {
-                            new ValidationErrorModel(modelException.Message, modelException.PropertyName, modelException.ErrorCode)
-                        }
+                    {
+                        new(modelException.Message, modelException.PropertyName, modelException.ErrorCode)
+                    }
                 };
                 break;
             case BackgroundJobClientException hangfireClientException:
@@ -74,9 +75,9 @@ public class ExceptionHandlingMiddleware
                     Title = "Hangfire Job Client Error",
                     Status = (int)status,
                     Errors = new List<ValidationErrorModel>
-                        {
-                            new ValidationErrorModel(hangfireClientException.Message)
-                        }
+                    {
+                        new(hangfireClientException.Message)
+                    }
                 };
                 break;
             case FirebaseAuthException firebaseAuthException:
@@ -86,9 +87,9 @@ public class ExceptionHandlingMiddleware
                     Title = "Firebase Auth Error",
                     Status = (int)status,
                     Errors = new List<ValidationErrorModel>
-                        {
-                            new ValidationErrorModel(firebaseAuthException.Message, "FirebaseAuth", "FirebaseAuthError")
-                        }
+                    {
+                        new(firebaseAuthException.Message, "FirebaseAuth", "FirebaseAuthError")
+                    }
                 };
                 break;
             default:
@@ -98,9 +99,9 @@ public class ExceptionHandlingMiddleware
                     Title = "Internal Server Error",
                     Status = (int)status,
                     Errors = new List<ValidationErrorModel>
-                        {
-                            new ValidationErrorModel("An unexpected error occurred.")
-                        }
+                    {
+                        new("An unexpected error occurred.")
+                    }
                 };
                 break;
         }

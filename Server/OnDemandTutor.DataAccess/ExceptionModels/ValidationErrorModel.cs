@@ -2,10 +2,6 @@
 
 public class ValidationErrorModel
 {
-    public string PropertyName { get; set; }
-    public string ErrorMessage { get; set; }
-    public string ErrorCode { get; set; }
-
     public ValidationErrorModel(string errorMessage, string propertyName = null, string errorCode = null)
     {
         PropertyName = propertyName;
@@ -13,4 +9,7 @@ public class ValidationErrorModel
         ErrorCode = errorCode;
     }
 
+    public string PropertyName { get; set; }
+    public string ErrorMessage { get; set; }
+    public string ErrorCode { get; set; }
 }

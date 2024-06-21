@@ -1,27 +1,28 @@
-﻿namespace OnDemandTutor.Models
+﻿namespace OnDemandTutor.Models;
+
+public enum RecordStatus
 {
-    public enum RecordStatus
-    {
-        Active,
-        Inactive,
-        Deleted,
-    }
+    Active,
+    Inactive,
+    Deleted
+}
 
-    public interface IBaseEntity { }
+public interface IBaseEntity
+{
+}
 
-    public abstract class BaseEntityEmpty : IBaseEntity
-    {
-        public int Id { get; set; }
-    }
+public abstract class BaseEntityEmpty : IBaseEntity
+{
+    public int Id { get; set; }
+}
 
-    public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
-    {
-        public DateTime CreatedDate { get; set; }
+public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
+{
+    public DateTime CreatedDate { get; set; }
 
-        public DateTime UpdatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
 
-        public DateTime DeletedDate { get; set; }
+    public DateTime DeletedDate { get; set; }
 
-        public RecordStatus RecordStatus { get; set; }
-    }
+    public RecordStatus RecordStatus { get; set; }
 }

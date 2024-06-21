@@ -1,9 +1,8 @@
-﻿namespace OnDemandTutor.Models.Enum
+﻿namespace OnDemandTutor.Models.Enum;
+
+public enum PaymentStatus
 {
-    public enum PaymentStatus
-    {
-        Pending,
-        Success,
-        Failed,
-    }
+    Pending,
+    Success,
+    Failed
 }

@@ -1,6 +1,5 @@
-﻿namespace OnDemandTutor.BusinessLogic.Interfaces.Slot
+﻿namespace OnDemandTutor.BusinessLogic.Interfaces.Slot;
+
+public interface ISlotServices
 {
-    public interface ISlotServices
-    {
-    }
 }

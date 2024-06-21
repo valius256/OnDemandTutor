@@ -1,15 +1,14 @@
-﻿using OnDemandTutor.Models.Dtos;
+﻿using System.Security.Claims;
+using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
-using System.Security.Claims;
 
-namespace OnDemandTutor.BusinessLogic.Interfaces.Auth
+namespace OnDemandTutor.BusinessLogic.Interfaces.Auth;
+
+public interface IAuthServices
 {
-    public interface IAuthServices
-    {
-        Task<AuthResponseDto> Login(LoginDtos loginDto);
-        Task<string> LoginWithFireBase(LoginDtos loginDto);
-        Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
-        Task<string> ForgotPassword(string email);
-        Task<bool> DeleteUserAsync(string? email);
-    }
+    Task<AuthResponseDto> Login(LoginDtos loginDto);
+    Task<string> LoginWithFireBase(LoginDtos loginDto);
+    Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
+    Task<string> ForgotPassword(string email);
+    Task<bool> DeleteUserAsync(string? email);
 }
