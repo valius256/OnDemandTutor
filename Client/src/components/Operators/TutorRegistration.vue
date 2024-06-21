@@ -1,9 +1,8 @@
 <template>
     <div class="p-4 w-full">
         <div class="flex justify-end gap-2">
-            <input class="border p-1 rounded-md w-64" type="text" v-model="keyword_name" placeholder="Search by name">
-            <button class="p-1 px-4 bg-slate-100 hover:bg-slate-300 rounded-lg" @click="handleSearch">
-                <i class="fa fa-search	"></i>
+            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg" @click="handleSearch">
+                <i class="fa fa-search	"></i> Filter
             </button>
         </div>
         <table id="operator-table" class="table-auto overflow-x-auto">
@@ -12,21 +11,22 @@
                     <th class="w-1/12">Id</th>
                     <th class="w-2/12">Tên</th>
                     <th class="w-2/12">Ảnh</th>
-                    <th class="w-4/12">Đăng ký môn</th>
                     <th class="w-2/12">Email</th>
                     <th class="w-2/12">SDT</th>
-                    <th class="w-2/12">Hành động</th>
+                    <th class="w-1/12">Hành động</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody>                
                 <tr v-for="tutor in tutors" :key="tutor.id">
                     <td>{{ tutor.id }}</td>
                     <td><button class="font-bold underline text-blue-400">{{ tutor.name }}</button></td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
-                    <td><div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subjects)"></div></td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
                     <td class="flex flex-col gap-2">
+                        <button class="text-white rounded-lg bg-blue-500 hover:bg-blue-200 font-bold text-lg p-2"  @click="handleAccept(registration.id)">
+                            Chi Tiết
+                        </button>
                         <button class="text-white rounded-lg bg-lime-500 hover:bg-lime-200 font-bold text-lg p-2"  @click="handleAccept(registration.id)">
                             Duyệt
                         </button>
@@ -69,17 +69,6 @@ export default {
                     email: "abc@gmail.com",
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
-                    subjects : [
-                        {
-                            name : "Toán"
-                        },
-                        {
-                            name : "Tiếng Anh"
-                        },
-                        {
-                            name : "Vật Lý"
-                        },
-                    ]
                 },
                 {
                     id: 2,
@@ -88,17 +77,6 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Active",
-                    subjects : [
-                        {
-                            name : "Toán"
-                        },
-                        {
-                            name : "Tiếng Anh"
-                        },
-                        {
-                            name : "Vật Lý"
-                        },
-                    ]
                 },
                 {
                     id: 3,
@@ -107,14 +85,6 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Fired",
-                    subjects : [
-                        {
-                            name : "Toán"
-                        },
-                        {
-                            name : "Piano, organ"
-                        },
-                    ]
                 },
                 {
                     id: 4,
@@ -123,14 +93,6 @@ export default {
                     phone: "0987654321",
                     avatar: "/src/assets/noavatar.jpg",
                     status: "Left",
-                    subjects : [
-                        {
-                            name : "Tiếng Nhật"
-                        },
-                        {
-                            name : "Tiếng Anh"
-                        },
-                    ]
                 },
             ],
         }

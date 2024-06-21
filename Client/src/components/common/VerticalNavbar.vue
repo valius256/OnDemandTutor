@@ -19,7 +19,7 @@
                             <i class="fa fa-graduation-cap text-2xl mr-2"></i> Gia sư
                         </router-link>
                         <router-link to="/admin/accounts/operators" class="px-8 py-4 hover:bg-blue-800">
-                            <i class="fa fa-user-o text-2xl mr-2"></i> Vận hành
+                            <i class="fa fa-gear text-2xl mr-2"></i> Vận hành
                         </router-link>
                     </div>
                     <router-link to="/admin/subjects" class="px-2 py-4 hover:bg-blue-800">
