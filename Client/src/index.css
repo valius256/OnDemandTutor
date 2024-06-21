@@ -3,6 +3,28 @@
 @tailwind components;
 @tailwind utilities;
 
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.clickable-row {
+    cursor: pointer;
+}
 /* Styling for a table with the ID 'operator-table' */
 #operator-table {
     width: 100%;
@@ -13,7 +35,6 @@
     text-align: left;
     border: 1px solid #ddd;
     border-radius: 10px;
-    overflow: hidden;
 }
 
 #operator-table th, #operator-table td {
