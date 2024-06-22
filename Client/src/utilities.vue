@@ -58,7 +58,7 @@ export default {
     },
     sqlDateStringToSlashFormat(dateString) {
       const date = new Date(dateString)
-      return `${date.getDay()}/${date.getMonth() + 1}/${date.getFullYear()}`; // Concatenate the year, month, and day with hyphens
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`; // Concatenate the year, month, and day with hyphens
     },
     slashDateFormatToSqlDateString(dateStr) {
       const dateParts = dateStr.split("/");
