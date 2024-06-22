@@ -26,7 +26,7 @@ public class SubjectController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetSubjects([FromQuery] PagingModel<GetSubjectDtos> pagingModel)
     {
-        var result = await _subjectService.GetSubjectsAsync(pagingModel);
+        var result = await _subjectService.GetSubjects(pagingModel);
         return Ok(result);
     }
 
@@ -35,7 +35,7 @@ public class SubjectController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetSubjectById(int id)
     {
-        var result = await _subjectService.GetSubjectByIdAsync(id);
+        var result = await _subjectService.GetSubjectById(id);
         if (result == null)
         {
             return NotFound();
@@ -48,7 +48,7 @@ public class SubjectController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos createSubjectDto)
     {
-        var result = await _subjectService.CreateSubjectAsync(createSubjectDto);
+        var result = await _subjectService.CreateSubject(createSubjectDto);
         return CreatedAtAction(nameof(GetSubjectById), new { id = result.id}, result);
     }
 
@@ -63,13 +63,13 @@ public class SubjectController : ControllerBase
             return BadRequest();
         }
 
-        var existingSubject = await _subjectService.GetSubjectByIdAsync(id);
+        var existingSubject = await _subjectService.GetSubjectById(id);
         if (existingSubject == null)
         {
             return NotFound();
         }
 
-        await _subjectService.UpdateSubjectAsync(updateSubjectDto);
+        await _subjectService.UpdateSubject(updateSubjectDto);
         return NoContent();
     }
 
@@ -78,13 +78,13 @@ public class SubjectController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteSubject(int id)
     {
-        var existingSubject = await _subjectService.GetSubjectByIdAsync(id);
+        var existingSubject = await _subjectService.GetSubjectById(id);
         if (existingSubject == null)
         {
             return NotFound();
         }
 
-        await _subjectService.DeleteSubjectAsync(id);
+        await _subjectService.DeleteSubject(id);
         return NoContent();
     }
 }
