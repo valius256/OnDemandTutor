@@ -17,7 +17,7 @@ public class SlotController : ControllerBase
     {
         _slotService = slotService;
     }
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
