@@ -15,7 +15,7 @@ export default {
     props: {
         slots: Array,
         shiftZoomSize: Number,
-        getDistanceInMin : Object
+        getDistanceInMin : Function
     },
     methods: {
         formatTime(dateStr) {

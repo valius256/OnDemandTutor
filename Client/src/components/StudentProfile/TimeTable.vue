@@ -47,7 +47,7 @@
                             </div>
                         </td>
                         <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek">
-                            <slot-detail :slots="getSlotsByDay(day.specificDay)" :now="now"
+                            <slot-detail :slots="getSlotsByDay(day.specificDay)" 
                                 :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin"/>
                         </td>
                     </tr>
