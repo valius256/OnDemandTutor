@@ -95,14 +95,16 @@ export default {
     },
     methods: {
         async handleSelectedWeekChange() {
-            this.specDays = [];
             for (let i = 0; i < 7; i++) {
                 const nextDay = new Date(this.selectedWeek);
                 nextDay.setDate(this.selectedWeek.getDate() + i);
-                this.daysInWeek[i].specificDay = nextDay.toLocaleDateString()
+                const dateStr = this.toSqlDateString(nextDay)
+                console.log(dateStr)
+                this.daysInWeek[i].specificDay = this.sqlDateStringToSlashFormat(dateStr)
             }
             let endDate = new Date(this.selectedWeek)
             endDate.setDate(this.selectedWeek.getDate() + 7)
+            console.log(this.daysInWeek)
             //await this.fetchLessons(this.selectedWeek, endDate)
         },
         async handleSelectedYearChange() {
