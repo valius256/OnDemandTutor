@@ -16,19 +16,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<List<GetSubjectDtos>> GetAllSubjectsAsync()
+        public async Task<List<GetSubjectDtos>> GetAllSubjects()
         {
             var subjects = await _unitOfWork.SubjectRepository.ToListAsync();
             return subjects.Adapt<List<GetSubjectDtos>>();
         }
 
-        public async Task<GetSubjectDtos> GetSubjectByIdAsync(int id)
+        public async Task<GetSubjectDtos> GetSubjectById(int id)
         {
             var subject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == id);
             return subject?.Adapt<GetSubjectDtos>();
         }
 
-        public async Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectDto)
+        public async Task<CreateSubjectDtos> CreateSubject(CreateSubjectDtos subjectDto)
         {
             var subjectEntity = subjectDto.Adapt<Models.Models.Subject>();
             var createdSubjectEntity = await _unitOfWork.SubjectRepository.AddAsync(subjectEntity);
@@ -36,7 +36,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
             return createdSubjectEntity.Adapt<CreateSubjectDtos>();
         }
 
-        public async Task<UpdateSubjectDtos> UpdateSubjectAsync(UpdateSubjectDtos subjectDto)
+        public async Task<UpdateSubjectDtos> UpdateSubject(UpdateSubjectDtos subjectDto)
         {
             var existingSubject = await _unitOfWork.SubjectRepository.FindAsync(subjectDto.Id);
             if (existingSubject == null)
@@ -50,7 +50,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
             return updatedSubjectEntity.Adapt<UpdateSubjectDtos>();
         }
 
-        public async Task<bool> DeleteSubjectAsync(int id)
+        public async Task<bool> DeleteSubject(int id)
         {
             var existingSubject = await _unitOfWork.SubjectRepository.FindAsync(id);
             if (existingSubject == null)
@@ -85,7 +85,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Subject
 
         //    return dtoPagedResult;
         //}
-        public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> pagingModel)
+        public async Task<PagedResult<GetSubjectDtos>> GetSubjects(PagingModel<GetSubjectDtos> pagingModel)
         {
             var subjects = await _unitOfWork.SubjectRepository.PagingAsync(
                 pagingModel,
