@@ -46,8 +46,9 @@
                                 {{ formatTime(shift.hour) }} : {{ formatTime(shift.min) }}
                             </div>
                         </td>
-                        <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek"
-                            v-html="getDayDetail(day.specificDay)">
+                        <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek">
+                            <slot-detail :slots="getSlotsByDay(day.specificDay)" :now="now"
+                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin"/>
                         </td>
                     </tr>
                 </tbody>
@@ -57,7 +58,9 @@
 </template>
 
 <script>
+import SlotDetail from './SlotDetail.vue';
 export default {
+  components: { SlotDetail },
     name: "StudentTimeTable",
     props: ['slots'],
     data() {
@@ -165,46 +168,10 @@ export default {
             }
             this.getShifts()
         },
-        getDayDetail(date) {
-            const now = new Date()
-            const slots = this.getSlotsByDay(date)
-            let html = ""
-            for (var slot of slots) {
-                const startTime = new Date(slot.startTime);
-                const endTime = new Date(slot.endTime);
-                const startDistance = startTime - now;
-                const endDistance = endTime - now;
-                const durationInHour = (endDistance - startDistance) / 3600000;
-                const distanceInMin = (this.getDistanceInMin(this.shiftZoomSize))
-                const top = 8 + (startTime.getHours() + startTime.getMinutes() / 60) * 40 * 60 / distanceInMin
-                const height = durationInHour * 40 * 60 / distanceInMin
-                const style = "rounded-lg absolute w-full text-white text-center " + this.getSlotStyle(slot)
-                let content = "";
-                if (height > 45) {
-                    content = this.formatTime(startTime.getHours()) + ":" + this.formatTime(startTime.getMinutes()) + "<br>" + this.formatTime(endTime.getHours()) + ":" + this.formatTime(endTime.getMinutes())
-                }
-                html += `
-                    <div class="${style}" style="top: ${top}px; height: ${height}px;">
-                        ${content}
-                    </div>`
-            }
-            return html
-        },
         getSlotsByDay(date) {
             const dateToCompare = (new Date(this.slashDateFormatToSqlDateString(date)).getDate())
             return this.slots.filter(s => new Date(s.startTime).getDate() == dateToCompare)
         },
-        getSlotStyle(slot) {
-            let bg = "";
-            if (slot.paidStatus == "InDebt"){
-                bg = "bg-red-400"
-            } else if (slot.paidStatus == "Charged"){
-                bg = "bg-green-400"
-            } else {
-                bg = "bg-gray-400"
-            }
-            return bg + " flex justify-center items-center"
-        }
     },
     mounted() {
         this.refresh()

@@ -24,7 +24,7 @@
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Tính Năng Của Chúng Tôi</h2>
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">Gia sư chuyên môn cao</h3>
                 <p>
@@ -33,7 +33,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">
                   Sắp xếp lịch học linh hoạt
@@ -44,7 +44,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div v class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">Giá cả phải chăng</h3>
                 <p>
@@ -61,7 +61,7 @@
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">1. Đăng ký</h3>
                 <p>
@@ -70,7 +70,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">2. Chọn Gia Sư</h3>
                 <p>
@@ -79,7 +79,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">3. Bắt Đầu Học</h3>
                 <p>
@@ -122,7 +122,7 @@
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Bạn Muốn Trở Thành Gia Sư?</h2>
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">1. Tạo tài khoản</h3>
                 <p>
@@ -131,7 +131,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">2. Cập nhật hồ sơ</h3>
                 <p>
@@ -140,7 +140,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex">
               <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-2xl font-bold mb-4">3. Bắt Đầu Dạy</h3>
                 <p>Bắt đầu làm việc dựa trên lịch dạy của bạn</p>
