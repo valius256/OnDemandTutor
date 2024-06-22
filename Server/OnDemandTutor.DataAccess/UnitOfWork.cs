@@ -36,9 +36,9 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
 
     public ISubjectRepository SubjectRepository { get; }
 
-    public ISlotRepository SlotRepository { get;}
+    public ISlotRepository SlotRepository { get; }
 
-    public IBlogRepository BlogRepository { get;  }
+    public IBlogRepository BlogRepository { get; }
 
 
     public Task MigrateAsync()

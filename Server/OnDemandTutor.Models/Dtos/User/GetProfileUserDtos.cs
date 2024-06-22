@@ -1,6 +1,6 @@
 ﻿using OnDemandTutor.Models.Enum;
 
-namespace OnDemandTutor.Models.Dtos;
+namespace OnDemandTutor.Models.Dtos.User;
 
 public class GetProfileUserDtos
 {
@@ -11,7 +11,7 @@ public class GetProfileUserDtos
     public required string Email { get; set; }
     public string? Address { get; set; }
 
-    public int? AvatarImageId { get; set; }
+    public string? AvatarImageUrl { get; set; }
 
     public string? Password { get; set; }
 

@@ -9,6 +9,5 @@ public class TutorSubject : IBaseEntity
 
     public int SubjectId { get; set; }
     public virtual Subject Subject { get; set; }
-
-    public TutorSubjectStatus TutorSubjectStatus { get; set; }
+    
 }

@@ -1,9 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.API.Middlesware;
-using OnDemandTutor.BusinessLogic.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
-using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
 
@@ -49,7 +45,7 @@ public class SubjectController : ControllerBase
     public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos createSubjectDto)
     {
         var result = await _subjectService.CreateSubject(createSubjectDto);
-        return CreatedAtAction(nameof(GetSubjectById), new { id = result.id}, result);
+        return CreatedAtAction(nameof(GetSubjectById), new { id = result.id }, result);
     }
 
     [HttpPut("{id}")]

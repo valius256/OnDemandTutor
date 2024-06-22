@@ -9,8 +9,7 @@ public class Subject : IBaseEntity
     public string Description { get; set; }
     public DateTime? CreateAt { get; set; }
     public bool Status { get; set; }
-    public int? ClassId { get; set; }
-    public int TutorDegreeId { get; set; }
+
 
     public virtual ICollection<TutorDegree> TutorDegree { get; set; } = new List<TutorDegree>();
     public virtual ICollection<Class> Class { get; set; } = new List<Class>();

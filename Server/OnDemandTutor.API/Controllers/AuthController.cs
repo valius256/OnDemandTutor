@@ -6,6 +6,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Dtos.Register;
+using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.API.Controllers;
 

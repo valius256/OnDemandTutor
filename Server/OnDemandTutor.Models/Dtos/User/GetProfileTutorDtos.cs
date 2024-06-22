@@ -1,12 +1,13 @@
 ﻿using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.User;
 
 public class GetProfileTutorDtos : GetProfileUserDtos
 {
-    public string? DegreeIdentityUrl { get; set; }
-    public string? AvatarImageUrl { get; set; }
-    public string? IdentityCardUrl { get; set; }
+    public string? IdCardImageUrl { get; set; }
     public string? ScheduleDescription { get; set; }
-    public TutorSubjectStatus? TutorSubjectStatus { get; set; }
+    public TutorSubjectDegreeStatus? TutorSubjectDegreeStatus { get; set; }
+    public virtual TutorDegree Degrees { get; set; }
+
 }

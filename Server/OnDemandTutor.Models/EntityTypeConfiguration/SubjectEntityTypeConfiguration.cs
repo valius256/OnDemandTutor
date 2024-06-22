@@ -9,7 +9,7 @@ public class SubjectEntityTypeConfiguration : IEntityTypeConfiguration<Subject>
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
         builder.HasKey(s => s.Id);
-
+        builder.Property(s => s.Id).ValueGeneratedOnAdd();
         // Define properties
         builder.Property(s => s.Name).IsRequired().HasMaxLength(100);
         builder.Property(s => s.SubjectType).IsRequired().HasMaxLength(50);

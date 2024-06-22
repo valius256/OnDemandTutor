@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Enum;
 
-public enum TutorSubjectStatus
+public enum TutorSubjectDegreeStatus
 {
     Pending, // đang chờ duyệt bằng cấp
     Approved, // đã được duyệt bằng cấp

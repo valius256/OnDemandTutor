@@ -11,17 +11,19 @@ public class User : IBaseEntity
     public string? Phone { get; set; }
     public required string Email { get; set; }
     public string? Address { get; set; }
-    public string? AvatarImageId { get; set; }
+    public string? AvatarImageUrl { get; set; }
     public DateTime? Dob { get; set; }
     public RoleStatus Role { get; set; }
     public decimal? Balance { get; set; }
     public decimal? TutorFeePerHour { get; set; }
     public double? Rating { get; set; }
-    public string? DegreeImageId { get; set; }
-    public string? IdCardImageID { get; set; }
+    public string? IdCardImageUrl { get; set; }
     public string? ScheduleDesciption { get; set; }
     public required string Password { get; set; }
-
+    public  Sex Sex { get; set; }
+    
+    
+    // for relationship
     public virtual ICollection<Blog> BlogCreateBy { get; set; } = new List<Blog>();
     public virtual ICollection<Blog> BlogUpdateBy { get; set; } = new List<Blog>();
     public virtual ICollection<FAQ> FAQs { get; set; } = new List<FAQ>();
