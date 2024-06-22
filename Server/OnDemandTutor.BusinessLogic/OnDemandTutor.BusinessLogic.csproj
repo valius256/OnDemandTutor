@@ -26,6 +26,16 @@
     <ItemGroup>
         <Folder Include="Services\Slot\" />
         <Folder Include="Services\Sending\" />
+        <Folder Include="Services\Blog\" />
+        <Folder Include="Services\Subject\" />
+        <Folder Include="Interfaces\Subject\" />
+        <Folder Include="Interfaces\Blog\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Services\Blog\" />
+      <None Remove="Services\Subject\" />
+      <None Remove="Interfaces\Subject\" />
+      <None Remove="Interfaces\Blog\" />
+    </ItemGroup>
 </Project>

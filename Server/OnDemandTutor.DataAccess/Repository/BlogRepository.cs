@@ -5,11 +5,11 @@ using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.DataAccess.Repository
 {
-	public class SubjectRepository : GenericRepository<Subject>, ISubjectRepository
+	public class BlogRepository : GenericRepository<Blog>, IBlogRepository
     {
-		public SubjectRepository(ApplicationDbContext context) : base(context)
+        public BlogRepository(ApplicationDbContext context) : base(context)
         {
-		}
-	}
+        }
+    }
 }
 

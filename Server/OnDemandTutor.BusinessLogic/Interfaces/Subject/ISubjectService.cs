@@ -1,15 +1,19 @@
-﻿using OnDemandTutor.Models.Dtos.Subject;
-using OnDemandTutor.Models.RequestModel.Subject;
+﻿using System;
+using OnDemandTutor.Models.Dtos.Subject;
+using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.BusinessLogic.Interfaces;
-
-public interface ISubjectService
+namespace OnDemandTutor.BusinessLogic.Interfaces.Subject
 {
-    Task<bool> CheckSubjectExists(string subjectName);
-    Task<GetSubjectDtos> GetSubjectByCode(int code);
-    Task<GetSubjectDtos> GetSubjectByName(string name);
-    Task<IEnumerable<GetSubjectDtos>> GetSubjectsByCategory(string category);
-    Task<bool> IsSubjectActive(int subjectId);
-    Task<IEnumerable<GetSubjectDtos>> SearchSubjectsByName(string name);
-    Task UpdateSubjectDescription(SubjectRequestModel requset);
+	public interface ISubjectService
+	{
+        Task<List<GetSubjectDtos>> GetAllSubjects();
+        Task<GetSubjectDtos> GetSubjectByIdAsync(int id);
+        Task<CreateSubjectDtos> CreateSubject(CreateSubjectDtos subjectDto);
+        Task<UpdateSubjectDtos> UpdateSubject(UpdateSubjectDtos subjectDto);
+        Task<bool> DeleteSubjectAsync(int id);
+        Task<List<GetSubjectDtos>> SearchSubjectsByName(string name);
+        Task<PagedResult<GetSubjectDtos>> GetSubjects(PagingModel<GetSubjectDtos> pagingModel);
+
+    }
 }
+
