@@ -2,6 +2,7 @@
 using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models.Dtos.Slot;
@@ -29,11 +30,21 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public async Task<GetSlotsDtos> GetSlotByIdAsync(int id)
         {
-            return await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
+            var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
+            if ( slot is null)
+            {
+                throw new BadRequestException("Slot not found");
+            }
+            return slot ;
         }
 
         public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
         {
+            var existedSlotID = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == slotDto.Id);
+            if (existedSlotID != null)
+            {
+                throw new ModelException("Slot", $"{existedSlotID.Id},already exited, please Try again", "The id is exsited");
+            }
             var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
 
             // Add the new Slot entity to repository
@@ -48,6 +59,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public async Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto)
         {
             var slot = slotDto.Adapt<UpdateSlotDtos>();
+            if (slot == null)
+            {
+                throw new NotFoundException($"Slot with ID {slotDto.Id} not found.");
+            }
             var updatedSlot = await _unitOfWork.SlotRepository.UpdateSlotAsync(slot);
             await _unitOfWork.SaveChangesAsync();
             return updatedSlot.Adapt<UpdateSlotDtos>();
@@ -57,6 +72,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
             await _unitOfWork.SaveChangesAsync();
+            if (!isDeleted)
+            {
+                throw new NotFoundException($"Slot with ID {id} not found.");
+            }
             return isDeleted;
         }
     }

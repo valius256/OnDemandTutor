@@ -1,53 +1,101 @@
-﻿using OnDemandTutor.BusinessLogic.Interfaces;
+﻿
+using System;
+using Mapster;
+using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Subject;
-using OnDemandTutor.Models.RequestModel.Subject;
+using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.BusinessLogic.Services.Subject;
-
-public class SubjectService : ISubjectService
+namespace OnDemandTutor.BusinessLogic.Services.Subject
 {
-    private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-
-    public SubjectService(IUnitOfWorkRepository unitOfWorkRepository)
+	public class SubjectService : ISubjectService
     {
-        _unitOfWorkRepository = unitOfWorkRepository;
-    }
+        private readonly IUnitOfWorkRepository _unitOfWork;
 
-    public async Task<bool> CheckSubjectExists(string subjectName)
-    {
-        return await _unitOfWorkRepository.SubjectRepository.CheckSubjectExists(subjectName);
-    }
+        public SubjectService(IUnitOfWorkRepository unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+        public async Task<List<GetSubjectDtos>> GetAllSubjectsAsync()
+        {
+            var subjects = await _unitOfWork.SubjectRepository.ToListAsync();
+            return subjects.Adapt<List<GetSubjectDtos>>();
+        }
 
-    public async Task<GetSubjectDtos> GetSubjectByCode(int code)
-    {
-        return await _unitOfWorkRepository.SubjectRepository.GetSubjectByCode(code);
-    }
+        public async Task<GetSubjectDtos> GetSubjectByIdAsync(int id)
+        {
+            var subject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == id);
+            return subject?.Adapt<GetSubjectDtos>();
+        }
+
+        public async Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectDto)
+        {
+            var subjectEntity = subjectDto.Adapt<Models.Models.Subject>();
+            var createdSubjectEntity = await _unitOfWork.SubjectRepository.AddAsync(subjectEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return createdSubjectEntity.Adapt<CreateSubjectDtos>();
+        }
+
+        public async Task<UpdateSubjectDtos> UpdateSubjectAsync(UpdateSubjectDtos subjectDto)
+        {
+            var existingSubject = await _unitOfWork.SubjectRepository.FindAsync(subjectDto.Id);
+            if (existingSubject == null)
+            {
+                throw new ArgumentException("Subject not found");
+            }
+
+            existingSubject = subjectDto.Adapt(existingSubject);
+            var updatedSubjectEntity = _unitOfWork.SubjectRepository.Update(existingSubject);
+            await _unitOfWork.SaveChangesAsync();
+            return updatedSubjectEntity.Adapt<UpdateSubjectDtos>();
+        }
+
+        public async Task<bool> DeleteSubjectAsync(int id)
+        {
+            var existingSubject = await _unitOfWork.SubjectRepository.FindAsync(id);
+            if (existingSubject == null)
+            {
+                throw new ArgumentException("Subject not found");
+            }
+
+            _unitOfWork.SubjectRepository.Remove(existingSubject);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<GetSubjectDtos>> SearchSubjectsByName(string name)
+        {
+            var subjects = await _unitOfWork.SubjectRepository.WhereAsync(s => s.Name.Contains(name));
+            return subjects.Adapt<List<GetSubjectDtos>>();
+        }
+        //public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> pagingModel)
+        //{
+        //    // Fetch the paginated data from the repository
+        //    var pagedResult = await _unitOfWork.SubjectRepository.PagingAsync(pagingModel);
+
+        //    // Use Mapster to map the entities to DTOs
+        //    var dtoPagedResult = new PagedResult<GetSubjectDtos>
+        //    {
+        //        Items = pagedResult.Items.Adapt<List<GetSubjectDtos>>(),
+        //        TotalCount = pagedResult.TotalCount,
+        //        CurrentPage = pagedResult.CurrentPage,
+        //        PageSize = pagedResult.PageSize,
+        //        TotalPages = pagedResult.TotalPages
+        //    };
+
+        //    return dtoPagedResult;
+        //}
+        public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> pagingModel)
+        {
+            var subjects = await _unitOfWork.SubjectRepository.PagingAsync(
+                pagingModel,
+                x => true, // Add your predicate here if needed
+                entities => entities.Adapt<List<GetSubjectDtos>>());
+
+            return subjects;
+        }
 
 
-    public Task<GetSubjectDtos> GetSubjectByName(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<GetSubjectDtos>> GetSubjectsByCategory(string category)
-    {
-        return await _unitOfWorkRepository.SubjectRepository.GetSubjectsByCategory(category);
-    }
-
-    public async Task<bool> IsSubjectActive(int subjectId)
-    {
-        return await _unitOfWorkRepository.SubjectRepository.IsSubjectActive(subjectId);
-    }
-
-    public async Task<IEnumerable<GetSubjectDtos>> SearchSubjectsByName(string name)
-    {
-        return await _unitOfWorkRepository.SubjectRepository.SearchSubjectsByName(name);
-    }
-
-    public async Task UpdateSubjectDescription(SubjectRequestModel requset)
-    {
-        await _unitOfWorkRepository.SubjectRepository.UpdateSubjectDescription(requset);
-        await _unitOfWorkRepository.SaveChangesAsync();
     }
 }
+

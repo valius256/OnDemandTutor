@@ -26,9 +26,13 @@
     <ItemGroup>
         <Folder Include="Migrations\" />
         <Folder Include="Dtos\Slot\" />
+        <Folder Include="Dtos\Blog\" />
+        <Folder Include="Dtos\Subject\" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Dtos\Slot\" />
+      <None Remove="Dtos\Blog\" />
+      <None Remove="Dtos\Subject\" />
     </ItemGroup>
 </Project>
