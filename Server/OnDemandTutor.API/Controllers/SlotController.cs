@@ -23,15 +23,10 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
     public async Task<IActionResult> GetSlots([FromQuery] PagingModel<GetSlotsDtos> pagingModel)
     {
-        try
-        {
+      
             var slots = await _slotService.GetSlotsAsync(pagingModel);
             return Ok(slots);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        
     }
 
     [Authorize]
@@ -40,19 +35,13 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> GetSlotById(int id)
     {
-        try
-        {
             var slot = await _slotService.GetSlotByIdAsync(id);
             if (slot == null)
             {
                 return NotFound();
             }
             return Ok(slot);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+     
     }
 
     [Authorize]
@@ -61,15 +50,9 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(CreateSlotsDtos), 200)]
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
     {
-        try
-        {
-            var createdSlot = await _slotService.CreateSlotAsync(slotDto);
+          var createdSlot = await _slotService.CreateSlotAsync(slotDto);
             return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        
     }
 
     [Authorize]
@@ -78,9 +61,7 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(UpdateSlotDtos), 200)]
     public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDtos slotDto)
     {
-        try
-        {
-            if (id != slotDto.Id)
+         if (id != slotDto.Id)
             {
                 return BadRequest("ID mismatch between route parameter and request body.");
             }
@@ -90,11 +71,7 @@ public class SlotController : ControllerBase
                 return NotFound();
             }
             return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+      
     }
 
     [Authorize]
@@ -103,18 +80,12 @@ public class SlotController : ControllerBase
     [ProducesResponseType(204)]
     public async Task<IActionResult> DeleteSlot(int id)
     {
-        try
-        {
-            var isDeleted = await _slotService.DeleteSlotAsync(id);
+          var isDeleted = await _slotService.DeleteSlotAsync(id);
             if (!isDeleted)
             {
                 return NotFound();
             }
             return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+     
     }
 }
