@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 
 namespace OnDemandTutor.API.Controllers;
@@ -15,7 +16,8 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload(string uid, string fileName, IFormFile file)
+    [Authorize]
+    public async Task<IActionResult> Upload(string fileName, IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("File is empty");
@@ -23,13 +25,14 @@ public class UploadController : ControllerBase
         // Upload image to Firebase Storage and get the URL
         using (var stream = file.OpenReadStream())
         {
-            var imageUrl = await _firebaseUploadServices.UploadImageAsync(uid, fileName, stream);
+            var imageUrl = await _firebaseUploadServices.UploadImageAsync(HttpContext.User, fileName, stream);
             return Ok(imageUrl);
         }
     }
 
 
     [HttpPost("get-image-list")]
+    [Authorize]
     public async Task<IActionResult> Load(string fireBaseId)
     {
         // Get the URL from Firebase Storage Database

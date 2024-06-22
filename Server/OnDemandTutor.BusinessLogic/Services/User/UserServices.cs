@@ -9,7 +9,9 @@ using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -56,9 +58,13 @@ public class UserServices : IUserServices
 
         var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
 
+        // Hash the password
+        // using var hmac = new HMACSHA512();
+        // var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDtos.Password)));
         var mappedUser = registerDtos.Adapt<Models.Models.User>();
         mappedUser.Role = RoleStatus.Customer;
         mappedUser.FireBaseid = fireBaseAuthId;
+        // mappedUser.Password = passwordHash; // open when present 
         await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
         await _unitOfWorkRepository.SaveChangesAsync();
@@ -81,21 +87,50 @@ public class UserServices : IUserServices
     }
 
 
-    public async Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos)
+    public async Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal userPrincipal)
     {
-        var userExist =
-            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerTutorDtos.Email);
-        if (userExist != null) throw new ModelException(userExist.Email, "Email is already existed");
+        var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.FireBaseid == userUid);
 
-        var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerTutorDtos);
-        var mappedUser = registerTutorDtos.Adapt<Models.Models.User>();
-        mappedUser.Role = RoleStatus.Tutor;
-        mappedUser.FireBaseid = fireBaseAuthId;
-        await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
+        if (userInDb == null)
+        {
+            throw new Exception("User not found.");
+
+        }
+        userInDb.AvatarImageUrl = registerTutorDtos.AvatarImageurl;
+        userInDb.ScheduleDesciption = registerTutorDtos.ScheduleDescription;
+        userInDb.IdCardImageUrl = registerTutorDtos.IdentityCardUrl;
+        userInDb.Role = RoleStatus.Tutor;
+        if (userInDb.AvatarImageUrl == registerTutorDtos.AvatarImageurl)
+        {
+            throw new ModelException("AvatarImageUrl", "AvatarImageUrl is dupplicated", "AvatarImageUrl is dupplicated");
+        }
+        
+        if(userInDb.IdCardImageUrl == registerTutorDtos.IdentityCardUrl) throw new ModelException("IdCardImageUrl", "IdCardImageUrl is dupplicated", "IdCardImageUrl is dupplicated");
+        _unitOfWorkRepository.UserRepository.Update(userInDb);
+        // Assign degrees to the tutor
+        foreach (var degreeDto in registerTutorDtos.Degrees)
+        {
+            if (userInDb.TutorDegrees.Any(ld => ld.DegreeImgUrl == degreeDto.DegreeImgUrl))
+            {
+                throw new Exception("Degree image is duplicated, add another link");
+            }
+            var tutorDegree = new TutorDegree
+            {
+                TutorId = userInDb.Id,
+                DegreeNumber = degreeDto.DegreeNumber,
+                SubjectId = degreeDto.SubjectId,
+                IssuranceDate = degreeDto.IssuranceDate, 
+                DegreeImgUrl = degreeDto.DegreeImgUrl,
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
+            };
+            userInDb.TutorDegrees.Add(tutorDegree);
+        }
+
         await _unitOfWorkRepository.SaveChangesAsync();
 
-        var rs = mappedUser.Adapt<GetProfileTutorDtos>();
-        return rs;
+        var result = userInDb.Adapt<GetProfileTutorDtos>();
+        return result;
     }
 
     public async Task<GetProfileUserDtos> GetUserProfileById(int id)
@@ -129,11 +164,7 @@ public class UserServices : IUserServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-
-    public Task<bool> ApprovedTutorAsync(TutorRegistrationRequestDtos tutorsRequest)
-    {
-        return Task.FromResult(true);
-    }
+    
 
     public async Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList()
     {
@@ -145,5 +176,19 @@ public class UserServices : IUserServices
     {
         var rs = await _unitOfWorkRepository.UserRepository.GetTutorListAsync(request);
         return rs;
+    }
+
+    public async Task ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
+    {
+        var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+        var userInDb = await _unitOfWorkRepository.UserRepository.GetTutorRegistration(userUid);
+        var record = userInDb.TutorDegrees.FirstOrDefault(td => td.Id == requestDtos.SubjectDegreeId);
+
+        if (requestDtos.Status == TutorSubjectDegreeStatus.Approved)
+            record.TutorSubjectStatus = TutorSubjectDegreeStatus.Approved;
+        else
+            record.TutorSubjectStatus = TutorSubjectDegreeStatus.Approved;
+      
+        _unitOfWorkRepository.SaveChangesAsync();
     }
 }

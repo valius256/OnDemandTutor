@@ -1,4 +1,5 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using System.Security.Claims;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
@@ -14,11 +15,12 @@ public class FirebaseUploadServices : IFirebaseUploadServices
     private readonly string StorageBucketName = "ondemandtutor-a049e.appspot.com";
 
 
-    public async Task<string> UploadImageAsync(string uid, string fileName, Stream fileStream)
+    public async Task<string> UploadImageAsync(ClaimsPrincipal claimsPrincipal, string fileName, Stream fileStream)
     {
         try
         {
-            var imageUrl = await UploadImageToFirebaseStorage(uid, fileName, fileStream);
+            var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+            var imageUrl = await UploadImageToFirebaseStorage(userUid, fileName, fileStream);
             return imageUrl;
         }
         catch (Exception ex)

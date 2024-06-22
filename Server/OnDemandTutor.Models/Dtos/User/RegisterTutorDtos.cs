@@ -1,13 +1,23 @@
-﻿using OnDemandTutor.Models.Dtos.Register;
+﻿using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.User;
 
-public class RegisterTutorDtos : RegisterDtos
+public class RegisterTutorDtos
 {
-    public string? DegreeIdentityId { get; set; }
-    public string? AvatarImageId { get; set; }
-    public string? IdentityCardId { get; set; }
+    public string? AvatarImageurl { get; set; }
+    public string? IdentityCardUrl { get; set; }
     public string? ScheduleDescription { get; set; }
-    public string DiplomaNumber { get; set; }
-    public DateOnly IssuanceDate { get; set; }
+    
+    public List<TutorDegreeDto> Degrees { get; set; } = new();
+}
+
+public class TutorDegreeDto
+{
+    public string? DegreeImgUrl { get; set; }
+    public string? Description { get; set; }
+    public int SubjectId { get; set; }
+    public string DegreeNumber { get; set; }
+    public TutorSubjectDegreeStatus Status { get; set; } = TutorSubjectDegreeStatus.Pending;
+    public DateOnly IssuranceDate { get; set; }
 }

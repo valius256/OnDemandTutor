@@ -57,7 +57,8 @@ public class JwtProviderServices : IJwtProviderServices
                     Password = password,
                     FireBaseid = authToken.LocalId,
                     FirstName = authToken.DisplayName,
-                    Role = RoleStatus.Customer
+                    Role = RoleStatus.Customer,
+                    Sex =  Sex.Male
                 });
                 await _unitOfWorkRepository.SaveChangesAsync();
             }

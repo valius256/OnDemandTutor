@@ -45,7 +45,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
     public async Task<IActionResult> RegisterTutor([FromBody] RegisterTutorDtos body)
     {
-        var result = await _userService.RegisterTutor(body);
+        var result = await _userService.RegisterTutor(body, HttpContext.User);
         return Ok(result);
     }
 
@@ -53,10 +53,11 @@ public class UserController : ControllerBase
     [HttpPost("approve-tutor-registration")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-    public async Task<IActionResult> ApprovedTutorRegis([FromBody] RegisterTutorDtos body)
+    public async Task<IActionResult> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
-        var result = await _userService.RegisterTutor(body);
-        return Ok(result);
+        await _userService.ApprovedTutorRegistration(body, HttpContext.User);
+        // return Ok(result);
+        return Ok();
     }
 
     [Authorize]
@@ -65,8 +66,9 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
     public async Task<IActionResult> UpdateProfile([FromBody] RegisterTutorDtos body)
     {
-        var result = await _userService.RegisterTutor(body);
-        return Ok(result);
+        // var result = await _userService.RegisterTutor(body);
+        // return Ok(result);
+        return Ok();
     }
 
     [Authorize]
