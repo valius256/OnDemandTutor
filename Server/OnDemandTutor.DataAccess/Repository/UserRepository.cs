@@ -22,10 +22,22 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .ToListAsync();
     }
 
+    public async Task<User> GetTutorRegistration(string firebaseId)
+    {
+        var rs = await dbSet
+            .Where(u => u.Role == RoleStatus.Tutor && u.FireBaseid == firebaseId)
+            .Include(u => u.TutorDegrees)
+            .Include(u => u.TutorSubjects)
+            .FirstOrDefaultAsync();
+        return rs;
+    }
+
     public async Task<PagedResult<TutorSimpleProfileDtos>> GetTutorListAsync(
         PagingModel<TutorSimpleProfileRequest> request)
     {
-        var rs = await dbSet.Where(ld => ld.Role == RoleStatus.Tutor)
+        var rs = await dbSet
+            .Include(ld => ld.TutorSubjects)
+            .Where(ld => ld.Role == RoleStatus.Tutor)
             .ToPagingAsync<TutorSimpleProfileDtos, User>(request.Page, request.Limit);
         return rs;
     }

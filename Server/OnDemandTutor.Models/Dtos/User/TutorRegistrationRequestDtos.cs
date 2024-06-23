@@ -1,13 +1,14 @@
-﻿namespace OnDemandTutor.Models.Dtos.User;
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Dtos.User;
 
 public class TutorRegistrationRequestDtos
 {
-    public string diplomaNumber;
-    public string IdCardNumber;
-    public DateOnly issuanceDate;
-    public string? tutorAddress;
-    public string tutorEmail;
-    public int tutorId;
-    public string tutorName;
-    public string? tutorPhoneNumber;
+   public int SubjectDegreeId { get; set; } 
+   public string DegreeImgUrl { get; set; }
+   public string DegreeNumber { get; set; }
+   public DateOnly IssuranceDate { get; set; }
+   public int SubjectId { get; set; }
+   public string? Description { get; set; }
+   public TutorSubjectDegreeStatus Status { get; set; } 
 }

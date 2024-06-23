@@ -1,7 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -9,6 +6,10 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
+using OnDemandTutor.Models.Dtos.User;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -49,7 +50,7 @@ public class AuthServices : IAuthServices
     {
         if (claimsPrincipal.Identities == null) throw new BadRequestException("User not Authenticate");
 
-        var userId = claimsPrincipal.FindFirst(c => c.Type == "id")?.Value;
+        var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
         if (userId.IsNullOrEmpty()) throw new BadRequestException("User not found");
 
 

@@ -12,8 +12,8 @@ using OnDemandTutor.Models;
 namespace OnDemandTutor.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240619055835_Tutor_Degree_Subject_link")]
-    partial class Tutor_Degree_Subject_link
+    [Migration("20240622030100_Initial_Add")]
+    partial class Initial_Add
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,9 +270,6 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ClassId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("CreateAt")
                         .HasColumnType("datetime2");
 
@@ -296,9 +293,6 @@ namespace OnDemandTutor.Models.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("TutorDegreeId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -358,17 +352,26 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DegreeImgID")
-                        .HasColumnType("int");
+                    b.Property<string>("DegreeImgUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DegreeNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("IssuranceDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TutorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TutorSubjectStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -432,14 +435,12 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AvatarImageId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AvatarImageUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<decimal?>("Balance")
                         .HasColumnType("money");
-
-                    b.Property<string>("DegreeImageId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Dob")
                         .HasColumnType("datetime2");
@@ -454,12 +455,12 @@ namespace OnDemandTutor.Models.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("IdCardImageID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("IdCardImageUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
@@ -483,8 +484,10 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<string>("ScheduleDesciption")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
+                    b.Property<int>("Sex")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<decimal?>("TutorFeePerHour")
                         .HasColumnType("money");

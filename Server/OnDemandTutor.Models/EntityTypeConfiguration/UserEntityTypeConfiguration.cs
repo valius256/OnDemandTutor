@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.EntityTypeConfiguration;
@@ -10,7 +11,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.FirstName).IsRequired().HasMaxLength(50);
+        builder.Property(x => x.FirstName).IsRequired(false).HasMaxLength(50);
         builder.Property(x => x.LastName).IsRequired(false).HasMaxLength(50);
         builder.Property(x => x.Email).IsRequired().HasMaxLength(50);
         builder.Property(x => x.Password).IsRequired().HasMaxLength(50);
@@ -19,10 +20,13 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(x => x.FireBaseid).IsUnique();
         builder.Property(x => x.Balance).HasColumnType("money").IsRequired(false);
         builder.Property(x => x.TutorFeePerHour).HasColumnType("money").IsRequired(false);
-
-
+        builder.Property(x => x.Sex).HasDefaultValue(Sex.Male).IsRequired();
+        builder.Property(x => x.AvatarImageUrl).HasMaxLength(1000);
+        builder.Property(x => x.IdCardImageUrl).HasMaxLength(1000);
+        
+        
         // Configure relationships
-        builder.HasMany(e => e.BlogCreateBy)
+        builder.HasMany(e => e.BlogCreateBy)    
             .WithOne(b => b.CreateBy)
             .HasForeignKey(b => b.CreateById)
             .OnDelete(DeleteBehavior.Restrict);

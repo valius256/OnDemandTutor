@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
+using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Auth;
 

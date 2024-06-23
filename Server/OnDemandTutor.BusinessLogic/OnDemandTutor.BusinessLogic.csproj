@@ -30,6 +30,10 @@
         <Folder Include="Services\Subject\" />
         <Folder Include="Interfaces\Subject\" />
         <Folder Include="Interfaces\Blog\" />
+        <Folder Include="Services\Class\" />
+        <Folder Include="Interfaces\Class\" />
+        <Folder Include="Interfaces\ConsultationRequest\" />
+        <Folder Include="Services\ConsultationRequest\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,5 +41,9 @@
       <None Remove="Services\Subject\" />
       <None Remove="Interfaces\Subject\" />
       <None Remove="Interfaces\Blog\" />
+      <None Remove="Services\Class\" />
+      <None Remove="Interfaces\Class\" />
+      <None Remove="Interfaces\ConsultationRequest\" />
+      <None Remove="Services\ConsultationRequest\" />
     </ItemGroup>
 </Project>

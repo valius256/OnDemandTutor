@@ -28,11 +28,15 @@
         <Folder Include="Dtos\Slot\" />
         <Folder Include="Dtos\Blog\" />
         <Folder Include="Dtos\Subject\" />
+        <Folder Include="Dtos\Class\" />
+        <Folder Include="Dtos\ConsultationRequestDtos\" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Dtos\Slot\" />
       <None Remove="Dtos\Blog\" />
       <None Remove="Dtos\Subject\" />
+      <None Remove="Dtos\Class\" />
+      <None Remove="Dtos\ConsultationRequestDtos\" />
     </ItemGroup>
 </Project>
