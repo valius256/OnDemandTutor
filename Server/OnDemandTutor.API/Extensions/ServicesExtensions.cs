@@ -10,11 +10,14 @@ using Newtonsoft.Json;
 using OnDemandTutor.API.Filter;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.BusinessLogic.Services.Blog;
+using OnDemandTutor.BusinessLogic.Services.Class;
+using OnDemandTutor.BusinessLogic.Services.ConsultationRequest;
 using OnDemandTutor.BusinessLogic.Services.Subject;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
@@ -39,7 +42,8 @@ public static class ServiceExtensions
         services.AddScoped<ISubjectRepository, SubjectRepository>();
         services.AddScoped<ISlotRepository, SlotRepository>();
         services.AddScoped<IBlogRepository, BlogRepository>();
-
+        services.AddScoped<IClassRepository, ClassRepository>();
+        services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
         services.AddProblemDetails();
         return services;
     }
@@ -49,6 +53,8 @@ public static class ServiceExtensions
         services.AddScoped<IUserServices, UserServices>();
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<IBlogService, BlogService>();
+        services.AddScoped<IClassService, ClassService>();
+        services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
         services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
         services.AddTransient<IMailService, MailService>();

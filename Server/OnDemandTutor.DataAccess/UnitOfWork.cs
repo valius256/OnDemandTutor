@@ -10,6 +10,8 @@ public interface IUnitOfWorkRepository
     public ISubjectRepository SubjectRepository { get; }
     public ISlotRepository SlotRepository { get; }
     public IBlogRepository BlogRepository { get; }
+    public IClassRepository ClassRepository { get; }
+    public IConsultationRequestRepository ConsultationRequestRepository { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync();
     Task MigrateAsync();
@@ -20,13 +22,16 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
     private readonly ApplicationDbContext _context;
 
     public UnitOfWorkRepository(ApplicationDbContext context, IUserRepository userRepository,
-        ISubjectRepository subjectRepository, ISlotRepository slotRepository, IBlogRepository blogRepository)
+        ISubjectRepository subjectRepository, ISlotRepository slotRepository, IBlogRepository blogRepository,
+        IClassRepository classRepository, IConsultationRequestRepository consultationRequestRepository)
     {
         _context = context;
         UserRepository = userRepository;
         SubjectRepository = subjectRepository;
         SlotRepository = slotRepository;
         BlogRepository = blogRepository;
+        ClassRepository = classRepository;
+        ConsultationRequestRepository = consultationRequestRepository;
     }
 
     public IUserRepository Users { get; }
@@ -40,6 +45,9 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
 
     public IBlogRepository BlogRepository { get; }
 
+    public IClassRepository ClassRepository { get; }
+
+    public IConsultationRequestRepository ConsultationRequestRepository { get; }
 
     public Task MigrateAsync()
     {
