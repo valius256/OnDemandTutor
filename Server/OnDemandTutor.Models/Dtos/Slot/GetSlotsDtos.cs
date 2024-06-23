@@ -1,0 +1,28 @@
+﻿using System;
+using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
+
+namespace OnDemandTutor.Models.Dtos.Slot
+{
+	public class GetSlotsDtos
+    {
+        public int Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public int CreateById { get; set; }
+        public DateTime EndTime { get; set; }
+        public string? TeachAddress { get; set; }
+        public int? ClassId { get; set; }
+        public int? SubjectId { get; set; }
+        public bool IsOnline { get; set; }
+        public int NumberOfStudents { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
+        public DateTime? ActualEndTime { get; set; }
+        public string Subject { get; set; }
+
+
+        // Navigation properties
+        public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>();
+        public virtual ICollection<Transaction> SlotTransaction { get; set; } = new List<Transaction>();
+    }
+}
+

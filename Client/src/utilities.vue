@@ -56,6 +56,10 @@ export default {
       const day = String(date.getDate()).padStart(2, "0"); // Get the day of the month and pad with leading zero if needed
       return `${year}-${month}-${day}`; // Concatenate the year, month, and day with hyphens
     },
+    sqlDateStringToSlashFormat(dateString) {
+      const date = new Date(dateString)
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`; // Concatenate the year, month, and day with hyphens
+    },
     slashDateFormatToSqlDateString(dateStr) {
       const dateParts = dateStr.split("/");
       if (dateParts[0].length == 1) {

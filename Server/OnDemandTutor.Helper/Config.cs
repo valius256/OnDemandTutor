@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 
-namespace OnDemandTutor.Helper
-{
-    public class MapperConfig : Profile
-    {
+namespace OnDemandTutor.Helper;
 
-    }
+public class MapperConfig : Profile
+{
 }

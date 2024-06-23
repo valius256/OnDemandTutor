@@ -9,7 +9,7 @@ public class SubjectEntityTypeConfiguration : IEntityTypeConfiguration<Subject>
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
         builder.HasKey(s => s.Id);
-
+        builder.Property(s => s.Id).ValueGeneratedOnAdd();
         // Define properties
         builder.Property(s => s.Name).IsRequired().HasMaxLength(100);
         builder.Property(s => s.SubjectType).IsRequired().HasMaxLength(50);
@@ -29,6 +29,11 @@ public class SubjectEntityTypeConfiguration : IEntityTypeConfiguration<Subject>
         builder.HasMany(s => s.Slots)
             .WithOne(sl => sl.Subject)
             .HasForeignKey(sl => sl.SubjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(s => s.TutorDegree)
+            .WithOne(s => s.Subject)
+            .HasForeignKey(s => s.SubjectId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

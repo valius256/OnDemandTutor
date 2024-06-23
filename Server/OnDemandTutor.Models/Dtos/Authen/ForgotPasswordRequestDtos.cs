@@ -1,7 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos.Authen
+﻿namespace OnDemandTutor.Models.Dtos.Authen;
+
+public class ForgotPasswordRequest
 {
-    public class ForgotPasswordRequest
-    {
-        public string Email { get; set; }
-    }
+    public string Email { get; set; }
 }

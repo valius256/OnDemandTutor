@@ -9,14 +9,20 @@ public class TutorDegreeEntityTypeConfiguration : IEntityTypeConfiguration<Tutor
     public void Configure(EntityTypeBuilder<TutorDegree> builder)
     {
         builder.HasKey(td => td.Id);
-
+        builder.Property(td => td.Id).ValueGeneratedOnAdd();
+        
         builder.Property(td => td.Description)
-            .IsRequired();
+            .IsRequired(false);
 
         // Configure relationship with User (Tutor)
         builder.HasOne(td => td.Tutor)
-               .WithMany(u => u.TutorDegrees)
-               .HasForeignKey(td => td.TutorId)
-               .OnDelete(DeleteBehavior.Restrict); // Adjust DeleteBehavior if needed
+            .WithMany(u => u.TutorDegrees)
+            .HasForeignKey(td => td.TutorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(td => td.Subject)
+            .WithMany(u => u.TutorDegree)
+            .HasForeignKey(t => t.SubjectId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

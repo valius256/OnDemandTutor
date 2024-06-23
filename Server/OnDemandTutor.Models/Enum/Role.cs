@@ -1,10 +1,9 @@
-﻿namespace OnDemandTutor.Models.Enum
+﻿namespace OnDemandTutor.Models.Enum;
+
+public enum RoleStatus
 {
-    public enum RoleStatus
-    {
-        Customer,
-        Tutor,
-        Operator,
-        Admin,
-    }
+    Customer,
+    Tutor,
+    Operator,
+    Admin
 }

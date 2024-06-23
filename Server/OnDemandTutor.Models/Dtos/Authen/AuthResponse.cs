@@ -1,7 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos
+﻿namespace OnDemandTutor.Models.Dtos;
+
+public class AuthResponseDto
 {
-    public class AuthResponseDto
-    {
-        public string Token { get; set; } = string.Empty;
-    }
+    public string Token { get; set; } = string.Empty;
 }

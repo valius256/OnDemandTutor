@@ -1,8 +1,7 @@
-﻿namespace OnDemandTutor.Models.Dtos.Authen
+﻿namespace OnDemandTutor.Models.Dtos.Authen;
+
+public class GetProfileRequestDtos
 {
-    public class GetProfileRequestDtos
-    {
-        public required string Email { get; set; }
-        public required string UserId { get; set; }
-    }
+    public required string Email { get; set; }
+    public required string UserId { get; set; }
 }

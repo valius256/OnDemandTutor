@@ -2,11 +2,9 @@ using Hangfire;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using OnDemandTutor.API;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.StartupExtension;
-using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models;
@@ -25,25 +23,25 @@ internal class Program
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-            ld => ld.MigrationsAssembly("OnDemandTutor.Models")));
+                ld => ld.MigrationsAssembly("OnDemandTutor.Models")));
 
         builder.Services.AddRepositories()
-                        .AddGeneralServices()
-                        .AddFireBaseServices()
-                        .AddFireBaseHttpClient()
-                        .AddControllersWithConfiguration()
-                        .AddCorsWithConfigurations()
-                        .AddSwaggerWithConfigurations()
-                        .AddFirebaseAuthentication(builder.Configuration)
-                        .AddMailConfiguration(builder.Configuration)
-                        .AddHangFireConfigurations(builder.Configuration);
+            .AddGeneralServices()
+            .AddFireBaseServices()
+            .AddFireBaseHttpClient()
+            .AddControllersWithConfiguration()
+            .AddCorsWithConfigurations()
+            .AddSwaggerWithConfigurations()
+            .AddFirebaseAuthentication(builder.Configuration)
+            .AddMailConfiguration(builder.Configuration)
+            .AddHangFireConfigurations(builder.Configuration);
 
         // Add global exception handler
         builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 
         builder.Services.AddAutoMapper(typeof(MapperConfig))
-                        //.AddAuthenticationService(builder.Configuration)
-                        .AddMapster();
+            //.AddAuthenticationService(builder.Configuration)
+            .AddMapster();
 
         // Register Mapster configurations
         var config = TypeAdapterConfig.GlobalSettings;
@@ -57,9 +55,7 @@ internal class Program
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             if (!dbContext.Database.CanConnect())
-            {
                 throw new DatabaseConnectionException("Cannot connect to the database");
-            }
         }
 
         // Configure Hangfire
@@ -67,7 +63,7 @@ internal class Program
         {
             DashboardTitle = "OnDemandTutor",
             DarkModeEnabled = true,
-            TimeZoneResolver = new DefaultTimeZoneResolver(),
+            TimeZoneResolver = new DefaultTimeZoneResolver()
         });
 
         // Enable processing Hangfire jobs

@@ -6,8 +6,7 @@
         <div class="mt-8 flex ">
             <router-link class="px-16 py-2 bg-gray-50 rounded-t-xl " to="/admin/accounts/tutors/list">Danh sách gia
                 sư</router-link>
-            <router-link class="px-16 py-2 bg-gray-50 rounded-t-xl" to="/admin/accounts/tutors/registration">Gia sư đăng
-                ký</router-link>
+            <router-link class="px-16 py-2 bg-gray-50 rounded-t-xl" to="/admin/accounts/tutors/registration">Xác thực gia sư</router-link>
         </div>
         <div class="rounded-b-xl shadow-lg p-2 ">
             <tutor-list v-if="$route.path == '/admin/accounts/tutors/list'"></tutor-list>
