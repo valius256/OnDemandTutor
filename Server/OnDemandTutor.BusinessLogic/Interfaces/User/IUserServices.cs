@@ -15,6 +15,7 @@ public interface IUserServices
     Task<GetProfileUserDtos> GetProfile(int? userId, string? email);
     Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
     Task<GetProfileUserDtos> GetUserProfileById(int id);
+    Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
 
     Task<bool> DeleteUserAsync(string? email);
 
@@ -22,6 +23,6 @@ public interface IUserServices
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
-    Task ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
+    Task<List<TutorRegistrationResponseDtos>> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
 
 }

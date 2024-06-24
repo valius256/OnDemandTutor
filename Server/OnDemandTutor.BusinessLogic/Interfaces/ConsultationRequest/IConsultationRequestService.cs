@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Security.Claims;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Paging;
 
@@ -11,6 +11,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces
         Task<GetConsultationRequestDtos> CreateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto);
         Task<GetConsultationRequestDtos> UpdateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto);
         Task<bool> DeleteConsultationRequestAsync(int id);
+        Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDtos requestDtos);
     }
 }
 

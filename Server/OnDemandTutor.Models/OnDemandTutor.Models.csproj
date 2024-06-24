@@ -29,7 +29,6 @@
         <Folder Include="Dtos\Blog\" />
         <Folder Include="Dtos\Subject\" />
         <Folder Include="Dtos\Class\" />
-        <Folder Include="Dtos\ConsultationRequestDtos\" />
     </ItemGroup>
 
     <ItemGroup>

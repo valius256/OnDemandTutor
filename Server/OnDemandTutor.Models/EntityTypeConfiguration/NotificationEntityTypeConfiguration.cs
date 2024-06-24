@@ -9,7 +9,7 @@ public class NotificationEntityTypeConfiguration : IEntityTypeConfiguration<Noti
     public void Configure(EntityTypeBuilder<Notification> builder)
     {
         builder.HasKey(n => n.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(n => n.Content)
             .IsRequired();
 

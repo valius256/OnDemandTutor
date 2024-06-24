@@ -22,13 +22,25 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .ToListAsync();
     }
 
-    public async Task<User> GetTutorRegistration(string firebaseId)
+    public async Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId)
     {
         var rs = await dbSet
-            .Where(u => u.Role == RoleStatus.Tutor && u.FireBaseid == firebaseId)
             .Include(u => u.TutorDegrees)
             .Include(u => u.TutorSubjects)
-            .FirstOrDefaultAsync();
+            .Where(u => u.Role == RoleStatus.Tutor && u.FireBaseid == firebaseId && u.TutorDegrees.Any(td => td.TutorSubjectStatus == TutorSubjectDegreeStatus.Pending)) // fetch record with pending
+             .Select(u => new TutorRegistrationResponseDtos
+             {
+                 UserName = u.FirstName + " " + u.LastName,
+                 Email = u.Email,
+                 DegreeImgUrl = u.TutorDegrees.FirstOrDefault().DegreeImgUrl,
+                 SubjectDegreeId = u.TutorDegrees.FirstOrDefault().Id,
+                 DegreeNumber = u.TutorDegrees.FirstOrDefault().DegreeNumber,
+                 SubjectId = u.TutorDegrees.FirstOrDefault().SubjectId,
+                 IssuranceDate = u.TutorDegrees.FirstOrDefault().IssuranceDate,
+                 Status = u.TutorDegrees.FirstOrDefault().TutorSubjectStatus
+             })
+             .AsNoTracking()
+            .ToListAsync();
         return rs;
     }
 
@@ -38,6 +50,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         var rs = await dbSet
             .Include(ld => ld.TutorSubjects)
             .Where(ld => ld.Role == RoleStatus.Tutor)
+            .AsNoTracking()
             .ToPagingAsync<TutorSimpleProfileDtos, User>(request.Page, request.Limit);
         return rs;
     }
