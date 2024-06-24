@@ -29,16 +29,7 @@ public class AuthServices : IAuthServices
         _jwtProviderServices = jwtProviderServices;
         _fireBaseAuthServices = fireBaseAuthServices;
     }
-
-    public async Task<AuthResponseDto> Login(LoginDtos loginDto)
-    {
-        var user = await _userServices.VerifyLogin(loginDto.Email, loginDto.Password);
-        return new AuthResponseDto
-        {
-            Token = CreateToken(user.Id, user.Role.ToString())
-        };
-    }
-
+    
     public async Task<string> LoginWithFireBase(LoginDtos loginDto)
     {
         var listUser = await _fireBaseAuthServices.GetAllUserRecord();
@@ -54,7 +45,7 @@ public class AuthServices : IAuthServices
         if (userId.IsNullOrEmpty()) throw new BadRequestException("User not found");
 
 
-        var user = await _userServices.GetUserProfileById(int.Parse(userId));
+        var user = await _userServices.GetUserProfileByFireBaseId(userId);
         if (user == null) throw new BadRequestException("User not found");
 
         return user;
@@ -77,26 +68,5 @@ public class AuthServices : IAuthServices
         return true;
     }
 
-    public string CreateToken(long userId, string userRole)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Key"]!);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new("uid", userId.ToString()),
-                new(ClaimTypes.Role, userRole)
-            }),
-            Expires = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtSettings:DurationInDays"])),
-            Issuer = _configuration["JwtSettings:Issuer"],
-            Audience = _configuration["JwtSettings:Audience"],
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
-    }
+ 
 }

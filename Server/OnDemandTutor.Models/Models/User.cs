@@ -35,6 +35,7 @@ public class User : IBaseEntity
     public virtual ICollection<TutorVideo> TutorVideos { get; set; } = new List<TutorVideo>();
     public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
+    public virtual ICollection<ConsultationRequest> Consultations { get; set; } = new List<ConsultationRequest>();
     public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
     public virtual ICollection<TutorSubject> TutorSubjects { get; set; } = new List<TutorSubject>();
 }

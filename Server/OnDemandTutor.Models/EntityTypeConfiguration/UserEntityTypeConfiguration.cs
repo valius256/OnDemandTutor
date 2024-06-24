@@ -23,10 +23,10 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Sex).HasDefaultValue(Sex.Male).IsRequired();
         builder.Property(x => x.AvatarImageUrl).HasMaxLength(1000);
         builder.Property(x => x.IdCardImageUrl).HasMaxLength(1000);
-        
-        
+
+
         // Configure relationships
-        builder.HasMany(e => e.BlogCreateBy)    
+        builder.HasMany(e => e.BlogCreateBy)
             .WithOne(b => b.CreateBy)
             .HasForeignKey(b => b.CreateById)
             .OnDelete(DeleteBehavior.Restrict);
@@ -82,6 +82,11 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.SubjectCreateBy)
             .WithOne(s => s.CreateBy)
             .HasForeignKey(s => s.CreateById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(u => u.Consultations)
+            .WithOne(u => u.HandleBy)
+            .HasForeignKey(u => u.HandleById)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

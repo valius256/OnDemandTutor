@@ -9,7 +9,7 @@ public class ClassEntityTypeConfiguration : IEntityTypeConfiguration<Class>
     public void Configure(EntityTypeBuilder<Class> builder)
     {
         builder.HasKey(c => c.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         // Define properties
         builder.Property(c => c.Name).HasMaxLength(100); // Adjust the maximum length as needed
         builder.Property(c => c.StudentName).HasMaxLength(100); // Adjust the maximum length as needed
