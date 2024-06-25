@@ -144,7 +144,7 @@
 
 <script>
 export default {
-  name: "tutorProfile",
+  name: "TutorProfile",
   data() {
     return {
       user: {

@@ -78,18 +78,27 @@
     </div>
     <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
       Thời khóa biểu
+      <Button class="ml-4" @click="showModal = true">Thêm slot</Button>
     </div>
     <time-table :slots="slots" />
+    <add-slot-modal
+      :showModal="showModal"
+      @close="showModal = false"
+      @add="addNewSlot"
+    />
   </div>
 </template>
 
 <script>
 import TimeTable from "./TimeTable.vue";
+import AddSlotModal from "./AddSlotModal.vue";
+
 export default {
-  components: { TimeTable },
+  components: { TimeTable, AddSlotModal },
   name: "TutorProfileSchedule",
   data() {
     return {
+      showModal: false,
       user: {
         balance: 100000,
       },
@@ -136,6 +145,12 @@ export default {
     };
   },
   methods: {
+    addNewSlot(newSlot) {
+      // Handle adding the new slot to your data array
+      this.slots.push(newSlot);
+      // Optionally, you can update upcomingSlot if needed
+      this.upcomingSlot = this.getClosestSlot(this.slots);
+    },
     getStatusDisplay(status) {
       let css = "px-4 py-1 text-white font-bold rounded-lg text-center";
       switch (status) {
