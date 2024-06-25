@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using FirebaseAdmin;
+﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -26,9 +25,13 @@ using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
-using IMailService = OnDemandTutor.BusinessLogic.Interfaces.Sending.IMailService;
-using MailService = OnDemandTutor.BusinessLogic.Services.Sending.MailService;
+using System.Security.Claims;
+using OnDemandTutor.BusinessLogic.Interfaces.Mail;
+using OnDemandTutor.BusinessLogic.Services.Mail;
+using SharedKernel.Domain.ValueObjects;
+
 
 namespace OnDemandTutor.API.Extensions;
 
@@ -43,6 +46,7 @@ public static class ServiceExtensions
         services.AddScoped<ISlotRepository, SlotRepository>();
         services.AddScoped<IBlogRepository, BlogRepository>();
         services.AddScoped<IClassRepository, ClassRepository>();
+        services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
         services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
         services.AddProblemDetails();
         return services;
@@ -56,11 +60,15 @@ public static class ServiceExtensions
         services.AddScoped<IClassService, ClassService>();
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
-        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
-        services.AddTransient<IMailService, MailService>();
+        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); ;
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
+
+
+        services.AddTransient<IMailServices, MailServices>();
+        
         services.AddProblemDetails();
+        services.AddLogging();
         return services;
     }
 
@@ -74,7 +82,7 @@ public static class ServiceExtensions
         });
         return services;
     }
-
+    
     public static IServiceCollection AddFireBaseHttpClient(this IServiceCollection services)
     {
         services.AddHttpClient<IJwtProviderServices, JwtProviderServices>((sp, client) =>
@@ -159,11 +167,10 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHangfire((sp, config) =>
-        {
+        // Register Hangfire and configure it
+        services.AddHangfire(config => 
             config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"),
                 new SqlServerStorageOptions
                 {
@@ -172,10 +179,14 @@ public static class ServiceExtensions
                     QueuePollInterval = TimeSpan.Zero,
                     UseRecommendedIsolationLevel = true,
                     DisableGlobalLocks = true
-                });
-        });
+                })
+        );
 
+        // Register Hangfire server
         services.AddHangfireServer();
+
+        // Register any other required services here
+        services.AddTransient<IDefaultScheduleJob, DefaultScheduleJob>();
 
         return services;
     }
@@ -183,19 +194,9 @@ public static class ServiceExtensions
     public static IServiceCollection AddMailConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<SmtpSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<AppSetting>(configuration.GetSection("SmtpSettings"));
         return services;
     }
 
-    public static void InitializeBackgroundJobs(IServiceProvider services)
-    {
-        var backgroundJobs = services.GetRequiredService<IBackgroundJobClient>();
-        var recurringJobs = services.GetRequiredService<IRecurringJobManager>();
-        ConfigureBackgroundJobs(backgroundJobs, recurringJobs);
-    }
-
-    public static void ConfigureBackgroundJobs(IBackgroundJobClient backgroundJobs, IRecurringJobManager recurringJobs)
-    {
-        // Example of enqueuing a job
-    }
+ 
 }

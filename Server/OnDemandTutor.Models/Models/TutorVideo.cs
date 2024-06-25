@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class TutorVideo : IBaseEntity
+public class TutorVideo : BaseEntity
 {
     public int Id { get; set; }
     public int? TutorId { get; set; }

@@ -1,10 +1,9 @@
-﻿using System;
-using OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.DataAccess.IRepository
 {
-	public interface IClassRepository : IGenericRepository<Class>
+    public interface IClassRepository : IGenericRepository<Class>
     {
-	}
+    }
 }
 

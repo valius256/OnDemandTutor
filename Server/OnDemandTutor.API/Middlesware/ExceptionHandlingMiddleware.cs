@@ -1,7 +1,7 @@
-﻿using System.Net;
-using System.Text.Json;
-using Hangfire;
+﻿using Hangfire;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using System.Net;
+using System.Text.Json;
 
 namespace OnDemandTutor.API.Middlesware;
 

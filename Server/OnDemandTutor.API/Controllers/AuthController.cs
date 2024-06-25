@@ -60,7 +60,7 @@ public class AuthController : BaseController<AuthController>
     public async Task<IApiResult<string>> ForgotPassword(ForgotPasswordRequest request)
     {
         return OKAsync(await _authServices.ForgotPassword(request.Email));
-      
+
     }
 
     [HttpGet("who-am-i")]

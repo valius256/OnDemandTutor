@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class StudentClass
+public class StudentClass : BaseEntity
 {
     public int StudentId { get; set; }
     public virtual User Student { get; set; }

@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
-using FirebaseAdmin.Auth;
-using OnDemandTutor.Models.Dtos;
+﻿using FirebaseAdmin.Auth;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.User;
 

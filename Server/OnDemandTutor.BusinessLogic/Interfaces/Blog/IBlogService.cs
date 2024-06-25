@@ -1,12 +1,10 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.Blog;
-using OnDemandTutor.Models.Dtos.Slot;
+﻿using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces
 {
-	public interface IBlogService
-	{
+    public interface IBlogService
+    {
         Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<GetBlogDtos> request);
         Task<GetBlogDtos> GetBlogByIdAsync(int id);
         Task<CreateBlogDtos> CreateBlogAsync(CreateBlogDtos blogDto);

@@ -1,8 +1,7 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Blog
+﻿namespace OnDemandTutor.Models.Dtos.Blog
 {
-	public class GetBlogDtos
-	{
+    public class GetBlogDtos
+    {
         public int Id { get; set; }
 
         public string? Title { get; set; }

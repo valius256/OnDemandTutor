@@ -23,10 +23,10 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
     public async Task<IActionResult> GetSlots([FromQuery] PagingModel<GetSlotsDtos> pagingModel)
     {
-      
-            var slots = await _slotService.GetSlotsAsync(pagingModel);
-            return Ok(slots);
-        
+
+        var slots = await _slotService.GetSlotsAsync(pagingModel);
+        return Ok(slots);
+
     }
 
     [Authorize]
@@ -35,13 +35,13 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> GetSlotById(int id)
     {
-            var slot = await _slotService.GetSlotByIdAsync(id);
-            if (slot == null)
-            {
-                return NotFound();
-            }
-            return Ok(slot);
-     
+        var slot = await _slotService.GetSlotByIdAsync(id);
+        if (slot == null)
+        {
+            return NotFound();
+        }
+        return Ok(slot);
+
     }
 
     [Authorize]
@@ -50,9 +50,9 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(CreateSlotsDtos), 200)]
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
     {
-          var createdSlot = await _slotService.CreateSlotAsync(slotDto);
-            return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
-        
+        var createdSlot = await _slotService.CreateSlotAsync(slotDto);
+        return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
+
     }
 
     [Authorize]
@@ -61,17 +61,17 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(UpdateSlotDtos), 200)]
     public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDtos slotDto)
     {
-         if (id != slotDto.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-            var updatedSlot = await _slotService.UpdateSlotAsync( slotDto);
-            if (updatedSlot == null)
-            {
-                return NotFound();
-            }
-            return NoContent();
-      
+        if (id != slotDto.Id)
+        {
+            return BadRequest("ID mismatch between route parameter and request body.");
+        }
+        var updatedSlot = await _slotService.UpdateSlotAsync(slotDto);
+        if (updatedSlot == null)
+        {
+            return NotFound();
+        }
+        return NoContent();
+
     }
 
     [Authorize]
@@ -80,12 +80,12 @@ public class SlotController : ControllerBase
     [ProducesResponseType(204)]
     public async Task<IActionResult> DeleteSlot(int id)
     {
-          var isDeleted = await _slotService.DeleteSlotAsync(id);
-            if (!isDeleted)
-            {
-                return NotFound();
-            }
-            return NoContent();
-     
+        var isDeleted = await _slotService.DeleteSlotAsync(id);
+        if (!isDeleted)
+        {
+            return NotFound();
+        }
+        return NoContent();
+
     }
 }

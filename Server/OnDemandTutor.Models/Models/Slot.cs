@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Models;
 
-public class Slot : IBaseEntity
+public class Slot : BaseEntity
 {
     public int Id { get; set; }
     public DateTime StartTime { get; set; }

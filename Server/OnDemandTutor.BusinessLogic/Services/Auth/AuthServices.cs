@@ -4,12 +4,9 @@ using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
-using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Dtos.User;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -29,7 +26,7 @@ public class AuthServices : IAuthServices
         _jwtProviderServices = jwtProviderServices;
         _fireBaseAuthServices = fireBaseAuthServices;
     }
-    
+
     public async Task<string> LoginWithFireBase(LoginDtos loginDto)
     {
         var listUser = await _fireBaseAuthServices.GetAllUserRecord();
@@ -68,5 +65,5 @@ public class AuthServices : IAuthServices
         return true;
     }
 
- 
+
 }

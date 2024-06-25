@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.Models.EntityTypeConfiguration;
+using OnDemandTutor.Models.MigrationData;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models;
@@ -52,5 +53,10 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new SubjectEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new StudentClassEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TutorSubjectEntityTypeConfiguration());
+
+        // seed 
+        modelBuilder.Seed();
     }
+
+
 }
