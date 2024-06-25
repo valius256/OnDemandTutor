@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class Notification : IBaseEntity
+public class Notification : BaseEntity
 {
     public int Id { get; set; }
     public string? Content { get; set; }

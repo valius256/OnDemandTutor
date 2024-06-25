@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class FAQ : IBaseEntity
+public class FAQ : BaseEntity
 {
     public int Id { get; set; }
     public string Question { get; set; }

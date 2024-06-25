@@ -1,8 +1,7 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Subject
+﻿namespace OnDemandTutor.Models.Dtos.Subject
 {
-	public class CreateSubjectDtos
-	{
+    public class CreateSubjectDtos
+    {
         public int id { get; set; }
         public string Name { get; set; }
         public string SubjectType { get; set; }

@@ -2,8 +2,8 @@
 
 public enum ConsultationRequestStatus
 {
-    created,
-    proccesing,
-    failed,
-    completed,
+    Created,
+    Proccesing,
+    Failed,
+    Completed,
 }

@@ -1,13 +1,17 @@
+using System.Configuration;
 using Hangfire;
+using Hangfire.Dashboard;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic;
 using OnDemandTutor.BusinessLogic.StartupExtension;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models;
+using SharedKernel.Application.Communication.Email;
 
 internal class Program
 {
@@ -20,11 +24,14 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddHttpClient();
-
+        
+        builder.Services.Configure<SmtpAppSetting>(builder.Configuration.GetSection("SmtpSettings"));
+        
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-                ld => ld.MigrationsAssembly("OnDemandTutor.Models")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+               ));
 
+        
         builder.Services.AddRepositories()
             .AddGeneralServices()
             .AddFireBaseServices()
@@ -35,6 +42,9 @@ internal class Program
             .AddFirebaseAuthentication(builder.Configuration)
             .AddMailConfiguration(builder.Configuration)
             .AddHangFireConfigurations(builder.Configuration);
+        
+        
+        builder.Services.AddSignalR();
 
         // Add global exception handler
         builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
@@ -63,6 +73,7 @@ internal class Program
         {
             DashboardTitle = "OnDemandTutor",
             DarkModeEnabled = true,
+            IsReadOnlyFunc = (DashboardContext context) => false,
             TimeZoneResolver = new DefaultTimeZoneResolver()
         });
 
@@ -82,7 +93,13 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<ItemHub>("/itemHub");
+        });
+
+
 
         app.Run();
     }

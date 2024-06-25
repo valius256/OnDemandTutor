@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.BusinessLogic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.Helper", "..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj", "{6E9413DE-CBA7-4416-A38F-2995D032F1B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnDemandTutor.SchedulerJobs", "..\OnDemandTutor.SchedulerJobs\OnDemandTutor.SchedulerJobs.csproj", "{6C304A68-20FA-404A-81F1-995010115527}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6E9413DE-CBA7-4416-A38F-2995D032F1B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E9413DE-CBA7-4416-A38F-2995D032F1B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E9413DE-CBA7-4416-A38F-2995D032F1B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C304A68-20FA-404A-81F1-995010115527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C304A68-20FA-404A-81F1-995010115527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C304A68-20FA-404A-81F1-995010115527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C304A68-20FA-404A-81F1-995010115527}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

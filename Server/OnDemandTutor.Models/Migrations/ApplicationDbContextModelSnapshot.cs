@@ -40,6 +40,15 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("CreateById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -51,6 +60,9 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int?>("UpdateById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
@@ -58,6 +70,68 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("UpdateById");
 
                     b.ToTable("Blogs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "Content of the first blog.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RecordStatus = 0,
+                            Title = "First Blog",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "Content of the second blog.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RecordStatus = 0,
+                            Title = "Second Blog",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Content = "Content of the third blog.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RecordStatus = 0,
+                            Title = "Third Blog",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Content = "Content of the fourth blog.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RecordStatus = 0,
+                            Title = "Fourth Blog",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Content = "Content of the fifth blog.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RecordStatus = 0,
+                            Title = "Fifth Blog",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Class", b =>
@@ -68,9 +142,18 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("SlotId")
                         .HasColumnType("int");
@@ -85,6 +168,9 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("TutorId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
@@ -92,6 +178,73 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("TutorId");
 
                     b.ToTable("Classes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Mathematics 101",
+                            RecordStatus = 0,
+                            SlotId = 1,
+                            StudentName = "John Doe",
+                            SubjectId = 1,
+                            TutorId = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Literature 201",
+                            RecordStatus = 0,
+                            SlotId = 2,
+                            StudentName = "Jane Smith",
+                            SubjectId = 2,
+                            TutorId = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Physics Lab",
+                            RecordStatus = 0,
+                            SlotId = 3,
+                            StudentName = "Alice Johnson",
+                            SubjectId = 3,
+                            TutorId = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "History Class",
+                            RecordStatus = 0,
+                            SlotId = 4,
+                            StudentName = "Michael Brown",
+                            SubjectId = 4,
+                            TutorId = 3,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Chemistry 301",
+                            RecordStatus = 0,
+                            SlotId = 5,
+                            StudentName = "Emily Davis",
+                            SubjectId = 5,
+                            TutorId = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.ConsultationRequest", b =>
@@ -102,6 +255,18 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ConsultationContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HandleById")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -109,15 +274,217 @@ namespace OnDemandTutor.Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ReasonFailed")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("RequestDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("HandleById");
+
                     b.ToTable("ConsultationRequests");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConsultationContent = "Consultation content for request 1.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HandleById = 1,
+                            Name = "John Doe",
+                            Phone = "1234567890",
+                            RecordStatus = 0,
+                            RequestDate = new DateOnly(1, 1, 2),
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConsultationContent = "Consultation content for request 2.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HandleById = 2,
+                            Name = "Jane Smith",
+                            Phone = "9876543210",
+                            RecordStatus = 0,
+                            RequestDate = new DateOnly(1, 1, 3),
+                            Status = 3,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConsultationContent = "Consultation content for request 3.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HandleById = 1,
+                            Name = "Michael Brown",
+                            Phone = "5551234567",
+                            RecordStatus = 0,
+                            RequestDate = new DateOnly(1, 1, 4),
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ConsultationContent = "Consultation content for request 4.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HandleById = 2,
+                            Name = "Emily Johnson",
+                            Phone = "4449876543",
+                            ReasonFailed = "Unavailable at requested time.",
+                            RecordStatus = 0,
+                            RequestDate = new DateOnly(1, 1, 5),
+                            Status = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ConsultationContent = "Consultation content for request 5.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HandleById = 1,
+                            Name = "David Lee",
+                            Phone = "7775551234",
+                            RecordStatus = 0,
+                            RequestDate = new DateOnly(1, 1, 6),
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.EmailTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Params")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailTemplate");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Body = "Welcome to OnDemandTutor! Dear {Name}, thank you for joining us.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "This email is sent to welcome new users.",
+                            Name = "Welcome_Email",
+                            Params = "{Name}",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Welcome to OnDemandTutor!",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Body = "Hello {Name}, this is a reminder for your upcoming class on {Date}.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "This email is sent as a reminder for scheduled classes.",
+                            Name = "Reminder_Email",
+                            Params = "{Name}, {Date}",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Reminder for Your Class",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Body = "Dear {Name}, your payment of {Amount} has been confirmed.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "This email confirms the successful payment for services.",
+                            Name = "Payment_Confirmation",
+                            Params = "{Name}, {Amount}",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Payment Confirmation",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Body = "Hi {Name}, we would love to hear your feedback about our services.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "This email requests feedback from users about their experience.",
+                            Name = "Feedback_Request",
+                            Params = "{Name}",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Feedback Request",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Body = "Dear {Name}, please click the link to activate your account: {ActivationLink}.",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "This email contains instructions to activate user accounts.",
+                            Name = "Account_Activation",
+                            Params = "{Name}, {ActivationLink}",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Account Activation",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.FAQ", b =>
@@ -137,15 +504,89 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("CreateById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
 
                     b.ToTable("Faqs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Answer = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Question = "What is Lorem Ipsum?",
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Answer = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
+                            CreateAt = new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Question = "Why do we use it?",
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Answer = "Contrary to popular belief, Lorem Ipsum is not simply random text.",
+                            CreateAt = new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Question = "Where does it come from?",
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Answer = "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.",
+                            CreateAt = new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Question = "Where can I get some?",
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Answer = "The standard Lorem Ipsum passage, used since the 1500s, is reproduced below for those interested.",
+                            CreateAt = new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Question = "What is the standard Lorem Ipsum passage?",
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Notification", b =>
@@ -160,7 +601,16 @@ namespace OnDemandTutor.Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("RefImageUrl")
@@ -168,6 +618,9 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.Property<string>("RefUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ViewStatus")
                         .HasColumnType("int");
@@ -177,6 +630,69 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "New message received",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReceiverId = 1,
+                            RecordStatus = 0,
+                            RefUrl = "/messages/1",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ViewStatus = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "Meeting reminder",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReceiverId = 2,
+                            RecordStatus = 0,
+                            RefUrl = "/events/5",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ViewStatus = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Content = "Payment received",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReceiverId = 1,
+                            RecordStatus = 0,
+                            RefUrl = "/payments/123",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ViewStatus = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Content = "New article published",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReceiverId = 2,
+                            RecordStatus = 0,
+                            RefImageUrl = "/images/articles/45.jpg",
+                            RefUrl = "/articles/45",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ViewStatus = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Content = "Account updated",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReceiverId = 1,
+                            RecordStatus = 0,
+                            RefUrl = "/account/settings",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ViewStatus = 0
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Slot", b =>
@@ -196,6 +712,12 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("CreateById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime");
 
@@ -208,6 +730,9 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime");
 
@@ -218,6 +743,9 @@ namespace OnDemandTutor.Models.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
@@ -227,6 +755,92 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("Slots");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClassId = 1,
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 6, 25, 17, 12, 52, 565, DateTimeKind.Local).AddTicks(6873),
+                            IsOnline = false,
+                            NumberOfStudents = 5,
+                            PaymentStatus = 0,
+                            RecordStatus = 0,
+                            StartTime = new DateTime(2024, 6, 25, 16, 12, 52, 565, DateTimeKind.Local).AddTicks(6872),
+                            SubjectId = 1,
+                            TeachAddress = "123 Main St",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActualEndTime = new DateTime(2024, 6, 25, 19, 42, 52, 565, DateTimeKind.Local).AddTicks(6880),
+                            ClassId = 2,
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 6, 25, 19, 12, 52, 565, DateTimeKind.Local).AddTicks(6878),
+                            IsOnline = true,
+                            NumberOfStudents = 3,
+                            PaymentStatus = 1,
+                            RecordStatus = 0,
+                            StartTime = new DateTime(2024, 6, 25, 18, 12, 52, 565, DateTimeKind.Local).AddTicks(6878),
+                            SubjectId = 2,
+                            TeachAddress = "456 Elm St",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClassId = 1,
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 6, 25, 21, 12, 52, 565, DateTimeKind.Local).AddTicks(6882),
+                            IsOnline = false,
+                            NumberOfStudents = 7,
+                            PaymentStatus = 0,
+                            RecordStatus = 0,
+                            StartTime = new DateTime(2024, 6, 25, 20, 12, 52, 565, DateTimeKind.Local).AddTicks(6881),
+                            SubjectId = 3,
+                            TeachAddress = "789 Oak St",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 6, 25, 23, 12, 52, 565, DateTimeKind.Local).AddTicks(6885),
+                            IsOnline = true,
+                            NumberOfStudents = 2,
+                            PaymentStatus = 0,
+                            RecordStatus = 0,
+                            StartTime = new DateTime(2024, 6, 25, 22, 12, 52, 565, DateTimeKind.Local).AddTicks(6884),
+                            SubjectId = 4,
+                            TeachAddress = "101 Pine St",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 6, 26, 1, 12, 52, 565, DateTimeKind.Local).AddTicks(6888),
+                            IsOnline = true,
+                            NumberOfStudents = 4,
+                            PaymentStatus = 0,
+                            RecordStatus = 0,
+                            StartTime = new DateTime(2024, 6, 26, 0, 12, 52, 565, DateTimeKind.Local).AddTicks(6887),
+                            SubjectId = 5,
+                            TeachAddress = "111 Cedar St",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.SlotStudent", b =>
@@ -242,6 +856,33 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("SlotStudents");
+
+                    b.HasData(
+                        new
+                        {
+                            SlotId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            SlotId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            SlotId = 2,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            SlotId = 2,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            SlotId = 3,
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.StudentClass", b =>
@@ -252,11 +893,78 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("ClassId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("StudentId", "ClassId");
 
                     b.HasIndex("ClassId");
 
                     b.ToTable("StudentClasses");
+
+                    b.HasData(
+                        new
+                        {
+                            StudentId = 1,
+                            ClassId = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            StudentId = 2,
+                            ClassId = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            StudentId = 3,
+                            ClassId = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            StudentId = 4,
+                            ClassId = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            StudentId = 5,
+                            ClassId = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Subject", b =>
@@ -273,6 +981,12 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int?>("CreateById")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -283,6 +997,9 @@ namespace OnDemandTutor.Models.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
@@ -291,11 +1008,86 @@ namespace OnDemandTutor.Models.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreateById");
 
                     b.ToTable("Subjects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateAt = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Basic mathematics subject",
+                            Name = "Mathematics",
+                            RecordStatus = 0,
+                            Status = true,
+                            SubjectType = "Science",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreateAt = new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Language arts subject",
+                            Name = "English",
+                            RecordStatus = 0,
+                            Status = true,
+                            SubjectType = "Language",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreateAt = new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Study of matter and energy",
+                            Name = "Physics",
+                            RecordStatus = 0,
+                            Status = true,
+                            SubjectType = "Science",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreateAt = new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Study of past events",
+                            Name = "History",
+                            RecordStatus = 0,
+                            Status = true,
+                            SubjectType = "Social Science",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreateAt = new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699),
+                            CreateById = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Study of computers and computational systems",
+                            Name = "Computer Science",
+                            RecordStatus = 0,
+                            Status = true,
+                            SubjectType = "Science",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Transaction", b =>
@@ -315,12 +1107,18 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime");
 
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentMethod")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("SlotId")
                         .HasColumnType("int");
@@ -332,6 +1130,9 @@ namespace OnDemandTutor.Models.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -339,6 +1140,83 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("SlotId");
 
                     b.ToTable("Transactions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 100.00m,
+                            CreatedById = 1,
+                            CreatedDate = new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6945),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Payment for tutoring session",
+                            PaymentMethod = "Credit Card",
+                            RecordStatus = 0,
+                            SlotId = 1,
+                            Status = 1,
+                            TransactionCode = "TRX001",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 50.00m,
+                            CreatedById = 2,
+                            CreatedDate = new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6947),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Payment for online class",
+                            PaymentMethod = "PayPal",
+                            RecordStatus = 0,
+                            SlotId = 2,
+                            Status = 1,
+                            TransactionCode = "TRX002",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 75.00m,
+                            CreatedById = 1,
+                            CreatedDate = new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6949),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Payment for tutoring session",
+                            PaymentMethod = "Bank Transfer",
+                            RecordStatus = 0,
+                            SlotId = 3,
+                            Status = 1,
+                            TransactionCode = "TRX003",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 120.00m,
+                            CreatedById = 2,
+                            CreatedDate = new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6951),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Payment for online class",
+                            PaymentMethod = "Credit Card",
+                            RecordStatus = 0,
+                            SlotId = 4,
+                            Status = 1,
+                            TransactionCode = "TRX004",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Amount = 90.00m,
+                            CreatedById = 1,
+                            CreatedDate = new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6953),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Payment for tutoring session",
+                            PaymentMethod = "PayPal",
+                            RecordStatus = 0,
+                            SlotId = 5,
+                            Status = 1,
+                            TransactionCode = "TRX005",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorDegree", b =>
@@ -349,6 +1227,9 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DegreeImgUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -356,11 +1237,17 @@ namespace OnDemandTutor.Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("IssuranceDate")
                         .HasColumnType("date");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
@@ -371,6 +1258,9 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("TutorSubjectStatus")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SubjectId");
@@ -378,6 +1268,83 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("TutorId");
 
                     b.ToTable("TutorDegrees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DegreeImgUrl = "https://example.com/degree1.jpg",
+                            DegreeNumber = "12345",
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Bachelor's in Mathematics",
+                            IssuranceDate = new DateOnly(2023, 5, 15),
+                            RecordStatus = 0,
+                            SubjectId = 1,
+                            TutorId = 1,
+                            TutorSubjectStatus = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DegreeImgUrl = "https://example.com/degree2.jpg",
+                            DegreeNumber = "54321",
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Master's in English Literature",
+                            IssuranceDate = new DateOnly(2022, 9, 30),
+                            RecordStatus = 0,
+                            SubjectId = 2,
+                            TutorId = 2,
+                            TutorSubjectStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DegreeImgUrl = "https://example.com/degree3.jpg",
+                            DegreeNumber = "98765",
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "PhD in Physics",
+                            IssuranceDate = new DateOnly(2024, 2, 10),
+                            RecordStatus = 0,
+                            SubjectId = 3,
+                            TutorId = 1,
+                            TutorSubjectStatus = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DegreeImgUrl = "https://example.com/degree4.jpg",
+                            DegreeNumber = "24680",
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Bachelor's in History",
+                            IssuranceDate = new DateOnly(2021, 12, 5),
+                            RecordStatus = 0,
+                            SubjectId = 4,
+                            TutorId = 2,
+                            TutorSubjectStatus = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DegreeImgUrl = "https://example.com/degree5.jpg",
+                            DegreeNumber = "13579",
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Master's in Computer Science",
+                            IssuranceDate = new DateOnly(2023, 8, 20),
+                            RecordStatus = 0,
+                            SubjectId = 5,
+                            TutorId = 1,
+                            TutorSubjectStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorSubject", b =>
@@ -388,11 +1355,78 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("SubjectId", "UserId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("TutorSubjects");
+
+                    b.HasData(
+                        new
+                        {
+                            SubjectId = 1,
+                            UserId = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            SubjectId = 2,
+                            UserId = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            SubjectId = 3,
+                            UserId = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            SubjectId = 1,
+                            UserId = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            SubjectId = 4,
+                            UserId = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Id = 0,
+                            RecordStatus = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.TutorVideo", b =>
@@ -403,12 +1437,24 @@ namespace OnDemandTutor.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TutorId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("VideoUrl")
                         .IsRequired()
@@ -419,6 +1465,63 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasIndex("TutorId");
 
                     b.ToTable("TutorVideos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Introduction to Mathematics",
+                            RecordStatus = 0,
+                            TutorId = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VideoUrl = "https://example.com/video1.mp4"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "English Literature Analysis",
+                            RecordStatus = 0,
+                            TutorId = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VideoUrl = "https://example.com/video2.mp4"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Physics Fundamentals",
+                            RecordStatus = 0,
+                            TutorId = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VideoUrl = "https://example.com/video3.mp4"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Historical Events Overview",
+                            RecordStatus = 0,
+                            TutorId = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VideoUrl = "https://example.com/video4.mp4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Introduction to Programming",
+                            RecordStatus = 0,
+                            TutorId = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            VideoUrl = "https://example.com/video5.mp4"
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.User", b =>
@@ -495,6 +1598,108 @@ namespace OnDemandTutor.Models.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "123 Main St",
+                            AvatarImageUrl = "http://example.com/avatar1.png",
+                            Balance = 100.0m,
+                            Dob = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "john.doe@example.com",
+                            FireBaseid = "firebaseid1",
+                            FirstName = "John",
+                            IdCardImageUrl = "http://example.com/id1.png",
+                            LastName = "Doe",
+                            Password = "password123",
+                            Phone = "1234567890",
+                            Rating = 4.5,
+                            Role = 3,
+                            ScheduleDesciption = "Available on weekends",
+                            Sex = 1,
+                            TutorFeePerHour = 50.0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "456 Elm St",
+                            AvatarImageUrl = "http://example.com/avatar2.png",
+                            Balance = 200.0m,
+                            Dob = new DateTime(1985, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "jane.smith@example.com",
+                            FireBaseid = "firebaseid2",
+                            FirstName = "Jane",
+                            IdCardImageUrl = "http://example.com/id2.png",
+                            LastName = "Smith",
+                            Password = "password123",
+                            Phone = "0987654321",
+                            Rating = 4.7000000000000002,
+                            Role = 1,
+                            ScheduleDesciption = "Available on weekdays",
+                            Sex = 0,
+                            TutorFeePerHour = 60.0m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "789 Pine St",
+                            AvatarImageUrl = "http://example.com/avatar3.png",
+                            Balance = 300.0m,
+                            Dob = new DateTime(1995, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "alice.johnson@example.com",
+                            FireBaseid = "firebaseid3",
+                            FirstName = "Alice",
+                            IdCardImageUrl = "http://example.com/id3.png",
+                            LastName = "Johnson",
+                            Password = "password123",
+                            Phone = "1122334455",
+                            Rating = 4.7999999999999998,
+                            Role = 0,
+                            ScheduleDesciption = "Available in the evenings",
+                            Sex = 0,
+                            TutorFeePerHour = 70.0m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "101 Maple St",
+                            AvatarImageUrl = "http://example.com/avatar4.png",
+                            Balance = 400.0m,
+                            Dob = new DateTime(1975, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "bob.williams@example.com",
+                            FireBaseid = "firebaseid4",
+                            FirstName = "Bob",
+                            IdCardImageUrl = "http://example.com/id4.png",
+                            LastName = "Williams",
+                            Password = "password123",
+                            Phone = "2233445566",
+                            Rating = 4.9000000000000004,
+                            Role = 1,
+                            ScheduleDesciption = "Available on weekends",
+                            Sex = 1,
+                            TutorFeePerHour = 80.0m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "202 Oak St",
+                            AvatarImageUrl = "http://example.com/avatar5.png",
+                            Balance = 500.0m,
+                            Dob = new DateTime(1980, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "charlie.brown@example.com",
+                            FireBaseid = "firebaseid5",
+                            FirstName = "Charlie",
+                            IdCardImageUrl = "http://example.com/id5.png",
+                            LastName = "Brown",
+                            Password = "password123",
+                            Phone = "3344556677",
+                            Rating = 5.0,
+                            Role = 0,
+                            ScheduleDesciption = "Available all day",
+                            Sex = 1,
+                            TutorFeePerHour = 90.0m
+                        });
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Blog", b =>
@@ -532,6 +1737,17 @@ namespace OnDemandTutor.Models.Migrations
                     b.Navigation("Subject");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OnDemandTutor.Models.Models.ConsultationRequest", b =>
+                {
+                    b.HasOne("OnDemandTutor.Models.Models.User", "HandleBy")
+                        .WithMany("Consultations")
+                        .HasForeignKey("HandleById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HandleBy");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.FAQ", b =>
@@ -723,6 +1939,8 @@ namespace OnDemandTutor.Models.Migrations
                     b.Navigation("BlogCreateBy");
 
                     b.Navigation("BlogUpdateBy");
+
+                    b.Navigation("Consultations");
 
                     b.Navigation("FAQs");
 

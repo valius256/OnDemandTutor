@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class Transaction : IBaseEntity
+public class Transaction : BaseEntity
 {
     public int Id { get; set; }
     public required string TransactionCode { get; set; }

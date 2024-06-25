@@ -14,7 +14,7 @@ public class UserController : BaseController<UserController>
 {
     private readonly IUserServices _userService;
 
-    public UserController(Logger<UserController> logger,IUserServices userService) : base(logger)
+    public UserController(ILogger<UserController> logger, IUserServices userService) : base(logger)
     {
         _userService = userService;
     }
@@ -30,7 +30,7 @@ public class UserController : BaseController<UserController>
     }
 
     [Authorize]
-    [HttpGet("profile")]
+    [HttpPost("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
     public async Task<IActionResult> GetProfile([FromBody] int userId)
@@ -56,7 +56,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<List<TutorRegistrationResponseDtos>>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
         return OKAsync(await _userService.ApprovedTutorRegistration(body, HttpContext.User));
-    ;
+        ;
     }
 
     [Authorize]
@@ -77,6 +77,6 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
     {
         return OKAsync(await _userService.ViewTutorList(request));
-   
+
     }
 }

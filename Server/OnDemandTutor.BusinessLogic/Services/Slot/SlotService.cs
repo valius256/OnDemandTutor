@@ -1,26 +1,24 @@
-﻿using System;
-using Mapster;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
-using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
 {
-	public class SlotService : ISlotServices
+    public class SlotService : ISlotServices
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly ISlotRepository _slotRepository;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository, ISlotRepository slotRepository)
-		{
-			unitOfWorkRepository = _unitOfWork;
-			slotRepository = _slotRepository;
+        {
+            unitOfWorkRepository = _unitOfWork;
+            slotRepository = _slotRepository;
 
-		}
+        }
 
 
         public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request)
@@ -31,11 +29,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public async Task<GetSlotsDtos> GetSlotByIdAsync(int id)
         {
             var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
-            if ( slot is null)
+            if (slot is null)
             {
                 throw new BadRequestException("Slot not found");
             }
-            return slot ;
+            return slot;
         }
 
         public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)

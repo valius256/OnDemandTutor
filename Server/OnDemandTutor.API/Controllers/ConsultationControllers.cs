@@ -29,7 +29,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(await _consultationRequestService.CreateConsultationRequestAsync(requestDtos));
         }
 
-        
+
 
         // [AllowAnonymous]
         [Authorize]
@@ -40,7 +40,7 @@ namespace OnDemandTutor.API.Controllers
         {
             return OKAsync(await _consultationRequestService.GetConsultationRequestsAsync(requestDtos));
         }
-        
+
         // [Authorize]
         [HttpGet("get-by-id")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -58,6 +58,6 @@ namespace OnDemandTutor.API.Controllers
         {
             return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(HttpContext.User, requestDtos));
         }
-        
+
     }
 }

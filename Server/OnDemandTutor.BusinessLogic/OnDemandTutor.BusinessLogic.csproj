@@ -12,10 +12,10 @@
         <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
         <PackageReference Include="Google.Cloud.Firestore" Version="3.7.0" />
         <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-        <PackageReference Include="MailKit" Version="4.6.0" />
+        <PackageReference Include="LinqKit" Version="1.3.0" />
         <PackageReference Include="Mapster" Version="7.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
         <PackageReference Include="MimeKit" Version="4.6.0" />
-        <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Services\BackGroundJob\" />
         <Folder Include="Services\Slot\" />
-        <Folder Include="Services\Sending\" />
         <Folder Include="Services\Blog\" />
         <Folder Include="Services\Subject\" />
         <Folder Include="Interfaces\Subject\" />

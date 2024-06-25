@@ -1,10 +1,10 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+﻿using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Enum;
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -58,7 +58,7 @@ public class JwtProviderServices : IJwtProviderServices
                     FireBaseid = authToken.LocalId,
                     FirstName = authToken.DisplayName,
                     Role = RoleStatus.Customer,
-                    Sex =  Sex.Male
+                    Sex = Sex.Male
                 });
                 await _unitOfWorkRepository.SaveChangesAsync();
             }

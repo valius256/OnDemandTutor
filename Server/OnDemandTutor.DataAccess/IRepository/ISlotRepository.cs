@@ -1,11 +1,10 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.Slot;
+﻿using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.IRepository
 {
-	public interface ISlotRepository : IGenericRepository<Slot>
+    public interface ISlotRepository : IGenericRepository<Slot>
     {
         Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request);
         Task<GetSlotsDtos> GetSlotByIdAsync(int id);

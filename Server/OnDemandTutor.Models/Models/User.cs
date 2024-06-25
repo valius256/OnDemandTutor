@@ -20,9 +20,9 @@ public class User : IBaseEntity
     public string? IdCardImageUrl { get; set; }
     public string? ScheduleDesciption { get; set; }
     public required string Password { get; set; }
-    public  Sex Sex { get; set; }
-    
-    
+    public Sex Sex { get; set; }
+
+
     // for relationship
     public virtual ICollection<Blog> BlogCreateBy { get; set; } = new List<Blog>();
     public virtual ICollection<Blog> BlogUpdateBy { get; set; } = new List<Blog>();

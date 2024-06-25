@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
+﻿using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Paging;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces
 {

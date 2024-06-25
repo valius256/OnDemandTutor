@@ -1,11 +1,10 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.Subject;
+﻿using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Subject
 {
-	public interface ISubjectService
-	{
+    public interface ISubjectService
+    {
         Task<List<GetSubjectDtos>> GetAllSubjects();
         Task<GetSubjectDtos> GetSubjectById(int id);
         Task<CreateSubjectDtos> CreateSubject(CreateSubjectDtos subjectDto);

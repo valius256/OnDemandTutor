@@ -1,10 +1,9 @@
-﻿using System;
-using OnDemandTutor.Models.Enum;
+﻿using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.Slot
 {
-	public class GetSlotsDtos
+    public class GetSlotsDtos
     {
         public int Id { get; set; }
         public DateTime StartTime { get; set; }
