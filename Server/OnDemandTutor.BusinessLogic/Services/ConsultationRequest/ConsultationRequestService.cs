@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
-using Mapster;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
 {
@@ -66,6 +67,35 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             _unitOfWork.ConsultationRequestRepository.Remove(consultationRequest);
             await _unitOfWork.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDtos requestDtos)
+        {
+            var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
+
+            var recordInDb = await _unitOfWork.ConsultationRequestRepository
+                .FirstOrDefaultAsync(l => l.Id == requestDtos.Id && l.Status != ConsultationRequestStatus.Completed);
+
+            if (recordInDb == null) return false;
+
+            recordInDb.HandleById = operatorId;
+            if (requestDtos.Status == ConsultationRequestStatus.Completed)
+            {
+                recordInDb.Status = ConsultationRequestStatus.Completed;
+                recordInDb.HandleById = operatorId;
+                _unitOfWork.ConsultationRequestRepository.Update(recordInDb);
+            }
+            else if (requestDtos.Status == ConsultationRequestStatus.Failed)
+            {
+                recordInDb.Status = ConsultationRequestStatus.Failed;
+                recordInDb.HandleById = operatorId;
+                recordInDb.ReasonFailed = requestDtos.ReasonFailed;
+                _unitOfWork.ConsultationRequestRepository.Update(recordInDb);
+            }
+
+
+            return true;
+
         }
     }
 }

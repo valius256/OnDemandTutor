@@ -1,5 +1,4 @@
-﻿using System;
-using Mapster;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
@@ -7,15 +6,14 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace OnDemandTutor.DataAccess.Repository
 {
-	public class SlotRepository : GenericRepository<Slot>, ISlotRepository
+    public class SlotRepository : GenericRepository<Slot>, ISlotRepository
     {
-		public SlotRepository(ApplicationDbContext context) : base(context)
+        public SlotRepository(ApplicationDbContext context) : base(context)
         {
-		}
+        }
 
         public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request)
         {
@@ -25,7 +23,7 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 if (request.Filter.SubjectId.HasValue)
                 {
-                    query =  dbSet.Where(slot => slot.SubjectId == request.Filter.SubjectId);
+                    query = dbSet.Where(slot => slot.SubjectId == request.Filter.SubjectId);
                 }
                 if (request.Filter.ClassId.HasValue)
                 {
@@ -90,7 +88,7 @@ namespace OnDemandTutor.DataAccess.Repository
             return true;
         }
 
-      
+
     }
 }
 

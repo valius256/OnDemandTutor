@@ -1,12 +1,10 @@
-﻿using System;
-using OnDemandTutor.Models.Models;
-using OnDemandTutor.Models.Paging;
+﻿using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.DataAccess.IRepository
 {
     public interface IConsultationRequestRepository : IGenericRepository<ConsultationRequest>
     {
-        
+
     }
 }
 

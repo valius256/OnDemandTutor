@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class Class : IBaseEntity
+public class Class : BaseEntity
 {
     public int Id { get; set; }
     public string? Name { get; set; }

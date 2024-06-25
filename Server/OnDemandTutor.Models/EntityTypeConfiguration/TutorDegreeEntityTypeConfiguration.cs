@@ -10,7 +10,7 @@ public class TutorDegreeEntityTypeConfiguration : IEntityTypeConfiguration<Tutor
     {
         builder.HasKey(td => td.Id);
         builder.Property(td => td.Id).ValueGeneratedOnAdd();
-        
+
         builder.Property(td => td.Description)
             .IsRequired(false);
 

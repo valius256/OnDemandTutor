@@ -1,10 +1,16 @@
-﻿namespace OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Enum;
 
-public class ConsultationRequest : IBaseEntity
+namespace OnDemandTutor.Models.Models;
+
+public class ConsultationRequest : BaseEntity
 {
     public int Id { get; set; }
     public string? Name { get; set; }
     public string Phone { get; set; }
-    public DateTime RequestDate { get; set; }
-    public int Status { get; set; }
+    public int HandleById { get; set; }
+    public string? ConsultationContent { get; set; }
+    public DateOnly RequestDate { get; set; }
+    public ConsultationRequestStatus Status { get; set; }
+    public string? ReasonFailed { get; set; }
+    public virtual User HandleBy { get; set; }
 }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
-using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
@@ -12,12 +12,12 @@ namespace OnDemandTutor.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController : BaseController<AuthController>
 {
     private readonly IAuthServices _authServices;
     private readonly IUserServices _userServices;
 
-    public AuthController(IUserServices userService, IAuthServices authServices)
+    public AuthController(IUserServices userService, IAuthServices authServices, ILogger<AuthController> logger) : base(logger)
     {
         _userServices = userService;
         _authServices = authServices;
@@ -25,10 +25,10 @@ public class AuthController : ControllerBase
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-    public async Task<ActionResult<GetProfileUserDtos>> Register([FromBody] RegisterDtos body)
+    [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
+    public async Task<IApiResult<GetProfileUserDtos>> Register([FromBody] RegisterDtos body)
     {
-        return await _userServices.RegisterUser(body);
+        return OKAsync(await _userServices.RegisterUser(body));
     }
 
 
@@ -44,41 +44,41 @@ public class AuthController : ControllerBase
     //{
     //    return await _authService.Login(body);
     //}
+
     [HttpPost("login-firebase")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(string), 200)]
-    public async Task<ActionResult<string>> LoginFireBase([FromBody] LoginDtos body)
+    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    public async Task<IApiResult<string>> LoginFireBase([FromBody] LoginDtos body)
     {
-        return await _authServices.LoginWithFireBase(body);
+        return OKAsync(await _authServices.LoginWithFireBase(body));
     }
 
     [AllowAnonymous]
     [HttpPost("forgot-password")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(string), 200)]
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    public async Task<IApiResult<string>> ForgotPassword(ForgotPasswordRequest request)
     {
-        var result = await _authServices.ForgotPassword(request.Email);
-        return Ok(result);
+        return OKAsync(await _authServices.ForgotPassword(request.Email));
+
     }
 
     [HttpGet("who-am-i")]
     [Authorize]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-    public async Task<IActionResult> GetProfile()
+    [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
+    public async Task<IApiResult<GetProfileUserDtos>> GetProfile()
     {
-        var result = await _authServices.GetUserProfileByClaim(HttpContext.User);
-        return Ok(result);
+        return OKAsync(await _authServices.GetUserProfileByClaim(HttpContext.User));
     }
 
     //[AllowAnonymous]
     [Authorize]
     [HttpPost("delete")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(bool), 200)]
-    public async Task<ActionResult<bool>> DeleteUser([FromBody] string userEmail)
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> DeleteUser([FromBody] string userEmail)
     {
-        return await _authServices.DeleteUserAsync(userEmail);
+        return OKAsync(await _authServices.DeleteUserAsync(userEmail));
     }
 }

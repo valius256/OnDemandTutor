@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
-using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
@@ -10,11 +10,11 @@ namespace OnDemandTutor.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UserController : BaseController<UserController>
 {
     private readonly IUserServices _userService;
 
-    public UserController(IUserServices userService)
+    public UserController(ILogger<UserController> logger, IUserServices userService) : base(logger)
     {
         _userService = userService;
     }
@@ -30,7 +30,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("profile")]
+    [HttpPost("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
     public async Task<IActionResult> GetProfile([FromBody] int userId)
@@ -52,12 +52,11 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpPost("approve-tutor-registration")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-    public async Task<IActionResult> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
+    [ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
+    public async Task<IApiResult<List<TutorRegistrationResponseDtos>>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
-        await _userService.ApprovedTutorRegistration(body, HttpContext.User);
-        // return Ok(result);
-        return Ok();
+        return OKAsync(await _userService.ApprovedTutorRegistration(body, HttpContext.User));
+        ;
     }
 
     [Authorize]
@@ -74,10 +73,10 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpPost("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(List<TutorSimpleProfileDtos>), 200)]
-    public async Task<IActionResult> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
+    [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDtos>>), 200)]
+    public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
     {
-        var result = await _userService.ViewTutorList(request);
-        return Ok(result);
+        return OKAsync(await _userService.ViewTutorList(request));
+
     }
 }

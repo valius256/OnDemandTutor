@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Mapster;
+using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Paging;
-using Mapster;
-using OnDemandTutor.BusinessLogic.Interfaces.Class;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
 {
-	public class ClassService: IClassService
+    public class ClassService : IClassService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
 

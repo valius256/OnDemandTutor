@@ -1,9 +1,7 @@
-﻿using System;
-using Mapster;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
-using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Paging;
 

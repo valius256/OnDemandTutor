@@ -20,9 +20,9 @@ public class MapsterConfig : IRegister
             .Map(dest => dest.ScheduleDescription, src => src.ScheduleDesciption)
             .Map(dest => dest.TutorSubjectDegreeStatus, src => src.TutorDegrees.FirstOrDefault()!.TutorSubjectStatus)
             ;
-   
-          
-        
+
+
+
         config.NewConfig<User, TutorSimpleProfileDtos>()
             .Map(dest => dest.FullName, src => src.FirstName + " " + src.LastName)
             .Map(dest => dest.Description, src => src.ScheduleDesciption)

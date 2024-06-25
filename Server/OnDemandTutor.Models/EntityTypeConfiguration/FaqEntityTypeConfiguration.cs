@@ -9,7 +9,7 @@ public class FaqEntityTypeConfiguration : IEntityTypeConfiguration<FAQ>
     public void Configure(EntityTypeBuilder<FAQ> builder)
     {
         builder.HasKey(f => f.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(f => f.Question)
             .IsRequired();
 

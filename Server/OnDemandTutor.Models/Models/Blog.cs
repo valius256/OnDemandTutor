@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Models;
 
-public class Blog : IBaseEntity
+public class Blog : BaseEntity
 {
     public int Id { get; set; }
 

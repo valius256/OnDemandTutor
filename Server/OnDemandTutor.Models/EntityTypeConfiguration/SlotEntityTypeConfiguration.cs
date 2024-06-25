@@ -9,7 +9,7 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
     public void Configure(EntityTypeBuilder<Slot> builder)
     {
         builder.HasKey(s => s.Id);
-
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(s => s.StartTime)
             .IsRequired()
             .HasColumnType("datetime");

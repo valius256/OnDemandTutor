@@ -1,6 +1,4 @@
-﻿
-using System;
-using Mapster;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Subject;
@@ -8,7 +6,7 @@ using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Subject
 {
-	public class SubjectService : ISubjectService
+    public class SubjectService : ISubjectService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
 

@@ -1,6 +1,6 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
+﻿using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Paging;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces
 {
@@ -11,6 +11,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces
         Task<GetConsultationRequestDtos> CreateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto);
         Task<GetConsultationRequestDtos> UpdateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto);
         Task<bool> DeleteConsultationRequestAsync(int id);
+        Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDtos requestDtos);
     }
 }
 
