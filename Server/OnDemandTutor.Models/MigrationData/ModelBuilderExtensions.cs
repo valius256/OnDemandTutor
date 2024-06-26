@@ -30,7 +30,8 @@ namespace OnDemandTutor.Models.MigrationData
                 IdCardImageUrl = "http://example.com/id1.png", 
                 ScheduleDesciption = "Available on weekends", 
                 Password = "password123", 
-                Sex = Sex.Male 
+                Sex = Sex.Male ,
+                IsActive = true
             },
             new User 
             { 
@@ -50,7 +51,9 @@ namespace OnDemandTutor.Models.MigrationData
                 IdCardImageUrl = "http://example.com/id2.png", 
                 ScheduleDesciption = "Available on weekdays", 
                 Password = "password123", 
-                Sex = Sex.Female 
+                Sex = Sex.Female, 
+                IsActive = true
+
             },
             // Add three more users
             new User 
@@ -71,7 +74,9 @@ namespace OnDemandTutor.Models.MigrationData
                 IdCardImageUrl = "http://example.com/id3.png", 
                 ScheduleDesciption = "Available in the evenings", 
                 Password = "password123", 
-                Sex = Sex.Female 
+                Sex = Sex.Female, 
+                IsActive = true
+
             },
             new User 
             { 
@@ -91,7 +96,9 @@ namespace OnDemandTutor.Models.MigrationData
                 IdCardImageUrl = "http://example.com/id4.png", 
                 ScheduleDesciption = "Available on weekends", 
                 Password = "password123", 
-                Sex = Sex.Male 
+                Sex = Sex.Male, 
+                IsActive = true
+
             },
             new User 
             { 
@@ -111,7 +118,9 @@ namespace OnDemandTutor.Models.MigrationData
                 IdCardImageUrl = "http://example.com/id5.png", 
                 ScheduleDesciption = "Available all day", 
                 Password = "password123", 
-                Sex = Sex.Male 
+                Sex = Sex.Male ,
+                IsActive = false
+
             }
         );
 
@@ -304,7 +313,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 1,
                 IsOnline = false,
                 NumberOfStudents = 5,
-                PaymentStatus = PaymentStatus.Pending,
+                PaymentStatus = PaymentStatus.Paid,
                 ActualEndTime = null
             },
             new Slot
@@ -318,7 +327,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 2,
                 IsOnline = true,
                 NumberOfStudents = 3,
-                PaymentStatus = PaymentStatus.Success,
+                PaymentStatus = PaymentStatus.Unpaid,
                 ActualEndTime = DateTime.Now.AddHours(4).AddMinutes(30)
             },
             new Slot
@@ -332,7 +341,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 3,
                 IsOnline = false,
                 NumberOfStudents = 7,
-                PaymentStatus = PaymentStatus.Pending,
+                PaymentStatus = PaymentStatus.Paid,
                 ActualEndTime = null
             },
             new Slot
@@ -346,7 +355,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 4,
                 IsOnline = true,
                 NumberOfStudents = 2,
-                PaymentStatus = PaymentStatus.Pending,
+                PaymentStatus = PaymentStatus.Paid,
                 ActualEndTime = null
             },
             new Slot
@@ -360,7 +369,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 5,
                 IsOnline = true,
                 NumberOfStudents = 4,
-                PaymentStatus = PaymentStatus.Pending,
+                PaymentStatus = PaymentStatus.Paid,
                 ActualEndTime = null
             }
         );

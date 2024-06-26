@@ -29,7 +29,9 @@ using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
 using System.Security.Claims;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
+using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Services.Mail;
+using OnDemandTutor.BusinessLogic.Services.Payment;
 using SharedKernel.Domain.ValueObjects;
 
 
@@ -48,6 +50,8 @@ public static class ServiceExtensions
         services.AddScoped<IClassRepository, ClassRepository>();
         services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
         services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
+        
         services.AddProblemDetails();
         return services;
     }
@@ -61,12 +65,11 @@ public static class ServiceExtensions
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
         services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); ;
-        services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
-
+        services.AddScoped<IVnPayServices, VnPayServices>();
 
         services.AddTransient<IMailServices, MailServices>();
-        
+        services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();
         services.AddLogging();
         return services;
