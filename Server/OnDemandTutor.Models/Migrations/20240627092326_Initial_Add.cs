@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnDemandTutor.Models.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_Data_Seed : Migration
+    public partial class Initial_Add : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,10 @@ namespace OnDemandTutor.Models.Migrations
                     IdCardImageUrl = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     ScheduleDesciption = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Sex = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
+                    Sex = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    DeaActiveReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TutorVerified = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -189,7 +192,7 @@ namespace OnDemandTutor.Models.Migrations
                     CreateById = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -341,8 +344,10 @@ namespace OnDemandTutor.Models.Migrations
                     SubjectId = table.Column<int>(type: "integer", nullable: true),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
                     NumberOfStudents = table.Column<int>(type: "int", nullable: false),
+                    SlotStatus = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     ActualEndTime = table.Column<DateTime>(type: "datetime", nullable: true),
+                    Finished = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -473,37 +478,38 @@ namespace OnDemandTutor.Models.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "Sex", "TutorFeePerHour" },
-                values: new object[] { 1, "123 Main St", "http://example.com/avatar1.png", 100.0m, new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john.doe@example.com", "firebaseid1", "John", "http://example.com/id1.png", "Doe", "password123", "1234567890", 4.5, 3, "Available on weekends", 1, 50.0m });
+                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "DeaActiveReason", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "IsActive", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "Sex", "TutorFeePerHour" },
+                values: new object[] { 1, "123 Main St", "http://example.com/avatar1.png", 100.0m, null, new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "john.doe@example.com", "firebaseid1", "John", "http://example.com/id1.png", true, "Doe", "password123", "1234567890", 4.5, 3, "Available on weekends", 1, 50.0m });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "TutorFeePerHour" },
+                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "DeaActiveReason", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "IsActive", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "TutorFeePerHour" },
                 values: new object[,]
                 {
-                    { 2, "456 Elm St", "http://example.com/avatar2.png", 200.0m, new DateTime(1985, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "jane.smith@example.com", "firebaseid2", "Jane", "http://example.com/id2.png", "Smith", "password123", "0987654321", 4.7000000000000002, 1, "Available on weekdays", 60.0m },
-                    { 3, "789 Pine St", "http://example.com/avatar3.png", 300.0m, new DateTime(1995, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "alice.johnson@example.com", "firebaseid3", "Alice", "http://example.com/id3.png", "Johnson", "password123", "1122334455", 4.7999999999999998, 0, "Available in the evenings", 70.0m }
+                    { 2, "456 Elm St", "http://example.com/avatar2.png", 200.0m, null, new DateTime(1985, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "jane.smith@example.com", "firebaseid2", "Jane", "http://example.com/id2.png", true, "Smith", "password123", "0987654321", 4.7000000000000002, 1, "Available on weekdays", 60.0m },
+                    { 3, "789 Pine St", "http://example.com/avatar3.png", 300.0m, null, new DateTime(1995, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "alice.johnson@example.com", "firebaseid3", "Alice", "http://example.com/id3.png", true, "Johnson", "password123", "1122334455", 4.7999999999999998, 0, "Available in the evenings", 70.0m }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "Sex", "TutorFeePerHour" },
-                values: new object[,]
-                {
-                    { 4, "101 Maple St", "http://example.com/avatar4.png", 400.0m, new DateTime(1975, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "bob.williams@example.com", "firebaseid4", "Bob", "http://example.com/id4.png", "Williams", "password123", "2233445566", 4.9000000000000004, 1, "Available on weekends", 1, 80.0m },
-                    { 5, "202 Oak St", "http://example.com/avatar5.png", 500.0m, new DateTime(1980, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "charlie.brown@example.com", "firebaseid5", "Charlie", "http://example.com/id5.png", "Brown", "password123", "3344556677", 5.0, 0, "Available all day", 1, 90.0m }
-                });
+                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "DeaActiveReason", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "IsActive", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "Sex", "TutorFeePerHour" },
+                values: new object[] { 4, "101 Maple St", "http://example.com/avatar4.png", 400.0m, null, new DateTime(1975, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), "bob.williams@example.com", "firebaseid4", "Bob", "http://example.com/id4.png", true, "Williams", "password123", "2233445566", 4.9000000000000004, 1, "Available on weekends", 1, 80.0m });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Address", "AvatarImageUrl", "Balance", "DeaActiveReason", "Dob", "Email", "FireBaseid", "FirstName", "IdCardImageUrl", "LastName", "Password", "Phone", "Rating", "Role", "ScheduleDesciption", "Sex", "TutorFeePerHour" },
+                values: new object[] { 5, "202 Oak St", "http://example.com/avatar5.png", 500.0m, null, new DateTime(1980, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "charlie.brown@example.com", "firebaseid5", "Charlie", "http://example.com/id5.png", "Brown", "password123", "3344556677", 5.0, 0, "Available all day", 1, 90.0m });
 
             migrationBuilder.InsertData(
                 table: "Blogs",
                 columns: new[] { "Id", "Content", "CreateAt", "CreateById", "CreatedDate", "DeletedDate", "RecordStatus", "Title", "UpdateAt", "UpdateById", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "Content of the first blog.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "First Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "Content of the second blog.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Second Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, "Content of the third blog.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Third Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, "Content of the fourth blog.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Fourth Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, "Content of the fifth blog.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Fifth Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, "Content of the first blog.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "First Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "Content of the second blog.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Second Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "Content of the third blog.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Third Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, "Content of the fourth blog.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Fourth Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, "Content of the fifth blog.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Fifth Blog", null, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -523,11 +529,11 @@ namespace OnDemandTutor.Models.Migrations
                 columns: new[] { "Id", "Answer", "CreateAt", "CreateById", "CreatedDate", "DeletedDate", "Question", "RecordStatus", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.", new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "What is Lorem Ipsum?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.", new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Why do we use it?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, "Contrary to popular belief, Lorem Ipsum is not simply random text.", new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Where does it come from?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.", new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Where can I get some?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, "The standard Lorem Ipsum passage, used since the 1500s, is reproduced below for those interested.", new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "What is the standard Lorem Ipsum passage?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, "Lorem Ipsum is simply dummy text of the printing and typesetting industry.", new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "What is Lorem Ipsum?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.", new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Why do we use it?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "Contrary to popular belief, Lorem Ipsum is not simply random text.", new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Where does it come from?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.", new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Where can I get some?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, "The standard Lorem Ipsum passage, used since the 1500s, is reproduced below for those interested.", new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "What is the standard Lorem Ipsum passage?", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -547,11 +553,11 @@ namespace OnDemandTutor.Models.Migrations
                 columns: new[] { "Id", "CreateAt", "CreateById", "CreatedDate", "DeletedDate", "Description", "Name", "RecordStatus", "Status", "SubjectType", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic mathematics subject", "Mathematics", 0, true, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Language arts subject", "English", 0, true, "Language", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of matter and energy", "Physics", 0, true, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of past events", "History", 0, true, "Social Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6699), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of computers and computational systems", "Computer Science", 0, true, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Basic mathematics subject", "Mathematics", 0, 0, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Language arts subject", "English", 0, 0, "Language", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of matter and energy", "Physics", 0, 0, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of past events", "History", 0, 0, "Social Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621), 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Study of computers and computational systems", "Computer Science", 0, 0, "Science", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -580,11 +586,11 @@ namespace OnDemandTutor.Models.Migrations
 
             migrationBuilder.InsertData(
                 table: "Slots",
-                columns: new[] { "Id", "ActualEndTime", "ClassId", "CreateById", "CreatedDate", "DeletedDate", "EndTime", "IsOnline", "NumberOfStudents", "PaymentStatus", "RecordStatus", "StartTime", "SubjectId", "TeachAddress", "UpdatedDate" },
+                columns: new[] { "Id", "ActualEndTime", "ClassId", "CreateById", "CreatedDate", "DeletedDate", "EndTime", "Finished", "IsOnline", "NumberOfStudents", "PaymentStatus", "RecordStatus", "StartTime", "SubjectId", "TeachAddress", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 4, null, null, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 25, 23, 12, 52, 565, DateTimeKind.Local).AddTicks(6885), true, 2, 0, 0, new DateTime(2024, 6, 25, 22, 12, 52, 565, DateTimeKind.Local).AddTicks(6884), 4, "101 Pine St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, null, null, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 26, 1, 12, 52, 565, DateTimeKind.Local).AddTicks(6888), true, 4, 0, 0, new DateTime(2024, 6, 26, 0, 12, 52, 565, DateTimeKind.Local).AddTicks(6887), 5, "111 Cedar St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 4, null, null, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 28, 0, 23, 24, 636, DateTimeKind.Local).AddTicks(836), false, true, 2, 1, 0, new DateTime(2024, 6, 27, 23, 23, 24, 636, DateTimeKind.Local).AddTicks(836), 4, "101 Pine St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, null, null, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 28, 2, 23, 24, 636, DateTimeKind.Local).AddTicks(839), false, true, 4, 1, 0, new DateTime(2024, 6, 28, 1, 23, 24, 636, DateTimeKind.Local).AddTicks(838), 5, "111 Cedar St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -613,12 +619,12 @@ namespace OnDemandTutor.Models.Migrations
 
             migrationBuilder.InsertData(
                 table: "Slots",
-                columns: new[] { "Id", "ActualEndTime", "ClassId", "CreateById", "CreatedDate", "DeletedDate", "EndTime", "IsOnline", "NumberOfStudents", "PaymentStatus", "RecordStatus", "StartTime", "SubjectId", "TeachAddress", "UpdatedDate" },
+                columns: new[] { "Id", "ActualEndTime", "ClassId", "CreateById", "CreatedDate", "DeletedDate", "EndTime", "Finished", "IsOnline", "NumberOfStudents", "PaymentStatus", "RecordStatus", "StartTime", "SubjectId", "TeachAddress", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, null, 1, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 25, 17, 12, 52, 565, DateTimeKind.Local).AddTicks(6873), false, 5, 0, 0, new DateTime(2024, 6, 25, 16, 12, 52, 565, DateTimeKind.Local).AddTicks(6872), 1, "123 Main St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2024, 6, 25, 19, 42, 52, 565, DateTimeKind.Local).AddTicks(6880), 2, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 25, 19, 12, 52, 565, DateTimeKind.Local).AddTicks(6878), true, 3, 1, 0, new DateTime(2024, 6, 25, 18, 12, 52, 565, DateTimeKind.Local).AddTicks(6878), 2, "456 Elm St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, null, 1, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 25, 21, 12, 52, 565, DateTimeKind.Local).AddTicks(6882), false, 7, 0, 0, new DateTime(2024, 6, 25, 20, 12, 52, 565, DateTimeKind.Local).AddTicks(6881), 3, "789 Oak St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, null, 1, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 27, 18, 23, 24, 636, DateTimeKind.Local).AddTicks(825), false, false, 5, 1, 0, new DateTime(2024, 6, 27, 17, 23, 24, 636, DateTimeKind.Local).AddTicks(824), 1, "123 Main St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new DateTime(2024, 6, 27, 20, 53, 24, 636, DateTimeKind.Local).AddTicks(831), 2, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 27, 20, 23, 24, 636, DateTimeKind.Local).AddTicks(830), false, true, 3, 0, 0, new DateTime(2024, 6, 27, 19, 23, 24, 636, DateTimeKind.Local).AddTicks(829), 2, "456 Elm St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, null, 1, 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 6, 27, 22, 23, 24, 636, DateTimeKind.Local).AddTicks(833), false, false, 7, 1, 0, new DateTime(2024, 6, 27, 21, 23, 24, 636, DateTimeKind.Local).AddTicks(833), 3, "789 Oak St", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -638,8 +644,8 @@ namespace OnDemandTutor.Models.Migrations
                 columns: new[] { "Id", "Amount", "CreatedById", "CreatedDate", "DeletedDate", "Notes", "PaymentMethod", "RecordStatus", "SlotId", "Status", "TransactionCode", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 4, 120.00m, 2, new DateTime(2024, 6, 22, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6951), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for online class", "Credit Card", 0, 4, 1, "TRX004", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 90.00m, 1, new DateTime(2024, 6, 21, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6953), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "PayPal", 0, 5, 1, "TRX005", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 4, 120.00m, 2, new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(919), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for online class", "Credit Card", 0, 4, 1, "TRX004", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 90.00m, 1, new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(921), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "PayPal", 0, 5, 1, "TRX005", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -659,9 +665,9 @@ namespace OnDemandTutor.Models.Migrations
                 columns: new[] { "Id", "Amount", "CreatedById", "CreatedDate", "DeletedDate", "Notes", "PaymentMethod", "RecordStatus", "SlotId", "Status", "TransactionCode", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, 100.00m, 1, new DateTime(2024, 6, 25, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6945), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "Credit Card", 0, 1, 1, "TRX001", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 50.00m, 2, new DateTime(2024, 6, 24, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6947), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for online class", "PayPal", 0, 2, 1, "TRX002", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 75.00m, 1, new DateTime(2024, 6, 23, 15, 12, 52, 565, DateTimeKind.Local).AddTicks(6949), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "Bank Transfer", 0, 3, 1, "TRX003", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 100.00m, 1, new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(913), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "Credit Card", 0, 1, 1, "TRX001", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 50.00m, 2, new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(915), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for online class", "PayPal", 0, 2, 1, "TRX002", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 75.00m, 1, new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(917), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Payment for tutoring session", "Bank Transfer", 0, 3, 1, "TRX003", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(

@@ -28,7 +28,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.TutorVerified).HasDefaultValue(false);
         
         // default will query the user with active status
-        builder.HasQueryFilter(x => x.IsActive);
+        // builder.HasQueryFilter(x => x.IsActive);
         
         // Configure relationships
         builder.HasMany(e => e.BlogCreateBy)

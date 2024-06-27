@@ -327,7 +327,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 2,
                 IsOnline = true,
                 NumberOfStudents = 3,
-                PaymentStatus = PaymentStatus.Unpaid,
+                PaymentStatus = PaymentStatus.Notpaid,
                 ActualEndTime = DateTime.Now.AddHours(4).AddMinutes(30)
             },
             new Slot
@@ -388,7 +388,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Basic mathematics subject",
                     CreateAt = createAt,
-                    Status = true
+                    Status = SubjectStatus.Enable
                 },
                 new Subject
                 {
@@ -398,7 +398,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 2,
                     Description = "Language arts subject",
                     CreateAt = createAt.AddDays(-1),
-                    Status = true
+                    Status = SubjectStatus.Enable
                 },
                 new Subject
                 {
@@ -408,7 +408,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Study of matter and energy",
                     CreateAt = createAt.AddDays(-2),
-                    Status = true
+                    Status = SubjectStatus.Enable
                 },
                 new Subject
                 {
@@ -418,7 +418,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 2,
                     Description = "Study of past events",
                     CreateAt = createAt.AddDays(-3),
-                    Status = true
+                    Status = SubjectStatus.Enable
                 },
                 new Subject
                 {
@@ -428,7 +428,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Study of computers and computational systems",
                     CreateAt = createAt.AddDays(-4),
-                    Status = true
+                    Status = SubjectStatus.Enable
                 }
             );
 

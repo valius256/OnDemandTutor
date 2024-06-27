@@ -13,10 +13,13 @@ public class Slot : BaseEntity
     public int? SubjectId { get; set; }
     public bool IsOnline { get; set; }
     public int NumberOfStudents { get; set; }
+    public SlotStatus SlotStatus { get; set; }
     public PaymentStatus PaymentStatus { get; set; }
     public DateTime? ActualEndTime { get; set; }
+    public bool Finished { get; set; }
     public virtual Subject Subject { get; set; }
-
+    
+    
 
     // Navigation properties
     public virtual User CreatedBy { get; set; }
