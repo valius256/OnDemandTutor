@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Services\BackGroundJob\" />
         <Folder Include="Services\Slot\" />
         <Folder Include="Services\Blog\" />
         <Folder Include="Services\Subject\" />

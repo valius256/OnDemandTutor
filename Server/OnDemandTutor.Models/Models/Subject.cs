@@ -1,4 +1,6 @@
-﻿namespace OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Models;
 
 public class Subject : BaseEntity
 {
@@ -8,7 +10,7 @@ public class Subject : BaseEntity
     public int? CreateById { get; set; }
     public string Description { get; set; }
     public DateTime? CreateAt { get; set; }
-    public bool Status { get; set; }
+    public SubjectStatus Status { get; set; }
 
 
     public virtual ICollection<TutorDegree> TutorDegree { get; set; } = new List<TutorDegree>();

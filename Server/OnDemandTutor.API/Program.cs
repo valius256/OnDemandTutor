@@ -26,6 +26,7 @@ internal class Program
         builder.Services.AddHttpClient();
         
         builder.Services.Configure<SmtpAppSetting>(builder.Configuration.GetSection("SmtpSettings"));
+        builder.Services.Configure<VnPay>(builder.Configuration.GetSection("VnPay"));
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")

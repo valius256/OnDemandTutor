@@ -21,7 +21,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
 
         // Navigation properties
         public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>();
-        public virtual ICollection<Transaction> SlotTransaction { get; set; } = new List<Transaction>();
+        public virtual ICollection<Models.Transaction> SlotTransaction { get; set; } = new List<Models.Transaction>();
     }
 }
 

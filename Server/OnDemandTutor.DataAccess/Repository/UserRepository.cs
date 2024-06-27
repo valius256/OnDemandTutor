@@ -44,14 +44,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return rs;
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDtos>> GetTutorListAsync(
+    public async Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorListAsync(
         PagingModel<TutorSimpleProfileRequest> request)
     {
-        var rs = await dbSet
+        var tutorList = await dbSet
             .Include(ld => ld.TutorSubjects)
             .Where(ld => ld.Role == RoleStatus.Tutor)
             .AsNoTracking()
             .ToPagingAsync<TutorSimpleProfileDtos, User>(request.Page, request.Limit);
-        return rs;
+        return tutorList;
     }
 }

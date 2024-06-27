@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.EntityTypeConfiguration;
@@ -13,6 +14,8 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
         builder.Property(s => s.StartTime)
             .IsRequired()
             .HasColumnType("datetime");
+
+        builder.Property(s => s.SlotStatus).HasDefaultValue(SlotStatus.NotYet); 
 
         builder.Property(s => s.EndTime)
             .IsRequired()

@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
-public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IBaseEntity
+public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
     protected readonly ApplicationDbContext context;
 
