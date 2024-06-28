@@ -6,13 +6,13 @@ using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
-using OnDemandTutor.Models;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -47,10 +47,10 @@ public class UserServices : IUserServices
             { "Name", $"{user.Email}" },
         };
 
-   
+
         var address = new List<string> { user.Email };
 
-        _mailServices.SendAsync(EmailType.Welcome_Email,  address, new List<string>(), emailParam, false);
+        _mailServices.SendAsync(EmailType.Welcome_Email, address, new List<string>(), emailParam, false);
         //_mailServices.SendAsync();
         return userModel.Adapt<GetProfileUserDtos>();
     }
@@ -150,7 +150,7 @@ public class UserServices : IUserServices
     }
 
     public async Task<GetProfileUserDtos> GetUserProfileById(int id)
-    {     
+    {
         return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id))
             .Adapt<GetProfileUserDtos>();
     }
@@ -179,7 +179,7 @@ public class UserServices : IUserServices
 
         // Filter out users that already exist
         var newUsers = usersToSync.Where(u => !existingUserIds.Contains(u.FireBaseid)).ToList();
-        
+
         // Add new users
         if (newUsers.Any()) await _unitOfWorkRepository.UserRepository.AddRangeAsync(newUsers);
 
@@ -196,7 +196,7 @@ public class UserServices : IUserServices
 
     public async Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
     {
-        var tutorList =  await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
+        var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
         if (!tutorList.Items.Any()) return null;
         return tutorList;
     }
