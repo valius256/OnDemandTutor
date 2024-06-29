@@ -8,5 +8,5 @@ public interface IUserRepository : IGenericRepository<User>
 {
     Task<List<User>> GetUsersListDegreeData();
     Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId);
-    Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorListAsync(PagingModel<TutorSimpleProfileRequest> request);
+    Task<PagedResult<User>> ViewTutorListAsync(PagingModel<TutorSimpleProfileRequest> request);
 }

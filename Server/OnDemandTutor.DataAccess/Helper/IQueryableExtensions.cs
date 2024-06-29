@@ -43,11 +43,11 @@ public static class IQueryableExtensions
         return result;
     }
 
-    public static async Task<PagedResult<T>> ToPagingAsync<T, TEntity>(
+    public static async Task<PagedResult<TEntity>> ToPagingAsync<TEntity>(
         this IQueryable<TEntity> query,
         int page, int limit)
     {
-        var result = new PagedResult<T>
+        var result = new PagedResult<TEntity>
         {
             Total = await query.CountAsync(),
             Page = page,
@@ -69,7 +69,7 @@ public static class IQueryableExtensions
         }
 
         // Use Mapster for mapping
-        result.Items = items.Adapt<List<T>>();
+        result.Items = items.Adapt<List<TEntity>>();
 
         return result;
     }

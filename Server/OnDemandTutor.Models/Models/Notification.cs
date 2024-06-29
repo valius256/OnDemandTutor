@@ -7,6 +7,6 @@ public class Notification : BaseEntity
     public int? ReceiverId { get; set; }
     public string? RefUrl { get; set; }
     public string? RefImageUrl { get; set; }
-    public int ViewStatus { get; set; }
+    public bool IsViewed { get; set; }
     public virtual User Receiver { get; set; }
 }

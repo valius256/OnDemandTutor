@@ -197,8 +197,7 @@ public class UserServices : IUserServices
     public async Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
     {
         var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
-        if (!tutorList.Items.Any()) return null;
-        return tutorList;
+        return tutorList.Adapt<PagedResult<TutorSimpleProfileDtos>>();
     }
 
     public async Task<List<TutorRegistrationResponseDtos>> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)

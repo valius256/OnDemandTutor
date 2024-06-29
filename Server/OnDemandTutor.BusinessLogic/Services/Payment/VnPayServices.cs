@@ -18,9 +18,9 @@ public class VnPayServices : IVnPayServices
     {
         _vnPay = vnPay.Value;
         _configuration = configuration;
-        _unitOfWorkRepository = unitOfWorkRepository;  
+        _unitOfWorkRepository = unitOfWorkRepository;
     }
-    
+
     public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
     {
         var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
@@ -34,15 +34,15 @@ public class VnPayServices : IVnPayServices
         pay.AddRequestData("vnp_TmnCode", _vnPay.TmnCode);
         pay.AddRequestData("vnp_Amount", ((int)model.Amount * 100).ToString());
         pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
-        pay.AddRequestData("vnp_CurrCode",_vnPay.CurrCode);
+        pay.AddRequestData("vnp_CurrCode", _vnPay.CurrCode);
         pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
-        pay.AddRequestData("vnp_Locale",_vnPay.Locale);
+        pay.AddRequestData("vnp_Locale", _vnPay.Locale);
         pay.AddRequestData("vnp_OrderInfo", $"{model.Email} {model.OrderDescription} {model.Amount}");
         pay.AddRequestData("vnp_OrderType", model.OrderType);
         pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
         pay.AddRequestData("vnp_TxnRef", tick);
         pay.AddRequestData("vnp_Email", model.Email);
-        
+
         var paymentUrl =
             pay.CreateRequestUrl(_configuration["Vnpay:BaseUrl"], _configuration["Vnpay:HashSecret"]);
 
@@ -54,7 +54,7 @@ public class VnPayServices : IVnPayServices
         var pay = new VnPayLibrary();
         var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
-       
+
         return response;
     }
 }

@@ -17,8 +17,8 @@ public class NotificationEntityTypeConfiguration : IEntityTypeConfiguration<Noti
 
         builder.Property(n => n.RefImageUrl);
 
-        builder.Property(n => n.ViewStatus)
-            .IsRequired();
+        builder.Property(n => n.IsViewed)
+            .HasDefaultValue(false);
 
         // Configure relationship with User
         builder.HasOne<User>(n => n.Receiver)

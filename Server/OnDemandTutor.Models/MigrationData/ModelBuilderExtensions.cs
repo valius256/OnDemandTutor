@@ -11,124 +11,124 @@ namespace OnDemandTutor.Models.MigrationData
             // seed blog 
 
             #region User
-     modelBuilder.Entity<User>().HasData(
-            new User 
-            { 
-                Id = 1, 
-                FireBaseid = "firebaseid1", 
-                FirstName = "John", 
-                LastName = "Doe", 
-                Phone = "1234567890", 
-                Email = "john.doe@example.com", 
-                Address = "123 Main St", 
-                AvatarImageUrl = "http://example.com/avatar1.png", 
-                Dob = new DateTime(1990, 1, 1), 
-                Role = RoleStatus.Admin, 
-                Balance = 100.0m, 
-                TutorFeePerHour = 50.0m, 
-                Rating = 4.5, 
-                IdCardImageUrl = "http://example.com/id1.png", 
-                ScheduleDesciption = "Available on weekends", 
-                Password = "password123", 
-                Sex = Sex.Male ,
-                IsActive = true
-            },
-            new User 
-            { 
-                Id = 2, 
-                FireBaseid = "firebaseid2", 
-                FirstName = "Jane", 
-                LastName = "Smith", 
-                Phone = "0987654321", 
-                Email = "jane.smith@example.com", 
-                Address = "456 Elm St", 
-                AvatarImageUrl = "http://example.com/avatar2.png", 
-                Dob = new DateTime(1985, 2, 2), 
-                Role = RoleStatus.Tutor, 
-                Balance = 200.0m, 
-                TutorFeePerHour = 60.0m, 
-                Rating = 4.7, 
-                IdCardImageUrl = "http://example.com/id2.png", 
-                ScheduleDesciption = "Available on weekdays", 
-                Password = "password123", 
-                Sex = Sex.Female, 
-                IsActive = true
+            modelBuilder.Entity<User>().HasData(
+                   new User
+                   {
+                       Id = 1,
+                       FireBaseid = "firebaseid1",
+                       FirstName = "John",
+                       LastName = "Doe",
+                       Phone = "1234567890",
+                       Email = "john.doe@example.com",
+                       Address = "123 Main St",
+                       AvatarImageUrl = "http://example.com/avatar1.png",
+                       Dob = new DateTime(1990, 1, 1),
+                       Role = RoleStatus.Admin,
+                       Balance = 100.0m,
+                       TutorFeePerHour = 50.0m,
+                       Rating = 4.5,
+                       IdCardImageUrl = "http://example.com/id1.png",
+                       ScheduleDesciption = "Available on weekends",
+                       Password = "password123",
+                       Sex = Sex.Male,
+                       IsActive = true
+                   },
+                   new User
+                   {
+                       Id = 2,
+                       FireBaseid = "firebaseid2",
+                       FirstName = "Jane",
+                       LastName = "Smith",
+                       Phone = "0987654321",
+                       Email = "jane.smith@example.com",
+                       Address = "456 Elm St",
+                       AvatarImageUrl = "http://example.com/avatar2.png",
+                       Dob = new DateTime(1985, 2, 2),
+                       Role = RoleStatus.Tutor,
+                       Balance = 200.0m,
+                       TutorFeePerHour = 60.0m,
+                       Rating = 4.7,
+                       IdCardImageUrl = "http://example.com/id2.png",
+                       ScheduleDesciption = "Available on weekdays",
+                       Password = "password123",
+                       Sex = Sex.Female,
+                       IsActive = true
 
-            },
-            // Add three more users
-            new User 
-            { 
-                Id = 3, 
-                FireBaseid = "firebaseid3", 
-                FirstName = "Alice", 
-                LastName = "Johnson", 
-                Phone = "1122334455", 
-                Email = "alice.johnson@example.com", 
-                Address = "789 Pine St", 
-                AvatarImageUrl = "http://example.com/avatar3.png", 
-                Dob = new DateTime(1995, 3, 3), 
-                Role = RoleStatus.Customer, 
-                Balance = 300.0m, 
-                TutorFeePerHour = 70.0m, 
-                Rating = 4.8, 
-                IdCardImageUrl = "http://example.com/id3.png", 
-                ScheduleDesciption = "Available in the evenings", 
-                Password = "password123", 
-                Sex = Sex.Female, 
-                IsActive = true
+                   },
+                   // Add three more users
+                   new User
+                   {
+                       Id = 3,
+                       FireBaseid = "firebaseid3",
+                       FirstName = "Alice",
+                       LastName = "Johnson",
+                       Phone = "1122334455",
+                       Email = "alice.johnson@example.com",
+                       Address = "789 Pine St",
+                       AvatarImageUrl = "http://example.com/avatar3.png",
+                       Dob = new DateTime(1995, 3, 3),
+                       Role = RoleStatus.Customer,
+                       Balance = 300.0m,
+                       TutorFeePerHour = 70.0m,
+                       Rating = 4.8,
+                       IdCardImageUrl = "http://example.com/id3.png",
+                       ScheduleDesciption = "Available in the evenings",
+                       Password = "password123",
+                       Sex = Sex.Female,
+                       IsActive = true
 
-            },
-            new User 
-            { 
-                Id = 4, 
-                FireBaseid = "firebaseid4", 
-                FirstName = "Bob", 
-                LastName = "Williams", 
-                Phone = "2233445566", 
-                Email = "bob.williams@example.com", 
-                Address = "101 Maple St", 
-                AvatarImageUrl = "http://example.com/avatar4.png", 
-                Dob = new DateTime(1975, 4, 4), 
-                Role = RoleStatus.Tutor, 
-                Balance = 400.0m, 
-                TutorFeePerHour = 80.0m, 
-                Rating = 4.9, 
-                IdCardImageUrl = "http://example.com/id4.png", 
-                ScheduleDesciption = "Available on weekends", 
-                Password = "password123", 
-                Sex = Sex.Male, 
-                IsActive = true
+                   },
+                   new User
+                   {
+                       Id = 4,
+                       FireBaseid = "firebaseid4",
+                       FirstName = "Bob",
+                       LastName = "Williams",
+                       Phone = "2233445566",
+                       Email = "bob.williams@example.com",
+                       Address = "101 Maple St",
+                       AvatarImageUrl = "http://example.com/avatar4.png",
+                       Dob = new DateTime(1975, 4, 4),
+                       Role = RoleStatus.Tutor,
+                       Balance = 400.0m,
+                       TutorFeePerHour = 80.0m,
+                       Rating = 4.9,
+                       IdCardImageUrl = "http://example.com/id4.png",
+                       ScheduleDesciption = "Available on weekends",
+                       Password = "password123",
+                       Sex = Sex.Male,
+                       IsActive = true
 
-            },
-            new User 
-            { 
-                Id = 5, 
-                FireBaseid = "firebaseid5", 
-                FirstName = "Charlie", 
-                LastName = "Brown", 
-                Phone = "3344556677", 
-                Email = "charlie.brown@example.com", 
-                Address = "202 Oak St", 
-                AvatarImageUrl = "http://example.com/avatar5.png", 
-                Dob = new DateTime(1980, 5, 5), 
-                Role = RoleStatus.Customer, 
-                Balance = 500.0m, 
-                TutorFeePerHour = 90.0m, 
-                Rating = 5.0, 
-                IdCardImageUrl = "http://example.com/id5.png", 
-                ScheduleDesciption = "Available all day", 
-                Password = "password123", 
-                Sex = Sex.Male ,
-                IsActive = false
+                   },
+                   new User
+                   {
+                       Id = 5,
+                       FireBaseid = "firebaseid5",
+                       FirstName = "Charlie",
+                       LastName = "Brown",
+                       Phone = "3344556677",
+                       Email = "charlie.brown@example.com",
+                       Address = "202 Oak St",
+                       AvatarImageUrl = "http://example.com/avatar5.png",
+                       Dob = new DateTime(1980, 5, 5),
+                       Role = RoleStatus.Customer,
+                       Balance = 500.0m,
+                       TutorFeePerHour = 90.0m,
+                       Rating = 5.0,
+                       IdCardImageUrl = "http://example.com/id5.png",
+                       ScheduleDesciption = "Available all day",
+                       Password = "password123",
+                       Sex = Sex.Male,
+                       IsActive = false
 
-            }
-        );
+                   }
+               );
 
-            
+
 
             #endregion
-            
-            
+
+
             #region  Blog
             var createAt = DateTime.Now;
             modelBuilder.Entity<Blog>().HasData(
@@ -247,7 +247,7 @@ namespace OnDemandTutor.Models.MigrationData
 
 
             #endregion
-            
+
             #region  notifications
             modelBuilder.Entity<Notification>().HasData(
                 new Notification
@@ -257,7 +257,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ReceiverId = 1,
                     RefUrl = "/messages/1",
                     RefImageUrl = null,
-                    ViewStatus = 0
+                    IsViewed = true
                 },
                 new Notification
                 {
@@ -266,7 +266,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ReceiverId = 2,
                     RefUrl = "/events/5",
                     RefImageUrl = null,
-                    ViewStatus = 0
+                    IsViewed = true
                 },
                 new Notification
                 {
@@ -275,7 +275,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ReceiverId = 1,
                     RefUrl = "/payments/123",
                     RefImageUrl = null,
-                    ViewStatus = 0
+                    IsViewed = true
                 },
                 new Notification
                 {
@@ -284,7 +284,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ReceiverId = 2,
                     RefUrl = "/articles/45",
                     RefImageUrl = "/images/articles/45.jpg",
-                    ViewStatus = 0
+                    IsViewed = false
                 },
                 new Notification
                 {
@@ -293,7 +293,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ReceiverId = 1,
                     RefUrl = "/account/settings",
                     RefImageUrl = null,
-                    ViewStatus = 0
+                    IsViewed = false
                 }
             );
 
@@ -313,8 +313,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 1,
                 IsOnline = false,
                 NumberOfStudents = 5,
-                PaymentStatus = PaymentStatus.Paid,
-                ActualEndTime = null
+                ActualEndTime = DateTime.Today
             },
             new Slot
             {
@@ -327,7 +326,6 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 2,
                 IsOnline = true,
                 NumberOfStudents = 3,
-                PaymentStatus = PaymentStatus.Notpaid,
                 ActualEndTime = DateTime.Now.AddHours(4).AddMinutes(30)
             },
             new Slot
@@ -341,8 +339,8 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 3,
                 IsOnline = false,
                 NumberOfStudents = 7,
-                PaymentStatus = PaymentStatus.Paid,
-                ActualEndTime = null
+                ActualEndTime = DateTime.Today
+
             },
             new Slot
             {
@@ -355,8 +353,8 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 4,
                 IsOnline = true,
                 NumberOfStudents = 2,
-                PaymentStatus = PaymentStatus.Paid,
-                ActualEndTime = null
+                ActualEndTime = DateTime.Today
+
             },
             new Slot
             {
@@ -369,8 +367,7 @@ namespace OnDemandTutor.Models.MigrationData
                 SubjectId = 5,
                 IsOnline = true,
                 NumberOfStudents = 4,
-                PaymentStatus = PaymentStatus.Paid,
-                ActualEndTime = null
+                ActualEndTime = DateTime.Today
             }
         );
 
@@ -608,11 +605,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
-                new SlotStudent { SlotId = 1, UserId = 1 },
-                new SlotStudent { SlotId = 1, UserId = 2 },
-                new SlotStudent { SlotId = 2, UserId = 3 },
-                new SlotStudent { SlotId = 2, UserId = 4 },
-                new SlotStudent { SlotId = 3, UserId = 1 }
+                new SlotStudent { SlotId = 1, UserId = 1 , Feedback = "Qua dinh luon em oi"},
+                new SlotStudent { SlotId = 1, UserId = 2 , Feedback = "Qua dinh luon em oi 1"},
+                new SlotStudent { SlotId = 2, UserId = 3 , Feedback = "Qua dinh luon em oi 2" },
+                new SlotStudent { SlotId = 2, UserId = 4, Feedback = "Qua dinh luon em oi 3" },
+                new SlotStudent { SlotId = 3, UserId = 1, Feedback = "Qua dinh luon em oi 4"}
                 // Add more as needed
             );
 
@@ -669,15 +666,15 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-            
+
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { StudentId = 1, ClassId = 1 },
-                new StudentClass { StudentId = 2, ClassId = 1 },
-                new StudentClass { StudentId = 3, ClassId = 2 },
-                new StudentClass { StudentId = 4, ClassId = 2 },
-                new StudentClass { StudentId = 5, ClassId = 3 }
+                new StudentClass { StudentId = 1, ClassId = 1 , Rating = 5},
+                new StudentClass { StudentId = 2, ClassId = 1 , Rating = 2},
+                new StudentClass { StudentId = 3, ClassId = 2 , Rating = 3},
+                new StudentClass { StudentId = 4, ClassId = 2 , Rating = 4 },
+                new StudentClass { StudentId = 5, ClassId = 3 , Rating = 4}
                 // Add more as needed
             );
 

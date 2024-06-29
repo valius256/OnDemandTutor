@@ -29,9 +29,7 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
 
         builder.Property(s => s.NumberOfStudents)
             .IsRequired();
-
-        builder.Property(s => s.PaymentStatus)
-            .IsRequired();
+        
 
         builder.Property(s => s.SubjectId)
             .IsRequired(false)

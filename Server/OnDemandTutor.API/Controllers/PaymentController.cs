@@ -3,14 +3,12 @@ using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.Models.Dtos.Payment;
-using OnDemandTutor.Models.Dtos.Slot;
-using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers;
 
 
 [Route("api/[controller]")]
-[ApiController] 
+[ApiController]
 public class PaymentController : BaseController<PaymentController>
 {
     private readonly IVnPayServices _vnPayServices;
@@ -18,7 +16,7 @@ public class PaymentController : BaseController<PaymentController>
     {
         _vnPayServices = vnPayServices;
     }
-    
+
     //[Authorize]
     [HttpPost("create-payment")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -28,6 +26,8 @@ public class PaymentController : BaseController<PaymentController>
         var url = _vnPayServices.CreatePaymentUrl(requestDtos, HttpContext);
         return OKAsync(url);
     }
+    
+    
 
     [HttpPost("execute")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -37,4 +37,6 @@ public class PaymentController : BaseController<PaymentController>
         var response = await _vnPayServices.PaymentExecute(Request.Query);
         return OKAsync(response);
     }
+
+
 }
