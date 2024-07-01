@@ -10,6 +10,8 @@ using OnDemandTutor.API.Filter;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Mail;
+using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -17,6 +19,8 @@ using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.BusinessLogic.Services.Blog;
 using OnDemandTutor.BusinessLogic.Services.Class;
 using OnDemandTutor.BusinessLogic.Services.ConsultationRequest;
+using OnDemandTutor.BusinessLogic.Services.Mail;
+using OnDemandTutor.BusinessLogic.Services.Payment;
 using OnDemandTutor.BusinessLogic.Services.Subject;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
@@ -28,11 +32,6 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
 using System.Security.Claims;
-using OnDemandTutor.BusinessLogic.Interfaces.Mail;
-using OnDemandTutor.BusinessLogic.Interfaces.Payment;
-using OnDemandTutor.BusinessLogic.Services.Mail;
-using OnDemandTutor.BusinessLogic.Services.Payment;
-using SharedKernel.Domain.ValueObjects;
 
 
 namespace OnDemandTutor.API.Extensions;
@@ -51,7 +50,8 @@ public static class ServiceExtensions
         services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
         services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
-        
+        services.AddScoped<ITutorDegreeRepository, TutorDegreeRepository>();
+
         services.AddProblemDetails();
         return services;
     }
@@ -85,7 +85,7 @@ public static class ServiceExtensions
         });
         return services;
     }
-    
+
     public static IServiceCollection AddFireBaseHttpClient(this IServiceCollection services)
     {
         services.AddHttpClient<IJwtProviderServices, JwtProviderServices>((sp, client) =>
@@ -173,7 +173,7 @@ public static class ServiceExtensions
     public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services, IConfiguration configuration)
     {
         // Register Hangfire and configure it
-        services.AddHangfire(config => 
+        services.AddHangfire(config =>
             config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"),
                 new SqlServerStorageOptions
                 {
@@ -201,5 +201,5 @@ public static class ServiceExtensions
         return services;
     }
 
- 
+
 }

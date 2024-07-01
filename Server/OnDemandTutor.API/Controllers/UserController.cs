@@ -53,7 +53,7 @@ public class UserController : BaseController<UserController>
     [HttpPost("approve-tutor-registration")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
-    public async Task<IApiResult<List<TutorRegistrationResponseDtos>>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
+    public async Task<IApiResult<bool>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
         return OKAsync(await _userService.ApprovedTutorRegistration(body, HttpContext.User));
         ;
@@ -79,7 +79,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.ViewTutorList(request));
 
     }
-    
-    
-    
+
+
+
 }

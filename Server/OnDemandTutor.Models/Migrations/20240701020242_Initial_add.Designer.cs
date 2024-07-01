@@ -12,8 +12,8 @@ using OnDemandTutor.Models;
 namespace OnDemandTutor.Models.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240627092326_Initial_Add")]
-    partial class Initial_Add
+    [Migration("20240701020242_Initial_add")]
+    partial class Initial_add
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,7 +79,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 1,
                             Content = "Content of the first blog.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -91,7 +91,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 2,
                             Content = "Content of the second blog.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -103,7 +103,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 3,
                             Content = "Content of the third blog.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -115,7 +115,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 4,
                             Content = "Content of the fourth blog.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 3,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -127,7 +127,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 5,
                             Content = "Content of the fifth blog.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -421,12 +421,12 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 1,
-                            Body = "Welcome to OnDemandTutor! Dear {Name}, thank you for joining us.",
+                            Body = "Welcome to OnDemandTutor! Dear [Name], thank you for joining us.",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This email is sent to welcome new users.",
                             Name = "Welcome_Email",
-                            Params = "{Name}",
+                            Params = "[Name]",
                             RecordStatus = 0,
                             Status = true,
                             Subject = "Welcome to OnDemandTutor!",
@@ -435,12 +435,12 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 2,
-                            Body = "Hello {Name}, this is a reminder for your upcoming class on {Date}.",
+                            Body = "Hello [Name], this is a reminder for your upcoming class on {Date}.",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This email is sent as a reminder for scheduled classes.",
                             Name = "Reminder_Email",
-                            Params = "{Name}, {Date}",
+                            Params = "[Name], [Date]",
                             RecordStatus = 0,
                             Status = true,
                             Subject = "Reminder for Your Class",
@@ -449,12 +449,12 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 3,
-                            Body = "Dear {Name}, your payment of {Amount} has been confirmed.",
+                            Body = "Dear [Name], your payment of [Amount] has been confirmed.",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This email confirms the successful payment for services.",
                             Name = "Payment_Confirmation",
-                            Params = "{Name}, {Amount}",
+                            Params = "[Name], [Amount]",
                             RecordStatus = 0,
                             Status = true,
                             Subject = "Payment Confirmation",
@@ -463,12 +463,12 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 4,
-                            Body = "Hi {Name}, we would love to hear your feedback about our services.",
+                            Body = "Hi [Name], we would love to hear your feedback about our services.",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This email requests feedback from users about their experience.",
                             Name = "Feedback_Request",
-                            Params = "{Name}",
+                            Params = "[Name]",
                             RecordStatus = 0,
                             Status = true,
                             Subject = "Feedback Request",
@@ -477,15 +477,29 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 5,
-                            Body = "Dear {Name}, please click the link to activate your account: {ActivationLink}.",
+                            Body = "Dear [Name], please click the link to activate your account: [ActivationLink].",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "This email contains instructions to activate user accounts.",
                             Name = "Account_Activation",
-                            Params = "{Name}, {ActivationLink}",
+                            Params = "[Name], [ActivationLink]",
                             RecordStatus = 0,
                             Status = true,
                             Subject = "Account Activation",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Body = "\r\n                                           <!DOCTYPE html>\r\n                        <html lang=\"en\">\r\n                        <head>\r\n                            <meta charset=\"UTF-8\">\r\n                            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n                            <title>Tutor Registration Approval</title>\r\n                            <style>\r\n                                body {\r\n                                    font-family: Arial, sans-serif;\r\n                                    line-height: 1.6;\r\n                                }\r\n                                .container {\r\n                                    margin: 0 auto;\r\n                                    padding: 20px;\r\n                                    max-width: 600px;\r\n                                    border: 1px solid #ddd;\r\n                                    border-radius: 5px;\r\n                                    background-color: #f9f9f9;\r\n                                }\r\n                                .header, .footer {\r\n                                    text-align: center;\r\n                                }\r\n                                .content {\r\n                                    margin-top: 20px;\r\n                                }\r\n                                .content p {\r\n                                    margin: 10px 0;\r\n                                }\r\n                            </style>\r\n                        </head>\r\n                        <body>\r\n                            <div class=\"container\">\r\n                                <div class=\"header\">\r\n                                    <h2>Tutor Registration Approval</h2>\r\n                                </div>\r\n                                <div class=\"content\">\r\n                                    <p>Dear [TutorName],</p>\r\n                                    <p>We are pleased to inform you that your registration as a tutor has been reviewed.</p>\r\n                                    <p>[ApprovalStatus]</p>\r\n                                    <p>If your registration has been approved, you can start using our platform to offer your tutoring services. If your registration has been rejected, please find the reason below:</p>\r\n                                    <p>[RejectionReason]</p>\r\n                                    <p>Thank you for your interest in joining our tutoring platform. If you have any questions, feel free to contact our support team.</p>\r\n                                </div>\r\n                                <div class=\"footer\">\r\n                                    <p>Best regards,</p>\r\n                                    <p>The On Demand Tutor Platform Team</p>\r\n                                </div>\r\n                            </div>\r\n                        </body>\r\n                        </html>\r\n\r\n    ",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Email template for notifying tutors about their registration approval status.",
+                            Name = "TutorRegistrationApproval",
+                            Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
+                            RecordStatus = 0,
+                            Status = true,
+                            Subject = "Your Tutor Registration Approval Status",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -534,7 +548,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 1,
                             Answer = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -546,7 +560,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 2,
                             Answer = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
-                            CreateAt = new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 30, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -558,7 +572,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 3,
                             Answer = "Contrary to popular belief, Lorem Ipsum is not simply random text.",
-                            CreateAt = new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 29, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -570,7 +584,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 4,
                             Answer = "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.",
-                            CreateAt = new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 28, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -582,7 +596,7 @@ namespace OnDemandTutor.Models.Migrations
                         {
                             Id = 5,
                             Answer = "The standard Lorem Ipsum passage, used since the 1500s, is reproduced below for those interested.",
-                            CreateAt = new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 27, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -610,6 +624,11 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsViewed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int?>("ReceiverId")
                         .HasColumnType("int");
 
@@ -625,9 +644,6 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ViewStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReceiverId");
@@ -641,11 +657,11 @@ namespace OnDemandTutor.Models.Migrations
                             Content = "New message received",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsViewed = true,
                             ReceiverId = 1,
                             RecordStatus = 0,
                             RefUrl = "/messages/1",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ViewStatus = 0
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -653,11 +669,11 @@ namespace OnDemandTutor.Models.Migrations
                             Content = "Meeting reminder",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsViewed = true,
                             ReceiverId = 2,
                             RecordStatus = 0,
                             RefUrl = "/events/5",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ViewStatus = 0
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -665,11 +681,11 @@ namespace OnDemandTutor.Models.Migrations
                             Content = "Payment received",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsViewed = true,
                             ReceiverId = 1,
                             RecordStatus = 0,
                             RefUrl = "/payments/123",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ViewStatus = 0
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -677,12 +693,12 @@ namespace OnDemandTutor.Models.Migrations
                             Content = "New article published",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsViewed = false,
                             ReceiverId = 2,
                             RecordStatus = 0,
                             RefImageUrl = "/images/articles/45.jpg",
                             RefUrl = "/articles/45",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ViewStatus = 0
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -690,11 +706,11 @@ namespace OnDemandTutor.Models.Migrations
                             Content = "Account updated",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsViewed = false,
                             ReceiverId = 1,
                             RecordStatus = 0,
                             RefUrl = "/account/settings",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ViewStatus = 0
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -724,16 +740,13 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("Finished")
+                    b.Property<bool>("IsFinished")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("bit");
 
                     b.Property<int>("NumberOfStudents")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("RecordStatus")
@@ -771,18 +784,18 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 1,
+                            ActualEndTime = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Local),
                             ClassId = 1,
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EndTime = new DateTime(2024, 6, 27, 18, 23, 24, 636, DateTimeKind.Local).AddTicks(825),
-                            Finished = false,
+                            EndTime = new DateTime(2024, 7, 1, 11, 2, 42, 215, DateTimeKind.Local).AddTicks(7615),
+                            IsFinished = false,
                             IsOnline = false,
                             NumberOfStudents = 5,
-                            PaymentStatus = 1,
                             RecordStatus = 0,
                             SlotStatus = 0,
-                            StartTime = new DateTime(2024, 6, 27, 17, 23, 24, 636, DateTimeKind.Local).AddTicks(824),
+                            StartTime = new DateTime(2024, 7, 1, 10, 2, 42, 215, DateTimeKind.Local).AddTicks(7614),
                             SubjectId = 1,
                             TeachAddress = "123 Main St",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -790,19 +803,18 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 2,
-                            ActualEndTime = new DateTime(2024, 6, 27, 20, 53, 24, 636, DateTimeKind.Local).AddTicks(831),
+                            ActualEndTime = new DateTime(2024, 7, 1, 13, 32, 42, 215, DateTimeKind.Local).AddTicks(7626),
                             ClassId = 2,
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EndTime = new DateTime(2024, 6, 27, 20, 23, 24, 636, DateTimeKind.Local).AddTicks(830),
-                            Finished = false,
+                            EndTime = new DateTime(2024, 7, 1, 13, 2, 42, 215, DateTimeKind.Local).AddTicks(7624),
+                            IsFinished = false,
                             IsOnline = true,
                             NumberOfStudents = 3,
-                            PaymentStatus = 0,
                             RecordStatus = 0,
                             SlotStatus = 0,
-                            StartTime = new DateTime(2024, 6, 27, 19, 23, 24, 636, DateTimeKind.Local).AddTicks(829),
+                            StartTime = new DateTime(2024, 7, 1, 12, 2, 42, 215, DateTimeKind.Local).AddTicks(7623),
                             SubjectId = 2,
                             TeachAddress = "456 Elm St",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -810,18 +822,18 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 3,
+                            ActualEndTime = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Local),
                             ClassId = 1,
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EndTime = new DateTime(2024, 6, 27, 22, 23, 24, 636, DateTimeKind.Local).AddTicks(833),
-                            Finished = false,
+                            EndTime = new DateTime(2024, 7, 1, 15, 2, 42, 215, DateTimeKind.Local).AddTicks(7628),
+                            IsFinished = false,
                             IsOnline = false,
                             NumberOfStudents = 7,
-                            PaymentStatus = 1,
                             RecordStatus = 0,
                             SlotStatus = 0,
-                            StartTime = new DateTime(2024, 6, 27, 21, 23, 24, 636, DateTimeKind.Local).AddTicks(833),
+                            StartTime = new DateTime(2024, 7, 1, 14, 2, 42, 215, DateTimeKind.Local).AddTicks(7628),
                             SubjectId = 3,
                             TeachAddress = "789 Oak St",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -829,17 +841,17 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 4,
+                            ActualEndTime = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Local),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EndTime = new DateTime(2024, 6, 28, 0, 23, 24, 636, DateTimeKind.Local).AddTicks(836),
-                            Finished = false,
+                            EndTime = new DateTime(2024, 7, 1, 17, 2, 42, 215, DateTimeKind.Local).AddTicks(7633),
+                            IsFinished = false,
                             IsOnline = true,
                             NumberOfStudents = 2,
-                            PaymentStatus = 1,
                             RecordStatus = 0,
                             SlotStatus = 0,
-                            StartTime = new DateTime(2024, 6, 27, 23, 23, 24, 636, DateTimeKind.Local).AddTicks(836),
+                            StartTime = new DateTime(2024, 7, 1, 16, 2, 42, 215, DateTimeKind.Local).AddTicks(7632),
                             SubjectId = 4,
                             TeachAddress = "101 Pine St",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -847,17 +859,17 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 5,
+                            ActualEndTime = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Local),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EndTime = new DateTime(2024, 6, 28, 2, 23, 24, 636, DateTimeKind.Local).AddTicks(839),
-                            Finished = false,
+                            EndTime = new DateTime(2024, 7, 1, 19, 2, 42, 215, DateTimeKind.Local).AddTicks(7637),
+                            IsFinished = false,
                             IsOnline = true,
                             NumberOfStudents = 4,
-                            PaymentStatus = 1,
                             RecordStatus = 0,
                             SlotStatus = 0,
-                            StartTime = new DateTime(2024, 6, 28, 1, 23, 24, 636, DateTimeKind.Local).AddTicks(838),
+                            StartTime = new DateTime(2024, 7, 1, 18, 2, 42, 215, DateTimeKind.Local).AddTicks(7636),
                             SubjectId = 5,
                             TeachAddress = "111 Cedar St",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -872,6 +884,13 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("SlotId", "UserId");
 
                     b.HasIndex("UserId");
@@ -882,27 +901,37 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             SlotId = 1,
-                            UserId = 1
+                            UserId = 1,
+                            Feedback = "Qua dinh luon em oi",
+                            PaymentStatus = 0
                         },
                         new
                         {
                             SlotId = 1,
-                            UserId = 2
+                            UserId = 2,
+                            Feedback = "Qua dinh luon em oi 1",
+                            PaymentStatus = 0
                         },
                         new
                         {
                             SlotId = 2,
-                            UserId = 3
+                            UserId = 3,
+                            Feedback = "Qua dinh luon em oi 2",
+                            PaymentStatus = 0
                         },
                         new
                         {
                             SlotId = 2,
-                            UserId = 4
+                            UserId = 4,
+                            Feedback = "Qua dinh luon em oi 3",
+                            PaymentStatus = 0
                         },
                         new
                         {
                             SlotId = 3,
-                            UserId = 1
+                            UserId = 1,
+                            Feedback = "Qua dinh luon em oi 4",
+                            PaymentStatus = 0
                         });
                 });
 
@@ -923,7 +952,16 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RatingForTutorId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TutorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -932,6 +970,8 @@ namespace OnDemandTutor.Models.Migrations
                     b.HasKey("StudentId", "ClassId");
 
                     b.HasIndex("ClassId");
+
+                    b.HasIndex("TutorId");
 
                     b.ToTable("StudentClasses");
 
@@ -943,6 +983,8 @@ namespace OnDemandTutor.Models.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
+                            Rating = 5,
+                            RatingForTutorId = 0,
                             RecordStatus = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -953,6 +995,8 @@ namespace OnDemandTutor.Models.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
+                            Rating = 2,
+                            RatingForTutorId = 0,
                             RecordStatus = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -963,6 +1007,8 @@ namespace OnDemandTutor.Models.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
+                            Rating = 3,
+                            RatingForTutorId = 0,
                             RecordStatus = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -973,6 +1019,8 @@ namespace OnDemandTutor.Models.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
+                            Rating = 4,
+                            RatingForTutorId = 0,
                             RecordStatus = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -983,6 +1031,8 @@ namespace OnDemandTutor.Models.Migrations
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
+                            Rating = 4,
+                            RatingForTutorId = 0,
                             RecordStatus = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -1042,7 +1092,7 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 1,
-                            CreateAt = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1056,7 +1106,7 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 2,
-                            CreateAt = new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 30, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1070,7 +1120,7 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 3,
-                            CreateAt = new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 29, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1084,7 +1134,7 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 4,
-                            CreateAt = new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 28, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 2,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1098,7 +1148,7 @@ namespace OnDemandTutor.Models.Migrations
                         new
                         {
                             Id = 5,
-                            CreateAt = new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(621),
+                            CreateAt = new DateTime(2024, 6, 27, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7390),
                             CreateById = 1,
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1168,7 +1218,7 @@ namespace OnDemandTutor.Models.Migrations
                             Id = 1,
                             Amount = 100.00m,
                             CreatedById = 1,
-                            CreatedDate = new DateTime(2024, 6, 27, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(913),
+                            CreatedDate = new DateTime(2024, 7, 1, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7707),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Notes = "Payment for tutoring session",
                             PaymentMethod = "Credit Card",
@@ -1183,7 +1233,7 @@ namespace OnDemandTutor.Models.Migrations
                             Id = 2,
                             Amount = 50.00m,
                             CreatedById = 2,
-                            CreatedDate = new DateTime(2024, 6, 26, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(915),
+                            CreatedDate = new DateTime(2024, 6, 30, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7710),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Notes = "Payment for online class",
                             PaymentMethod = "PayPal",
@@ -1198,7 +1248,7 @@ namespace OnDemandTutor.Models.Migrations
                             Id = 3,
                             Amount = 75.00m,
                             CreatedById = 1,
-                            CreatedDate = new DateTime(2024, 6, 25, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(917),
+                            CreatedDate = new DateTime(2024, 6, 29, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7712),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Notes = "Payment for tutoring session",
                             PaymentMethod = "Bank Transfer",
@@ -1213,7 +1263,7 @@ namespace OnDemandTutor.Models.Migrations
                             Id = 4,
                             Amount = 120.00m,
                             CreatedById = 2,
-                            CreatedDate = new DateTime(2024, 6, 24, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(919),
+                            CreatedDate = new DateTime(2024, 6, 28, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7714),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Notes = "Payment for online class",
                             PaymentMethod = "Credit Card",
@@ -1228,7 +1278,7 @@ namespace OnDemandTutor.Models.Migrations
                             Id = 5,
                             Amount = 90.00m,
                             CreatedById = 1,
-                            CreatedDate = new DateTime(2024, 6, 23, 16, 23, 24, 636, DateTimeKind.Local).AddTicks(921),
+                            CreatedDate = new DateTime(2024, 6, 27, 9, 2, 42, 215, DateTimeKind.Local).AddTicks(7717),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Notes = "Payment for tutoring session",
                             PaymentMethod = "PayPal",
@@ -1269,6 +1319,9 @@ namespace OnDemandTutor.Models.Migrations
 
                     b.Property<int>("RecordStatus")
                         .HasColumnType("int");
+
+                    b.Property<string>("RejectReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
@@ -1388,6 +1441,9 @@ namespace OnDemandTutor.Models.Migrations
                     b.Property<int>("RecordStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -1406,6 +1462,7 @@ namespace OnDemandTutor.Models.Migrations
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
                             RecordStatus = 0,
+                            Status = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -1416,6 +1473,7 @@ namespace OnDemandTutor.Models.Migrations
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
                             RecordStatus = 0,
+                            Status = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -1426,6 +1484,7 @@ namespace OnDemandTutor.Models.Migrations
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
                             RecordStatus = 0,
+                            Status = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -1436,6 +1495,7 @@ namespace OnDemandTutor.Models.Migrations
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
                             RecordStatus = 0,
+                            Status = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -1446,6 +1506,7 @@ namespace OnDemandTutor.Models.Migrations
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Id = 0,
                             RecordStatus = 0,
+                            Status = 0,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -1873,9 +1934,15 @@ namespace OnDemandTutor.Models.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("OnDemandTutor.Models.Models.User", "Tutor")
+                        .WithMany()
+                        .HasForeignKey("TutorId");
+
                     b.Navigation("Class");
 
                     b.Navigation("Student");
+
+                    b.Navigation("Tutor");
                 });
 
             modelBuilder.Entity("OnDemandTutor.Models.Models.Subject", b =>

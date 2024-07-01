@@ -22,6 +22,6 @@ public interface IUserServices
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
-    Task<List<TutorRegistrationResponseDtos>> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
+    Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
 
 }

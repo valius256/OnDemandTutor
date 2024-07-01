@@ -1,5 +1,6 @@
 ﻿using FirebaseAdmin.Auth;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
@@ -40,18 +41,7 @@ public class UserServices : IUserServices
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId || u.Email == userEmail);
         if (userModel == null) throw new BadRequestException("User not found");
-
-        var user = _unitOfWorkRepository.UserRepository.Find(userId);
-        var emailParam = new Dictionary<string, string>()
-        {
-            { "Name", $"{user.Email}" },
-        };
-
-
-        var address = new List<string> { user.Email };
-
-        _mailServices.SendAsync(EmailType.Welcome_Email, address, new List<string>(), emailParam, false);
-        //_mailServices.SendAsync();
+        
         return userModel.Adapt<GetProfileUserDtos>();
     }
 
@@ -90,7 +80,9 @@ public class UserServices : IUserServices
 
     public async Task<GetProfileUserDtos> VerifyLogin(string? email, string? password)
     {
-        if (email.IsNullOrEmpty()) throw new ModelException(email, "Input Email or phone number is empty");
+        if (email.IsNullOrEmpty())
+            if (email != null)
+                throw new ModelException(email, "Input Email or phone number is empty");
         if (password.IsNullOrEmpty()) throw new BadRequestException("Input password is empty");
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u =>
             u.Email == email && u.Password.Equals(password));
@@ -200,19 +192,46 @@ public class UserServices : IUserServices
         return tutorList.Adapt<PagedResult<TutorSimpleProfileDtos>>();
     }
 
-    public async Task<List<TutorRegistrationResponseDtos>> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
+    public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
     {
-        var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
-
-        var userWithPendingRegistration = await _unitOfWorkRepository.UserRepository.GetTutorRegistration(userUid);
-
-        foreach (var degreeSubjectRegistration in userWithPendingRegistration)
+        foreach (var dto in requestDtos.tutorRegistrationDtos)
         {
-            degreeSubjectRegistration.Status = requestDtos.StatusApproved;
-
-            _unitOfWorkRepository.SaveChangesAsync();
+            await _unitOfWorkRepository.TutorDegreeRepository
+                .Where(td => td.Id == dto.TutorDegreeId)
+                .ExecuteUpdateAsync(setter => setter
+                    .SetProperty(s => s.TutorSubjectStatus, requestDtos.StatusApproved)
+                    .SetProperty(s => s.RejectReason, dto.RejectReason)
+                );
+            
+            var tutorId = await _unitOfWorkRepository.TutorDegreeRepository
+                .Where(td => td.Id == dto.TutorDegreeId)
+                .Select(ld => ld.TutorId)
+                .FirstOrDefaultAsync();
+            
+            
+            var tutorEmailDb = await _unitOfWorkRepository.UserRepository
+                .Where(ld => ld.Id == tutorId)
+                .Select(ld => ld.Email)
+                .FirstOrDefaultAsync();
+            var tutorEmails = new List<string>();
+            
+            if (tutorEmailDb != null)
+            {
+                tutorEmails.Add(tutorEmailDb);
+            }
+            
+       
+            var emailParams = new Dictionary<string, string>()
+            {
+                // { "TutorName", $"{user.Email}" }, for testing( using the email can receive mail)
+                { "TutorName", $"{tutorEmailDb}" },
+                { "ApprovalStatus", $"{requestDtos.StatusApproved}" },
+                { "RejectionReason", $"{requestDtos.tutorRegistrationDtos.FirstOrDefault()?.RejectReason}" },
+            };
+        
+            await _mailServices.SendAsync(EmailType.Tutor_Registration_Approval, tutorEmails, new List<string>(), emailParams);
         }
-
-        return userWithPendingRegistration;
+        return true;
     }
+
 }
