@@ -14,6 +14,7 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -223,7 +224,6 @@ public class UserServices : IUserServices
             {
                 tutorEmails.Add(tutorEmailDb);
             }
-            
        
             var emailParams = new Dictionary<string, string>()
             {
@@ -256,4 +256,19 @@ public class UserServices : IUserServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> UpdateProfile(UpdateUserDtos requestDtos, ClaimsPrincipal userClaims)
+    {
+        var userid = userClaims.FindFirst(c => c.Type == "id")?.Value;
+        if (requestDtos.Id is 0 or null)
+        {
+            requestDtos.Id = int.Parse(userid);
+        }
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDtos.Id);
+       var rs =  requestDtos.Adapt(userInDb);
+        _unitOfWorkRepository.UserRepository.Update(userInDb);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+    
 }
