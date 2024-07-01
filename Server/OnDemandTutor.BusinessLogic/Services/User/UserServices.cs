@@ -194,6 +194,10 @@ public class UserServices : IUserServices
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
     {
+        if (!requestDtos.tutorRegistrationDtos.Any())
+        {
+            return false;
+        }
         foreach (var dto in requestDtos.tutorRegistrationDtos)
         {
             await _unitOfWorkRepository.TutorDegreeRepository
@@ -234,4 +238,22 @@ public class UserServices : IUserServices
         return true;
     }
 
+    public async Task<bool> DeleteTutor(DeleteTutorDtos requestDtos)
+    {
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDtos.userId);
+        if (userInDb.IsActive == false)
+        {
+            throw new ModelException("user status", $"{userInDb.IsActive} already delete",
+                "This account is already deleted");
+        }
+
+        await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == requestDtos.userId)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.IsActive, false)
+                                                    .SetProperty(s => s.RecordStatus, RecordStatus.Inactive)
+                                                    .SetProperty(s => s.DeaActiveReason, requestDtos.DeaActiveReason)
+                                                
+            );
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
 }

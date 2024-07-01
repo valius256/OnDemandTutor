@@ -74,12 +74,20 @@ public class UserController : BaseController<UserController>
     [HttpPost("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDtos>>), 200)]
-    public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
+    public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(
+        PagingModel<TutorSimpleProfileRequest> request)
     {
         return OKAsync(await _userService.ViewTutorList(request));
 
     }
 
-
+    [Authorize]
+    [HttpPost("remove-tutor")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> DeleteTutor([FromBody] DeleteTutorDtos requestDtos)
+    {
+        return OKAsync(await _userService.DeleteTutor(requestDtos));
+    }
 
 }
