@@ -15,6 +15,7 @@ import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
 import SubjectManagementPage from "../pages/Operators/SubjectManagementPage.vue";
 import SubjectRegistrationDetailPage from "../pages/Operators/SubjectRegistrationDetailPage.vue";
 import BlogManagementPage from "../pages/Operators/BlogManagementPage.vue";
+import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue"
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -144,7 +145,17 @@ const routes = [
   {
     path: "/admin/blogs",
     name: "BlogManagementPage",
-    component: BlogManagementPage,
+    redirect : "/admin/blogs/manage",
+    children : [
+      {
+        path : "manage",
+        component: BlogManagementPage,
+      },
+      {
+        path : "editor/:id",
+        component: BlogEditorPage,
+      },
+    ]
   },
   {
     path: "/admin/faqs",
