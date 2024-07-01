@@ -5,7 +5,8 @@
 
 # Ignore appsettings.json in the OnDemandTutor.API directory
 /Server/OnDemandTutor.API/appsettings.json
-
+# Ignore MigrationFolder
+/Server/OnDemandTutor.Models/Migrations
 # User-specific files
 *.rsuser
 *.suo
