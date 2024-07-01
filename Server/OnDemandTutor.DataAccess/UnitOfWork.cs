@@ -12,9 +12,9 @@ public interface IUnitOfWorkRepository
     public IBlogRepository BlogRepository { get; }
     public IClassRepository ClassRepository { get; }
     public IConsultationRequestRepository ConsultationRequestRepository { get; }
-    
+    public ITutorDegreeRepository TutorDegreeRepository { get; }
     public IEmailTemplateRepository EmailTemplateRepository { get; }
-    
+
     public ITransactionRepository TransactionRepository { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync();
@@ -28,7 +28,7 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
     public UnitOfWorkRepository(ApplicationDbContext context, IUserRepository userRepository,
         ISubjectRepository subjectRepository, ISlotRepository slotRepository, IBlogRepository blogRepository,
         IClassRepository classRepository, IConsultationRequestRepository consultationRequestRepository,
-        IEmailTemplateRepository emailTemplateRepository, ITransactionRepository transactionRepository)
+        IEmailTemplateRepository emailTemplateRepository, ITransactionRepository transactionRepository, ITutorDegreeRepository tutorDegreeRepository)
     {
         _context = context;
         UserRepository = userRepository;
@@ -39,6 +39,7 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         ConsultationRequestRepository = consultationRequestRepository;
         EmailTemplateRepository = emailTemplateRepository;
         TransactionRepository = transactionRepository;
+        TutorDegreeRepository = tutorDegreeRepository;
     }
 
     public IUserRepository Users { get; }
@@ -56,8 +57,10 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
 
     public IConsultationRequestRepository ConsultationRequestRepository { get; }
     public IEmailTemplateRepository EmailTemplateRepository { get; }
-    
+
     public ITransactionRepository TransactionRepository { get; }
+
+    public ITutorDegreeRepository TutorDegreeRepository { get; }
 
     public Task MigrateAsync()
     {

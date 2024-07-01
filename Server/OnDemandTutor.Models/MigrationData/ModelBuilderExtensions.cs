@@ -605,11 +605,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
-                new SlotStudent { SlotId = 1, UserId = 1 , Feedback = "Qua dinh luon em oi"},
-                new SlotStudent { SlotId = 1, UserId = 2 , Feedback = "Qua dinh luon em oi 1"},
-                new SlotStudent { SlotId = 2, UserId = 3 , Feedback = "Qua dinh luon em oi 2" },
+                new SlotStudent { SlotId = 1, UserId = 1, Feedback = "Qua dinh luon em oi" },
+                new SlotStudent { SlotId = 1, UserId = 2, Feedback = "Qua dinh luon em oi 1" },
+                new SlotStudent { SlotId = 2, UserId = 3, Feedback = "Qua dinh luon em oi 2" },
                 new SlotStudent { SlotId = 2, UserId = 4, Feedback = "Qua dinh luon em oi 3" },
-                new SlotStudent { SlotId = 3, UserId = 1, Feedback = "Qua dinh luon em oi 4"}
+                new SlotStudent { SlotId = 3, UserId = 1, Feedback = "Qua dinh luon em oi 4" }
                 // Add more as needed
             );
 
@@ -670,11 +670,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { StudentId = 1, ClassId = 1 , Rating = 5},
-                new StudentClass { StudentId = 2, ClassId = 1 , Rating = 2},
-                new StudentClass { StudentId = 3, ClassId = 2 , Rating = 3},
-                new StudentClass { StudentId = 4, ClassId = 2 , Rating = 4 },
-                new StudentClass { StudentId = 5, ClassId = 3 , Rating = 4}
+                new StudentClass { StudentId = 1, ClassId = 1, Rating = 5 },
+                new StudentClass { StudentId = 2, ClassId = 1, Rating = 2 },
+                new StudentClass { StudentId = 3, ClassId = 2, Rating = 3 },
+                new StudentClass { StudentId = 4, ClassId = 2, Rating = 4 },
+                new StudentClass { StudentId = 5, ClassId = 3, Rating = 4 }
                 // Add more as needed
             );
 
@@ -701,8 +701,8 @@ namespace OnDemandTutor.Models.MigrationData
                   Id = 1,
                   Name = "Welcome_Email",
                   Status = true,
-                  Body = "Welcome to OnDemandTutor! Dear {Name}, thank you for joining us.",
-                  Params = "{Name}",
+                  Body = "Welcome to OnDemandTutor! Dear [Name], thank you for joining us.",
+                  Params = "[Name]",
                   Subject = "Welcome to OnDemandTutor!",
                   Description = "This email is sent to welcome new users."
               },
@@ -711,8 +711,8 @@ namespace OnDemandTutor.Models.MigrationData
                 Id = 2,
                 Name = "Reminder_Email",
                 Status = true,
-                Body = "Hello {Name}, this is a reminder for your upcoming class on {Date}.",
-                Params = "{Name}, {Date}",
+                Body = "Hello [Name], this is a reminder for your upcoming class on {Date}.",
+                Params = "[Name], [Date]",
                 Subject = "Reminder for Your Class",
                 Description = "This email is sent as a reminder for scheduled classes."
             },
@@ -721,8 +721,8 @@ namespace OnDemandTutor.Models.MigrationData
                 Id = 3,
                 Name = "Payment_Confirmation",
                 Status = true,
-                Body = "Dear {Name}, your payment of {Amount} has been confirmed.",
-                Params = "{Name}, {Amount}",
+                Body = "Dear [Name], your payment of [Amount] has been confirmed.",
+                Params = "[Name], [Amount]",
                 Subject = "Payment Confirmation",
                 Description = "This email confirms the successful payment for services."
             },
@@ -731,8 +731,8 @@ namespace OnDemandTutor.Models.MigrationData
                 Id = 4,
                 Name = "Feedback_Request",
                 Status = true,
-                Body = "Hi {Name}, we would love to hear your feedback about our services.",
-                Params = "{Name}",
+                Body = "Hi [Name], we would love to hear your feedback about our services.",
+                Params = "[Name]",
                 Subject = "Feedback Request",
                 Description = "This email requests feedback from users about their experience."
             },
@@ -741,12 +741,74 @@ namespace OnDemandTutor.Models.MigrationData
                 Id = 5,
                 Name = "Account_Activation",
                 Status = true,
-                Body = "Dear {Name}, please click the link to activate your account: {ActivationLink}.",
-                Params = "{Name}, {ActivationLink}",
+                Body = "Dear [Name], please click the link to activate your account: [ActivationLink].",
+                Params = "[Name], [ActivationLink]",
                 Subject = "Account Activation",
                 Description = "This email contains instructions to activate user accounts."
-            }
-            // Add more email templates as needed
+            },
+             new EmailTemplate
+             {
+                 Id = 6,
+                 Name = "TutorRegistrationApproval",
+                 Status = true,
+                 Subject = "Your Tutor Registration Approval Status",
+                 Body = @"
+                                           <!DOCTYPE html>
+                        <html lang=""en"">
+                        <head>
+                            <meta charset=""UTF-8"">
+                            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                            <title>Tutor Registration Approval</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    line-height: 1.6;
+                                }
+                                .container {
+                                    margin: 0 auto;
+                                    padding: 20px;
+                                    max-width: 600px;
+                                    border: 1px solid #ddd;
+                                    border-radius: 5px;
+                                    background-color: #f9f9f9;
+                                }
+                                .header, .footer {
+                                    text-align: center;
+                                }
+                                .content {
+                                    margin-top: 20px;
+                                }
+                                .content p {
+                                    margin: 10px 0;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class=""container"">
+                                <div class=""header"">
+                                    <h2>Tutor Registration Approval</h2>
+                                </div>
+                                <div class=""content"">
+                                    <p>Dear [TutorName],</p>
+                                    <p>We are pleased to inform you that your registration as a tutor has been reviewed.</p>
+                                    <p>[ApprovalStatus]</p>
+                                    <p>If your registration has been approved, you can start using our platform to offer your tutoring services. If your registration has been rejected, please find the reason below:</p>
+                                    <p>[RejectionReason]</p>
+                                    <p>Thank you for your interest in joining our tutoring platform. If you have any questions, feel free to contact our support team.</p>
+                                </div>
+                                <div class=""footer"">
+                                    <p>Best regards,</p>
+                                    <p>The On Demand Tutor Platform Team</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>
+
+    ",
+                 Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
+                 Description = "Email template for notifying tutors about their registration approval status."
+             }
+
         );
             #endregion
 

@@ -12,7 +12,7 @@ public class TutorDegree : BaseEntity
     public string DegreeNumber { get; set; }
     public DateOnly IssuranceDate { get; set; }
     public TutorSubjectDegreeStatus TutorSubjectStatus { get; set; }
-
+    public string? RejectReason { get; set; }
 
     public virtual Subject Subject { get; set; }
     public virtual User Tutor { get; set; }
