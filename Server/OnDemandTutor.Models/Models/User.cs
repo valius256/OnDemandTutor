@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Models;
 
-public class User : IBaseEntity
+public class User : BaseEntity
 {
     public int Id { get; set; }
     public string FireBaseid { get; set; }

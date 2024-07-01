@@ -23,5 +23,6 @@ public interface IUserServices
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
     Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
+    Task<bool> DeleteTutor(DeleteTutorDtos requestDtos);
 
 }
