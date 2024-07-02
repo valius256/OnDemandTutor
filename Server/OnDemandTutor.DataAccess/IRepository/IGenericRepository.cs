@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using OnDemandTutor.Models;
 using OnDemandTutor.Models.Paging;
 using System.Linq.Expressions;
 
 namespace OnDemandTutor.DataAccess.IRepository;
 
-public interface IGenericRepository<TEntity> where TEntity : class, IBaseEntity
+public interface IGenericRepository<TEntity> where TEntity : class
 {
     Task<bool> AllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 

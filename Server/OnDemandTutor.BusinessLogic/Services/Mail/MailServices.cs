@@ -1,4 +1,5 @@
 ﻿using LinqKit;
+using Microsoft.Extensions.Options;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.DataAccess.IRepository;
@@ -6,7 +7,6 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Models;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.Extensions.Options;
 
 namespace OnDemandTutor.BusinessLogic.Services.Mail;
 
@@ -15,7 +15,7 @@ public class MailServices : IMailServices
     private readonly IDefaultScheduleJob _defaultScheduleJob;
     private readonly IEmailTemplateRepository _emailTemplateRepository;
     private readonly SmtpAppSetting _smtpAppSetting;
-  
+
     public MailServices(
         IDefaultScheduleJob defaultScheduleJob,
         IEmailTemplateRepository emailTemplateRepository,
@@ -26,10 +26,10 @@ public class MailServices : IMailServices
         _emailTemplateRepository = emailTemplateRepository;
         _smtpAppSetting = appSetting.Value;
     }
-    
-    
-    
-    
+
+
+
+
     public async Task SendAsync(string name, List<string> toAddress, List<string> ccAddresses, Dictionary<string, string> param, bool isInQueue = false)
     {
         if (!isInQueue)
@@ -45,8 +45,8 @@ public class MailServices : IMailServices
         await SendAsync(template, toAddress, ccAddresses, param);
     }
 
-  
-    private  async Task SendAsync(EmailTemplate template, List<string> toAddress, List<string> ccAddresses, Dictionary<string, string> param)
+
+    private async Task SendAsync(EmailTemplate template, List<string> toAddress, List<string> ccAddresses, Dictionary<string, string> param)
     {
         var smtpAppSetting = new SmtpAppSetting // Assuming you have a class SmtpAppSetting with necessary properties
         {
@@ -62,7 +62,7 @@ public class MailServices : IMailServices
             client.EnableSsl = _smtpAppSetting.EnableSsl;
             client.Credentials = new NetworkCredential(smtpAppSetting.SmtpUserName, smtpAppSetting.AppVerify);
             client.Port = smtpAppSetting.SmtpPort;
-            
+
             using (var message = new MailMessage())
             {
                 try

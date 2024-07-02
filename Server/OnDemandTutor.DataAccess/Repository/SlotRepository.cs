@@ -66,7 +66,7 @@ namespace OnDemandTutor.DataAccess.Repository
             existingSlot.SubjectId = slotDto.SubjectId;
             existingSlot.IsOnline = slotDto.IsOnline;
             existingSlot.NumberOfStudents = slotDto.NumberOfStudents;
-            existingSlot.PaymentStatus = slotDto.PaymentStatus;
+            existingSlot.SlotStudents.FirstOrDefault().PaymentStatus = slotDto.PaymentStatus;
             existingSlot.ActualEndTime = slotDto.ActualEndTime;
             // Update other properties as needed
 

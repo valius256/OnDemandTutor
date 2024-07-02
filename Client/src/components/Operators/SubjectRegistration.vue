@@ -1,0 +1,202 @@
+<template>
+    <div class="p-4 w-full">
+        <div class="flex justify-end gap-2">
+            <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
+                Reset bộ lọc
+            </button>
+            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
+                @click="toggleFilterPopup">
+                <i class="fa fa-search	"></i> Filter
+            </button>
+        </div>
+        <table id="operator-table">
+            <thead>
+                <tr>
+                    <th class="w-1/12">Id</th>
+                    <th class="w-3/12">Tên</th>
+                    <th class="w-2/12">Ảnh</th>
+                    <th class="w-3/12">Đăng ký môn</th>
+                    <th class="w-2/12">Ngày tạo</th>
+                    <th class="w-1/12"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="registration in registrations" :key="registration.id">
+                    <td>{{ registration.id }}</td>
+                    <td><button class="font-bold underline text-blue-400">{{ registration.user.name }}</button></td>
+                    <td><img :src="registration.user.avatar" class="w-24 h-24"></td>
+                    <td>
+                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(registration.subject.name)"></div>
+                    </td>
+                    <td>{{ registration.createAt }}</td>
+                    <td class="relative">
+                        <router-link :to="`/admin/subjects/detail/${registration.id}`">
+                            <div class="p-2 bg-blue-400 hover:bg-blue-200 text-white font-bold rounded-lg">
+                                Xem xét
+                            </div>
+                        </router-link>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="flex gap-4 justify-center mt-4" v-if="this.registrations.length > 0">
+            <button @click="movePage(false)">
+                <i class="fa fa-arrow-left text-2xl"></i>
+            </button>
+            <div class="flex gap-2 ">
+                <input class="border p-1 rounded-md w-16" type="number" v-model="currentPage" min="1"
+                    @change="handlePageChange">
+                <div class="p-1"> / {{ this.totalPage }}</div>
+            </div>
+            <button @click="movePage(true)">
+                <i class="fa fa-arrow-right text-2xl"></i>
+            </button>
+        </div>
+        <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc đăng ký môn"
+            :notOverflow="true">
+            <subject-registration-filter-popup :close="toggleFilterPopup" :filterDto="filterDto"
+                :action="handleFilter" />
+        </generic-popup>
+    </div>
+</template>
+
+<script>
+import GenericPopup from '../common/GenericPopup.vue'
+import SubjectRegistrationFilterPopup from './SubjectRegistrationFilterPopup.vue'
+export default {
+    components: { GenericPopup, SubjectRegistrationFilterPopup },
+    name: "SubjectRegistrationList",
+    data() {
+        return {
+            totalPage: 100,
+            pageSize: 10,
+            currentPage: 1,
+            selectId: 0,
+            isShowPopup: false,
+            isOpenFilterPopup: false,
+            registrations: [
+                {
+                    id: 1,
+                    user: {
+                        name: "Nguyen Van A",
+                        avatar: "/src/assets/noavatar.jpg",
+                    },
+                    createAt: "2000-01-01 15:00:00",
+                    subject: {
+                        name: "Tiếng Anh"
+                    }
+                },
+                {
+                    id: 2,
+                    user: {
+                        name: "Nguyen Van A",
+                        avatar: "/src/assets/noavatar.jpg",
+                    },
+                    createAt: "2000-01-01 15:00:00",
+                    subject: {
+                        name: "Toán"
+                    }
+                },
+                {
+                    id: 3,
+                    user: {
+                        name: "Nguyen Van A",
+                        avatar: "/src/assets/noavatar.jpg",
+                    },
+                    createAt: "2000-01-01 15:00:00",
+                    subject: {
+                        name: "Toán"
+                    }
+                },
+                {
+                    id: 4,
+                    user: {
+                        name: "Nguyen Van A",
+                        avatar: "/src/assets/noavatar.jpg",
+                    },
+                    createAt: "2000-01-01 15:00:00",
+                    subject: {
+                        name: "Vật lý"
+                    }
+                },
+            ],
+            filterDto: {
+                name: "",
+                fromCreateDate: null,
+                toCreateDate: null,
+                selectedSubjects: [],
+                isChanged: false
+            }
+        }
+    },
+    methods: {
+        resetFilter() {
+            this.filterDto = {
+                name: "",
+                fromCreateDate: null,
+                toCreateDate: null,
+                selectedSubjects: [],
+                isChanged: false
+            }
+        },
+        handleFilter(filterDto, selectedSubjects) {
+            console.log(filterDto)
+            this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            this.filterDto.selectedSubjects = selectedSubjects
+        },
+        toggleFilterPopup() {
+            this.isOpenFilterPopup = !this.isOpenFilterPopup
+        },
+        displaySubjects(subject) {
+            let color = "gray"
+            let html = ""
+            switch (subject) {
+                case "Toán":
+                    color = "border-orange-400"
+                    break;
+                case "Tiếng Anh":
+                    color = "border-green-400"
+                    break;
+                case "Tiếng Nhật":
+                    color = "border-pink-400"
+                    break;
+            }
+            var style = `rounded-lg py-2 px-6 border ${color}`
+            html += `<span class="${style}">${subject}</span>`
+            return html
+        },
+        getStatusStyle(status) {
+            let css = "text-center font-bold text-white rounded-lg p-1"
+            switch (status) {
+                case "Active":
+                    return css + " bg-green-400"
+                case "Left":
+                    return css + " bg-gray-400"
+                case "Fired":
+                    return css + " bg-red-400"
+            }
+        },
+        async handlePageChange() {
+            if (this.currentPage > this.totalPage) {
+                this.currentPage = this.totalPage
+            }
+            if (this.currentPage < 1) {
+                this.currentPage = 1
+            }
+            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+        },
+        async movePage(forward) {
+            if (forward && this.currentPage < this.totalPage) {
+                this.currentPage++
+                await this.handlePageChange()
+            } else if (!forward && this.currentPage > 1) {
+                this.currentPage--
+                await this.handlePageChange()
+            }
+        },
+    },
+    mounted() {
+    }
+}
+</script>

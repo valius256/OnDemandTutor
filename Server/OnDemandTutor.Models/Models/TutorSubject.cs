@@ -1,4 +1,6 @@
-﻿namespace OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Models;
 
 public class TutorSubject : BaseEntity
 {
@@ -7,5 +9,7 @@ public class TutorSubject : BaseEntity
 
     public int SubjectId { get; set; }
     public virtual Subject Subject { get; set; }
+
+    public SubjectStatus Status { get; set; }
 
 }

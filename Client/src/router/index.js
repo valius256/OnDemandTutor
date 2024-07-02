@@ -14,9 +14,10 @@ import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue"
 import OperatorManagementPage from "../pages/Operators/OperatorMangementPage.vue";
 import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
 import SubjectManagementPage from "../pages/Operators/SubjectManagementPage.vue";
+import SubjectRegistrationDetailPage from "../pages/Operators/SubjectRegistrationDetailPage.vue";
 import BlogManagementPage from "../pages/Operators/BlogManagementPage.vue";
+import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue"
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
-import ClassManagementPage from "../pages/Operators/ClassManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
@@ -147,12 +148,36 @@ const routes = [
   {
     path: "/admin/subjects",
     name: "SubjectManagementPage",
-    component: SubjectManagementPage,
+    redirect : "/admin/subjects/list",
+    children : [
+      {
+        path : "list",
+        component: SubjectManagementPage,
+      },
+      {
+        path : "registration",
+        component: SubjectManagementPage,
+      },
+      {
+        path : "detail/:id",
+        component: SubjectRegistrationDetailPage,
+      }
+    ]
   },
   {
     path: "/admin/blogs",
     name: "BlogManagementPage",
-    component: BlogManagementPage,
+    redirect : "/admin/blogs/manage",
+    children : [
+      {
+        path : "manage",
+        component: BlogManagementPage,
+      },
+      {
+        path : "editor/:id",
+        component: BlogEditorPage,
+      },
+    ]
   },
   {
     path: "/admin/faqs",

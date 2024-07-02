@@ -8,8 +8,12 @@ public class StudentClassEntityTypeConfiguration : IEntityTypeConfiguration<Stud
 {
     public void Configure(EntityTypeBuilder<StudentClass> builder)
     {
-        builder.HasKey(cl => new { cl.StudentId, cl.ClassId });
+        builder.HasKey(sc => sc.Id);
+        builder.Property(sc => sc.Id).ValueGeneratedOnAdd();
 
+
+        builder.Property(sc => sc.Rating).HasDefaultValue(5);
+        
         builder.HasOne(sc => sc.Class)
             .WithMany(c => c.StudentClasses)
             .HasForeignKey(sc => sc.ClassId)
@@ -19,5 +23,7 @@ public class StudentClassEntityTypeConfiguration : IEntityTypeConfiguration<Stud
             .WithMany(s => s.StudentClasses)
             .HasForeignKey(sc => sc.StudentId)
             .OnDelete(DeleteBehavior.Restrict);
+
+
     }
 }

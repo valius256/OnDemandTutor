@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Models;
 
-public class User : IBaseEntity
+public class User : BaseEntity
 {
     public int Id { get; set; }
     public string FireBaseid { get; set; }
@@ -21,7 +21,9 @@ public class User : IBaseEntity
     public string? ScheduleDesciption { get; set; }
     public required string Password { get; set; }
     public Sex Sex { get; set; }
-
+    public bool IsActive { get; set; } = true;
+    public string? DeaActiveReason { get; set; }
+    public bool TutorVerified { get; set; } = false;
 
     // for relationship
     public virtual ICollection<Blog> BlogCreateBy { get; set; } = new List<Blog>();

@@ -17,6 +17,7 @@ public class TutorDegreeDto
     public string? Description { get; set; }
     public int SubjectId { get; set; }
     public string DegreeNumber { get; set; }
+    public string RejectedReason { get; set; }
     public TutorSubjectDegreeStatus Status { get; set; }
     public DateOnly IssuranceDate { get; set; }
 }

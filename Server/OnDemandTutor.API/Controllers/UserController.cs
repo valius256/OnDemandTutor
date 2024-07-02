@@ -23,60 +23,79 @@ public class UserController : BaseController<UserController>
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
-    public async Task<IActionResult> GetAll()
+    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll()
     {
         var result = await _userService.GetAllUsers();
-        return Ok(result);
+        return OKAsync(result);
     }
 
     [Authorize]
     [HttpPost("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-    public async Task<IActionResult> GetProfile([FromBody] int userId)
+    public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromBody] int userId)
     {
         var result = await _userService.GetProfile(userId, null);
-        return Ok(result);
+        return OKAsync(result);
     }
 
     [Authorize]
     [HttpPost("register-tutor")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-    public async Task<IActionResult> RegisterTutor([FromBody] RegisterTutorDtos body)
+    public async Task<IApiResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
     {
         var result = await _userService.RegisterTutor(body, HttpContext.User);
-        return Ok(result);
+        return OKAsync(result);
     }
 
     [Authorize]
     [HttpPost("approve-tutor-registration")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
-    public async Task<IApiResult<List<TutorRegistrationResponseDtos>>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
+    public async Task<IApiResult<bool>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
         return OKAsync(await _userService.ApprovedTutorRegistration(body, HttpContext.User));
         ;
     }
 
+
+    /// <summary>
+    ///    update user profile 
+    /// </summary>
+    /// if the fe don;t place Id in UpdateUserDto.Id it will take the id from the Claims when login scf
+    /// <param name="body"></param>
+    /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("update-profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-    public async Task<IActionResult> UpdateProfile([FromBody] RegisterTutorDtos body)
+    [ProducesResponseType(typeof(bool), 200)]
+    public async Task<IApiResult<bool>> UpdateProfile([FromBody] UpdateUserDto requestDto)
     {
-        // var result = await _userService.RegisterTutor(body);
-        // return Ok(result);
-        return Ok();
+        var result = await _userService.UpdateProfile(requestDto, HttpContext.User);
+        return OKAsync(result);
     }
 
     [Authorize]
     [HttpPost("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDtos>>), 200)]
-    public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
+    [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]
+    public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList(
+        PagingModel<TutorSimpleProfileRequest> request)
     {
         return OKAsync(await _userService.ViewTutorList(request));
 
     }
+
+    [Authorize]
+    [HttpPost("remove-tutor")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> DeleteTutor([FromBody] DeleteTutorDto requestDto)
+    {
+        return OKAsync(await _userService.DeleteTutor(requestDto));
+    }
+
+
+
 }

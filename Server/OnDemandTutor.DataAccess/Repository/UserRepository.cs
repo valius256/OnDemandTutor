@@ -24,7 +24,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId)
     {
-        var rs = await dbSet
+        var tutorList = await dbSet
             .Include(u => u.TutorDegrees)
             .Include(u => u.TutorSubjects)
             .Where(u => u.Role == RoleStatus.Tutor && u.FireBaseid == firebaseId && u.TutorDegrees.Any(td => td.TutorSubjectStatus == TutorSubjectDegreeStatus.Pending)) // fetch record with pending
@@ -41,17 +41,17 @@ public class UserRepository : GenericRepository<User>, IUserRepository
              })
              .AsNoTracking()
             .ToListAsync();
-        return rs;
+        return tutorList;
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDtos>> GetTutorListAsync(
+    public async Task<PagedResult<User>> ViewTutorListAsync(
         PagingModel<TutorSimpleProfileRequest> request)
     {
-        var rs = await dbSet
+        var tutorList = await dbSet
             .Include(ld => ld.TutorSubjects)
             .Where(ld => ld.Role == RoleStatus.Tutor)
             .AsNoTracking()
-            .ToPagingAsync<TutorSimpleProfileDtos, User>(request.Page, request.Limit);
-        return rs;
+            .ToPagingAsync(request.Page, request.Limit);
+        return tutorList;
     }
 }

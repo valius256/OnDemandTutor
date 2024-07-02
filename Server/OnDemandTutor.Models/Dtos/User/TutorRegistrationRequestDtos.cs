@@ -4,6 +4,13 @@ namespace OnDemandTutor.Models.Dtos.User;
 
 public class TutorRegistrationRequestDtos
 {
-    public List<TutorDegreeDto> TutorDegrees { get; set; } = new List<TutorDegreeDto>();
+    public List<TutorRegistrationDtos> tutorRegistrationDtos { get; set; }
     public TutorSubjectDegreeStatus StatusApproved { get; set; }
 }
+
+public class TutorRegistrationDtos
+{
+    public int TutorDegreeId { get; set; }
+    public string? RejectReason { get; set; }
+}
+
