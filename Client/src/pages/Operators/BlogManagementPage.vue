@@ -48,7 +48,9 @@
                         </div>
                         <button class="font-bold text-xl hover:underline hover:text-purple-600">{{ blog.title
                             }}</button>
-                        <div class="max-h-28 overflow-hidden text-ellipsis line-clamp-4">{{ blog.content }}</div>
+                        <div class="max-h-28 overflow-hidden text-ellipsis line-clamp-4">
+                            {{ convertHtmlToText(blog.content) }}
+                        </div>
                     </div>
 
                 </div>
@@ -91,10 +93,10 @@ export default {
             currentPage: 1,
             blogs: [
                 {
-                    id : 1,
+                    id: 1,
                     title: "Hello World",
                     thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBbf9L4SlvzAvmgPiQmxSO1JaU6oQ92xsDgw&s",
-                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore/ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore",
+                    content: "<h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</h1>. <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore/ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore",
                     createdAt: "2020-01-01 14:02:59",
                     createdBy: {
                         name: "Thomas"
@@ -102,7 +104,7 @@ export default {
                     updatedAt: "2020-01-01 19:00:55",
                 },
                 {
-                    id : 2,
+                    id: 2,
                     title: "Hello World",
                     thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBbf9L4SlvzAvmgPiQmxSO1JaU6oQ92xsDgw&s",
                     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
@@ -143,6 +145,7 @@ export default {
                 isSortAsc: true,
                 sortProp: "Id"
             },
+
         }
     },
     methods: {
@@ -189,6 +192,10 @@ export default {
             this.sortDto = JSON.parse(JSON.stringify(sortDto));
             //this.blogs.sort()
         },
+        convertHtmlToText(html) {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            return doc.body.textContent || '';
+        }
     }
 }
 </script>
