@@ -4,5 +4,6 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 
 public interface ITransactionServices
 {
-    Task CreateTransactionDb(TransactionDtos transaction);
+    Task<int> CreateTransactionDb(TransactionDto transaction);
+    Task TransactionPaid(string transactionId, DateTime paidTime);
 }

@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Http;
+using OnDemandTutor.Models.Dtos.Payment;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Http;
-using OnDemandTutor.Models.Dtos.Payment;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -14,7 +14,7 @@ public class VnPayLibrary
     private readonly SortedList<string, string> _requestData = new SortedList<string, string>(new VnPayCompare());
     private readonly SortedList<string, string> _responseData = new SortedList<string, string>(new VnPayCompare());
 
-    public PaymentResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
+    public PaymentSlotResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
     {
         var vnPay = new VnPayLibrary();
 
@@ -25,25 +25,34 @@ public class VnPayLibrary
                 vnPay.AddResponseData(key, value);
             }
         }
-
+        // vnp_TxnRef: Ma don hang merchant gui VNPAY tai command=pay    
+        // vnp_TransactionNo: Ma GD tai he thong VNPAY
+        // vnp_ResponseCode:Response code from VNPAY: 00: Thanh cong, Khac 00: Xem tai lieu
+        // vnp_SecureHash: HmacSHA512 cua du lieu tra ve
+        
         var orderId = Convert.ToInt64(vnPay.GetResponseData("vnp_TxnRef"));
         var vnPayTranId = Convert.ToInt64(vnPay.GetResponseData("vnp_TransactionNo"));
         var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
         var vnpSecureHash =
             collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
-        var email = vnPay.GetResponseData("vnp_Email");
-        
+
         var checkSignature =
             vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
-
+        
+        var orderInfoParts = orderInfo.Split(' '); // Split the string by space
+        var email = orderInfoParts.Length > 0 ? orderInfoParts[0] : string.Empty;
+        var userId = orderInfoParts.Length > 1 ? Convert.ToInt32(orderInfoParts[1]) : 0;
+        var slotId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
+        var time = orderInfoParts.Length > 3 ? orderInfoParts[3] : string.Empty;
+        
         if (!checkSignature)
-            return new PaymentResponseModel()
+            return new PaymentSlotResponseModel()
             {
                 Success = false
             };
 
-        return new PaymentResponseModel()
+        return new PaymentSlotResponseModel()
         {
             Success = true,
             PaymentMethod = "VnPay",
@@ -53,7 +62,8 @@ public class VnPayLibrary
             TransactionId = vnPayTranId.ToString(),
             Token = vnpSecureHash,
             VnPayResponseCode = vnpResponseCode,
-            Email = email
+            SlotId = slotId,
+            UserId = userId,
         };
     }
     public string GetIpAddress(HttpContext context)
@@ -62,7 +72,7 @@ public class VnPayLibrary
         try
         {
             var remoteIpAddress = context.Connection.RemoteIpAddress;
-        
+
             if (remoteIpAddress != null)
             {
                 if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
@@ -70,9 +80,9 @@ public class VnPayLibrary
                     remoteIpAddress = Dns.GetHostEntry(remoteIpAddress).AddressList
                         .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
                 }
-        
+
                 if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
-        
+
                 return ipAddress;
             }
         }

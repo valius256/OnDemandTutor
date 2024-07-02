@@ -15,7 +15,7 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
             .IsRequired()
             .HasColumnType("datetime");
 
-        builder.Property(s => s.SlotStatus).HasDefaultValue(SlotStatus.NotYet); 
+        builder.Property(s => s.SlotStatus).HasDefaultValue(SlotStatus.NotYet);
 
         builder.Property(s => s.EndTime)
             .IsRequired()
@@ -29,7 +29,7 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
 
         builder.Property(s => s.NumberOfStudents)
             .IsRequired();
-        
+
 
         builder.Property(s => s.SubjectId)
             .IsRequired(false)
@@ -52,5 +52,8 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
             .WithOne(t => t.Slot)
             .HasForeignKey(t => t.SlotId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(s => s.Classes).WithMany(s => s.Slots).HasForeignKey(t => t.ClassId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

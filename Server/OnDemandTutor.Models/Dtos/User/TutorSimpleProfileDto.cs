@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.User;
 
-public class TutorSimpleProfileDtos
+public class TutorSimpleProfileDto
 {
     public string FullName { get; set; }
     public string? Email { get; set; }

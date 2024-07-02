@@ -10,4 +10,4 @@ public interface ISlotServices
     Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto);
     Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto);
     Task<bool> DeleteSlotAsync(int id);
-}
+} 

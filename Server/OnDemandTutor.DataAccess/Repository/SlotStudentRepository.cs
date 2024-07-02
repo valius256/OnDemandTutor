@@ -4,10 +4,9 @@ using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
-public class TransactionRepository : GenericRepository<Transaction>, ITransactionRepository
+public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStudentRepository
 {
-    public TransactionRepository(ApplicationDbContext context) : base(context)
+    public SlotStudentRepository(ApplicationDbContext context) : base(context)
     {
     }
-
 }

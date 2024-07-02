@@ -1,6 +1,8 @@
-﻿namespace OnDemandTutor.Models.Dtos.Payment;
+﻿using OnDemandTutor.Models.Enum;
 
-public class PaymentResponseModel
+namespace OnDemandTutor.Models.Dtos.Payment;
+
+public class PaymentSlotResponseModel
 {
     public string OrderDescription { get; set; }
     public string TransactionId { get; set; }
@@ -11,4 +13,8 @@ public class PaymentResponseModel
     public string Token { get; set; }
     public string VnPayResponseCode { get; set; }
     public string Email { get; set; }
+    public double Amount { get; set; } 
+    public int SlotId { get; set; }
+    public int UserId { get; set; } 
+    public PaymentStatus PaymentStatus { get; set; }
 }

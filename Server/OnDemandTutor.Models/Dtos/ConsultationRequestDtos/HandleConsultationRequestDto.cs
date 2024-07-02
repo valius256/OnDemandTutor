@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 
-public class HandleConsultationRequestDtos
+public class HandleConsultationRequestDto
 {
     public int Id { get; set; }
     public ConsultationRequestStatus Status { get; set; }
