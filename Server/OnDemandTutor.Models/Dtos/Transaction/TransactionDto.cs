@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.Transaction;
 
-public class TransactionDtos
+public class TransactionDto
 {
     public required string TransactionCode { get; set; }
     public string PaymentMethod { get; set; }

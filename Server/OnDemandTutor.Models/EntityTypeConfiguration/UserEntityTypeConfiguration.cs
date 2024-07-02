@@ -26,10 +26,10 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.IsActive).HasDefaultValue(true);
         builder.Property(x => x.DeaActiveReason).IsRequired(false);
         builder.Property(x => x.TutorVerified).HasDefaultValue(false);
-        
+
         // default will query the user with active status
         // builder.HasQueryFilter(x => x.IsActive);
-        
+
         // Configure relationships
         builder.HasMany(e => e.BlogCreateBy)
             .WithOne(b => b.CreateBy)

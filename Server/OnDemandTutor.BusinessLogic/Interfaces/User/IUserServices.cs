@@ -3,7 +3,6 @@ using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.User;
 
@@ -22,9 +21,9 @@ public interface IUserServices
     //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
-    Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
+    Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
     Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
-    Task<bool> DeleteTutor(DeleteTutorDtos requestDtos);
-    Task<bool> UpdateProfile(UpdateUserDtos requestDtos, ClaimsPrincipal claims);
+    Task<bool> DeleteTutor(DeleteTutorDto requestDto);
+    Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);
 
 }

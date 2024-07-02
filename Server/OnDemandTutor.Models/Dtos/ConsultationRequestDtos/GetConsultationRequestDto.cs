@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Dtos.ConsultationRequestDtos
 {
-    public class GetConsultationRequestDtos
+    public class GetConsultationRequestDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }

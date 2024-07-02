@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -15,9 +16,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository, ISlotRepository slotRepository)
         {
-            unitOfWorkRepository = _unitOfWork;
-            slotRepository = _slotRepository;
-
+            _unitOfWork = unitOfWorkRepository;
+            _slotRepository = slotRepository;
         }
 
 
@@ -76,6 +76,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
             return isDeleted;
         }
+        
     }
 }
 

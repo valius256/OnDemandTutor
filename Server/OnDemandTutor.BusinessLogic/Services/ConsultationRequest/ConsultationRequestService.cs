@@ -17,12 +17,12 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<GetConsultationRequestDtos>> GetConsultationRequestsAsync(PagingModel<GetConsultationRequestDtos> pagingModel)
+        public async Task<PagedResult<GetConsultationRequestDto>> GetConsultationRequestsAsync(PagingModel<GetConsultationRequestDto> pagingModel)
         {
             var pagedResult = await _unitOfWork.ConsultationRequestRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.ConsultationRequest>>());
-            var dtoPagedResult = new PagedResult<GetConsultationRequestDtos>
+            var dtoPagedResult = new PagedResult<GetConsultationRequestDto>
             {
-                Items = pagedResult.Items.Adapt<List<GetConsultationRequestDtos>>(),
+                Items = pagedResult.Items.Adapt<List<GetConsultationRequestDto>>(),
                 Page = pagedResult.Page,
                 Limit = pagedResult.Limit,
                 Total = pagedResult.Total
@@ -30,21 +30,21 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             return dtoPagedResult;
         }
 
-        public async Task<GetConsultationRequestDtos> GetConsultationRequestByIdAsync(int id)
+        public async Task<GetConsultationRequestDto> GetConsultationRequestByIdAsync(int id)
         {
             var consultationRequest = await _unitOfWork.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
-            return consultationRequest?.Adapt<GetConsultationRequestDtos>();
+            return consultationRequest?.Adapt<GetConsultationRequestDto>();
         }
 
-        public async Task<GetConsultationRequestDtos> CreateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto)
+        public async Task<GetConsultationRequestDto> CreateConsultationRequestAsync(GetConsultationRequestDto consultationRequestDto)
         {
             var consultationRequest = consultationRequestDto.Adapt<Models.Models.ConsultationRequest>();
             await _unitOfWork.ConsultationRequestRepository.AddAsync(consultationRequest);
             await _unitOfWork.SaveChangesAsync();
-            return consultationRequest.Adapt<GetConsultationRequestDtos>();
+            return consultationRequest.Adapt<GetConsultationRequestDto>();
         }
 
-        public async Task<GetConsultationRequestDtos> UpdateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto)
+        public async Task<GetConsultationRequestDto> UpdateConsultationRequestAsync(GetConsultationRequestDto consultationRequestDto)
         {
             var consultationRequest = await _unitOfWork.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == consultationRequestDto.Id);
             if (consultationRequest == null)
@@ -54,7 +54,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             consultationRequestDto.Adapt(consultationRequest);
             _unitOfWork.ConsultationRequestRepository.Update(consultationRequest);
             await _unitOfWork.SaveChangesAsync();
-            return consultationRequest.Adapt<GetConsultationRequestDtos>();
+            return consultationRequest.Adapt<GetConsultationRequestDto>();
         }
 
         public async Task<bool> DeleteConsultationRequestAsync(int id)
@@ -69,7 +69,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             return true;
         }
 
-        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDtos requestDtos)
+        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDto requestDtos)
         {
             var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
 

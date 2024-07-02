@@ -32,6 +32,12 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
 using System.Security.Claims;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
+using OnDemandTutor.BusinessLogic.Services.Slot;
+using OnDemandTutor.BusinessLogic.Services.SlotStudent;
+using OnDemandTutor.BusinessLogic.Services.Transaction;
 
 
 namespace OnDemandTutor.API.Extensions;
@@ -51,7 +57,8 @@ public static class ServiceExtensions
         services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITutorDegreeRepository, TutorDegreeRepository>();
-
+        services.AddScoped<ISlotStudentRepository, SlotStudentRepository>();
+        
         services.AddProblemDetails();
         return services;
     }
@@ -64,10 +71,15 @@ public static class ServiceExtensions
         services.AddScoped<IClassService, ClassService>();
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
-        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); ;
+        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); 
         services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
         services.AddScoped<IVnPayServices, VnPayServices>();
-
+        services.AddScoped<ISlotServices, SlotService>();
+        services.AddScoped<ISlotStudentServices, SlotStudentService>();
+        services.AddScoped<ITransactionServices, TransactionServices>();
+        
+        
+        
         services.AddTransient<IMailServices, MailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();

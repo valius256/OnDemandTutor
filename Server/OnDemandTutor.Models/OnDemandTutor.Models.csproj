@@ -25,7 +25,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Dtos\Slot\" />
         <Folder Include="Dtos\Blog\" />
         <Folder Include="Dtos\Subject\" />
         <Folder Include="Dtos\Class\" />

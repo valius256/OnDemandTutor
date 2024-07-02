@@ -14,4 +14,3 @@ public class TutorRegistrationDtos
     public string? RejectReason { get; set; }
 }
 
-    

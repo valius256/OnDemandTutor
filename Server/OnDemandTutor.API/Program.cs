@@ -1,4 +1,3 @@
-using System.Configuration;
 using Hangfire;
 using Hangfire.Dashboard;
 using Mapster;
@@ -11,7 +10,6 @@ using OnDemandTutor.BusinessLogic.StartupExtension;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models;
-using SharedKernel.Application.Communication.Email;
 
 internal class Program
 {
@@ -24,15 +22,15 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddHttpClient();
-        
+
         builder.Services.Configure<SmtpAppSetting>(builder.Configuration.GetSection("SmtpSettings"));
         builder.Services.Configure<VnPay>(builder.Configuration.GetSection("VnPay"));
-        
+
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
                ));
 
-        
+
         builder.Services.AddRepositories()
             .AddGeneralServices()
             .AddFireBaseServices()
@@ -43,8 +41,8 @@ internal class Program
             .AddFirebaseAuthentication(builder.Configuration)
             .AddMailConfiguration(builder.Configuration)
             .AddHangFireConfigurations(builder.Configuration);
-        
-        
+
+
         builder.Services.AddSignalR();
 
         // Add global exception handler
