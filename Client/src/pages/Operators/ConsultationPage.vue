@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 w-full">
+    <div class="p-4 w-full" @click="setSelectId(0)">
         <div class="text-2xl font-bold">
             Yêu cầu tư vấn
         </div>
@@ -12,6 +12,7 @@
                         <th class="w-3/12">Email</th>
                         <th class="w-4/12">Message</th>
                         <th class="w-2/12">Status</th>
+                        <th class="w-1/12"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,6 +23,28 @@
                         <td>{{ request.message }}</td>
                         <td>
                             <div :class="getStatusStyle(request.status)">{{ request.status }}</div>
+                        </td>
+                        <td class="relative">
+                            <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
+                                @click.stop="setSelectId(request.id)">
+                                <i class="fa fa-ellipsis-h	"></i>
+                            </button>
+                            <div v-if="selectId == request.id"
+                                class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-48 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
+                                <!-- Content of your menu -->
+                                <button v-if='request.status == "Pending"' class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-green-400"
+                                    @click="handleResolve(request.id)">
+                                    <i class="fa fa-check mr-4"></i>Đã giải quyết
+                                </button>
+                                <button v-if='request.status == "Done"' class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-red-400"
+                                    @click="handleResolve(request.id)">
+                                    <i class="fa fa-close mr-4"></i>Chưa giải quyết
+                                </button>
+                                <!-- <li class="hover:bg-slate-200 p-2"></li> -->
+                                <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left">
+                                    <i class="fa fa-trash mr-4"></i>Xóa
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -51,6 +74,7 @@ export default {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
+            selectId : 0,
             requests: [
                 {
                     id: 1,
@@ -96,6 +120,14 @@ export default {
             } else if (!forward && this.currentPage > 1) {
                 this.currentPage--
                 await this.handlePageChange()
+            }
+        },
+        setSelectId(id) {
+            if (id == this.selectId) {
+                this.selectId = 0
+            } else {
+                this.selectId = id
+                this.isShowPopup = true
             }
         },
     }

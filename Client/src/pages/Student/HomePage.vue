@@ -20,7 +20,32 @@
           </button>
         </div>
       </section>
-      <section id="features" class="py-20">
+      <section id="popular-tutors" class="py-20">
+        <div class="container mx-auto text-center">
+          <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
+          <div class="flex flex-wrap -mx-4">
+            <div
+              v-for="tutor in tutors"
+              :key="tutor.id"
+              class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8"
+            >
+              <div class="bg-white rounded-lg shadow p-6">
+                <img :src="tutor.avatar" />
+                <p class="mt-4 font-bold">{{ tutor.name }}</p>
+                <p class="mt-2 italic">
+                  {{ tutor.bookerNumber }} người đã đặt dạy
+                </p>
+                <button
+                  class="mt-3 bg-slate-50 text-blue-600 py-3 px-6 rounded-full text-lg font-bold"
+                >
+                  Đặt ngay
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="features" class="bg-blue-100 py-20">
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Tính Năng Của Chúng Tôi</h2>
           <div class="flex flex-wrap -mx-4">
@@ -57,7 +82,7 @@
         </div>
       </section>
 
-      <section id="how-it-works" class="bg-blue-100 py-20">
+      <section id="how-it-works" class=" py-20">
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
           <div class="flex flex-wrap -mx-4">
@@ -92,31 +117,7 @@
         </div>
       </section>
 
-      <section id="popular-tutors" class="py-20">
-        <div class="container mx-auto text-center">
-          <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
-          <div class="flex flex-wrap -mx-4">
-            <div
-              v-for="tutor in tutors"
-              :key="tutor.id"
-              class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8"
-            >
-              <div class="bg-white rounded-lg shadow p-6">
-                <img :src="tutor.avatar" />
-                <p class="mt-4 font-bold">{{ tutor.name }}</p>
-                <p class="mt-2 italic">
-                  {{ tutor.bookerNumber }} người đã đặt dạy
-                </p>
-                <button
-                  class="mt-3 bg-slate-50 text-blue-600 py-3 px-6 rounded-full text-lg font-bold"
-                >
-                  Đặt ngay
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       <section id="how-to-tutor" class="bg-blue-100 py-20">
         <div class="container mx-auto text-center">

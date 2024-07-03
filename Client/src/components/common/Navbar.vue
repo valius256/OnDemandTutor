@@ -31,7 +31,7 @@
       >FAQs</router-link
     >
     <router-link
-      v-if="user"
+      v-if="user && user.role=='Student'"
       class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold"
       to="/student"
     >
@@ -41,7 +41,7 @@
       </div>
     </router-link>
     <router-link
-      v-if="user"
+      v-if="user && user.role=='Tutor'"
       class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold"
       to="/tutor"
     >
