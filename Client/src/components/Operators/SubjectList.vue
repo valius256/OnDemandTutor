@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import SubjectAddEditPopup from './SubjectAddEditPopup.vue'
 import SubjectFilterPopup from './SubjectFilterPopup.vue'
@@ -187,6 +188,22 @@ export default {
         }
     },
     methods: {
+        async fetchSubject(){
+            let query = {
+                Sorts: {
+                    column: "Id",
+                    isDesc: true
+                },
+                Page: 0,
+                Limit: 5
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?'+ 
+            this.jsonToQueryString(query))
+            if (response.data) {
+                this.subjects = response.data.items
+            }
+        },
         resetFilter() {
             this.filterDto = {
                 name: "",
@@ -268,6 +285,7 @@ export default {
         },
     },
     mounted() {
+        this.fetchSubject()
     }
 }
 </script>

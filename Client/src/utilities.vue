@@ -70,6 +70,11 @@ export default {
       }
       return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
     },
+    jsonToQueryString(jsonObject) {
+      return Object.keys(jsonObject)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(jsonObject[key]))}`)
+        .join('&');
+    }
     // Define other global methods here if needed
   },
 };
