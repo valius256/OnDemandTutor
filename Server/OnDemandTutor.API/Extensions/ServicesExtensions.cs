@@ -10,6 +10,7 @@ using OnDemandTutor.API.Filter;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
@@ -19,6 +20,7 @@ using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.BusinessLogic.Services.Blog;
 using OnDemandTutor.BusinessLogic.Services.Class;
 using OnDemandTutor.BusinessLogic.Services.ConsultationRequest;
+using OnDemandTutor.BusinessLogic.Services.FAQ;
 using OnDemandTutor.BusinessLogic.Services.Mail;
 using OnDemandTutor.BusinessLogic.Services.Payment;
 using OnDemandTutor.BusinessLogic.Services.Subject;
@@ -51,6 +53,7 @@ public static class ServiceExtensions
         services.AddScoped<IConsultationRequestRepository, ConsultationRequestRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITutorDegreeRepository, TutorDegreeRepository>();
+        services.AddScoped<IFAQRepository, FAQRepository>();
 
         services.AddProblemDetails();
         return services;
@@ -63,6 +66,7 @@ public static class ServiceExtensions
         services.AddScoped<IBlogService, BlogService>();
         services.AddScoped<IClassService, ClassService>();
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
+        services.AddScoped<IFAQService, FAQService>();
         services.AddScoped<IAuthServices, AuthServices>();
         services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); ;
         services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();

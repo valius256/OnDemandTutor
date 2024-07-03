@@ -28,7 +28,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(classes);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassDtos), 200)]
@@ -42,7 +42,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(classDto);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassDtos), 200)]
@@ -52,7 +52,7 @@ namespace OnDemandTutor.API.Controllers
             return CreatedAtAction(nameof(GetClassById), new { id = createdClass.Id }, createdClass);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassDtos), 200)]
@@ -70,7 +70,7 @@ namespace OnDemandTutor.API.Controllers
             return NoContent();
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(204)]
