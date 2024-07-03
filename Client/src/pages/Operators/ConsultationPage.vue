@@ -9,9 +9,10 @@
                     <tr>
                         <th class="w-1/12">Id</th>
                         <th class="w-2/12">Phone</th>
-                        <th class="w-3/12">Email</th>
-                        <th class="w-4/12">Message</th>
-                        <th class="w-2/12">Status</th>
+                        <th class="w-2/12">Email</th>
+                        <th class="w-2/12">Ngày yêu cầu</th>
+                        <th class="w-4/12">Nội dung</th>
+                        <th class="w-1/12">Trạng thái</th>
                         <th class="w-1/12"></th>
                     </tr>
                 </thead>
@@ -20,6 +21,7 @@
                         <td>{{ request.id }}</td>
                         <td>{{ request.phone }}</td>
                         <td class="break-all">{{ request.email }}</td>
+                        <td>{{ request.requestDate }}</td>
                         <td>{{ request.message }}</td>
                         <td>
                             <div :class="getStatusStyle(request.status)">{{ request.status }}</div>
@@ -81,6 +83,7 @@ export default {
                     phone: "0987654321",
                     email: "hungttse173643@fpt.edu.vn",
                     message: "SOS",
+                    requestDate : "2024-01-01 12:00:00",
                     status: "Pending"
                 },
                 {
@@ -88,6 +91,7 @@ export default {
                     phone: "0987654321",
                     email: "hungttse173643@fpt.edu.vn",
                     message: "The break-words utility in Tailwind CSS can be applied directly to a td tag to ensure that content within the cell breaks and wraps as needed. However, Tailwind CSS uses the break-all utility instead of break-words. If you need to break words within table cells, you can use break-all or other relevant utilities for text wrapping and overflow handling",
+                    requestDate : "2024-01-01 12:00:00",
                     status: "Done"
                 }
             ],
