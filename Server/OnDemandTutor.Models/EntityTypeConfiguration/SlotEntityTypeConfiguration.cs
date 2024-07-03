@@ -51,6 +51,7 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
         builder.HasMany(s => s.SlotTransaction)
             .WithOne(t => t.Slot)
             .HasForeignKey(t => t.SlotId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(s => s.Classes).WithMany(s => s.Slots).HasForeignKey(t => t.ClassId)

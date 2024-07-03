@@ -30,9 +30,9 @@ public class UserServices : IUserServices
         _mailServices = mailServices;
     }
 
-    public async Task<List<GetProfileUserDtos>> GetAllUsers()
+    public async Task<List<GetProfileUserDtos>> GetAllUsers(UserFilterDto request)
     {
-        var userList = await _unitOfWorkRepository.UserRepository.ToListAsync();
+        var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
         return userList.Adapt<List<GetProfileUserDtos>>();
     }
 
@@ -153,6 +153,17 @@ public class UserServices : IUserServices
             .Adapt<GetProfileUserDtos>();
     }
 
+    public async Task<bool> RechareAccount(int uId, decimal money)
+    {
+        var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
+        if(recordInDb == null) return false;
+
+        recordInDb.Balance += money;
+        _unitOfWorkRepository.UserRepository.Update(recordInDb);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> DeleteUserAsync(string? email)
     {
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Email == email);
@@ -186,10 +197,10 @@ public class UserServices : IUserServices
         return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
+    public async Task<List<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
     {
         var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
-        return tutorList.Adapt<PagedResult<TutorSimpleProfileDto>>();
+        return tutorList.Adapt<List<TutorSimpleProfileDto>>();
     }
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)

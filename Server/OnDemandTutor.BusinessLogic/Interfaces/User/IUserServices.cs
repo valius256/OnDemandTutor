@@ -10,18 +10,18 @@ public interface IUserServices
 {
     Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos);
     Task<GetProfileUserDtos> VerifyLogin(string? email, string? password);
-    Task<List<GetProfileUserDtos>> GetAllUsers();
+    Task<List<GetProfileUserDtos>> GetAllUsers(UserFilterDto request);
     Task<GetProfileUserDtos> GetProfile(int? userId, string? email);
     Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
     Task<GetProfileUserDtos> GetUserProfileById(int id);
     Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
-
+    Task<bool> RechareAccount(int uId, decimal money); 
     Task<bool> DeleteUserAsync(string? email);
 
     //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
-    Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request);
+    Task<List<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request);
     Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
     Task<bool> DeleteTutor(DeleteTutorDto requestDto);
     Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);

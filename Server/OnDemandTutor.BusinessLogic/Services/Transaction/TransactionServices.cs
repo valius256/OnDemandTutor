@@ -19,12 +19,13 @@ public class TransactionServices : ITransactionServices
     public async Task<int> CreateTransactionDb(TransactionDto transaction)
     {
         var transactionModel = transaction.Adapt<Models.Models.Transaction>();
-        await _unitOfWorkRepository.TransactionRepository.AddAsync(transactionModel);
+        await _unitOfWorkRepository.TransactionRepository
+            .AddAsync(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
         return transactionModel.Id;
     }
 
-    public async Task TransactionPaid(string transactionId, DateTime paidTime)
+    public async Task<int> TransactionPaid(string transactionId, DateTime paidTime)
     {
         var transactionModel =
             await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(tr => tr.TransactionCode == transactionId);
@@ -38,5 +39,6 @@ public class TransactionServices : ITransactionServices
         
         _unitOfWorkRepository.TransactionRepository.Update(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
+        return transactionModel.Id;
     }
 }

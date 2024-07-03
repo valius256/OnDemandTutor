@@ -10,7 +10,7 @@ public class Subject : BaseEntity
     public int? CreateById { get; set; }
     public string Description { get; set; }
     public DateTime? CreateAt { get; set; }
-    public SubjectStatus Status { get; set; }
+    public bool IsEnable { get; set; }
 
 
     public virtual ICollection<TutorDegree> TutorDegree { get; set; } = new List<TutorDegree>();

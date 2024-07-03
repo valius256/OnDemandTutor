@@ -10,6 +10,6 @@ public class TransactionDto
     public DateTime CreatedDate { get; set; }
     public PaymentStatus? Status { get; set; }
     public string? Notes { get; set; }
-    public int SlotId { get; set; }
+    public int? SlotId { get; set; }
     public int CreatedById { get; set; }
 }
