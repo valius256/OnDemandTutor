@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.EntityTypeConfiguration;
@@ -8,7 +9,9 @@ public class SlotStudentEntityTypeConfiguration : IEntityTypeConfiguration<SlotS
 {
     public void Configure(EntityTypeBuilder<SlotStudent> builder)
     {
-        builder.HasKey(ss => new { ss.SlotId, ss.UserId });
+        builder.HasKey(ss => ss.Id);
+        builder.Property(ss => ss.Id).ValueGeneratedOnAdd();
+        builder.Property(ss => ss.PaymentStatus).HasDefaultValue(PaymentStatus.Notpaid);
 
         builder.HasOne(ss => ss.Slot)
             .WithMany(s => s.SlotStudents)

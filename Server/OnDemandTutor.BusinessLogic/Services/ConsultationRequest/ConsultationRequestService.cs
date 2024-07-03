@@ -10,19 +10,19 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
 {
     public class ConsultationRequestService : IConsultationRequestService
     {
-        private readonly IUnitOfWorkRepository _unitOfWork;
+        private readonly IUnitOfWorkRepository _unitOfWorkRepository;
 
-        public ConsultationRequestService(IUnitOfWorkRepository unitOfWork)
+        public ConsultationRequestService(IUnitOfWorkRepository unitOfWorkRepository)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWorkRepository = unitOfWorkRepository;
         }
 
-        public async Task<PagedResult<GetConsultationRequestDtos>> GetConsultationRequestsAsync(PagingModel<GetConsultationRequestDtos> pagingModel)
+        public async Task<PagedResult<GetConsultationRequestDto>> GetConsultationRequestsAsync(PagingModel<GetConsultationRequestDto> pagingModel)
         {
-            var pagedResult = await _unitOfWork.ConsultationRequestRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.ConsultationRequest>>());
-            var dtoPagedResult = new PagedResult<GetConsultationRequestDtos>
+            var pagedResult = await _unitOfWorkRepository.ConsultationRequestRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.ConsultationRequest>>());
+            var dtoPagedResult = new PagedResult<GetConsultationRequestDto>
             {
-                Items = pagedResult.Items.Adapt<List<GetConsultationRequestDtos>>(),
+                Items = pagedResult.Items.Adapt<List<GetConsultationRequestDto>>(),
                 Page = pagedResult.Page,
                 Limit = pagedResult.Limit,
                 Total = pagedResult.Total
@@ -30,50 +30,51 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             return dtoPagedResult;
         }
 
-        public async Task<GetConsultationRequestDtos> GetConsultationRequestByIdAsync(int id)
+        public async Task<GetConsultationRequestDto> GetConsultationRequestByIdAsync(int id)
         {
-            var consultationRequest = await _unitOfWork.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
-            return consultationRequest?.Adapt<GetConsultationRequestDtos>();
+            var consultationRequest = await _unitOfWorkRepository.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
+            return consultationRequest?.Adapt<GetConsultationRequestDto>();
         }
 
-        public async Task<GetConsultationRequestDtos> CreateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto)
+        public async Task<GetConsultationRequestDto> CreateConsultationRequestAsync(RegisterConsultationRequestDto consultationRequestDto)
         {
             var consultationRequest = consultationRequestDto.Adapt<Models.Models.ConsultationRequest>();
-            await _unitOfWork.ConsultationRequestRepository.AddAsync(consultationRequest);
-            await _unitOfWork.SaveChangesAsync();
-            return consultationRequest.Adapt<GetConsultationRequestDtos>();
+            consultationRequest.CreatedDate = DateTime.Today;
+            await _unitOfWorkRepository.ConsultationRequestRepository.AddAsync(consultationRequest);
+            await _unitOfWorkRepository.SaveChangesAsync();
+            return consultationRequest.Adapt<GetConsultationRequestDto>();
         }
 
-        public async Task<GetConsultationRequestDtos> UpdateConsultationRequestAsync(GetConsultationRequestDtos consultationRequestDto)
+        public async Task<GetConsultationRequestDto> UpdateConsultationRequestAsync(GetConsultationRequestDto consultationRequestDto)
         {
-            var consultationRequest = await _unitOfWork.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == consultationRequestDto.Id);
+            var consultationRequest = await _unitOfWorkRepository.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == consultationRequestDto.Id);
             if (consultationRequest == null)
             {
                 return null;
             }
             consultationRequestDto.Adapt(consultationRequest);
-            _unitOfWork.ConsultationRequestRepository.Update(consultationRequest);
-            await _unitOfWork.SaveChangesAsync();
-            return consultationRequest.Adapt<GetConsultationRequestDtos>();
+            _unitOfWorkRepository.ConsultationRequestRepository.Update(consultationRequest);
+            await _unitOfWorkRepository.SaveChangesAsync();
+            return consultationRequest.Adapt<GetConsultationRequestDto>();
         }
 
         public async Task<bool> DeleteConsultationRequestAsync(int id)
         {
-            var consultationRequest = await _unitOfWork.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
+            var consultationRequest = await _unitOfWorkRepository.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
             if (consultationRequest == null)
             {
                 return false;
             }
-            _unitOfWork.ConsultationRequestRepository.Remove(consultationRequest);
-            await _unitOfWork.SaveChangesAsync();
+            _unitOfWorkRepository.ConsultationRequestRepository.Remove(consultationRequest);
+            await _unitOfWorkRepository.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDtos requestDtos)
+        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDto requestDtos)
         {
             var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
 
-            var recordInDb = await _unitOfWork.ConsultationRequestRepository
+            var recordInDb = await _unitOfWorkRepository.ConsultationRequestRepository
                 .FirstOrDefaultAsync(l => l.Id == requestDtos.Id && l.Status != ConsultationRequestStatus.Completed);
 
             if (recordInDb == null) return false;
@@ -83,19 +84,23 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             {
                 recordInDb.Status = ConsultationRequestStatus.Completed;
                 recordInDb.HandleById = operatorId;
-                _unitOfWork.ConsultationRequestRepository.Update(recordInDb);
+                _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
             }
             else if (requestDtos.Status == ConsultationRequestStatus.Failed)
             {
                 recordInDb.Status = ConsultationRequestStatus.Failed;
                 recordInDb.HandleById = operatorId;
-                recordInDb.ReasonFailed = requestDtos.ReasonFailed;
-                _unitOfWork.ConsultationRequestRepository.Update(recordInDb);
+                _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
             }
 
 
             return true;
 
+        }
+
+        public async Task<List<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request)
+        {
+            return await _unitOfWorkRepository.ConsultationRequestRepository.ViewAllConsultationsRequestAsync(request);
         }
     }
 }

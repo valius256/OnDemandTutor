@@ -14,7 +14,6 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -31,9 +30,9 @@ public class UserServices : IUserServices
         _mailServices = mailServices;
     }
 
-    public async Task<List<GetProfileUserDtos>> GetAllUsers()
+    public async Task<List<GetProfileUserDtos>> GetAllUsers(UserFilterDto request)
     {
-        var userList = await _unitOfWorkRepository.UserRepository.ToListAsync();
+        var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
         return userList.Adapt<List<GetProfileUserDtos>>();
     }
 
@@ -42,7 +41,7 @@ public class UserServices : IUserServices
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId || u.Email == userEmail);
         if (userModel == null) throw new BadRequestException("User not found");
-        
+
         return userModel.Adapt<GetProfileUserDtos>();
     }
 
@@ -154,6 +153,17 @@ public class UserServices : IUserServices
             .Adapt<GetProfileUserDtos>();
     }
 
+    public async Task<bool> RechareAccount(int uId, decimal money)
+    {
+        var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
+        if(recordInDb == null) return false;
+
+        recordInDb.Balance += money;
+        _unitOfWorkRepository.UserRepository.Update(recordInDb);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> DeleteUserAsync(string? email)
     {
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Email == email);
@@ -187,10 +197,10 @@ public class UserServices : IUserServices
         return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDtos>> ViewTutorList(PagingModel<TutorSimpleProfileRequest> request)
+    public async Task<List<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
     {
         var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
-        return tutorList.Adapt<PagedResult<TutorSimpleProfileDtos>>();
+        return tutorList.Adapt<List<TutorSimpleProfileDto>>();
     }
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
@@ -207,24 +217,24 @@ public class UserServices : IUserServices
                     .SetProperty(s => s.TutorSubjectStatus, requestDtos.StatusApproved)
                     .SetProperty(s => s.RejectReason, dto.RejectReason)
                 );
-            
+
             var tutorId = await _unitOfWorkRepository.TutorDegreeRepository
                 .Where(td => td.Id == dto.TutorDegreeId)
                 .Select(ld => ld.TutorId)
                 .FirstOrDefaultAsync();
-            
-            
+
+
             var tutorEmailDb = await _unitOfWorkRepository.UserRepository
                 .Where(ld => ld.Id == tutorId)
                 .Select(ld => ld.Email)
                 .FirstOrDefaultAsync();
             var tutorEmails = new List<string>();
-            
+
             if (tutorEmailDb != null)
             {
                 tutorEmails.Add(tutorEmailDb);
             }
-       
+
             var emailParams = new Dictionary<string, string>()
             {
                 // { "TutorName", $"{user.Email}" }, for testing( using the email can receive mail)
@@ -232,43 +242,43 @@ public class UserServices : IUserServices
                 { "ApprovalStatus", $"{requestDtos.StatusApproved}" },
                 { "RejectionReason", $"{requestDtos.tutorRegistrationDtos.FirstOrDefault()?.RejectReason}" },
             };
-        
+
             await _mailServices.SendAsync(EmailType.Tutor_Registration_Approval, tutorEmails, new List<string>(), emailParams);
         }
         return true;
     }
 
-    public async Task<bool> DeleteTutor(DeleteTutorDtos requestDtos)
+    public async Task<bool> DeleteTutor(DeleteTutorDto requestDto)
     {
-        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDtos.userId);
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
         if (userInDb.IsActive == false)
         {
             throw new ModelException("user status", $"{userInDb.IsActive} already delete",
                 "This account is already deleted");
         }
 
-        await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == requestDtos.userId)
+        await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == requestDto.userId)
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.IsActive, false)
                                                     .SetProperty(s => s.RecordStatus, RecordStatus.Inactive)
-                                                    .SetProperty(s => s.DeaActiveReason, requestDtos.DeaActiveReason)
-                                                
+                                                    .SetProperty(s => s.DeaActiveReason, requestDto.DeaActiveReason)
+
             );
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> UpdateProfile(UpdateUserDtos requestDtos, ClaimsPrincipal userClaims)
+    public async Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
     {
         var userid = userClaims.FindFirst(c => c.Type == "id")?.Value;
-        if (requestDtos.Id is 0 or null)
+        if (requestDto.Id is 0 or null)
         {
-            requestDtos.Id = int.Parse(userid);
+            requestDto.Id = int.Parse(userid);
         }
-        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDtos.Id);
-       var rs =  requestDtos.Adapt(userInDb);
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
+        var rs = requestDto.Adapt(userInDb);
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-    
+
 }

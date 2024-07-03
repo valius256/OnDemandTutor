@@ -8,6 +8,7 @@ public class User : BaseEntity
     public string FireBaseid { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+
     public string? Phone { get; set; }
     public required string Email { get; set; }
     public string? Address { get; set; }
@@ -24,7 +25,7 @@ public class User : BaseEntity
     public bool IsActive { get; set; } = true;
     public string? DeaActiveReason { get; set; }
     public bool TutorVerified { get; set; } = false;
-    
+
     // for relationship
     public virtual ICollection<Blog> BlogCreateBy { get; set; } = new List<Blog>();
     public virtual ICollection<Blog> BlogUpdateBy { get; set; } = new List<Blog>();

@@ -14,6 +14,9 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasMaxLength(50)
             .IsRequired(false);
 
+        builder.Property(t => t.SlotId)
+            .IsRequired(false);
+        
         builder.Property(t => t.PaymentMethod)
             .HasMaxLength(50)
             .IsRequired(false);
@@ -26,15 +29,19 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasColumnType("datetime")
             .IsRequired();
 
-        builder.Property(t => t.Status)
-            .IsRequired(false);
-
         builder.Property(t => t.Notes)
             .IsRequired(false);
 
         builder.HasOne(t => t.CreatedBy)
             .WithMany(u => u.TransactionCreatedBy)
             .HasForeignKey(t => t.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+       
+        builder.HasOne(t => t.Slot)
+            .WithMany(s => s.SlotTransaction)
+            .HasForeignKey(t => t.SlotId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

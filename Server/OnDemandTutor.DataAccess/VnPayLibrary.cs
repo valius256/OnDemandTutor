@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Http;
+using OnDemandTutor.Models.Dtos.Payment;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Http;
-using OnDemandTutor.Models.Dtos.Payment;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -14,7 +14,7 @@ public class VnPayLibrary
     private readonly SortedList<string, string> _requestData = new SortedList<string, string>(new VnPayCompare());
     private readonly SortedList<string, string> _responseData = new SortedList<string, string>(new VnPayCompare());
 
-    public PaymentResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
+    public PaymentSlotResponseModel GetFullResponseData(IQueryCollection collection, string hashSecret)
     {
         var vnPay = new VnPayLibrary();
 
@@ -29,32 +29,53 @@ public class VnPayLibrary
         var orderId = Convert.ToInt64(vnPay.GetResponseData("vnp_TxnRef"));
         var vnPayTranId = Convert.ToInt64(vnPay.GetResponseData("vnp_TransactionNo"));
         var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
-        var vnpSecureHash =
-            collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
+        var vnpSecureHash = collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value;
+        var money = vnPay.GetResponseData("vnp_Amount");
+        var orderDescription  = vnPay.GetResponseData("vnp_OrderDescription");
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
-        var email = vnPay.GetResponseData("vnp_Email");
-        
-        var checkSignature =
-            vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
+        var orderInfoParts = orderInfo.Split(' ');
+
+        bool isRecharge = false;
+        if (orderInfoParts.Length > 0)
+        {
+            var rs = bool.TryParse(orderInfoParts[0], out isRecharge);
+        }
+        var description = orderInfoParts.Length > 1? orderInfoParts[1] : "";
+        var userId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
+        int? slotId = null;
+        if (orderInfoParts.Length > 3 && string.IsNullOrEmpty(orderInfoParts[3]))
+        {
+            int tempSlotId;
+            if (int.TryParse(orderInfoParts[3], out tempSlotId))
+            {
+                slotId = tempSlotId;
+            }
+        }
+
+        var checkSignature = vnPay.ValidateSignature(vnpSecureHash, hashSecret);
 
         if (!checkSignature)
-            return new PaymentResponseModel()
+        {
+            return new PaymentSlotResponseModel()
             {
                 Success = false
             };
+        }
 
-        return new PaymentResponseModel()
+        var rs1 =  new PaymentSlotResponseModel()
         {
             Success = true,
             PaymentMethod = "VnPay",
-            OrderDescription = orderInfo,
-            OrderId = orderId.ToString(),
-            PaymentId = vnPayTranId.ToString(),
-            TransactionId = vnPayTranId.ToString(),
+            OrderDescription = orderDescription,
+            TransactionCode = orderId.ToString(),
             Token = vnpSecureHash,
             VnPayResponseCode = vnpResponseCode,
-            Email = email
+            SlotId = slotId.HasValue ? slotId.Value : (int?)null,
+            UserId = userId,
+            Money = decimal.Parse(money),
+            IsRechargePayment = isRecharge,
         };
+        return rs1;
     }
     public string GetIpAddress(HttpContext context)
     {
@@ -62,7 +83,7 @@ public class VnPayLibrary
         try
         {
             var remoteIpAddress = context.Connection.RemoteIpAddress;
-        
+
             if (remoteIpAddress != null)
             {
                 if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
@@ -70,9 +91,9 @@ public class VnPayLibrary
                     remoteIpAddress = Dns.GetHostEntry(remoteIpAddress).AddressList
                         .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
                 }
-        
+
                 if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
-        
+
                 return ipAddress;
             }
         }

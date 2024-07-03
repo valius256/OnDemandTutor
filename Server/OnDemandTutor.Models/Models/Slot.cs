@@ -16,9 +16,9 @@ public class Slot : BaseEntity
     public SlotStatus SlotStatus { get; set; }
     public DateTime? ActualEndTime { get; set; }
     public bool IsFinished { get; set; }
-   
-    
-    
+
+
+
 
     // Navigation properties
     public virtual Subject Subject { get; set; }

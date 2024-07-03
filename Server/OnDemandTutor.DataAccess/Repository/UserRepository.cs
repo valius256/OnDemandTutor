@@ -16,6 +16,66 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     }
 
 
+    public async Task<List<User>> ViewUsersListAsync(UserFilterDto request)
+    {
+        var userListQuery = dbSet
+            .Include(ld => ld.TutorSubjects)
+            .AsQueryable()
+            ;
+
+        // Apply filters based on request
+        if (!string.IsNullOrEmpty(request.name))
+        {
+            userListQuery = userListQuery.Where(ld =>
+                ld.FirstName.Contains(request.name) || ld.LastName.Contains(request.name));
+        }
+
+        if (!string.IsNullOrEmpty(request.email))
+        {
+            userListQuery = userListQuery.Where(ld => ld.Email == request.email);
+        }
+
+        if (!string.IsNullOrEmpty(request.phone))
+        {
+            userListQuery = userListQuery.Where(ld => ld.Phone == request.phone);
+        }
+
+        if (!string.IsNullOrEmpty(request.Address))
+        {
+            userListQuery = userListQuery.Where(ld => ld.Address == request.Address);
+        }
+
+        if (request.sex != Sex.Other)
+        {
+            userListQuery = userListQuery.Where(ld => ld.Sex == request.sex);
+        }
+
+        if (request.Role != null)
+        {
+            userListQuery = userListQuery.Where(ld => ld.Role == request.Role);
+        }
+
+        if (request. DobFromDate!= null && request.DobToDate != null)
+        {
+            userListQuery = userListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.CreatedDate <= request.DobToDate);
+        }
+
+        if (!string.IsNullOrEmpty(request.Subject))
+        {
+            userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
+        }
+        
+        int limit = request.Limit;
+        int skip = (request.Page - 1) * limit;
+        userListQuery = userListQuery.Skip(skip).Take(limit);
+
+        var tutorList = await userListQuery
+            .AsNoTracking()
+            .ToListAsync();
+
+        return tutorList;
+    }
+
     public async Task<List<User>> GetUsersListDegreeData()
     {
         return await dbSet.Include(ld => ld.TutorDegrees)
@@ -44,14 +104,66 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return tutorList;
     }
 
-    public async Task<PagedResult<User>> ViewTutorListAsync(
-        PagingModel<TutorSimpleProfileRequest> request)
+    public async Task<List<User>> ViewTutorListAsync(TutorFilterDto request)
     {
-        var tutorList = await dbSet
+        var tutorListQuery = dbSet
             .Include(ld => ld.TutorSubjects)
-            .Where(ld => ld.Role == RoleStatus.Tutor)
+            .Where(ld => ld.Role == RoleStatus.Tutor);
+
+        // Apply filters based on request
+        if (!string.IsNullOrEmpty(request.name))
+        {
+            tutorListQuery = tutorListQuery.Where(ld =>
+                ld.FirstName.Contains(request.name) || ld.LastName.Contains(request.name));
+        }
+
+        if (!string.IsNullOrEmpty(request.email))
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Email == request.email);
+        }
+
+        if (!string.IsNullOrEmpty(request.phone))
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Phone == request.phone);
+        }
+
+        if (!string.IsNullOrEmpty(request.Address))
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Address == request.Address);
+        }
+
+        if (request.sex != Sex.Other)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Sex == request.sex);
+        }
+
+        if (request.DobFromDate != null && request.DobToDate != null)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.Dob <= request.DobToDate);
+        }
+
+        if (request.JoinFromDate != null && request.JoinToDate != null)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+        }
+
+        if (!string.IsNullOrEmpty(request.Subject))
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
+        }
+
+        
+        int limit = request.Limit;
+        int skip = (request.Page - 1) * limit;
+        tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
+
+        var tutorList = await tutorListQuery
             .AsNoTracking()
-            .ToPagingAsync(request.Page, request.Limit);
+            .ToListAsync();
+
         return tutorList;
     }
+
+
+    
 }

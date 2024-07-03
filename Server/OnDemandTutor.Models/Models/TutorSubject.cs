@@ -9,7 +9,7 @@ public class TutorSubject : BaseEntity
 
     public int SubjectId { get; set; }
     public virtual Subject Subject { get; set; }
-    
+
     public SubjectStatus Status { get; set; }
 
 }

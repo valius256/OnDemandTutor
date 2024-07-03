@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OnDemandTutor.Models.Dtos.Payment;
+using OnDemandTutor.Models.Dtos.Slot;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Payment;
 
 public interface IVnPayServices
 {
-    string CreatePaymentUrl(PaymentInformationModel model, HttpContext context);
-    Task<PaymentResponseModel> PaymentExecute(IQueryCollection collections);
+    Task<string> CreatePaymentForSlotUrl(PaySlotDto model, HttpContext context, GetSlotsDtos slot);
+    Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections);
+    Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context);
+    Task<bool> ProcessCashbackAsync(CashBackDto cashbackDto, HttpContext context);
 }

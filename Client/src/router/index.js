@@ -7,6 +7,7 @@ import RegisterPage from "../pages/Auth/RegisterPage.vue";
 import BlogsPage from "../pages/Student/BlogsPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
 import StudentProfile from "../pages/Student/ProfilePage.vue";
+import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
 // import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
 // import CreateClassPage from "../pages/Student/CreateClassPage.vue";
 import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue";
@@ -15,6 +16,7 @@ import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
 import SubjectManagementPage from "../pages/Operators/SubjectManagementPage.vue";
 import SubjectRegistrationDetailPage from "../pages/Operators/SubjectRegistrationDetailPage.vue";
 import BlogManagementPage from "../pages/Operators/BlogManagementPage.vue";
+import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue"
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -72,7 +74,7 @@ const routes = [
   {
     path: "/student",
     name: "StudentProfilePage",
-    redirect : "/student/profile",
+    redirect: "/student/profile",
     children: [
       {
         path: "profile",
@@ -88,6 +90,27 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: "/tutor",
+    name: "TutorProfilePage",
+    redirect: "/tutor/profile",
+    children: [
+      {
+        path: "profile",
+        component: TutorProfile,
+      },
+      {
+        path: "schedule",
+        component: TutorProfile,
+      },
+      {
+        path: "payment",
+        component: TutorProfile,
+      },
+    ],
+  },
+
   {
     path: "/admin/accounts",
     name: "AccountManagement",
@@ -100,16 +123,16 @@ const routes = [
       {
         path: "tutors",
         redirect: "/admin/accounts/tutors/list",
-        children : [
+        children: [
           {
-            path : "list",
+            path: "list",
             component: TutorManagementPage,
           },
           {
-            path : "registration",
+            path: "registration",
             component: TutorManagementPage,
-          }
-        ]
+          },
+        ],
       },
       {
         path: "operators",
@@ -144,7 +167,17 @@ const routes = [
   {
     path: "/admin/blogs",
     name: "BlogManagementPage",
-    component: BlogManagementPage,
+    redirect : "/admin/blogs/manage",
+    children : [
+      {
+        path : "manage",
+        component: BlogManagementPage,
+      },
+      {
+        path : "editor/:id",
+        component: BlogEditorPage,
+      },
+    ]
   },
   {
     path: "/admin/faqs",

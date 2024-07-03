@@ -8,7 +8,7 @@ using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers
 {
-    [Route("api/subject")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ConsultationControllers : BaseController<ConsultationControllers>
     {
@@ -23,8 +23,8 @@ namespace OnDemandTutor.API.Controllers
         [Authorize]
         [HttpPost("register")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(GetConsultationRequestDtos), 200)]
-        public async Task<ActionResult> RegisterForConsultation([FromBody] GetConsultationRequestDtos requestDtos)
+        [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
+        public async Task<ActionResult> RegisterForConsultation([FromBody] RegisterConsultationRequestDto requestDtos)
         {
             return Ok(await _consultationRequestService.CreateConsultationRequestAsync(requestDtos));
         }
@@ -35,17 +35,17 @@ namespace OnDemandTutor.API.Controllers
         [Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IApiResult<PagedResult<GetConsultationRequestDtos>>), 200)]
-        public async Task<IApiResult<PagedResult<GetConsultationRequestDtos>>> GetAllConsultationRequest(PagingModel<GetConsultationRequestDtos> requestDtos)
+        [ProducesResponseType(typeof(IApiResult<List<GetConsultationRequestDto>>), 200)]
+        public async Task<IApiResult<List<GetConsultationRequestDto>>> GetAllConsultationRequest([FromQuery] ConsultationRequestFilterDto requestDtos)
         {
-            return OKAsync(await _consultationRequestService.GetConsultationRequestsAsync(requestDtos));
+            return OKAsync(await _consultationRequestService.ViewAllConsultationsRequestAsync(requestDtos));
         }
 
         // [Authorize]
         [HttpGet("get-by-id")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IApiResult<GetConsultationRequestDtos>), 200)]
-        public async Task<IApiResult<GetConsultationRequestDtos>> GetAllConsultationRequest([FromBody] int id)
+        [ProducesResponseType(typeof(IApiResult<GetConsultationRequestDto>), 200)]
+        public async Task<IApiResult<GetConsultationRequestDto>> GetAllConsultationRequest(int id)
         {
             return OKAsync(await _consultationRequestService.GetConsultationRequestByIdAsync(id));
         }
@@ -54,9 +54,9 @@ namespace OnDemandTutor.API.Controllers
         [HttpPost("Handle")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]
-        public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDtos requestDtos)
+        public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDto requestDto)
         {
-            return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(HttpContext.User, requestDtos));
+            return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(HttpContext.User, requestDto));
         }
 
     }

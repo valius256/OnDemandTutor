@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.Transaction;
 
-public class TransactionDtos
+public class TransactionDto
 {
     public required string TransactionCode { get; set; }
     public string PaymentMethod { get; set; }
@@ -10,6 +10,6 @@ public class TransactionDtos
     public DateTime CreatedDate { get; set; }
     public PaymentStatus? Status { get; set; }
     public string? Notes { get; set; }
-    public int SlotId { get; set; }
+    public int? SlotId { get; set; }
     public int CreatedById { get; set; }
 }

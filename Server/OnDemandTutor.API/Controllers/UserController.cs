@@ -23,9 +23,9 @@ public class UserController : BaseController<UserController>
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll()
+    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
     {
-        var result = await _userService.GetAllUsers();
+        var result = await _userService.GetAllUsers(request);
         return OKAsync(result);
     }
 
@@ -59,29 +59,29 @@ public class UserController : BaseController<UserController>
         ;
     }
 
-    
+
     /// <summary>
     ///    update user profile 
     /// </summary>
-    /// if the fe don;t place Id in UpdateUserDtos.Id it will take the id from the Claims when login scf
+    /// if the fe don;t place Id in UpdateUserDto.Id it will take the id from the Claims when login scf
     /// <param name="body"></param>
     /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("update-profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(bool), 200)]
-    public async Task<IApiResult<bool>> UpdateProfile([FromBody] UpdateUserDtos requestDtos)
+    public async Task<IApiResult<bool>> UpdateProfile([FromBody] UpdateUserDto requestDto)
     {
-        var result = await _userService.UpdateProfile(requestDtos, HttpContext.User);
+        var result = await _userService.UpdateProfile(requestDto, HttpContext.User);
         return OKAsync(result);
     }
 
     [Authorize]
-    [HttpPost("view-tutor-list")]
+    [HttpGet("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDtos>>), 200)]
-    public async Task<IApiResult<PagedResult<TutorSimpleProfileDtos>>> ViewTutorList(
-        PagingModel<TutorSimpleProfileRequest> request)
+    [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]
+    public async Task<IApiResult<List<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
+        TutorFilterDto request)
     {
         return OKAsync(await _userService.ViewTutorList(request));
 
@@ -91,11 +91,11 @@ public class UserController : BaseController<UserController>
     [HttpPost("remove-tutor")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
-    public async Task<IApiResult<bool>> DeleteTutor([FromBody] DeleteTutorDtos requestDtos)
+    public async Task<IApiResult<bool>> DeleteTutor([FromBody] DeleteTutorDto requestDto)
     {
-        return OKAsync(await _userService.DeleteTutor(requestDtos));
+        return OKAsync(await _userService.DeleteTutor(requestDto));
     }
-    
-    
+
+
 
 }
