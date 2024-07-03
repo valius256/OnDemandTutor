@@ -6,7 +6,8 @@ namespace OnDemandTutor.DataAccess.IRepository;
 
 public interface IUserRepository : IGenericRepository<User>
 {
+    Task<List<User>> ViewUsersListAsync(UserFilterDto request);
     Task<List<User>> GetUsersListDegreeData();
     Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId);
-    Task<PagedResult<User>> ViewTutorListAsync(PagingModel<TutorSimpleProfileRequest> request);
+    Task<List<User>> ViewTutorListAsync(TutorFilterDto request);
 }

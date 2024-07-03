@@ -12,8 +12,8 @@ public class Transaction : BaseEntity
     public DateTime CreatedDate { get; set; }
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }
-    public int SlotId { get; set; }
+    public int? SlotId { get; set; }
     public int CreatedById { get; set; }
     public virtual User CreatedBy { get; set; }
-    public virtual Slot Slot { get; set; }
+    public virtual Slot? Slot { get; set; }
 }

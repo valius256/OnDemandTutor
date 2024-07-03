@@ -70,5 +70,14 @@ public class PaymentController : BaseController<PaymentController>
         return OKAsync(response);
     }
 
+    [HttpPost("create-recharge")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    public async Task<IActionResult> CreateRecharge([FromBody] RechargeDto request)
+    {
+        var paymentUrl = await _vnPayServices.RechargePaymentAsync(request, HttpContext);
+        return Ok(paymentUrl);
+    }
 
 }

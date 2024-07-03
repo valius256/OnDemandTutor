@@ -144,7 +144,6 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 1.",
                     RequestDate = DateOnly.MinValue.AddDays(1),
                     Status = ConsultationRequestStatus.Proccesing,
-                    ReasonFailed = null
                 },
                 new ConsultationRequest
                 {
@@ -155,7 +154,6 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 2.",
                     RequestDate = DateOnly.MinValue.AddDays(2),
                     Status = ConsultationRequestStatus.Completed,
-                    ReasonFailed = null
                 },
                 new ConsultationRequest
                 {
@@ -166,7 +164,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 3.",
                     RequestDate = DateOnly.MinValue.AddDays(3),
                     Status = ConsultationRequestStatus.Proccesing,
-                    ReasonFailed = null
+                   
                 },
                 new ConsultationRequest
                 {
@@ -177,7 +175,6 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 4.",
                     RequestDate = DateOnly.MinValue.AddDays(4),
                     Status = ConsultationRequestStatus.Failed,
-                    ReasonFailed = "Không có sẵn vào thời gian yêu cầu."
                 },
                 new ConsultationRequest
                 {
@@ -188,7 +185,6 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 5.",
                     RequestDate = DateOnly.MinValue.AddDays(5),
                     Status = ConsultationRequestStatus.Proccesing,
-                    ReasonFailed = null
                 }
               );
 
@@ -375,7 +371,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Basic mathematics subject",
                     CreateAt = createAt,
-                    Status = SubjectStatus.Enable
+                    IsEnable = true,
                 },
                 new Subject
                 {
@@ -385,7 +381,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 2,
                     Description = "Language arts subject",
                     CreateAt = createAt.AddDays(-1),
-                    Status = SubjectStatus.Enable
+                    IsEnable = true,
                 },
                 new Subject
                 {
@@ -395,7 +391,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Study of matter and energy",
                     CreateAt = createAt.AddDays(-2),
-                    Status = SubjectStatus.Enable
+                    IsEnable = true,
                 },
                 new Subject
                 {
@@ -405,7 +401,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 2,
                     Description = "Study of past events",
                     CreateAt = createAt.AddDays(-3),
-                    Status = SubjectStatus.Enable
+                    IsEnable = true,
                 },
                 new Subject
                 {
@@ -415,7 +411,7 @@ namespace OnDemandTutor.Models.MigrationData
                     CreateById = 1,
                     Description = "Study of computers and computational systems",
                     CreateAt = createAt.AddDays(-4),
-                    Status = SubjectStatus.Enable
+                    IsEnable = false,
                 }
             );
 

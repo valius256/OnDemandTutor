@@ -77,7 +77,7 @@ public static class ServiceExtensions
         services.AddScoped<ISlotServices, SlotService>();
         services.AddScoped<ISlotStudentServices, SlotStudentService>();
         services.AddScoped<ITransactionServices, TransactionServices>();
-        
+        services.AddScoped<IPaymentProcessor, VnPayProcessor>();
         
         
         services.AddTransient<IMailServices, MailServices>();

@@ -23,9 +23,9 @@ public class UserController : BaseController<UserController>
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll()
+    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
     {
-        var result = await _userService.GetAllUsers();
+        var result = await _userService.GetAllUsers(request);
         return OKAsync(result);
     }
 
@@ -77,11 +77,11 @@ public class UserController : BaseController<UserController>
     }
 
     [Authorize]
-    [HttpPost("view-tutor-list")]
+    [HttpGet("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]
-    public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList(
-        PagingModel<TutorSimpleProfileRequest> request)
+    public async Task<IApiResult<List<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
+        TutorFilterDto request)
     {
         return OKAsync(await _userService.ViewTutorList(request));
 

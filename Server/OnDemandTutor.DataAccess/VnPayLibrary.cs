@@ -25,46 +25,57 @@ public class VnPayLibrary
                 vnPay.AddResponseData(key, value);
             }
         }
-        // vnp_TxnRef: Ma don hang merchant gui VNPAY tai command=pay    
-        // vnp_TransactionNo: Ma GD tai he thong VNPAY
-        // vnp_ResponseCode:Response code from VNPAY: 00: Thanh cong, Khac 00: Xem tai lieu
-        // vnp_SecureHash: HmacSHA512 cua du lieu tra ve
-        
+
         var orderId = Convert.ToInt64(vnPay.GetResponseData("vnp_TxnRef"));
         var vnPayTranId = Convert.ToInt64(vnPay.GetResponseData("vnp_TransactionNo"));
         var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
-        var vnpSecureHash =
-            collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
+        var vnpSecureHash = collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value;
+        var money = vnPay.GetResponseData("vnp_Amount");
+        var orderDescription  = vnPay.GetResponseData("vnp_OrderDescription");
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
+        var orderInfoParts = orderInfo.Split(' ');
 
-        var checkSignature =
-            vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
-        
-        var orderInfoParts = orderInfo.Split(' '); // Split the string by space
-        var email = orderInfoParts.Length > 0 ? orderInfoParts[0] : string.Empty;
-        var userId = orderInfoParts.Length > 1 ? Convert.ToInt32(orderInfoParts[1]) : 0;
-        var slotId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
-        var time = orderInfoParts.Length > 3 ? orderInfoParts[3] : string.Empty;
-        
+        bool isRecharge = false;
+        if (orderInfoParts.Length > 0)
+        {
+            var rs = bool.TryParse(orderInfoParts[0], out isRecharge);
+        }
+        var description = orderInfoParts.Length > 1? orderInfoParts[1] : "";
+        var userId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
+        int? slotId = null;
+        if (orderInfoParts.Length > 3 && string.IsNullOrEmpty(orderInfoParts[3]))
+        {
+            int tempSlotId;
+            if (int.TryParse(orderInfoParts[3], out tempSlotId))
+            {
+                slotId = tempSlotId;
+            }
+        }
+
+        var checkSignature = vnPay.ValidateSignature(vnpSecureHash, hashSecret);
+
         if (!checkSignature)
+        {
             return new PaymentSlotResponseModel()
             {
                 Success = false
             };
+        }
 
-        return new PaymentSlotResponseModel()
+        var rs1 =  new PaymentSlotResponseModel()
         {
             Success = true,
             PaymentMethod = "VnPay",
-            OrderDescription = orderInfo,
-            OrderId = orderId.ToString(),
-            PaymentId = vnPayTranId.ToString(),
-            TransactionId = vnPayTranId.ToString(),
+            OrderDescription = orderDescription,
+            TransactionCode = orderId.ToString(),
             Token = vnpSecureHash,
             VnPayResponseCode = vnpResponseCode,
-            SlotId = slotId,
+            SlotId = slotId.HasValue ? slotId.Value : (int?)null,
             UserId = userId,
+            Money = decimal.Parse(money),
+            IsRechargePayment = isRecharge,
         };
+        return rs1;
     }
     public string GetIpAddress(HttpContext context)
     {
