@@ -12,6 +12,7 @@ public interface IUnitOfWorkRepository
     public IBlogRepository BlogRepository { get; }
     public IClassRepository ClassRepository { get; }
     public IConsultationRequestRepository ConsultationRequestRepository { get; }
+    public IFAQRepository FAQRepository { get; }
     public ITutorDegreeRepository TutorDegreeRepository { get; }
     public IEmailTemplateRepository EmailTemplateRepository { get; }
     public ISlotStudentRepository SlotStudentRepository { get; }
@@ -29,7 +30,7 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         ISubjectRepository subjectRepository, ISlotRepository slotRepository, IBlogRepository blogRepository,
         IClassRepository classRepository, IConsultationRequestRepository consultationRequestRepository,
         IEmailTemplateRepository emailTemplateRepository, ITransactionRepository transactionRepository, ITutorDegreeRepository tutorDegreeRepository,
-            ISlotStudentRepository slotStudentRepository
+            ISlotStudentRepository slotStudentRepository, IFAQRepository fAQRepository
         )
     {
         _context = context;
@@ -43,6 +44,7 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         TransactionRepository = transactionRepository;
         TutorDegreeRepository = tutorDegreeRepository;
         SlotStudentRepository = slotStudentRepository;
+        FAQRepository = fAQRepository;
     }
 
     public IUserRepository Users { get; }
@@ -59,7 +61,11 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
     public IClassRepository ClassRepository { get; }
 
     public IConsultationRequestRepository ConsultationRequestRepository { get; }
+
+    public IFAQRepository FAQRepository { get; }
+
     public IEmailTemplateRepository EmailTemplateRepository { get; }
+
     public ISlotStudentRepository SlotStudentRepository { get; }
 
     public ITransactionRepository TransactionRepository { get; }
