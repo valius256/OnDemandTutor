@@ -65,7 +65,7 @@ export default {
       user: {
         name: "Hello World",
         avatar: "/src/assets/noavatar.jpg",
-        role: "Student",
+        role: "Admin",
       },
     };
   },
