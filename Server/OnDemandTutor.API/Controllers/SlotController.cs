@@ -51,7 +51,7 @@ public class SlotController : ControllerBase
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
     {
         var createdSlot = await _slotService.CreateSlotAsync(slotDto);
-        return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
+        return CreatedAtAction(nameof(GetSlotById), createdSlot);
 
     }
 

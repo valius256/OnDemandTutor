@@ -1,4 +1,10 @@
-﻿namespace OnDemandTutor.Models.Dtos.Subject
+﻿using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.User;
+using OnDemandTutor.Models.Models;
+using static OnDemandTutor.Models.Dtos.Blog.GetBlogDtos;
+
+namespace OnDemandTutor.Models.Dtos.Subject
 {
     public class GetSubjectDtos
     {
@@ -8,9 +14,8 @@
         public int? CreateById { get; set; }
         public string Description { get; set; }
         public DateTime? CreateAt { get; set; }
-        public bool Status { get; set; }
-        public int? ClassId { get; set; }
-        public int TutorDegreeId { get; set; }
+        public bool IsEnable { get; set; }
+        public string CreateByName { get; set; } 
     }
 }
 
