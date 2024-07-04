@@ -28,6 +28,8 @@
         <Folder Include="Dtos\Blog\" />
         <Folder Include="Dtos\Subject\" />
         <Folder Include="Dtos\Class\" />
+        <Folder Include="Dtos\EmailTemplate\" />
+        <Folder Include="Dtos\FAQ\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,5 +38,7 @@
       <None Remove="Dtos\Subject\" />
       <None Remove="Dtos\Class\" />
       <None Remove="Dtos\ConsultationRequestDtos\" />
+      <None Remove="Dtos\EmailTemplate\" />
+      <None Remove="Dtos\FAQ\" />
     </ItemGroup>
 </Project>
