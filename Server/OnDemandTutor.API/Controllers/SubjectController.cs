@@ -1,86 +1,90 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
+using System.Threading.Tasks;
 
-
-namespace OnDemandTutor.API.Controllers;
-
-[Route("api/subject")]
-[ApiController]
-public class SubjectController : ControllerBase
+namespace OnDemandTutor.API.Controllers
 {
-    private readonly ISubjectService _subjectService;
-
-    public SubjectController(ISubjectService userService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SubjectController : ControllerBase
     {
-        _subjectService = userService;
-    }
+        private readonly ISubjectService _subjectService;
 
-    [HttpGet]
-    [ProducesResponseType(typeof(PagedResult<GetSubjectDtos>), 200)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> GetSubjects([FromQuery] PagingModel<GetSubjectDtos> pagingModel)
-    {
-        var result = await _subjectService.GetSubjects(pagingModel);
-        return Ok(result);
-    }
-
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(GetSubjectDtos), 200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetSubjectById(int id)
-    {
-        var result = await _subjectService.GetSubjectById(id);
-        if (result == null)
+        public SubjectController(ISubjectService subjectService)
         {
-            return NotFound();
-        }
-        return Ok(result);
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(GetSubjectDtos), 201)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos createSubjectDto)
-    {
-        var result = await _subjectService.CreateSubject(createSubjectDto);
-        return CreatedAtAction(nameof(GetSubjectById), new { id = result.id }, result);
-    }
-
-    [HttpPut("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> UpdateSubject(int id, [FromBody] UpdateSubjectDtos updateSubjectDto)
-    {
-        if (id != updateSubjectDto.Id)
-        {
-            return BadRequest();
+            _subjectService = subjectService;
         }
 
-        var existingSubject = await _subjectService.GetSubjectById(id);
-        if (existingSubject == null)
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedResult<GetSubjectDtos>), 200)]
+        public async Task<IActionResult> GetSubjects([FromQuery] PagingModel<GetSubjectDtos> pagingModel)
         {
-            return NotFound();
+            var subjects = await _subjectService.GetSubjectsAsync(pagingModel);
+            return Ok(subjects);
         }
 
-        await _subjectService.UpdateSubject(updateSubjectDto);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> DeleteSubject(int id)
-    {
-        var existingSubject = await _subjectService.GetSubjectById(id);
-        if (existingSubject == null)
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(GetSubjectDtos), 200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetSubjectById(int id)
         {
-            return NotFound();
+            var subject = await _subjectService.GetSubjectByIdAsync(id);
+            if (subject == null)
+            {
+                return NotFound();
+            }
+            return Ok(subject);
         }
 
-        await _subjectService.DeleteSubject(id);
-        return NoContent();
+        [Authorize]
+        [HttpPost]
+        [ProducesResponseType(typeof(CreateSubjectDtos), 201)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos subjectCreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var createdSubject = await _subjectService.CreateSubjectAsync(subjectCreateDto);
+            return CreatedAtAction(nameof(GetSubjectById), createdSubject);
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(GetSubjectDtos), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> UpdateSubject(int id, [FromBody] GetSubjectDtos GetSubjectDtos)
+        {
+            if (id != GetSubjectDtos.Id)
+            {
+                return BadRequest("ID mismatch between route parameter and request body.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+                var updatedSubject = await _subjectService.UpdateSubjectAsync(GetSubjectDtos);
+                return Ok(updatedSubject);
+        }
+
+        //[Authorize]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteSubject(int id)
+        {
+                await _subjectService.DeleteSubjectAsync(id);
+                return NoContent();
+        }
     }
 }

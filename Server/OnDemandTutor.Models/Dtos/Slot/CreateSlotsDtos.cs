@@ -4,7 +4,6 @@ namespace OnDemandTutor.Models.Dtos.Slot
 {
     public class CreateSlotsDtos
     {
-        public int Id { get; set; }
         public DateTime StartTime { get; set; }
         public int CreateById { get; set; }
         public DateTime EndTime { get; set; }

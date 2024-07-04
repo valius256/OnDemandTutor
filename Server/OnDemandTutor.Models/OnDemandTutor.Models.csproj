@@ -30,6 +30,7 @@
         <Folder Include="Dtos\Class\" />
         <Folder Include="Dtos\EmailTemplate\" />
         <Folder Include="Dtos\FAQ\" />
+        <Folder Include="Dtos\Notification\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -40,5 +41,6 @@
       <None Remove="Dtos\ConsultationRequestDtos\" />
       <None Remove="Dtos\EmailTemplate\" />
       <None Remove="Dtos\FAQ\" />
+      <None Remove="Dtos\Notification\" />
     </ItemGroup>
 </Project>
