@@ -4,6 +4,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -36,9 +37,16 @@ public class TransactionServices : ITransactionServices
 
         transactionModel.Status = PaymentStatus.Paid;
         transactionModel.UpdatedDate = paidTime;
-        
+
         _unitOfWorkRepository.TransactionRepository.Update(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
         return transactionModel.Id;
+    }
+
+    public async Task<List<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim)
+    {
+        string id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
+        var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
+        return listTransactionModel.Adapt<List<TransactionDto>>();
     }
 }

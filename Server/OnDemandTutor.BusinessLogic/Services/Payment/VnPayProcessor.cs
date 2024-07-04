@@ -21,17 +21,17 @@ public class VnPayProcessor : IPaymentProcessor
         var pay = new VnPayLibrary();
         var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
-        var rs=  new VnPayResponse
+        var rs = new VnPayResponse
         {
             Success = response.Success,
             OrderId = response.TransactionCode,
             UserId = response.UserId,
             SlotId = response.SlotId,
-             IsRechargePayment = response.IsRechargePayment, 
-             Money = response.Money,
-             PaymentMethod = response.PaymentMethod,
-             OrderDescription = response.OrderDescription,
-             VnPayResponseCode = response.VnPayResponseCode,
+            IsRechargePayment = response.IsRechargePayment,
+            Money = response.Money,
+            PaymentMethod = response.PaymentMethod,
+            OrderDescription = response.OrderDescription,
+            VnPayResponseCode = response.VnPayResponseCode,
             PaymentStatus = response.Success ? PaymentStatus.Paid : PaymentStatus.Notpaid
         };
         return rs;

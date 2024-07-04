@@ -1,6 +1,5 @@
 ﻿using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Models;
-using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.IRepository;
 

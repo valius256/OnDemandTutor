@@ -13,7 +13,7 @@ public class StudentClassEntityTypeConfiguration : IEntityTypeConfiguration<Stud
 
 
         builder.Property(sc => sc.Rating).HasDefaultValue(5);
-        
+
         builder.HasOne(sc => sc.Class)
             .WithMany(c => c.StudentClasses)
             .HasForeignKey(sc => sc.ClassId)

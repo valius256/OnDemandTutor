@@ -8,4 +8,6 @@ public static class EmailType
     public const string Feedback_Request = "Feedback_Request";
     public const string Account_Activation = "Tutor_Registration_Approval";
     public const string Tutor_Registration_Approval = "TutorRegistrationApproval";
+    public const string Request_Withdraw_Notification = "Request_Withdraw_Notification"; // [UserName],[Amount],[BankAccountNumber],[BankName],[Reason]
+    public const string WithDraw_Approval_Notification = "WithDraw_Approval_Notification"; // [UserName], [Status], [Reply]
 }

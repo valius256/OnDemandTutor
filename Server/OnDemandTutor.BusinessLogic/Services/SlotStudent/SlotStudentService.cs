@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using Mapster;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.SlotStudent;
@@ -34,7 +33,7 @@ public class SlotStudentService : ISlotStudentServices
         {
             throw new Exception($"this course has already paid by studentId {studentId}");
         }
-        
+
         slotStudent.PaymentStatus = PaymentStatus.Paid;
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
