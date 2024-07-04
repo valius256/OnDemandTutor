@@ -76,7 +76,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(result);
     }
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpGet("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]

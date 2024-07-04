@@ -164,7 +164,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 3.",
                     RequestDate = DateOnly.MinValue.AddDays(3),
                     Status = ConsultationRequestStatus.Proccesing,
-                   
+
                 },
                 new ConsultationRequest
                 {
@@ -594,7 +594,7 @@ namespace OnDemandTutor.Models.MigrationData
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
-                new SlotStudent { Id = 1,SlotId = 1, UserId = 1, Feedback = "Phản hồi về buổi học của anh John." },
+                new SlotStudent { Id = 1, SlotId = 1, UserId = 1, Feedback = "Phản hồi về buổi học của anh John." },
                 new SlotStudent { Id = 2, SlotId = 1, UserId = 2, Feedback = "Phản hồi về buổi học của Jane." },
                 new SlotStudent { Id = 3, SlotId = 2, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
                 new SlotStudent { Id = 4, SlotId = 2, UserId = 4, Feedback = "Phản hồi về buổi học của Bob." },
@@ -661,11 +661,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1,StudentId = 1, ClassId = 1, Rating = 5, RatingForTutorId = 1},
-                new StudentClass { Id = 2,StudentId = 2, ClassId = 1, Rating = 2, RatingForTutorId = 2},
-                new StudentClass { Id = 3,StudentId = 3, ClassId = 2, Rating = 3, RatingForTutorId = 1},
-                new StudentClass { Id = 4,StudentId = 4, ClassId = 2, Rating = 4, RatingForTutorId = 2},
-                new StudentClass { Id = 5,StudentId = 5, ClassId = 3, Rating = 4, RatingForTutorId = 1}
+                new StudentClass { Id = 1, StudentId = 1, ClassId = 1, Rating = 5, RatingForTutorId = 1 },
+                new StudentClass { Id = 2, StudentId = 2, ClassId = 1, Rating = 2, RatingForTutorId = 2 },
+                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, RatingForTutorId = 1 },
+                new StudentClass { Id = 4, StudentId = 4, ClassId = 2, Rating = 4, RatingForTutorId = 2 },
+                new StudentClass { Id = 5, StudentId = 5, ClassId = 3, Rating = 4, RatingForTutorId = 1 }
                 // Add more as needed
             );
 
@@ -744,64 +744,253 @@ namespace OnDemandTutor.Models.MigrationData
                  Status = true,
                  Subject = "Your Tutor Registration Approval Status",
                  Body = @"
-                    <!DOCTYPE html>
-            <html lang=""""vi"""">
-            <head>
-                <meta charset=""""UTF-8"""">
-                <meta name=""""viewport"""" content=""""width=device-width, initial-scale=1.0"""">
-                <title>Tình trạng phê duyệt Đăng ký Giảng viên</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        line-height: 1.6;
-                    }
-                    .container {
-                        margin: 0 auto;
-                        padding: 20px;
-                        max-width: 600px;
-                        border: 1px solid #ddd;
-                        border-radius: 5px;
-                        background-color: #f9f9f9;
-                    }
-                    .header, .footer {
-                        text-align: center;
-                    }
-                    .content {
-                        margin-top: 20px;
-                    }
-                    .content p {
-                        margin: 10px 0;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class=""""container"""">
-                    <div class=""""header"""">
-                        <h2>Tình trạng phê duyệt Đăng ký Giảng viên</h2>
-                    </div>
-                    <div class=""""content"""">
-                        <p>Kính gửi [TutorName],</p>
-                        <p>Chúng tôi rất vui được thông báo rằng đăng ký của bạn làm giảng viên đã được xem xét.</p>
-                        <p>[ApprovalStatus]</p>
-                        <p>Nếu đăng ký của bạn đã được chấp nhận, bạn có thể bắt đầu sử dụng nền tảng của chúng tôi để cung cấp dịch vụ gia sư của mình. Nếu đăng ký của bạn bị từ chối, vui lòng tìm lý do bên dưới:</p>
-                        <p>[RejectionReason]</p>
-                        <p>Cảm ơn bạn đã quan tâm đến việc tham gia nền tảng gia sư của chúng tôi. Nếu có bất kỳ câu hỏi nào, xin vui lòng liên hệ đội ngũ hỗ trợ của chúng tôi.</p>
-                    </div>
-                    <div class=""""footer"""">
-                        <p>Trân trọng,</p>
-                        <p>Đội ngũ On Demand Tutor Platform</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-    ",
+                            <!DOCTYPE html>
+                    <html lang=""""vi"""">
+                    <head>
+                        <meta charset=""""UTF-8"""">
+                        <meta name=""""viewport"""" content=""""width=device-width, initial-scale=1.0"""">
+                        <title>Tình trạng phê duyệt Đăng ký Giảng viên</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                line-height: 1.6;
+                            }
+                            .container {
+                                margin: 0 auto;
+                                padding: 20px;
+                                max-width: 600px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                background-color: #f9f9f9;
+                            }
+                            .header, .footer {
+                                text-align: center;
+                            }
+                            .content {
+                                margin-top: 20px;
+                            }
+                            .content p {
+                                margin: 10px 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class=""""container"""">
+                            <div class=""""header"""">
+                                <h2>Tình trạng phê duyệt Đăng ký Giảng viên</h2>
+                            </div>
+                            <div class=""""content"""">
+                                <p>Kính gửi [TutorName],</p>
+                                <p>Chúng tôi rất vui được thông báo rằng đăng ký của bạn làm giảng viên đã được xem xét.</p>
+                                <p>[ApprovalStatus]</p>
+                                <p>Nếu đăng ký của bạn đã được chấp nhận, bạn có thể bắt đầu sử dụng nền tảng của chúng tôi để cung cấp dịch vụ gia sư của mình. Nếu đăng ký của bạn bị từ chối, vui lòng tìm lý do bên dưới:</p>
+                                <p>[RejectionReason]</p>
+                                <p>Cảm ơn bạn đã quan tâm đến việc tham gia nền tảng gia sư của chúng tôi. Nếu có bất kỳ câu hỏi nào, xin vui lòng liên hệ đội ngũ hỗ trợ của chúng tôi.</p>
+                            </div>
+                            <div class=""""footer"""">
+                                <p>Trân trọng,</p>
+                                <p>Đội ngũ On Demand Tutor Platform</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+            ",
                  Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
                  Description = "Email template for notifying tutors about their registration approval status."
-             }
+             },
 
-        );
+                   new EmailTemplate
+                   {
+                       Id = 7,
+                       Name = "Request_Withdraw_Notification",
+                       Status = true,
+                       Subject = "Withdrawal Request Received",
+                       Body = @"
+                    <!DOCTYPE html>
+                    <html lang=""en"">
+                    <head>
+                        <meta charset=""UTF-8"">
+                        <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                        <title>Withdrawal Request Received</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                line-height: 1.6;
+                            }
+                            .container {
+                                margin: 0 auto;
+                                padding: 20px;
+                                max-width: 600px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                background-color: #f9f9f9;
+                            }
+                            .header, .footer {
+                                text-align: center;
+                            }
+                            .content {
+                                margin-top: 20px;
+                            }
+                            .content p {
+                                margin: 10px 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class=""container"">
+                            <div class=""header"">
+                                <h2>Withdrawal Request Received</h2>
+                            </div>
+                            <div class=""content"">
+                                <p>Dear [UserName],</p>
+                                <p>We have received your request to withdraw funds. Below are the details of your request:</p>
+                                <p><strong>Amount:</strong> [Amount]</p>
+                                <p><strong>Bank Account Number:</strong> [BankAccountNumber]</p>
+                                <p><strong>Bank Name:</strong> [BankName]</p>
+                                <p><strong>Reason:</strong> [Reason]</p>
+                                <p>Our team will process your request as soon as possible. If you have any questions, please feel free to contact our support team.</p>
+                            </div>
+                            <div class=""footer"">
+                                <p>Best regards,</p>
+                                <p>The Support Team</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                ",
+                       Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
+                       Description = "Email template for notifying users about their withdrawal request."
+                   },
+              new EmailTemplate
+              {
+                  Id = 8,
+                  Name = "WithDraw_Approval_Notification",
+                  Status = true,
+                  Subject = "Withdrawal Request Status Update",
+                  Body = @"
+        <!DOCTYPE html>
+        <html lang=""en"">
+        <head>
+            <meta charset=""UTF-8"">
+            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+            <title>Withdrawal Request Status Update</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                }
+                .container {
+                    margin: 0 auto;
+                    padding: 20px;
+                    max-width: 600px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    background-color: #f9f9f9;
+                }
+                .header, .footer {
+                    text-align: center;
+                }
+                .content {
+                    margin-top: 20px;
+                }
+                .content p {
+                    margin: 10px 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class=""container"">
+                <div class=""header"">
+                    <h2>Withdrawal Request Status Update</h2>
+                </div>
+                <div class=""content"">
+                    <p>Dear [UserName],</p>
+                    <p>Your withdrawal request has been reviewed and updated to the following status:</p>
+                    <p><strong>Status:</strong> [Status]</p>
+                    <p><strong>Amount:</strong> [Amount]</p>
+                    <p><strong>Reply:</strong> [Reply]</p>
+                    <p>If you have any questions, please feel free to contact our support team.</p>
+                </div>
+                <div class=""footer"">
+                    <p>Best regards,</p>
+                    <p>The Support Team</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    ",
+                  Params = "[UserName], [Status], [Amount],[Reply]",
+                  Description = "Email template for notifying users about the status of their withdrawal request."
+              }
+
+
+            );
             #endregion
 
+            #region RequestWithDraw
+            modelBuilder.Entity<RequestWithDraw>().HasData(
+                new RequestWithDraw
+                {
+                    Id = 1,
+                    UserId = 2, // User with Id = 2 (Trần Thị B)
+                    Amount = 100.0m,
+                    BankAccountNumber = "123456789",
+                    BankName = "Example Bank",
+                    Description = "Withdrawal for tutoring services",
+                    OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
+                    Reply = "Withdrawal processed successfully",
+                    Status = WithDrawStatus.Success
+                },
+                new RequestWithDraw
+                {
+                    Id = 2,
+                    UserId = 4, // User with Id = 4 (Phạm Văn D)
+                    Amount = 150.0m,
+                    BankAccountNumber = "987654321",
+                    BankName = "Another Bank",
+                    Description = "Withdrawal for teaching materials",
+                    OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
+                    Reply = "Withdrawal approved",
+                    Status = WithDrawStatus.Success
+                },
+                new RequestWithDraw
+                {
+                    Id = 3,
+                    UserId = 3, // User with Id = 3 (Lê Văn C)
+                    Amount = 200.0m,
+                    BankAccountNumber = "555555555",
+                    BankName = "Bank C",
+                    Description = "Withdrawal for consultation services",
+                    OperatorId = 2, // Assuming Operator with Id = 2 (Trần Thị B)
+                    Reply = "Withdrawal pending",
+                    Status = WithDrawStatus.Pending
+                },
+                new RequestWithDraw
+                {
+                    Id = 4,
+                    UserId = 1, // User with Id = 1 (Nguyễn Văn A)
+                    Amount = 300.0m,
+                    BankAccountNumber = "111111111",
+                    BankName = "Bank A",
+                    Description = "Withdrawal for administrative purposes",
+                    OperatorId = 3, // Assuming Operator with Id = 3 (Lê Văn C)
+                    Reply = "Withdrawal under review",
+                    Status = WithDrawStatus.Pending
+                },
+                new RequestWithDraw
+                {
+                    Id = 5,
+                    UserId = 5, // User with Id = 5 (Đặng Văn E)
+                    Amount = 250.0m,
+                    BankAccountNumber = "999999999",
+                    BankName = "Bank E",
+                    Description = "Withdrawal for customer support",
+                    OperatorId = 4, // Assuming Operator with Id = 4 (Phạm Văn D)
+                    Reply = "Withdrawal processed",
+                    Status = WithDrawStatus.Pending
+                }
+            );
+            #endregion
 
         }
     }

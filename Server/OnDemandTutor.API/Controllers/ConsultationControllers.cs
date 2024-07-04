@@ -4,7 +4,6 @@ using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
-using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers
 {

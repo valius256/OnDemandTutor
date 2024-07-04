@@ -65,11 +65,6 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         return await FirebaseAuth.DefaultInstance.GeneratePasswordResetLinkAsync(email);
     }
 
-    public Task<string> LoginFireBase(string email, string password)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task SetCustomClaimsAsync(string userId, Dictionary<string, object> claims)
     {
         await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(userId, claims);

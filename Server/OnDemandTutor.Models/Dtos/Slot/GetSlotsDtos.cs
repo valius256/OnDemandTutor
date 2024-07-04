@@ -1,5 +1,4 @@
 ﻿using OnDemandTutor.Models.Enum;
-using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.Slot
 {

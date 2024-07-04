@@ -1,4 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos.ConsultationRequestDtos
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Dtos.ConsultationRequestDtos
 {
     public class GetConsultationRequestDto
     {
@@ -7,6 +9,7 @@
         public string Phone { get; set; }
         public string ConsultationContent { get; set; }
         public DateTime CreatedDate { get; set; }
+        public ConsultationRequestStatus Status { get; set; }
     }
 }
 
