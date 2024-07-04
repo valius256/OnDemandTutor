@@ -17,4 +17,9 @@
         <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Condition=" '$(EnableDefaultCompileItems)' == 'true' " Update="UnitOfWork.cs">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Compile>
+    </ItemGroup>
 </Project>
