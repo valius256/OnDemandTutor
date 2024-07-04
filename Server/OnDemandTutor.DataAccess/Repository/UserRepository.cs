@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
-using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -19,11 +17,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public async Task<List<User>> ViewUsersListAsync(UserFilterDto request)
     {
         var userListQuery = dbSet
-            .Include(ld => ld.TutorSubjects)
             .AsQueryable()
             ;
 
-        // Apply filters based on request
         if (!string.IsNullOrEmpty(request.name))
         {
             userListQuery = userListQuery.Where(ld =>
@@ -55,25 +51,26 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => ld.Role == request.Role);
         }
 
-        if (request. DobFromDate!= null && request.DobToDate != null)
+        if (request.DobFromDate != null && request.DobToDate != null)
         {
-            userListQuery = userListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.CreatedDate <= request.DobToDate);
+            userListQuery = userListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.Dob <= request.DobToDate);
         }
 
         if (!string.IsNullOrEmpty(request.Subject))
         {
             userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
-        
-        int limit = request.Limit;
-        int skip = (request.Page - 1) * limit;
+
+        int limit = request.Limit > 0 ? request.Limit : 10;
+        int page = request.Page > 0 ? request.Page : 1;
+        int skip = (page - 1) * limit;
         userListQuery = userListQuery.Skip(skip).Take(limit);
 
-        var tutorList = await userListQuery
+        var filteredUsers = await userListQuery
             .AsNoTracking()
             .ToListAsync();
 
-        return tutorList;
+        return filteredUsers;
     }
 
     public async Task<List<User>> GetUsersListDegreeData()
@@ -110,7 +107,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .Include(ld => ld.TutorSubjects)
             .Where(ld => ld.Role == RoleStatus.Tutor);
 
-        // Apply filters based on request
         if (!string.IsNullOrEmpty(request.name))
         {
             tutorListQuery = tutorListQuery.Where(ld =>
@@ -152,18 +148,19 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
 
-        
-        int limit = request.Limit;
-        int skip = (request.Page - 1) * limit;
+
+        int limit = request.Limit > 0 ? request.Limit : 10;
+        int page = request.Page > 0 ? request.Page : 1;
+        int skip = (page - 1) * limit;
         tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
-        var tutorList = await tutorListQuery
+        var filteredUsers = await tutorListQuery
             .AsNoTracking()
             .ToListAsync();
 
-        return tutorList;
+        return filteredUsers;
     }
 
 
-    
+
 }

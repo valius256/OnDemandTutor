@@ -6,15 +6,12 @@ using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Payment;
 using OnDemandTutor.Models.Dtos.Slot;
-using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
-using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.BusinessLogic.Services.Payment;
 
@@ -28,7 +25,7 @@ public class VnPayServices : IVnPayServices
     private readonly IPaymentProcessor _paymentProcessor;
     private readonly IUserServices _userServices;
 
-    public VnPayServices(IOptions<VnPay> vnPay, IConfiguration configuration, 
+    public VnPayServices(IOptions<VnPay> vnPay, IConfiguration configuration,
         IUnitOfWorkRepository unitOfWorkRepository, ITransactionServices transactionServices,
         ISlotStudentServices slotStudentServices, IPaymentProcessor paymentProcessor, IUserServices userServices)
     {
@@ -49,7 +46,7 @@ public class VnPayServices : IVnPayServices
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", (decimal)(model.Price * model.Time), model.OrderDescription, slot.Id, context);
         await _transactionServices.CreateTransactionDb(transactionDto);
 
-       
+
         return paymentUrl;
     }
 
@@ -59,8 +56,8 @@ public class VnPayServices : IVnPayServices
         int transactionId = 0;
         if (response.Success)
         {
-            transactionId =  await _transactionServices.TransactionPaid(response.OrderId, DateTime.UtcNow);
-            
+            transactionId = await _transactionServices.TransactionPaid(response.OrderId, DateTime.UtcNow);
+
             if (response.SlotId != null)
             {
                 if (await _slotStudentServices.GetSlotStudentAsync(response.SlotId.Value, response.UserId) != null)
@@ -70,9 +67,9 @@ public class VnPayServices : IVnPayServices
             }
             else
             {
-                await _userServices.RechareAccount(response.UserId, response.Money);
+                await _userServices.RechargeAccount(response.UserId, response.Money);
             }
-          
+
         }
 
         response.PaymentStatus = PaymentStatus.Paid;
@@ -80,7 +77,7 @@ public class VnPayServices : IVnPayServices
         {
             PaymentStatus = response.PaymentStatus,
             SlotId = response.SlotId,
-            TransactionCode =  response.OrderId,
+            TransactionCode = response.OrderId,
             UserId = response.UserId,
             TransactionId = transactionId,
             Money = response.Money,
@@ -96,18 +93,13 @@ public class VnPayServices : IVnPayServices
     public async Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context)
     {
         var tick = DateTime.Now.Ticks.ToString();
-        var paymentUrl = CreateVnPayRequest(model, context, null, model.Amount, model.Notes,true, tick);
+        var paymentUrl = CreateVnPayRequest(model, context, null, model.Amount, model.Notes, true, tick);
 
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, null, context);
         await _transactionServices.CreateTransactionDb(transactionDto);
-        
-      
-        return paymentUrl;
-    }
 
-    public Task<bool> ProcessCashbackAsync(CashBackDto cashbackDto, HttpContext context)
-    {
-        throw new NotImplementedException();
+
+        return paymentUrl;
     }
 
     private string CreateVnPayRequest<T>(T model, HttpContext context, int? slotId, decimal amount, string? description, bool? isRechargePayment, string tick)
@@ -126,7 +118,7 @@ public class VnPayServices : IVnPayServices
         pay.AddRequestData("vnp_CurrCode", _vnPay.CurrCode);
         pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
         pay.AddRequestData("vnp_Locale", _vnPay.Locale);
-        pay.AddRequestData("vnp_OrderInfo", $"{isRechargePayment} {description} {int.Parse(currUid)} {slotId}");
+        pay.AddRequestData("vnp_OrderInfo", $"{isRechargePayment}|{description}|{currUid}|{slotId}");
         pay.AddRequestData("vnp_OrderType", "other");
         pay.AddRequestData("vnp_ReturnUrl", "https://localhost:7142/api/Payment/execute");
         pay.AddRequestData("vnp_TxnRef", tick);

@@ -16,7 +16,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 
         builder.Property(t => t.SlotId)
             .IsRequired(false);
-        
+
         builder.Property(t => t.PaymentMethod)
             .HasMaxLength(50)
             .IsRequired(false);
@@ -36,8 +36,8 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .WithMany(u => u.TransactionCreatedBy)
             .HasForeignKey(t => t.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
-        
-       
+
+
         builder.HasOne(t => t.Slot)
             .WithMany(s => s.SlotTransaction)
             .HasForeignKey(t => t.SlotId)

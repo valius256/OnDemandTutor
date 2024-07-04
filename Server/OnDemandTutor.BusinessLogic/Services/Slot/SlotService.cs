@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -76,7 +75,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
             return isDeleted;
         }
-        
+
     }
 }
 

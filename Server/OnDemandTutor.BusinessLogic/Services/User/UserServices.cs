@@ -12,7 +12,6 @@ using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
-using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
@@ -153,10 +152,10 @@ public class UserServices : IUserServices
             .Adapt<GetProfileUserDtos>();
     }
 
-    public async Task<bool> RechareAccount(int uId, decimal money)
+    public async Task<bool> RechargeAccount(int uId, decimal money)
     {
         var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
-        if(recordInDb == null) return false;
+        if (recordInDb == null) return false;
 
         recordInDb.Balance += money;
         _unitOfWorkRepository.UserRepository.Update(recordInDb);
@@ -281,4 +280,20 @@ public class UserServices : IUserServices
         return true;
     }
 
+    public async Task<decimal?> GetBalanceAsync(int userId)
+    {
+        var record = await _unitOfWorkRepository.UserRepository
+            .FirstOrDefaultAsync(ld => ld.Id == userId);
+        return record.Balance;
+    }
+
+    public async Task<bool> UpdateBalance(int userId, decimal amount)
+    {
+        var record = await _unitOfWorkRepository.UserRepository
+            .FirstOrDefaultAsync(ld => ld.Id == userId);
+        record.Balance = amount;
+        _unitOfWorkRepository.UserRepository.Update(record);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
 }

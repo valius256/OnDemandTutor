@@ -1,7 +1,6 @@
 ﻿using FirebaseAdmin.Auth;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
-using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -15,7 +14,7 @@ public interface IUserServices
     Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
     Task<GetProfileUserDtos> GetUserProfileById(int id);
     Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
-    Task<bool> RechareAccount(int uId, decimal money); 
+    Task<bool> RechargeAccount(int uId, decimal money);
     Task<bool> DeleteUserAsync(string? email);
 
     //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
@@ -25,5 +24,7 @@ public interface IUserServices
     Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
     Task<bool> DeleteTutor(DeleteTutorDto requestDto);
     Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);
+    Task<decimal?> GetBalanceAsync(int userId);
+    Task<bool> UpdateBalance(int userId, decimal amount);
 
 }

@@ -12,7 +12,11 @@ using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
+using OnDemandTutor.BusinessLogic.Interfaces.RequestWithDraw;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Auth;
@@ -21,7 +25,11 @@ using OnDemandTutor.BusinessLogic.Services.Class;
 using OnDemandTutor.BusinessLogic.Services.ConsultationRequest;
 using OnDemandTutor.BusinessLogic.Services.Mail;
 using OnDemandTutor.BusinessLogic.Services.Payment;
+using OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
+using OnDemandTutor.BusinessLogic.Services.Slot;
+using OnDemandTutor.BusinessLogic.Services.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.Subject;
+using OnDemandTutor.BusinessLogic.Services.Transaction;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
 using OnDemandTutor.DataAccess;
@@ -32,12 +40,6 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
 using System.Security.Claims;
-using OnDemandTutor.BusinessLogic.Interfaces.Slot;
-using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
-using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
-using OnDemandTutor.BusinessLogic.Services.Slot;
-using OnDemandTutor.BusinessLogic.Services.SlotStudent;
-using OnDemandTutor.BusinessLogic.Services.Transaction;
 
 
 namespace OnDemandTutor.API.Extensions;
@@ -58,7 +60,9 @@ public static class ServiceExtensions
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ITutorDegreeRepository, TutorDegreeRepository>();
         services.AddScoped<ISlotStudentRepository, SlotStudentRepository>();
-        
+        services.AddScoped<IRequestWithDrawRepository, RequestWithDrawRepository>();
+
+
         services.AddProblemDetails();
         return services;
     }
@@ -71,15 +75,15 @@ public static class ServiceExtensions
         services.AddScoped<IClassService, ClassService>();
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
-        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>(); 
+        services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
         services.AddScoped<IFireBaseAuthServices, FirebaseAuthServices>();
         services.AddScoped<IVnPayServices, VnPayServices>();
         services.AddScoped<ISlotServices, SlotService>();
         services.AddScoped<ISlotStudentServices, SlotStudentService>();
         services.AddScoped<ITransactionServices, TransactionServices>();
         services.AddScoped<IPaymentProcessor, VnPayProcessor>();
-        
-        
+        services.AddScoped<IRequestWithDrawServices, RequestWithDrawServices>();
+
         services.AddTransient<IMailServices, MailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();

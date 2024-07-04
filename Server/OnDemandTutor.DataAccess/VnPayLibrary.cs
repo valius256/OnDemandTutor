@@ -31,22 +31,21 @@ public class VnPayLibrary
         var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
         var vnpSecureHash = collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value;
         var money = vnPay.GetResponseData("vnp_Amount");
-        var orderDescription  = vnPay.GetResponseData("vnp_OrderDescription");
+        var orderDescription = vnPay.GetResponseData("vnp_OrderDescription");
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
-        var orderInfoParts = orderInfo.Split(' ');
+        var orderInfoParts = orderInfo.Split('|');
 
         bool isRecharge = false;
         if (orderInfoParts.Length > 0)
         {
-            var rs = bool.TryParse(orderInfoParts[0], out isRecharge);
+            bool.TryParse(orderInfoParts[0], out isRecharge);
         }
-        var description = orderInfoParts.Length > 1? orderInfoParts[1] : "";
+        var description = orderInfoParts.Length > 1 ? orderInfoParts[1] : "";
         var userId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
         int? slotId = null;
-        if (orderInfoParts.Length > 3 && string.IsNullOrEmpty(orderInfoParts[3]))
+        if (orderInfoParts.Length > 3 && !string.IsNullOrEmpty(orderInfoParts[3]))
         {
-            int tempSlotId;
-            if (int.TryParse(orderInfoParts[3], out tempSlotId))
+            if (int.TryParse(orderInfoParts[3], out int tempSlotId))
             {
                 slotId = tempSlotId;
             }
@@ -62,7 +61,7 @@ public class VnPayLibrary
             };
         }
 
-        var rs1 =  new PaymentSlotResponseModel()
+        var rs1 = new PaymentSlotResponseModel()
         {
             Success = true,
             PaymentMethod = "VnPay",

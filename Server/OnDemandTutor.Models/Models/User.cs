@@ -41,4 +41,6 @@ public class User : BaseEntity
     public virtual ICollection<ConsultationRequest> Consultations { get; set; } = new List<ConsultationRequest>();
     public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
     public virtual ICollection<TutorSubject> TutorSubjects { get; set; } = new List<TutorSubject>();
+    public virtual ICollection<RequestWithDraw> RequestWithDraw { get; set; } = new List<RequestWithDraw>();
+    public virtual ICollection<RequestWithDraw> OpearateBy { get; set; } = new List<RequestWithDraw>();
 }

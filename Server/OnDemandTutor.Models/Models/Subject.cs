@@ -1,6 +1,4 @@
-﻿using OnDemandTutor.Models.Enum;
-
-namespace OnDemandTutor.Models.Models;
+﻿namespace OnDemandTutor.Models.Models;
 
 public class Subject : BaseEntity
 {
