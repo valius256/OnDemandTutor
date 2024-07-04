@@ -19,24 +19,19 @@ public class ApplicationDbContext : DbContext
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ConsultationRequest> ConsultationRequests { get; set; }
-
     public DbSet<FAQ> Faqs { get; set; }
-
     public DbSet<Notification> Notifications { get; set; }
-
     public DbSet<Slot> Slots { get; set; }
-
     public DbSet<Subject> Subjects { get; set; }
-
     public DbSet<Transaction> Transactions { get; set; }
-
     public DbSet<TutorDegree> TutorDegrees { get; set; }
-
+    public DbSet<EmailTemplate> EmailTemplates { get; set; }
     public DbSet<TutorVideo> TutorVideos { get; set; }
     public DbSet<SlotStudent> SlotStudents { get; set; }
     public DbSet<Class> Classes { get; set; }
     public DbSet<StudentClass> StudentClasses { get; set; }
     public DbSet<TutorSubject> TutorSubjects { get; set; }
+    public DbSet<RequestWithDraw> RequestWithDraw { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,6 +48,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new SubjectEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new StudentClassEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TutorSubjectEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new RequestWithDrawEntityTypeConfiguration());
 
         // seed 
         modelBuilder.Seed();

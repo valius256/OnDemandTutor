@@ -18,8 +18,6 @@ public class Slot : BaseEntity
     public bool IsFinished { get; set; }
 
 
-
-
     // Navigation properties
     public virtual Subject Subject { get; set; }
     public virtual User CreatedBy { get; set; }

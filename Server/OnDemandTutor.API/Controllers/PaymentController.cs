@@ -1,5 +1,4 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
@@ -26,7 +25,7 @@ public class PaymentController : BaseController<PaymentController>
         _slotServices = slotServices;
         _classService = classService;
     }
-    
+
 
     [HttpPost("create-payment-slot")]
     [Authorize]
@@ -51,15 +50,12 @@ public class PaymentController : BaseController<PaymentController>
     public async Task<IActionResult> PurchaseClass(int classId)
     {
         var classDtos = _classService.GetClassByIdAsync(classId);
-        if(classDtos == null) 
+        if (classDtos == null)
             return BadRequest("Class not found");
 
         var classPaymentUrl = Task.CompletedTask;
         return Ok(classPaymentUrl);
     }
-    
-
-
 
     [HttpGet("execute")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]

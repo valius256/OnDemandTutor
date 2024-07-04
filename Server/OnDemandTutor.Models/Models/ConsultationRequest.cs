@@ -12,7 +12,7 @@ public class ConsultationRequest : BaseEntity
     public DateOnly RequestDate { get; set; }
     public ConsultationRequestStatus Status { get; set; }
     public virtual User? HandleBy { get; set; }
-    
+
     public ConsultationRequest()
     {
         RequestDate = DateOnly.FromDateTime(DateTime.UtcNow);

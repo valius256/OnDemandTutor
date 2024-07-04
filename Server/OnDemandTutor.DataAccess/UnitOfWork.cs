@@ -17,6 +17,8 @@ public interface IUnitOfWorkRepository
     public IEmailTemplateRepository EmailTemplateRepository { get; }
     public ISlotStudentRepository SlotStudentRepository { get; }
     public ITransactionRepository TransactionRepository { get; }
+    public IRequestWithDrawRepository RequestWithDrawRepository { get; }
+
     int SaveChanges();
     Task<int> SaveChangesAsync();
     Task MigrateAsync();
@@ -30,7 +32,11 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         ISubjectRepository subjectRepository, ISlotRepository slotRepository, IBlogRepository blogRepository,
         IClassRepository classRepository, IConsultationRequestRepository consultationRequestRepository,
         IEmailTemplateRepository emailTemplateRepository, ITransactionRepository transactionRepository, ITutorDegreeRepository tutorDegreeRepository,
+<<<<<<< HEAD
             ISlotStudentRepository slotStudentRepository, IFAQRepository fAQRepository
+=======
+            ISlotStudentRepository slotStudentRepository, IRequestWithDrawRepository requestWithDrawRepository
+>>>>>>> a57c2bb5afb37e4837b81be4c40826d0ff6c798e
         )
     {
         _context = context;
@@ -44,7 +50,11 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         TransactionRepository = transactionRepository;
         TutorDegreeRepository = tutorDegreeRepository;
         SlotStudentRepository = slotStudentRepository;
+<<<<<<< HEAD
         FAQRepository = fAQRepository;
+=======
+        RequestWithDrawRepository = requestWithDrawRepository;
+>>>>>>> a57c2bb5afb37e4837b81be4c40826d0ff6c798e
     }
 
     public IUserRepository Users { get; }
@@ -69,6 +79,7 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
     public ISlotStudentRepository SlotStudentRepository { get; }
 
     public ITransactionRepository TransactionRepository { get; }
+    public IRequestWithDrawRepository RequestWithDrawRepository { get; }
 
     public ITutorDegreeRepository TutorDegreeRepository { get; }
 

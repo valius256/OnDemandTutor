@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import GenericPopup from '../../components/common/GenericPopup.vue';
 import StudentFilterPopup from '../../components/Operators/StudentFilterPopup.vue';
 export default {
@@ -215,6 +216,7 @@ export default {
                 await this.handlePageChange()
             }
         },
+        
     },
     mounted() {
     }

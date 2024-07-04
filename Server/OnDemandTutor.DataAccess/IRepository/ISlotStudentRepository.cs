@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.DataAccess.IRepository;
 
-public interface ISlotStudentRepository  : IGenericRepository<SlotStudent>
+public interface ISlotStudentRepository : IGenericRepository<SlotStudent>
 {
-    
+
 }

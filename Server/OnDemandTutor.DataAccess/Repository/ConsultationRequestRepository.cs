@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
-using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Models;
 
