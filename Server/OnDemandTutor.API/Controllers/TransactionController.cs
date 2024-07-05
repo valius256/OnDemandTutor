@@ -16,15 +16,23 @@ public class TransactionController : BaseController<TransactionController>
     {
         _transactionServices = transactionServices;
     }
-
-    // [AllowAnonymous]
+    
     [Authorize]
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
-    public async Task<ActionResult> RegisterForConsultation([FromQuery] TransactionFilterDto requestDtos)
+    public async Task<ActionResult> ViewAllTransaction([FromQuery] TransactionFilterDto requestDtos)
     {
-        return Ok(await _transactionServices.ViewALlTransaction(requestDtos, HttpContext.User));
+        return Ok(await  _transactionServices.ViewALlTransaction(requestDtos, HttpContext.User));
+    }
+    
+    [Authorize]
+    [HttpGet("get-by-id")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
+    public async Task<ActionResult> GetTransactionById([FromQuery] int id)
+    {
+        return Ok(await  _transactionServices.GetTransactionById(id, HttpContext.User));
     }
 
 }
