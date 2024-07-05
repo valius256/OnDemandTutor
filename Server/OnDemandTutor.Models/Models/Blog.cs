@@ -15,6 +15,7 @@ public class Blog : BaseEntity
     public int? UpdateById { get; set; }
 
     public DateTime? UpdateAt { get; set; }
+    public string? Thumbnail { get; set; }
 
     public virtual User? CreateBy { get; set; }
 

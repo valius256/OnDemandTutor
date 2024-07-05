@@ -44,9 +44,17 @@ public class TransactionServices : ITransactionServices
         return transactionModel.Id;
     }
 
+    public async Task<TransactionDto?> GetTransactionById(int id, ClaimsPrincipal? userClaims)
+    {
+        var uid = userClaims?.FindFirst(cl => cl.Type == "id")?.Value;
+        var model = await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(ts =>
+            ts.Id == id && ts.CreatedById == int.Parse(uid));
+        return model?.Adapt<TransactionDto>();
+    }
+
     public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim)
     {
-        string id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
+        var id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }

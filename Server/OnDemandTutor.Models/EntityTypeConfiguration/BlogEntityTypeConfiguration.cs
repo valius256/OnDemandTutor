@@ -12,7 +12,8 @@ public class BlogEntityTypeConfiguration : IEntityTypeConfiguration<Blog>
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.Title).IsRequired().HasMaxLength(100);
         builder.Property(x => x.Content).IsRequired();
-
+        builder.Property(x => x.Content).HasMaxLength(Int32.MaxValue).IsRequired(false);
+        builder.Property(x => x.Thumbnail).HasMaxLength(Int32.MaxValue).IsRequired(false);
 
         builder.HasOne(b => b.CreateBy)
             .WithMany(u => u.BlogCreateBy)
