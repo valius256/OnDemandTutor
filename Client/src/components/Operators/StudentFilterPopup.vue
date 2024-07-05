@@ -18,8 +18,8 @@
                     <span class="w-24 p-1 font-bold">Trạng thái</span>
                     <select v-model="formFilterDto.status" class="p-1 border rounded-lg">
                         <option value="All">Tất cả</option>
-                        <option value="Active">Hoạt động</option>
-                        <option value="Inactive">Không hoạt động</option>
+                        <option :value="true">Hoạt động</option>
+                        <option :value="false">Không hoạt động</option>
                     </select>
                 </div>
             </div>

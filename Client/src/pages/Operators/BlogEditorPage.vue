@@ -52,6 +52,9 @@ export default {
     methods: {
         async fetchBlogs(id) {
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            this.eventBus.emit("open-loading-popup", {
+                message: "Vui lòng chờ..."
+            })
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog/' + id)
             if (response.data) {
                 this.blog = response.data
@@ -59,6 +62,7 @@ export default {
                 this.title = this.blog.title
                 this.newImage = this.blog.thumbnail
             }
+            this.eventBus.emit("close-loading-popup")
         },
         async handleSave(saveOption) {
             if (saveOption.confirmation) {

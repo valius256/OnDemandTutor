@@ -72,13 +72,19 @@ export default {
     },
     jsonToQueryString(jsonObject) {
       return Object.keys(jsonObject)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(jsonObject[key]))}`)
+        .map(key => {
+          let value = jsonObject[key];
+          if (typeof value === 'object') {
+            value = JSON.stringify(value);
+          }
+          return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        })
         .join('&');
     },
     //For example 2024-07-03T21:58:53.1949788
-    beautifyDatetime(datetimeStr){
-      if (datetimeStr){
-        return datetimeStr.substring(0,4) + "/" + datetimeStr.substring(5,7) + "/" + datetimeStr.substring(8,10) + " lúc " + datetimeStr.substring(11,19)
+    beautifyDatetime(datetimeStr) {
+      if (datetimeStr) {
+        return datetimeStr.substring(0, 4) + "/" + datetimeStr.substring(5, 7) + "/" + datetimeStr.substring(8, 10) + " lúc " + datetimeStr.substring(11, 19)
       }
       return ""
     }
