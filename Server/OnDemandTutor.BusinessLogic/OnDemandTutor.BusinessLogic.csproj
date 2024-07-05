@@ -37,6 +37,8 @@
         <Folder Include="Interfaces\FAQ\" />
         <Folder Include="Interfaces\Notification\" />
         <Folder Include="Services\Notification\" />
+        <Folder Include="Interfaces\StudentClass\" />
+        <Folder Include="Services\StudentClass\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -52,5 +54,7 @@
       <None Remove="Interfaces\FAQ\" />
       <None Remove="Interfaces\Notification\" />
       <None Remove="Services\Notification\" />
+      <None Remove="Interfaces\StudentClass\" />
+      <None Remove="Services\StudentClass\" />
     </ItemGroup>
 </Project>

@@ -17,6 +17,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.RequestWithDraw;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
@@ -33,6 +34,7 @@ using OnDemandTutor.BusinessLogic.Services.Payment;
 using OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.BusinessLogic.Services.SlotStudent;
+using OnDemandTutor.BusinessLogic.Services.StudentClass;
 using OnDemandTutor.BusinessLogic.Services.Transaction;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
@@ -67,6 +69,7 @@ public static class ServiceExtensions
         services.AddScoped<IRequestWithDrawRepository, RequestWithDrawRepository>();
         services.AddScoped<IFAQRepository, FAQRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IStudentClassRepository, StudentClassRepository>();
         services.AddProblemDetails();
         return services;
     }
@@ -89,6 +92,7 @@ public static class ServiceExtensions
         services.AddScoped<IPaymentProcessor, VnPayProcessor>();
         services.AddScoped<IRequestWithDrawServices, RequestWithDrawServices>();
         services.AddScoped<IFAQService, FAQService>();
+        services.AddScoped<IStudentClassService, StudentClassService>();
         services.AddTransient<IMailServices, MailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();
