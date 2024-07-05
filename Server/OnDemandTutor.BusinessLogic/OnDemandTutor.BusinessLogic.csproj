@@ -33,6 +33,10 @@
         <Folder Include="Interfaces\Class\" />
         <Folder Include="Interfaces\ConsultationRequest\" />
         <Folder Include="Services\ConsultationRequest\" />
+        <Folder Include="Services\FAQ\" />
+        <Folder Include="Interfaces\FAQ\" />
+        <Folder Include="Interfaces\Notification\" />
+        <Folder Include="Services\Notification\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -44,5 +48,9 @@
       <None Remove="Interfaces\Class\" />
       <None Remove="Interfaces\ConsultationRequest\" />
       <None Remove="Services\ConsultationRequest\" />
+      <None Remove="Services\FAQ\" />
+      <None Remove="Interfaces\FAQ\" />
+      <None Remove="Interfaces\Notification\" />
+      <None Remove="Services\Notification\" />
     </ItemGroup>
 </Project>

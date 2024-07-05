@@ -37,11 +37,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
         {
-            var existedSlotID = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == slotDto.Id);
-            if (existedSlotID != null)
-            {
-                throw new ModelException("Slot", $"{existedSlotID.Id},already exited, please Try again", "The id is exsited");
-            }
+          
             var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
 
             // Add the new Slot entity to repository

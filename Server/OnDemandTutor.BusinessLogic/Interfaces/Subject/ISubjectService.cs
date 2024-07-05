@@ -5,13 +5,11 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Subject
 {
     public interface ISubjectService
     {
-        Task<List<GetSubjectDtos>> GetAllSubjects();
-        Task<GetSubjectDtos> GetSubjectById(int id);
-        Task<CreateSubjectDtos> CreateSubject(CreateSubjectDtos subjectDto);
-        Task<UpdateSubjectDtos> UpdateSubject(UpdateSubjectDtos subjectDto);
-        Task<bool> DeleteSubject(int id);
-        Task<List<GetSubjectDtos>> SearchSubjectsByName(string name);
-        Task<PagedResult<GetSubjectDtos>> GetSubjects(PagingModel<GetSubjectDtos> pagingModel);
+        Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> request);
+        Task<GetSubjectDtos> GetSubjectByIdAsync(int id);
+        Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectCreateDto);
+        Task<GetSubjectDtos> UpdateSubjectAsync(GetSubjectDtos subjectGetDto);
+        Task<bool> DeleteSubjectAsync(int id);
 
     }
 }
