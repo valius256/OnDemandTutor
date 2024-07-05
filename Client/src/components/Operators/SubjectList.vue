@@ -37,10 +37,13 @@
                     <td>
                         {{ subject.description }}
                     </td>
-                    <td>{{ subject.createAt }}</td>
-                    <td>{{ subject.updateAt }}</td>
+                    <td>{{ this.beautifyDatetime(subject.createAt)  }}</td>
+                    <td>{{ this.beautifyDatetime(subject.updatedDate) }}</td>
                     <td>
-                        <div :class="getStatusStyle(subject.status)">{{ subject.status }}</div>
+                        <div :class="getStatusStyle(subject.isEnable)">
+                            <i v-if="subject.isEnable" class="fa fa-check"></i>
+                            <i v-else class="fa fa-close"></i>
+                        </div>
                     </td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -55,11 +58,11 @@
                                 <i class="fa fa-edit mr-4"></i>Chỉnh sửa
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                            <button v-if="subject.status == 'Active'"
+                            <button v-if="subject.isEnable" @click="handleUpdate(subject)"
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                 <i class="fa fa-remove mr-4"></i>Vô hiệu hóa
                             </button>
-                            <button v-if="subject.status == 'Inactive'"
+                            <button v-else @click="handleUpdate(subject)"
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
                                 <i class="fa fa fa-check mr-4"></i>Kích hoạt
                             </button>
@@ -86,10 +89,10 @@
             <subject-filter-popup :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter" />
         </generic-popup>
         <generic-popup v-if="isOpenAddPopup" title="Thêm môn học" :closeFunction="toggleOpenAddPopup">
-            <subject-add-edit-popup :close="toggleOpenAddPopup" />
+            <subject-add-edit-popup :close="toggleOpenAddPopup" :reload="fetchSubject"/>
         </generic-popup>
         <generic-popup v-if="isOpenEditPopup" title="Chỉnh sửa môn học" :closeFunction="toggleOpenEditPopup">
-            <subject-add-edit-popup :close="toggleOpenEditPopup" :editDto="editDto" />
+            <subject-add-edit-popup :close="toggleOpenEditPopup" :editDto="editDto" :reload="fetchSubject"/>
         </generic-popup>
     </div>
 </template>
@@ -101,73 +104,19 @@ import SubjectAddEditPopup from './SubjectAddEditPopup.vue'
 import SubjectFilterPopup from './SubjectFilterPopup.vue'
 export default {
     components: { GenericPopup, SubjectFilterPopup, SubjectAddEditPopup },
+    inject : ['eventBus'],
     name: "AdminSubjectList",
     data() {
         return {
             totalPage: 100,
-            pageSize: 10,
+            pageSize: 5,
             currentPage: 1,
             selectId: 0,
             isShowPopup: false,
             isOpenFilterPopup: false,
             isOpenAddPopup : false,
             isOpenEditPopup : false,
-            subjects: [
-                {
-                    id: 1,
-                    name: "Toán",
-                    subjectType: "Khoa học tự nhiên",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Active"
-                },
-                {
-                    id: 2,
-                    name: "Lý",
-                    subjectType: "Khoa học tự nhiên",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Active"
-                },
-                {
-                    id: 3,
-                    name: "Hóa",
-                    subjectType: "Khoa học tự nhiên",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Active"
-                },
-                {
-                    id: 4,
-                    name: "Lịch sử",
-                    subjectType: "Khoa học xã hội",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Active"
-                },
-                {
-                    id: 5,
-                    name: "Địa lý",
-                    subjectType: "Khoa học xã hội",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Active"
-                },
-                {
-                    id: 6,
-                    name: "Piano",
-                    subjectType: "Năng khiếu",
-                    description: "Some description go here",
-                    createAt: "2000-01-01",
-                    updateAt: "2000-01-01",
-                    status: "Inactive"
-                }
-            ],
+            subjects: [],
             filterDto: {
                 name: "",
                 subjectType: "",
@@ -180,31 +129,41 @@ export default {
                 isChanged: false
             },
             editDto : {
+                id : 0,
                 name : "",
                 subjectType : "",
                 description : "",
-                status : "Active"
+                isEnable : true
             }
         }
     },
     methods: {
         async fetchSubject(){
             let query = {
+                "Filter.Name" : this.filterDto.name,
+                "Filter.Description" : this.filterDto.description,
+                "Filter.SubjectType" : this.filterDto.subjectType,
+                "Filter.FromCreateAt" : this.filterDto.fromCreateAt,
+                "Filter.ToCreateAt" : this.filterDto.toCreateAt,
+                "Filter.fromUpdateAt" : this.filterDto.fromUpdateAt,
+                "Filter.toUpdateAt" : this.filterDto.toUpdateAt,
+                "Filter.CreateByName" : "",
                 Sorts: {
                     column: "Id",
                     isDesc: true
                 },
-                Page: 0,
-                Limit: 5
+                Page: this.currentPage - 1,
+                Limit: this.pageSize
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?'+ 
             this.jsonToQueryString(query))
             if (response.data) {
                 this.subjects = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
             }
         },
-        resetFilter() {
+        async resetFilter() {
             this.filterDto = {
                 name: "",
                 subjectType: "",
@@ -216,22 +175,24 @@ export default {
                 status: "All",
                 isChanged: false
             }
+            await this.fetchSubject()
         },
         handleEdit(id) {
             const subject = this.subjects.find(o => o.id == id)
             if (subject != null) {
+                this.editDto.id = subject.id
                 this.editDto.name = subject.name,
                 this.editDto.subjectType = subject.subjectType,
                 this.editDto.description = subject.description,
-                this.editDto.status = subject.status
+                this.editDto.isEnable = subject.isEnable
 
                 this.toggleOpenEditPopup()
             }
         },
-        handleFilter(filterDto, selectedSubjects) {
+        async handleFilter(filterDto, selectedSubjects) {
             console.log(filterDto)
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
-            this.filterDto.selectedSubjects = selectedSubjects
+            await this.fetchSubject()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -257,14 +218,15 @@ export default {
             }
         },
         getStatusStyle(status) {
-            let css = "text-center font-bold text-white rounded-lg p-1"
+            let css = "text-center font-bold p-1 text-3xl"
             switch (status) {
-                case "Active":
-                    return css + " bg-green-400"
-                case "Inactive":
-                    return css + " bg-gray-400"
+                case true:
+                    return css + " text-green-400"
+                case false:
+                    return css + " text-gray-400"
             }
         },
+        
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
                 this.currentPage = this.totalPage
@@ -272,7 +234,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchSubject()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -282,6 +244,38 @@ export default {
                 this.currentPage--
                 await this.handlePageChange()
             }
+        },
+        async handleUpdate(subject) {
+            const request = {
+                id : subject.id,
+                name: subject.name,
+                subjectType: subject.subjectType,
+                description: subject.description,
+                isEnable: !subject.isEnable,
+            }
+            this.eventBus.emit("open-loading-popup", {
+                message: "Vui lòng chờ..."
+            })
+            try {
+
+                await axios.put(import.meta.env.VITE_API_URL + `/api/subject/${this.editDto.id}`, request, {
+                    headers : {
+                        "Authorization" : "Bearer " + localStorage.token
+                    }
+                })
+                this.eventBus.emit("open-result-dialog", {
+                    message: "Cập nhật môn học thành công",
+                    type: "Success"
+                })
+                await this.fetchSubject()
+            } catch (e) {
+                console.log(e)
+                this.eventBus.emit("open-result-dialog", {
+                    message: "Có vấn đề xảy ra khi cố cập nhật môn học",
+                    type: "Error"
+                })
+            }
+            this.eventBus.emit("close-loading-popup")
         },
     },
     mounted() {

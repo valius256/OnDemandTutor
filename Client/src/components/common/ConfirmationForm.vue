@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-md w-full px-6 py-8 bg-white rounded-lg shadow-md">
+  <div class="max-w-md w-full px-6 py-8 bg-white rounded-lg shadow-md animate-jump-in">
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{this.message}}</h2>
     <div class="flex justify-center gap-20">
       <button @click="clickYes" class="bg-green-300 pl-12 pr-12 pt-4 pb-4 rounded-lg font-bold hover:bg-green-500">YES</button>

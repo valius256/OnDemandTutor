@@ -37,10 +37,10 @@
                     <td>{{ faq.question }}</td>
                     <td>{{ faq.answer }}</td>
                     <td>
-                        {{ faq.createBy.name }}
+                        {{ faq.createBy?.name }}
                     </td>
-                    <td>{{ faq.createAt }}</td>
-                    <td>{{ faq.updateAt }}</td>
+                    <td>{{ this.beautifyDatetime(faq.createAt) }}</td>
+                    <td>{{ this.beautifyDatetime(faq.updatedDate) }}</td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
                             @click.stop="setSelectId(faq.id)">
@@ -49,13 +49,12 @@
                         <div v-if="selectId == faq.id"
                             class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-48 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
                             <!-- Content of your menu -->
-                            <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left"
-                                @click="handleEdit(faq.id)">
+                            <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left" @click="handleEdit(faq.id)">
                                 <i class="fa fa-edit mr-4"></i>Chỉnh sửa
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                            <button
-                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
+                            <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500"
+                            @click="handleDeleteFAQ({confirmation : true, id : faq.id})">
                                 <i class="fa fa-remove mr-4"></i>Xóa
                             </button>
                         </div>
@@ -78,13 +77,14 @@
         </div>
         <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc FAQ"
             :notOverflow="true">
-            <FAQFilterPopup  :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter" :operators="operators" />
+            <FAQFilterPopup :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter"
+                :operators="operators" />
         </generic-popup>
         <generic-popup v-if="isOpenAddPopup" title="Thêm FAQ" :closeFunction="toggleOpenAddPopup">
-            <FAQEditAddPopup :close="toggleOpenAddPopup" />
+            <FAQEditAddPopup :close="toggleOpenAddPopup" :reload="fetchFAQ" />
         </generic-popup>
         <generic-popup v-if="isOpenEditPopup" title="Chỉnh sửa FAQ" :closeFunction="toggleOpenEditPopup">
-            <FAQEditAddPopup :close="toggleOpenEditPopup" :editDto="editDto" />
+            <FAQEditAddPopup :close="toggleOpenEditPopup" :editDto="editDto" :reload="fetchFAQ" />
         </generic-popup>
     </div>
 </template>
@@ -93,8 +93,10 @@
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import FAQEditAddPopup from '../../components/Operators/FAQEditAddPopup.vue'
 import FAQFilterPopup from '../../components/Operators/FAQFilterPopup.vue'
+import axios from 'axios'
 export default {
     components: { GenericPopup, FAQEditAddPopup, FAQFilterPopup },
+    inject: ['eventBus'],
     name: "FAQManagementPage",
     data() {
         return {
@@ -104,52 +106,21 @@ export default {
             selectId: 0,
             isShowPopup: false,
             isOpenFilterPopup: false,
-            isOpenAddPopup : false,
-            isOpenEditPopup : false,
-            faqs: [
+            isOpenAddPopup: false,
+            isOpenEditPopup: false,
+            faqs: [],
+            operators: [
                 {
-                    id : 1,
-                    question : "What is love?",
-                    answer : "Tình yêu, ái tình hay gọi ngắn là tình là một loạt các cảm xúc, trạng thái tâm lý và thái độ khác nhau dao động từ tình cảm cá nhân đến niềm vui sướng. Tình yêu thường là một cảm xúc thu hút mạnh mẽ và nhu cầu muốn được ràng buộc gắn bó",
-                    createAt : "2000-01-01",
-                    updateAt : "2024-01-01",
-                    createBy : {
-                        name : "John"
-                    }
+                    id: 1,
+                    name: "Thomas"
                 },
                 {
-                    id : 2,
-                    question : "What is love?",
-                    answer : "Tình yêu, ái tình hay gọi ngắn là tình là một loạt các cảm xúc, trạng thái tâm lý và thái độ khác nhau dao động từ tình cảm cá nhân đến niềm vui sướng. Tình yêu thường là một cảm xúc thu hút mạnh mẽ và nhu cầu muốn được ràng buộc gắn bó",
-                    createAt : "2000-01-01",
-                    updateAt : "2024-01-01",
-                    createBy : {
-                        name : "John"
-                    }
+                    id: 2,
+                    name: "Arthur"
                 },
                 {
-                    id : 3,
-                    question : "What is love?",
-                    answer : "Tình yêu, ái tình hay gọi ngắn là tình là một loạt các cảm xúc, trạng thái tâm lý và thái độ khác nhau dao động từ tình cảm cá nhân đến niềm vui sướng. Tình yêu thường là một cảm xúc thu hút mạnh mẽ và nhu cầu muốn được ràng buộc gắn bó",
-                    createAt : "2000-01-01",
-                    updateAt : "2024-01-01",
-                    createBy : {
-                        name : "John"
-                    }
-                }
-            ],
-            operators :[
-                {
-                    id : 1,
-                    name : "Thomas"
-                },
-                {
-                    id : 2,
-                    name : "Arthur"
-                },
-                {
-                    id : 3,
-                    name : "John"
+                    id: 3,
+                    name: "John"
                 },
             ],
             filterDto: {
@@ -159,17 +130,42 @@ export default {
                 toCreateAt: "",
                 fromUpdateAt: "",
                 toUpdateAt: "",
-                createdBy : "All",
+                createdBy: "All",
                 isChanged: false
             },
-            editDto : {
+            editDto: {
+                id: 0,
                 question: "",
                 answer: "",
             }
         }
     },
     methods: {
-        resetFilter() {
+        async fetchFAQ() {
+            let query = {
+                "Filter.Question": this.filterDto.question,
+                "Filter.Answer": this.filterDto.answer,
+                "Filter.FromCreateAt": this.filterDto.fromCreateAt,
+                "Filter.ToCreateAt": this.filterDto.toCreateAt,
+                "Filter.fromUpdateAt": this.filterDto.fromUpdateAt,
+                "Filter.toUpdateAt": this.filterDto.toUpdateAt,
+                "Filter.CreateByName": this.filterDto.createdBy,
+                Sorts: {
+                    column: "Id",
+                    isDesc: true
+                },
+                Page: this.currentPage - 1,
+                Limit: this.pageSize
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/FAQ/all?' +
+                this.jsonToQueryString(query))
+            if (response.data) {
+                this.faqs = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+        },
+        async resetFilter() {
             this.filterDto = {
                 question: "",
                 answer: "",
@@ -177,23 +173,25 @@ export default {
                 toCreateAt: "",
                 fromUpdateAt: "",
                 toUpdateAt: "",
-                createdBy : "All",
+                createdBy: "All",
                 isChanged: false
             }
+            await this.fetchFAQ()
         },
         handleEdit(id) {
             const faq = this.faqs.find(o => o.id == id)
             if (faq != null) {
-                this.editDto.question = faq.name,
-                this.editDto.answer = faq.subjectType,
+                this.editDto.id = faq.id
+                this.editDto.question = faq.question,
+                    this.editDto.answer = faq.answer,
 
-                this.toggleOpenEditPopup()
+                    this.toggleOpenEditPopup()
             }
         },
-        handleFilter(filterDto, selectedSubjects) {
+        async handleFilter(filterDto) {
             console.log(filterDto)
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
-            this.filterDto.selectedSubjects = selectedSubjects
+            await this.fetchFAQ()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -225,7 +223,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchFAQ()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -236,8 +234,41 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async handleDeleteFAQ(request) {
+            if (request.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn xóa FAQ này không?",
+                    method: this.handleDeleteFAQ,
+                    params: {confirmation : false, id : request.id}
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.delete(import.meta.env.VITE_API_URL + '/api/FAQ/delete?id=' + request.id,{
+                        headers : {
+                            "Authorization" : "Bearer " + localStorage.token 
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Xóa FAQ thành công",
+                        type: "Success"
+                    })
+                    this.fetchFAQ()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Có vấn đề xảy ra khi xóa FAQ",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
     },
     mounted() {
+        this.fetchFAQ()
     }
 }
 </script>

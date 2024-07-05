@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Header class="sticky top-0 z-[100]"/>
-    <RouterView />
+    <Header class="sticky left-0 z-[100]" />
+    <RouterView class="min-h-screen max-w-screen overflow-x-auto" />
     <Footer />
   </div>
 </template>

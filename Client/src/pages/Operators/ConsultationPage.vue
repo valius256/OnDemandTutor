@@ -3,11 +3,15 @@
         <div class="text-2xl font-bold">
             Yêu cầu tư vấn
         </div>
-        <div class="mt-12">
-            <table id="operator-table" class="table-auto overflow-x-auto">
+        <div class="flex justify-end italic mt-12 gap-4">
+            Chỉ hiện thị những yêu cầu chưa giải quyết
+            <input type="checkbox" class="w-6" v-model="isShowPending" @change="fetchData">
+        </div>
+        <div class="mt-4">
+            <table id="operator-table" class="table-auto overflow-x-auto ">
                 <thead>
                     <tr>
-                        <th class="w-1/12">Id</th>
+                        <th class="w-2/12">Tên</th>
                         <th class="w-2/12">Phone</th>
                         <th class="w-2/12">Email</th>
                         <th class="w-2/12">Ngày yêu cầu</th>
@@ -18,13 +22,16 @@
                 </thead>
                 <tbody>
                     <tr v-for="request in requests" :key="request.id">
-                        <td>{{ request.id }}</td>
+                        <td>{{ request.name }}</td>
                         <td>{{ request.phone }}</td>
                         <td class="break-all">{{ request.email }}</td>
-                        <td>{{ request.requestDate }}</td>
-                        <td>{{ request.message }}</td>
+                        <td>{{ this.beautifyDatetime(request.createdDate) }}</td>
+                        <td>{{ request.consultationContent }}</td>
                         <td>
-                            <div :class="getStatusStyle(request.status)">{{ request.status }}</div>
+                            <div :class="getStatusStyle(request.status)">
+                                <span class="p-2" v-if="request.status == 0">Đang chờ</span>
+                                <span class="p-2" v-if="request.status == 1">Đã xong</span>
+                            </div>
                         </td>
                         <td class="relative">
                             <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -34,11 +41,13 @@
                             <div v-if="selectId == request.id"
                                 class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-48 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
                                 <!-- Content of your menu -->
-                                <button v-if='request.status == "Pending"' class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-green-400"
+                                <button v-if='request.status == 0'
+                                    class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-green-400"
                                     @click="handleResolve(request.id)">
                                     <i class="fa fa-check mr-4"></i>Đã giải quyết
                                 </button>
-                                <button v-if='request.status == "Done"' class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-red-400"
+                                <button v-if='request.status == 1'
+                                    class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-red-400"
                                     @click="handleResolve(request.id)">
                                     <i class="fa fa-close mr-4"></i>Chưa giải quyết
                                 </button>
@@ -69,6 +78,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     name: "ConsultationPage",
     data() {
@@ -76,35 +87,31 @@ export default {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
-            selectId : 0,
+            selectId: 0,
+            isShowPending : false,
             requests: [
-                {
-                    id: 1,
-                    phone: "0987654321",
-                    email: "hungttse173643@fpt.edu.vn",
-                    message: "SOS",
-                    requestDate : "2024-01-01 12:00:00",
-                    status: "Pending"
-                },
-                {
-                    id: 2,
-                    phone: "0987654321",
-                    email: "hungttse173643@fpt.edu.vn",
-                    message: "The break-words utility in Tailwind CSS can be applied directly to a td tag to ensure that content within the cell breaks and wraps as needed. However, Tailwind CSS uses the break-all utility instead of break-words. If you need to break words within table cells, you can use break-all or other relevant utilities for text wrapping and overflow handling",
-                    requestDate : "2024-01-01 12:00:00",
-                    status: "Done"
-                }
             ],
 
         }
     },
     methods: {
+        async fetchData() {
+            let queryString = ""
+            if (this.isShowPending){
+                queryString += "?status=0"
+            }
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/all' + queryString)
+            if (response.data) {
+                this.requests = response.data.data
+                this.totalPage = 1//Math.ceil(response.data.total / this.pageSize)
+            }
+        },
         getStatusStyle(status) {
-            let css = "text-center font-bold text-white rounded-lg"
+            let css = "text-center font-bold text-white rounded-lg flex"
             switch (status) {
-                case "Pending":
+                case 0:
                     return css + " bg-red-400"
-                case "Done":
+                case 1:
                     return css + " bg-green-400"
             }
         },
@@ -115,7 +122,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchSubject()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -134,6 +141,9 @@ export default {
                 this.isShowPopup = true
             }
         },
+    },
+    mounted() {
+        this.fetchData()
     }
 }
 </script>

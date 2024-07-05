@@ -42,7 +42,7 @@ namespace OnDemandTutor.API.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(PagedResult<FAQDto>), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]

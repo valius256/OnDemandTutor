@@ -1,6 +1,6 @@
 <template>
     <div class="p-12">
-        <div class="flex gap-16">
+        <div class="flex flex-wrap lg:flex-row gap-16">
             <div class="text-2xl">Timetable:</div>
             <div class="font-bold flex gap-8">
                 <button @click="moveWeek(false)"

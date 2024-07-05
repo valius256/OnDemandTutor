@@ -42,8 +42,8 @@
                     <img class="w-36 h-36" :src="blog.thumbnail">
                     <div class="w-full">
                         <div class="flex flex-col lg:flex-row lg:place-content-between">
-                            <div class="italic">Tạo bởi : {{ blog.createdBy.name }}</div>
-                            <div class="italic">Tạo lúc : {{ blog.createdAt }}</div>
+                            <div class="italic">Tạo bởi : {{ blog.createdBy?.name }}</div>
+                            <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createAt)  }}</div>
                             <div class="italic">Chỉnh sửa lần cuối : {{ blog.updatedAt }}</div>
                         </div>
                         <button class="font-bold text-xl hover:underline hover:text-purple-600">{{ blog.title
@@ -83,38 +83,18 @@
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import BlogFilterPopup from '../../components/Operators/BlogFilterPopup.vue'
 import BlogSortPopup from '../../components/Operators/BlogSortPopup.vue'
+import axios from 'axios'
+
 export default {
     components: { GenericPopup, BlogFilterPopup, BlogSortPopup },
+    injects : ['eventBus'],
     name: "BlogManagementPage",
     data() {
         return {
             totalPage: 100,
-            pageSize: 10,
+            pageSize: 5,
             currentPage: 1,
-            blogs: [
-                {
-                    id: 1,
-                    title: "Hello World",
-                    thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBbf9L4SlvzAvmgPiQmxSO1JaU6oQ92xsDgw&s",
-                    content: "<h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</h1>. <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore/ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore",
-                    createdAt: "2020-01-01 14:02:59",
-                    createdBy: {
-                        name: "Thomas"
-                    },
-                    updatedAt: "2020-01-01 19:00:55",
-                },
-                {
-                    id: 2,
-                    title: "Hello World",
-                    thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBbf9L4SlvzAvmgPiQmxSO1JaU6oQ92xsDgw&s",
-                    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.",
-                    createdAt: "2019-01-01 14:02:59",
-                    createdBy: {
-                        name: "Thomas"
-                    },
-                    updatedAt: "2020-05-01 12:25:00",
-                },
-            ],
+            blogs: [],
             operators: [
                 {
                     id: 1,
@@ -149,6 +129,33 @@ export default {
         }
     },
     methods: {
+        async fetchBlogs() {
+            let query = {
+                "Filter.Keyword": this.filterDto.keyword,
+                "Filter.Status": this.filterDto.status,
+                "Filter.FromCreateAt": this.filterDto.fromCreateAt,
+                "Filter.ToCreateAt": this.filterDto.toCreateAt,
+                "Filter.fromUpdateAt": this.filterDto.fromUpdateAt,
+                "Filter.toUpdateAt": this.filterDto.toUpdateAt,
+                "Filter.CreateBy.Name": "",
+                Sorts: {
+                    column: this.sortDto.sortProp,
+                    isDesc: !this.sortDto.isSortAsc
+                },
+                Page: this.currentPage - 1,
+                Limit: this.pageSize
+            }
+            if (this.filterDto.createdBy != "All"){
+                query['Filter.CreateBy.Id'] = this.filterDto.createdBy
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog?' +
+                this.jsonToQueryString(query))
+            if (response.data) {
+                this.blogs = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+        },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
                 this.currentPage = this.totalPage
@@ -156,6 +163,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
+            await this.fetchBlogs()
             //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
         },
         async movePage(forward) {
@@ -173,7 +181,7 @@ export default {
         toggleSortPopup() {
             this.isOpenSortPopup = !this.isOpenSortPopup
         },
-        resetFilter() {
+        async resetFilter() {
             this.filterDto = {
                 keyword: "",
                 fromCreateAt: "",
@@ -184,18 +192,24 @@ export default {
                 status: "All",
                 isChanged: false
             }
+            await this.fetchBlogs()
         },
-        handleFilter(filterDto) {
+        async handleFilter(filterDto) {
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            await this.fetchBlogs()
         },
-        handleSort(sortDto) {
+        async handleSort(sortDto) {
             this.sortDto = JSON.parse(JSON.stringify(sortDto));
+            await this.fetchBlogs()
             //this.blogs.sort()
         },
         convertHtmlToText(html) {
             const doc = new DOMParser().parseFromString(html, 'text/html');
             return doc.body.textContent || '';
         }
+    },
+    mounted(){
+        this.fetchBlogs()
     }
 }
 </script>
