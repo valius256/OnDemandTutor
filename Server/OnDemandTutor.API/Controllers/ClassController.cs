@@ -46,10 +46,10 @@ namespace OnDemandTutor.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassDtos), 200)]
-        public async Task<IActionResult> CreateClass([FromBody] GetClassDtos classDto)
+        public async Task<IActionResult> CreateClass([FromBody] CreateClassDTO classDto)
         {
             var createdClass = await _classService.CreateClassAsync(classDto);
-            return CreatedAtAction(nameof(GetClassById), new { id = createdClass.Id }, createdClass);
+            return CreatedAtAction(nameof(GetClassById), createdClass);
         }
 
         [Authorize]

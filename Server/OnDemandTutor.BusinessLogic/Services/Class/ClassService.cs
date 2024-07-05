@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Paging;
@@ -38,12 +39,24 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return classEntity.Adapt<GetClassDtos>();
         }
 
-        public async Task<GetClassDtos> CreateClassAsync(GetClassDtos classDto)
+        public async Task<CreateClassDTO> CreateClassAsync(CreateClassDTO classDto)
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
             var createdClass = await _unitOfWork.ClassRepository.AddAsync(classEntity);
+            var rs = createdClass.Entity.Adapt<CreateClassDTO>();
+                foreach (var slotId in classDto.SlotIds)
+            {
+                var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(slotId);
+                if (slot != null)
+                {
+                    var mapper = slot.Adapt<Models.Models.Slot>();
+                    slot.ClassId = createdClass.Entity.Id;
+                    
+                    _unitOfWork.SlotRepository.Update(mapper);
+                }
+            }
             await _unitOfWork.SaveChangesAsync();
-            return createdClass.Entity.Adapt<GetClassDtos>();
+            return rs;
         }
 
         public async Task<GetClassDtos> UpdateClassAsync(GetClassDtos classDto)

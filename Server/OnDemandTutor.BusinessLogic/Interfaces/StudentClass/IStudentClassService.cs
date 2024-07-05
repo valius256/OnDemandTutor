@@ -1,0 +1,16 @@
+﻿using System;
+using OnDemandTutor.Models.Dtos.StudentClass;
+using OnDemandTutor.Models.Paging;
+
+namespace OnDemandTutor.BusinessLogic.Interfaces.StudentClass
+{
+	public interface IStudentClassService
+	{
+        Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel);
+        Task<GetStudentClassDto> GetStudentClassByIdAsync(int id);
+        Task<CreateStudentClassDto> CreateStudentClassAsync(CreateStudentClassDto studentClassDto);
+        Task<UpdateStudentClassDto> UpdateStudentClassAsync(UpdateStudentClassDto studentClassDto);
+        Task<bool> DeleteStudentClassAsync(int id);
+    }
+}
+
