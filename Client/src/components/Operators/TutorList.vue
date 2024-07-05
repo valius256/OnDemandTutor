@@ -12,7 +12,6 @@
         <table id="operator-table">
             <thead>
                 <tr>
-                    <th class="w-1/12">Id</th>
                     <th class="w-2/12">Tên</th>
                     <th class="w-2/12">Ảnh</th>
                     <th class="w-3/12">Dạy môn</th>
@@ -24,11 +23,10 @@
             </thead>
             <tbody>
                 <tr v-for="tutor in tutors" :key="tutor.id">
-                    <td>{{ tutor.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ tutor.name }}</button></td>
+                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button></td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td>
-                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subjects)"></div>
+                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subject)"></div>
                     </td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
@@ -81,6 +79,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import TutorFilterPopup from './TutorFilterPopup.vue'
 export default {
@@ -95,76 +94,7 @@ export default {
             isShowPopup: false,
             isOpenFilterPopup: false,
             tutors: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    subjects: [
-                        {
-                            name: "Toán"
-                        },
-                        {
-                            name: "Tiếng Anh"
-                        },
-                        {
-                            name: "Vật Lý"
-                        },
-                    ]
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    subjects: [
-                        {
-                            name: "Toán"
-                        },
-                        {
-                            name: "Tiếng Anh"
-                        },
-                        {
-                            name: "Vật Lý"
-                        },
-                    ]
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Fired",
-                    subjects: [
-                        {
-                            name: "Toán"
-                        },
-                        {
-                            name: "Piano, organ"
-                        },
-                    ]
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Left",
-                    subjects: [
-                        {
-                            name: "Tiếng Nhật"
-                        },
-                        {
-                            name: "Tiếng Anh"
-                        },
-                    ]
-                },
+               
             ],
             filterDto: {
                 gender: "All",
@@ -173,17 +103,47 @@ export default {
                 email: "",
                 phone: "",
                 address: "",
-                fromDob: null,
-                toDob: null,
-                fromJoinDate : null,
-                toJoinDate : null,
+                fromDob: "",
+                toDob: "",
+                fromJoinDate : "",
+                toJoinDate : "",
                 selectedSubjects: [],
                 isChanged : false
             }
         }
     },
     methods: {
-        resetFilter(){
+        async fetchData(){
+            let query = {
+                Name : this.filterDto.name,
+                Email : this.filterDto.email,
+                Phone : this.filterDto.phone,
+                Address : this.filterDto.address,
+                DobFromDate : this.filterDto.fromDob ?? "",
+                DobToDate : this.filterDto.toDob ?? "",
+                JoinFromDate : this.filterDto.fromJoinDate ?? "",
+                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            if (this.filterDto.gender != "All") {
+                query['Sex'] = this.filterDto.gender
+            }
+            if (this.filterDto.status != "All") {
+                query['Status'] = this.filterDto.status
+            }
+            if (this.filterDto.selectedSubjects.length > 0) {
+                query['Subject'] = this.filterDto.selectedSubjects
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?'+ 
+            this.jsonToQueryString(query))
+            if (response.data) {
+                this.tutors = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async resetFilter(){
             this.filterDto = {
                 gender: "All",
                 status: "All",
@@ -198,11 +158,13 @@ export default {
                 selectedSubjects: [],
                 isChanged : false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto, selectedSubjects) {
+        async handleFilter(filterDto, selectedSubjects) {
             console.log(filterDto)
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
             this.filterDto.selectedSubjects = selectedSubjects
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -225,7 +187,7 @@ export default {
             let color = "gray"
             let html = ""
             for (var subject of subjects) {
-                switch (subject.name) {
+                switch (subject) {
                     case "Toán":
                         color = "border-orange-400"
                         break;
@@ -237,18 +199,18 @@ export default {
                         break;
                 }
                 var style = `rounded-lg py-2 px-6 border ${color}`
-                html += `<span class="${style}">${subject.name}</span>`
+                html += `<span class="${style}">${subject}</span>`
             }
             return html
         },
         getStatusStyle(status) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (status) {
-                case "Active":
+                case 0:
                     return css + " bg-green-400"
-                case "Left":
+                case 1:
                     return css + " bg-gray-400"
-                case "Fired":
+                case 2:
                     return css + " bg-red-400"
             }
         },
@@ -259,7 +221,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -272,6 +234,7 @@ export default {
         },
     },
     mounted() {
+        this.fetchData()
     }
 }
 </script>

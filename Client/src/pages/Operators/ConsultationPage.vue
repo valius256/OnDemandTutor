@@ -43,12 +43,12 @@
                                 <!-- Content of your menu -->
                                 <button v-if='request.status == 0'
                                     class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-green-400"
-                                    @click="handleResolve(request.id)">
+                                    @click="handleConsultationRequest({confirmation : true, status : 1, id: request.id})">
                                     <i class="fa fa-check mr-4"></i>Đã giải quyết
                                 </button>
                                 <button v-if='request.status == 1'
                                     class="hover:bg-slate-200 p-2 rounded-t-lg text-left text-red-400"
-                                    @click="handleResolve(request.id)">
+                                    @click="handleConsultationRequest({confirmation : true, status : 0, id: request.id})">
                                     <i class="fa fa-close mr-4"></i>Chưa giải quyết
                                 </button>
                                 <!-- <li class="hover:bg-slate-200 p-2"></li> -->
@@ -82,13 +82,14 @@ import axios from 'axios'
 
 export default {
     name: "ConsultationPage",
+    inject : ['eventBus'],
     data() {
         return {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
             selectId: 0,
-            isShowPending : false,
+            isShowPending: false,
             requests: [
             ],
 
@@ -96,14 +97,55 @@ export default {
     },
     methods: {
         async fetchData() {
-            let queryString = ""
-            if (this.isShowPending){
-                queryString += "?status=0"
+            let queryString = `?limit=${this.pageSize}&page=${this.currentPage}`
+            if (this.isShowPending) {
+                queryString += "&status=0"
             }
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/all' + queryString)
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/all' + queryString, {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.token
+                }
+            })
             if (response.data) {
-                this.requests = response.data.data
-                this.totalPage = 1//Math.ceil(response.data.total / this.pageSize)
+                this.requests = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async handleConsultationRequest(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn cập nhật trạng thái yêu cầu này sang "
+                       + (option.status == 0 ? "'Đang chờ' ?" : "'Đã xong' ?") ,
+                    method: this.handleConsultationRequest,
+                    params: {confirmation : false, status : option.status, id : option.id}
+                })
+            } else {
+                const request = {
+                    id : option.id,
+                    status : option.status
+                }
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.post(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/Handle', request,{
+                        headers : {
+                            "Authorization" : "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Có vấn đề xảy ra khi cập nhật",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
             }
         },
         getStatusStyle(status) {
@@ -122,7 +164,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            await this.fetchSubject()
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {

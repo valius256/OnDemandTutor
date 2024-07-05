@@ -20,4 +20,10 @@ public class GetProfileUserDtos
     public DateTime? Dob { get; set; }
     public string? Sex { get; set; }
     public string? BankAccount { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
+    public DateTime? CreatedDate { get; set; }
+
+    public DateTime? UpdatedDate { get; set; }
 }

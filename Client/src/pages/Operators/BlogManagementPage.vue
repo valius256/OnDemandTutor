@@ -43,7 +43,7 @@
                     <div class="w-full">
                         <div class="flex flex-col lg:flex-row lg:place-content-between">
                             <div class="italic">Tạo bởi : {{ blog.createdBy?.name }}</div>
-                            <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createAt)  }}</div>
+                            <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createAt) }}</div>
                             <div class="italic">Chỉnh sửa lần cuối : {{ blog.updatedAt }}</div>
                         </div>
                         <button class="font-bold text-xl hover:underline hover:text-purple-600">{{ blog.title
@@ -87,7 +87,7 @@ import axios from 'axios'
 
 export default {
     components: { GenericPopup, BlogFilterPopup, BlogSortPopup },
-    injects : ['eventBus'],
+    inject: ['eventBus'],
     name: "BlogManagementPage",
     data() {
         return {
@@ -145,9 +145,12 @@ export default {
                 Page: this.currentPage - 1,
                 Limit: this.pageSize
             }
-            if (this.filterDto.createdBy != "All"){
+            if (this.filterDto.createdBy != "All") {
                 query['Filter.CreateBy.Id'] = this.filterDto.createdBy
             }
+            this.eventBus.emit("open-loading-popup", {
+                message: "Vui lòng chờ..."
+            })
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog?' +
                 this.jsonToQueryString(query))
@@ -155,6 +158,7 @@ export default {
                 this.blogs = response.data.items
                 this.totalPage = Math.ceil(response.data.total / this.pageSize)
             }
+            this.eventBus.emit("close-loading-popup")
         },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
@@ -208,7 +212,7 @@ export default {
             return doc.body.textContent || '';
         }
     },
-    mounted(){
+    mounted() {
         this.fetchBlogs()
     }
 }
