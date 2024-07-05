@@ -46,7 +46,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
 
             foreach (var obj in objects)
             {
-                // Extracting the file name from the full object name
+                // Extracting the file Name from the full object Name
                 var fileName = obj.Name.Substring(obj.Name.LastIndexOf('/') + 1);
 
                 // Generate a signed URL for each image
@@ -62,7 +62,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
                 {
                     Uid = uid,
                     Url = url,
-                    FileName = fileName // Assigning the extracted file name
+                    FileName = fileName // Assigning the extracted file Name
                 };
 
                 downloadLinksList.Add(dto);

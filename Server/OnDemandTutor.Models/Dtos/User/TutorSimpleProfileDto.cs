@@ -9,6 +9,7 @@ public class TutorSimpleProfileDto
     public string? Phone { get; set; }
     public DateTime Dob { get; set; }
     public DateTime JoiningDate { get; set; }
+    public List<string> Subject { get; set; }
     public string Description { get; set; }
-    public virtual TutorSubject Subject { get; set; }
+    public virtual TutorSubject SubjectTutor { get; set; }
 }

@@ -133,7 +133,7 @@ namespace OnDemandTutor.Models.MigrationData
             #endregion
 
 
-            #region ConsultationRequets
+            #region ConsultationRequets 
             modelBuilder.Entity<ConsultationRequest>().HasData(
                 new ConsultationRequest
                 {
@@ -142,8 +142,8 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0123456789",
                     HandleById = 1,
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 1.",
-                    RequestDate = DateOnly.MinValue.AddDays(1),
-                    Status = ConsultationRequestStatus.Proccesing,
+                    RequestDate = DateTime.UtcNow.Date,
+                    Status = ConsultationRequestStatus.Pending,
                 },
                 new ConsultationRequest
                 {
@@ -152,8 +152,8 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0987654321",
                     HandleById = 2,
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 2.",
-                    RequestDate = DateOnly.MinValue.AddDays(2),
-                    Status = ConsultationRequestStatus.Completed,
+                    RequestDate = DateTime.Today,
+                    Status = ConsultationRequestStatus.Solved,
                 },
                 new ConsultationRequest
                 {
@@ -162,8 +162,8 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0122334455",
                     HandleById = 1,
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 3.",
-                    RequestDate = DateOnly.MinValue.AddDays(3),
-                    Status = ConsultationRequestStatus.Proccesing,
+                    RequestDate = DateTime.UtcNow.AddDays(-3),
+                    Status = ConsultationRequestStatus.Pending,
 
                 },
                 new ConsultationRequest
@@ -173,8 +173,8 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0233445566",
                     HandleById = 2,
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 4.",
-                    RequestDate = DateOnly.MinValue.AddDays(4),
-                    Status = ConsultationRequestStatus.Failed,
+                    RequestDate = DateTime.UtcNow.AddDays(-5),
+                    Status = ConsultationRequestStatus.Solved,
                 },
                 new ConsultationRequest
                 {
@@ -183,8 +183,8 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0344556677",
                     HandleById = 1,
                     ConsultationContent = "Nội dung tư vấn cho yêu cầu 5.",
-                    RequestDate = DateOnly.MinValue.AddDays(5),
-                    Status = ConsultationRequestStatus.Proccesing,
+                    RequestDate = DateTime.UtcNow.AddDays(-7),
+                    Status = ConsultationRequestStatus.Pending,
                 }
               );
 
@@ -748,7 +748,7 @@ namespace OnDemandTutor.Models.MigrationData
                     <html lang=""""vi"""">
                     <head>
                         <meta charset=""""UTF-8"""">
-                        <meta name=""""viewport"""" content=""""width=device-width, initial-scale=1.0"""">
+                        <meta Name=""""viewport"""" content=""""width=device-width, initial-scale=1.0"""">
                         <title>Tình trạng phê duyệt Đăng ký Giảng viên</title>
                         <style>
                             body {
@@ -810,7 +810,7 @@ namespace OnDemandTutor.Models.MigrationData
                     <html lang=""en"">
                     <head>
                         <meta charset=""UTF-8"">
-                        <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                        <meta Name=""viewport"" content=""width=device-width, initial-scale=1.0"">
                         <title>Withdrawal Request Received</title>
                         <style>
                             body {
@@ -872,7 +872,7 @@ namespace OnDemandTutor.Models.MigrationData
         <html lang=""en"">
         <head>
             <meta charset=""UTF-8"">
-            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+            <meta Name=""viewport"" content=""width=device-width, initial-scale=1.0"">
             <title>Withdrawal Request Status Update</title>
             <style>
                 body {

@@ -21,7 +21,7 @@ public class User : BaseEntity
     public string? IdCardImageUrl { get; set; }
     public string? ScheduleDesciption { get; set; }
     public required string Password { get; set; }
-    public Sex Sex { get; set; }
+    public Sex? Sex { get; set; }
     public bool IsActive { get; set; } = true;
     public string? DeaActiveReason { get; set; }
     public bool TutorVerified { get; set; } = false;

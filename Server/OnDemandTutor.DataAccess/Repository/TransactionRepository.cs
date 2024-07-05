@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Models;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -12,7 +14,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     {
     }
 
-    public async Task<List<Transaction>> ViewALlTransaction(TransactionFilterDto transactionFilter, int userId)
+    public async Task<PagedResult<Transaction>> ViewALlTransaction(TransactionFilterDto transactionFilter, int userId)
     {
         var transactionQuery = dbSet
             .Where(ld => ld.CreatedById == userId)
@@ -43,7 +45,8 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
 
         var filteredUsers = await transactionQuery
             .AsNoTracking()
-            .ToListAsync();
+            .ToNewPagingAsync(page, limit);
+        
         return filteredUsers;
     }
 

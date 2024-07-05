@@ -5,6 +5,7 @@ using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
 using System.Security.Claims;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -43,10 +44,10 @@ public class TransactionServices : ITransactionServices
         return transactionModel.Id;
     }
 
-    public async Task<List<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim)
+    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim)
     {
         string id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
-        return listTransactionModel.Adapt<List<TransactionDto>>();
+        return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }
 }

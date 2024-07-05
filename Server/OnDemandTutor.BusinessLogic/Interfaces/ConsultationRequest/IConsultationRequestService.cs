@@ -12,7 +12,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces
         Task<GetConsultationRequestDto> UpdateConsultationRequestAsync(GetConsultationRequestDto consultationRequestDto);
         Task<bool> DeleteConsultationRequestAsync(int id);
         Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDto requestDtos);
-        Task<List<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request);
+        Task<PagedResult<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request);
     }
 }
 

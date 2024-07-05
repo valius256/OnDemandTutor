@@ -75,32 +75,26 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
 
             var recordInDb = await _unitOfWorkRepository.ConsultationRequestRepository
-                .FirstOrDefaultAsync(l => l.Id == requestDtos.Id && l.Status != ConsultationRequestStatus.Completed);
+                .FirstOrDefaultAsync(l => l.Id == requestDtos.Id && l.Status != ConsultationRequestStatus.Solved);
 
             if (recordInDb == null) return false;
 
             recordInDb.HandleById = operatorId;
-            if (requestDtos.Status == ConsultationRequestStatus.Completed)
+            if (requestDtos.Status == ConsultationRequestStatus.Solved)
             {
-                recordInDb.Status = ConsultationRequestStatus.Completed;
+                recordInDb.Status = ConsultationRequestStatus.Solved;
                 recordInDb.HandleById = operatorId;
                 _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
             }
-            else if (requestDtos.Status == ConsultationRequestStatus.Failed)
-            {
-                recordInDb.Status = ConsultationRequestStatus.Failed;
-                recordInDb.HandleById = operatorId;
-                _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
-            }
-
-
+            
             return true;
 
         }
 
-        public async Task<List<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request)
+        public async Task<PagedResult<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request)
         {
-            return await _unitOfWorkRepository.ConsultationRequestRepository.ViewAllConsultationsRequestAsync(request);
+            var rs=  await _unitOfWorkRepository.ConsultationRequestRepository.ViewAllConsultationsRequestAsync(request);
+            return rs.Adapt<PagedResult<GetConsultationRequestDto>>();
         }
     }
 }

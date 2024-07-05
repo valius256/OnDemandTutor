@@ -10,10 +10,10 @@ public class RequestWithDraw : BaseEntity
     public string BankAccountNumber { get; set; }
     public string BankName { get; set; }
     public string? Description { get; set; }
-    public int OperatorId { get; set; }
+    public int? OperatorId { get; set; }
     public string? Reply { get; set; }
     public WithDrawStatus Status { get; set; }
 
     public virtual User User { get; set; }
-    public virtual User Operator { get; set; }
+    public virtual User? Operator { get; set; }
 }

@@ -38,7 +38,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new SlotEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new SlotStudentEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new TransactionConfiguration());
+        modelBuilder.ApplyConfiguration(new TransactionConfiguration());    
         modelBuilder.ApplyConfiguration(new TutorDegreeEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TutorVideoEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new FaqEntityTypeConfiguration());
