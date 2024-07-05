@@ -20,7 +20,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(x => x.FireBaseid).IsUnique();
         builder.Property(x => x.Balance).HasColumnType("money").IsRequired(false);
         builder.Property(x => x.TutorFeePerHour).HasColumnType("money").IsRequired(false);
-        builder.Property(x => x.Sex).HasDefaultValue(Sex.Male).IsRequired();
         builder.Property(x => x.AvatarImageUrl).HasMaxLength(1000);
         builder.Property(x => x.IdCardImageUrl).HasMaxLength(1000);
         builder.Property(x => x.IsActive).HasDefaultValue(true);

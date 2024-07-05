@@ -5,12 +5,12 @@ namespace OnDemandTutor.Models.Dtos.User;
 public class UpdateUserDto
 {
     public int? Id { get; set; }
-    [EmailAddress(ErrorMessage = "The email format is not valid")]
+    [EmailAddress(ErrorMessage = "The Email format is not valid")]
     public string? Email { get; set; }
     public string? Password { get; set; }
     [Compare(nameof(Password), ErrorMessage = "The passwords didn't match.")]
     public required string ConfirmPassword { get; set; }
-    [Phone(ErrorMessage = "The phone format is not valid")]
+    [Phone(ErrorMessage = "The Phone format is not valid")]
     public string? Phone { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

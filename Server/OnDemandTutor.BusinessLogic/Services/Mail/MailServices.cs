@@ -52,7 +52,7 @@ public class MailServices : IMailServices
         {
             SmtpHost = _smtpAppSetting.SmtpHost,
             SmtpPort = _smtpAppSetting.SmtpPort,
-            SmtpUserName = _smtpAppSetting.SmtpUserName, // Replace with your actual email address
+            SmtpUserName = _smtpAppSetting.SmtpUserName, // Replace with your actual Email address
             SmtpPassword = _smtpAppSetting.SmtpPassword, // Replace with your actual app password
             AppVerify = _smtpAppSetting.AppVerify // Adjust as per your requirements
         };
@@ -83,7 +83,7 @@ public class MailServices : IMailServices
                 }
                 catch (Exception ex)
                 {
-                    throw new ApplicationException($"Failed to send email: {ex.Message}", ex);
+                    throw new ApplicationException($"Failed to send Email: {ex.Message}", ex);
                 }
             }
         }

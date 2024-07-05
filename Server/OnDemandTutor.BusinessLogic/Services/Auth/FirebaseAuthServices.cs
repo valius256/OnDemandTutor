@@ -47,7 +47,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         }
 
 
-        throw new ArgumentException("At least one parameter (uid, email, or phone) must be provided.");
+        throw new ArgumentException("At least one parameter (uid, Email, or Phone) must be provided.");
     }
 
     public async Task<bool> DeleteUserAsync(string? email)

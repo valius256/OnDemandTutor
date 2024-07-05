@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -14,26 +16,26 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     }
 
 
-    public async Task<List<User>> ViewUsersListAsync(UserFilterDto request)
+    public async Task<PagedResult<User>> ViewUsersListAsync(UserFilterDto request)
     {
         var userListQuery = dbSet
             .AsQueryable()
             ;
 
-        if (!string.IsNullOrEmpty(request.name))
+        if (!string.IsNullOrEmpty(request.Name))
         {
             userListQuery = userListQuery.Where(ld =>
-                ld.FirstName.Contains(request.name) || ld.LastName.Contains(request.name));
+                ld.FirstName.Contains(request.Name) || ld.LastName.Contains(request.Name));
         }
 
-        if (!string.IsNullOrEmpty(request.email))
+        if (!string.IsNullOrEmpty(request.Email))
         {
-            userListQuery = userListQuery.Where(ld => ld.Email == request.email);
+            userListQuery = userListQuery.Where(ld => ld.Email == request.Email);
         }
 
-        if (!string.IsNullOrEmpty(request.phone))
+        if (!string.IsNullOrEmpty(request.Phone))
         {
-            userListQuery = userListQuery.Where(ld => ld.Phone == request.phone);
+            userListQuery = userListQuery.Where(ld => ld.Phone == request.Phone);
         }
 
         if (!string.IsNullOrEmpty(request.Address))
@@ -41,12 +43,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => ld.Address == request.Address);
         }
 
-        if (request.sex != Sex.Other)
+        if (request.Sex.HasValue)
         {
-            userListQuery = userListQuery.Where(ld => ld.Sex == request.sex);
+            userListQuery = userListQuery.Where(ld => ld.Sex == request.Sex);
         }
 
-        if (request.Role != null)
+        if (request.Role.HasValue)
         {
             userListQuery = userListQuery.Where(ld => ld.Role == request.Role);
         }
@@ -63,14 +65,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
-        int skip = (page - 1) * limit;
-        userListQuery = userListQuery.Skip(skip).Take(limit);
 
-        var filteredUsers = await userListQuery
-            .AsNoTracking()
-            .ToListAsync();
+        // Use the ToPagingAsync method for pagination
+        var pagedResult = await userListQuery.ToNewPagingAsync(page, limit);
 
-        return filteredUsers;
+        return pagedResult;
     }
 
     public async Task<List<User>> GetUsersListDegreeData()
@@ -101,10 +100,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return tutorList;
     }
 
-    public async Task<List<User>> ViewTutorListAsync(TutorFilterDto request)
+    public async Task<PagedResult<User>> ViewTutorListAsync(TutorFilterDto request)
     {
         var tutorListQuery = dbSet
-            .Include(ld => ld.TutorSubjects)
+            .Include(u => u.SubjectCreateBy)
             .Where(ld => ld.Role == RoleStatus.Tutor);
 
         if (!string.IsNullOrEmpty(request.name))
@@ -156,7 +155,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         var filteredUsers = await tutorListQuery
             .AsNoTracking()
-            .ToListAsync();
+            .ToNewPagingAsync(page, limit);
 
         return filteredUsers;
     }

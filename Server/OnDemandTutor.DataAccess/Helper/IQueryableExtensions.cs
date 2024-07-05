@@ -42,6 +42,38 @@ public static class IQueryableExtensions
 
         return result;
     }
+    
+    public static async Task<PagedResult<T>> ToNewPagingAsync<T>(
+        this IQueryable<T> query,
+        int page, int limit
+    )
+    {
+        var result = new PagedResult<T>
+        {
+            Total = await query.CountAsync(),
+            Page = page,
+            Limit = limit
+        };
+
+        List<T> items;
+        if (limit > 0)
+        {
+            var startIndex = (page - 1) * limit;
+            items = await query
+                .Skip(startIndex < 0 ? 0 : startIndex)
+                .Take(limit)
+                .ToListAsync();
+        }
+        else
+        {
+            items = await query.ToListAsync();
+        }
+        result.Items = items;
+        
+        return result;
+    }
+
+
 
     public static async Task<PagedResult<TEntity>> ToPagingAsync<TEntity>(
         this IQueryable<TEntity> query,

@@ -22,8 +22,8 @@ public class UserController : BaseController<UserController>
     [Authorize]
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(List<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<List<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
+    [ProducesResponseType(typeof(PagedResult<GetProfileUserDtos>), 200)]
+    public async Task<IApiResult<PagedResult<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
     {
         var result = await _userService.GetAllUsers(request);
         return OKAsync(result);
@@ -64,7 +64,7 @@ public class UserController : BaseController<UserController>
     ///    update user profile 
     /// </summary>
     /// if the fe don;t place Id in UpdateUserDto.Id it will take the id from the Claims when login scf
-    /// <param name="body"></param>
+    /// <param Name="body"></param>
     /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("update-profile")]
@@ -80,7 +80,7 @@ public class UserController : BaseController<UserController>
     [HttpGet("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]
-    public async Task<IApiResult<List<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
+    public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
         TutorFilterDto request)
     {
         return OKAsync(await _userService.ViewTutorList(request));

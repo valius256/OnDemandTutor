@@ -18,11 +18,17 @@ public abstract class BaseEntityEmpty : IBaseEntity
 
 public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
 {
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
-    public DateTime UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
-    public DateTime DeletedDate { get; set; }
+    public DateTime? DeletedDate { get; set; }
 
     public RecordStatus RecordStatus { get; set; }
+    
+    public void SoftDelete()
+    {
+        RecordStatus = RecordStatus.Deleted;
+        DeletedDate = DateTime.UtcNow;
+    }
 }

@@ -4,6 +4,7 @@ using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -19,7 +20,6 @@ namespace OnDemandTutor.API.Controllers
         }
 
         // [AllowAnonymous]
-        [Authorize]
         [HttpPost("register")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
@@ -31,11 +31,10 @@ namespace OnDemandTutor.API.Controllers
 
 
         // [AllowAnonymous]
-        [Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IApiResult<List<GetConsultationRequestDto>>), 200)]
-        public async Task<IApiResult<List<GetConsultationRequestDto>>> GetAllConsultationRequest([FromQuery] ConsultationRequestFilterDto requestDtos)
+        [ProducesResponseType(typeof(IApiResult<PagedResult<GetConsultationRequestDto>>), 200)]
+        public async Task<IApiResult<PagedResult<GetConsultationRequestDto>>> GetAllConsultationRequest([FromQuery] ConsultationRequestFilterDto requestDtos)
         {
             return OKAsync(await _consultationRequestService.ViewAllConsultationsRequestAsync(requestDtos));
         }
@@ -58,5 +57,12 @@ namespace OnDemandTutor.API.Controllers
             return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(HttpContext.User, requestDto));
         }
 
+        [HttpDelete("delete")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(bool), 200)]
+        public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery]int id)
+        {
+            return OKAsync(await _consultationRequestService.DeleteConsultationRequestAsync(id));
+        }
     }
 }

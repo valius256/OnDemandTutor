@@ -13,6 +13,7 @@ using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using System.Security.Claims;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -29,10 +30,10 @@ public class UserServices : IUserServices
         _mailServices = mailServices;
     }
 
-    public async Task<List<GetProfileUserDtos>> GetAllUsers(UserFilterDto request)
+    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request)
     {
         var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
-        return userList.Adapt<List<GetProfileUserDtos>>();
+        return userList.Adapt<PagedResult<GetProfileUserDtos>>();
     }
 
     public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail)
@@ -81,12 +82,12 @@ public class UserServices : IUserServices
     {
         if (email.IsNullOrEmpty())
             if (email != null)
-                throw new ModelException(email, "Input Email or phone number is empty");
+                throw new ModelException(email, "Input Email or Phone number is empty");
         if (password.IsNullOrEmpty()) throw new BadRequestException("Input password is empty");
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u =>
             u.Email == email && u.Password.Equals(password));
 
-        if (user is null) throw new NotFoundException("Wrong email, phone number or password");
+        if (user is null) throw new NotFoundException("Wrong Email, Phone number or password");
 
         return user.Adapt<GetProfileUserDtos>();
     }
@@ -196,10 +197,10 @@ public class UserServices : IUserServices
         return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
     }
 
-    public async Task<List<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
+    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
     {
         var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
-        return tutorList.Adapt<List<TutorSimpleProfileDto>>();
+        return tutorList.Adapt<PagedResult<TutorSimpleProfileDto>>();
     }
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
@@ -236,7 +237,7 @@ public class UserServices : IUserServices
 
             var emailParams = new Dictionary<string, string>()
             {
-                // { "TutorName", $"{user.Email}" }, for testing( using the email can receive mail)
+                // { "TutorName", $"{user.Email}" }, for testing( using the Email can receive mail)
                 { "TutorName", $"{tutorEmailDb}" },
                 { "ApprovalStatus", $"{requestDtos.StatusApproved}" },
                 { "RejectionReason", $"{requestDtos.tutorRegistrationDtos.FirstOrDefault()?.RejectReason}" },

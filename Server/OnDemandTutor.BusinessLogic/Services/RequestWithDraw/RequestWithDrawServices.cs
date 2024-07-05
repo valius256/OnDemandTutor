@@ -38,14 +38,10 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     public async Task<bool> CreateWithdrawRequest(RequestWithDrawDto request, ClaimsPrincipal userClaims)
     {
         var uid = userClaims.FindFirst(cl => cl.Type == "id")?.Value;
-        if (request.UserId == null)
-        {
-            request.UserId = int.Parse(uid);
-        }
         var userInfo = await _userServices.GetProfile(int.Parse(uid), null);
         // check money 
         var balanceFromSoureAcc = await _userServices.GetBalanceAsync(userInfo.Id);
-        if (request.Amount - balanceFromSoureAcc < 0)
+        if (balanceFromSoureAcc - request.Amount < 0)
         {
             throw new ModelException("Insufficient balance", "Insufficient balance to make withdraw request",
                 "Insufficient balance to make withdraw request");
@@ -53,11 +49,14 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         // update balance for src acc 
         var newSrcBalance = balanceFromSoureAcc - request.Amount;
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();
-        _unitOfWorkRepository.RequestWithDrawRepository.Add(requestWithDrawModel);
-        _userServices.UpdateBalance(int.Parse(uid), newSrcBalance.Value);
+        requestWithDrawModel.UserId = int.Parse(uid);
+        requestWithDrawModel.CreatedDate = DateTime.UtcNow;
+        
+        await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
+        await _userServices.UpdateBalance(int.Parse(uid), newSrcBalance.Value);
         await _unitOfWorkRepository.SaveChangesAsync();
 
-        // send email 
+        // send Email 
 
         var toAddress = new List<string> { userInfo.Email };
         var emailParams = new Dictionary<string, string>()
@@ -66,7 +65,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             { "Amount", $"{request.Amount}"},
             { "BankAccountNumber", $"{request.BankAccountNumber}"},
             { "BankName", $"{request.BankName}"},
-            { "Amount", $"{request.Reason}"}
+            { "Reason", $"{request.Reason}" }
         };
 
         await _mailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
