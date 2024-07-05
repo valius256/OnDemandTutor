@@ -5,7 +5,7 @@
       <div class="sticky top-1/4 flex justify-center">
         <div class="relative">
           <button
-            class="absolute right-0 mt-2 mr-2 w-8 h-8 bg-red-400 text-white rounded-full"
+            class="absolute right-0 mt-2 mr-2 w-8 h-8 bg-red-400 text-white rounded-full z-[50]"
             @click="toggleOpenOnfirmPopup"
           >
             X
@@ -23,7 +23,7 @@
       <div class="sticky top-1/4 flex justify-center">
         <div class="relative">
           <button
-            class="absolute right-0 mt-2 mr-2 w-8 h-8 bg-red-400 text-white rounded-full"
+            class="absolute right-0 mt-2 mr-2 w-8 h-8 bg-red-400 text-white rounded-full z-[50]"
             @click="closeResultDialog"
           >
             X

@@ -76,7 +76,7 @@ export default {
         .join('&');
     },
     //For example 2024-07-03T21:58:53.1949788
-    beaufifyDatetime(datetimeStr){
+    beautifyDatetime(datetimeStr){
       if (datetimeStr){
         return datetimeStr.substring(0,4) + "/" + datetimeStr.substring(5,7) + "/" + datetimeStr.substring(8,10) + " lúc " + datetimeStr.substring(11,19)
       }

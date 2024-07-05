@@ -16,9 +16,9 @@
             <div class="flex mt-4">
                 <span class="w-24 p-1 font-bold">Trang thái</span>
                 <div class="p-1 border rounded-lg">
-                    <input type="radio" v-model="status" :value="true">
+                    <input type="radio" v-model="isEnable" :value="true">
                     Hoạt động
-                    <input type="radio" v-model="status" :value="false">
+                    <input type="radio" v-model="isEnable" :value="false">
                     Không hoạt động
                 </div>
             </div>
@@ -52,7 +52,7 @@ export default {
             name: "",
             subjectType: "",
             description: "",
-            status: true,
+            isEnable: true,
         }
     },
     methods: {
@@ -61,7 +61,7 @@ export default {
                 this.name = this.editDto.name
                 this.subjectType = this.editDto.subjectType
                 this.description = this.editDto.description
-                this.status = this.editDto.status
+                this.isEnable = this.editDto.isEnable
             }
         },
         refresh() {
@@ -74,17 +74,21 @@ export default {
                 name: this.name,
                 subjectType: this.subjectType,
                 description: this.description,
-                status: this.status,
+                isEnable : this.isEnable,
             }
             this.eventBus.emit("open-loading-popup", {
-                message: "Please wait..."
+                message: "Vui lòng chờ..."
             })
             try {
 
-                await axios.post(import.meta.env.VITE_API_URL + `/api/subject`, request)
+                await axios.post(import.meta.env.VITE_API_URL + `/api/subject`, request, {
+                    headers : {
+                        "Authorization" : "Bearer " + localStorage.token
+                    }
+                })
 
                 this.eventBus.emit("open-result-dialog", {
-                    message: "Created Subject Successfully",
+                    message: "Tạo môn học thành công",
                     type: "Success"
                 })
                 this.reload()
@@ -92,7 +96,7 @@ export default {
             } catch (e) {
                 console.log(e)
                 this.eventBus.emit("open-result-dialog", {
-                    message: "Somemthing went wrong adding the subject",
+                    message: "Có vấn đề xảy ra khi cố thêm môn học",
                     type: "Error"
                 })
             }
@@ -104,17 +108,21 @@ export default {
                 name: this.name,
                 subjectType: this.subjectType,
                 description: this.description,
-                status: this.status,
+                isEnable: this.isEnable,
             }
             this.eventBus.emit("open-loading-popup", {
-                message: "Please wait..."
+                message: "Vui lòng chờ..."
             })
             try {
 
-                await axios.put(import.meta.env.VITE_API_URL + `/api/subject/${this.editDto.id}`, request)
+                await axios.put(import.meta.env.VITE_API_URL + `/api/subject/${this.editDto.id}`, request, {
+                    headers : {
+                        "Authorization" : "Bearer " + localStorage.token
+                    }
+                })
 
                 this.eventBus.emit("open-result-dialog", {
-                    message: "Update Subject Successfully",
+                    message: "Cập nhật môn học thành công",
                     type: "Success"
                 })
                 this.reload()
@@ -122,7 +130,7 @@ export default {
             } catch (e) {
                 console.log(e)
                 this.eventBus.emit("open-result-dialog", {
-                    message: "Somemthing went wrong updating the subject",
+                    message: "Có vấn đề xảy ra khi cố cập nhật môn học",
                     type: "Error"
                 })
             }

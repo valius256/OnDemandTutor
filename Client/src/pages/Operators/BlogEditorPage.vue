@@ -16,11 +16,12 @@
         </div>
         <Editor v-model="content" class="mt-8" editorStyle="height: 390px" />
         <div class="flex flex-col lg:flex-row justify-center mt-8 gap-4">
-            <button @click="handleSave"
+            <button @click="handleSave({confirmation : false, status : 0})"
                 class="rounded-lg bg-blue-400 hover:bg-blue-200 text-white font-bold py-2 px-12">
                 Hoàn thành
             </button>
-            <button class="rounded-lg bg-gray-400 hover:bg-gray-200 text-white font-bold py-2 px-12">
+            <button @click="handleSave({confirmation : false, status : 1})" 
+                class="rounded-lg bg-gray-400 hover:bg-gray-200 text-white font-bold py-2 px-12">
                 Lưu dưới dạng Blog ẩn
             </button>
             <button @click="$router.go(-1)"
@@ -32,9 +33,11 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Editor from 'primevue/editor';
 
 export default {
+    inject: ['eventBus'],
     components: { Editor },
     name: "BlogEditor",
     data() {
@@ -47,25 +50,69 @@ export default {
         }
     },
     methods: {
-        handleSave() {
-            //console.log(this.content)
-        },
-        presetEdit() {
-            this.blog = {
-                id: 1,
-                title: "Hello World",
-                thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBbf9L4SlvzAvmgPiQmxSO1JaU6oQ92xsDgw&s",
-                content: "<h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</h1>. <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore/ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore",
-                createdAt: "2020-01-01 14:02:59",
-                createdBy: {
-                    name: "Thomas"
-                },
-                updatedAt: "2020-01-01 19:00:55",
+        async fetchBlogs(id) {
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog/' + id)
+            if (response.data) {
+                this.blog = response.data
+                this.content = this.blog.content
+                this.title = this.blog.title
+                this.newImage = this.blog.thumbnail
             }
-            this.content = this.blog.content
-            this.title = this.blog.title
-            this.newImage = this.blog.thumbnail
-            console.log(this.content)
+        },
+        async handleSave(saveOption) {
+            if (saveOption.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn đăng bài Blog này?",
+                    method: this.handleSave,
+                    params: {confirmation : false, status : saveOption.status}
+                })
+            } else {
+                const request = {
+                    id: this.blogId,
+                    title: this.title,
+                    content: this.content,
+                    createById: 1,
+                    updateById: 1,
+                    createAt: "2024-07-05",
+                    updateAt: "2024-07-05",
+                    status : saveOption.status
+                }
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    if (this.blogId == 0) {
+                        await axios.post(import.meta.env.VITE_API_URL + '/api/Blog', request, {
+                            headers : {
+                                "Authorization" : "bearer " + localStorage.token
+                            }
+                        })
+                        this.eventBus.emit("open-result-dialog", {
+                            message: "Tạo Blog thành công",
+                            type: "Success"
+                        })
+                    } else {
+                        await axios.put(import.meta.env.VITE_API_URL + '/api/Blog/' + this.blogId, request, {
+                            headers : {
+                                "Authorization" : "bearer " + localStorage.token
+                            }
+                        })
+                        this.eventBus.emit("open-result-dialog", {
+                            message: "Cập nhật Blog thành công",
+                            type: "Success"
+                        })
+                    }
+                    this.$router.push("/admin/blogs/manage")
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã xảy ra sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
         },
         previewFiles(event) {
             const file = event.target.files[0];
@@ -83,7 +130,7 @@ export default {
     mounted() {
         this.blogId = this.$route.params.id
         if (this.blogId != 0) {
-            this.presetEdit()
+            this.fetchBlogs(this.blogId)
         }
     }
 }

@@ -2,9 +2,7 @@
   <div class="min-h-screen bg-blue-50">
     <main>
       <section class="bg-blue-500 text-white py-20 relative">
-        <div
-          class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"
-        ></div>
+        <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"></div>
         <div class="container mx-auto text-center relative z-10">
           <h2 class="text-4xl font-bold mb-8">
             Tìm Gia Sư Hoàn Hảo Cho Bạn Ngay Hôm Nay
@@ -13,9 +11,7 @@
             Các gia sư chuyên môn ở nhiều lĩnh vực khác nhau sẵn sàng giúp bạn
             đạt được mục tiêu học tập của mình.
           </p>
-          <button
-            class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold"
-          >
+          <button class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
             Bắt Đầu Ngay
           </button>
         </div>
@@ -24,20 +20,14 @@
         <div class="container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
           <div class="flex flex-wrap -mx-4">
-            <div
-              v-for="tutor in tutors"
-              :key="tutor.id"
-              class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8"
-            >
+            <div v-for="tutor in tutors" :key="tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8">
               <div class="bg-white rounded-lg shadow p-6">
                 <img :src="tutor.avatar" />
                 <p class="mt-4 font-bold">{{ tutor.name }}</p>
                 <p class="mt-2 italic">
                   {{ tutor.bookerNumber }} người đã đặt dạy
                 </p>
-                <button
-                  class="mt-3 bg-slate-50 text-blue-600 py-3 px-6 rounded-full text-lg font-bold"
-                >
+                <button class="mt-3 bg-slate-50 text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
                   Đặt ngay
                 </button>
               </div>
@@ -117,7 +107,7 @@
         </div>
       </section>
 
-      
+
 
       <section id="how-to-tutor" class="bg-blue-100 py-20">
         <div class="container mx-auto text-center">
@@ -151,42 +141,25 @@
         </div>
       </section>
       <section id="contact" class="bg-blue-500 text-white py-20 relative">
-        <div
-          class="absolute inset-0 z-0 bg-contact-banner bg-cover bg-no-repeat opacity-50"
-        ></div>
+        <div class="absolute inset-0 z-0 bg-contact-banner bg-cover bg-no-repeat opacity-50"></div>
         <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Liên Hệ Với Chúng Tôi</h2>
           <p class="mb-10">
             Bạn có bất cứ thắc mắc nào không? Hãy để lại thông tin liên lạc.
             Chúng tôi sẽ liên hệ với bạn sớm nhất có thể để tư vấn nhé!
           </p>
-          <div
-            class="w-1/2 mx-auto p-10 flex flex-col gap-4 rounded-xl bg-slate-300 text-black"
-          >
-            <input
-              type="text"
-              placeholder="Tên của bạn"
-              class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
-            />
-            <input
-              type="email"
-              placeholder="Email của bạn"
-              class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
-            />
-            <input
-              type="tel"
-              placeholder="Số điện thoại"
-              class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
-            />
-            <textarea
-              placeholder="Nội dung tin nhắn"
-              class="bg-white py-3 px-4 rounded-lg h-32 mb-6"
-            ></textarea>
+          <div class="w-1/2 mx-auto p-10 flex flex-col gap-4 rounded-xl bg-slate-300 text-black">
+            <input type="text" placeholder="Tên của bạn" class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
+              v-model="consultationName" />
+            <input type="email" placeholder="Email của bạn" class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
+              v-model="consultationEmail" />
+            <input type="tel" placeholder="Số điện thoại" class="bg-white py-3 px-4 rounded-full mb-4 md:mb-0"
+              v-model="consultationPhone" />
+            <textarea placeholder="Nội dung tin nhắn" class="bg-white py-3 px-4 rounded-lg h-32 mb-6"
+              v-model="consultationMessage"></textarea>
           </div>
-          <button
-            type="submit"
-            class="font-bold mt-4 bg-white text-blue-600 py-3 px-6 rounded-full text-lg hover:bg-slate-200"
-          >
+          <button type="submit" @click="sendConsultationRequest(true)"
+            class="font-bold mt-4 bg-white text-blue-600 py-3 px-6 rounded-full text-lg hover:bg-slate-200">
             Gửi tin nhắn
           </button>
         </div>
@@ -196,13 +169,19 @@
 </template>
 
 <script>
+import axios from "axios";
 import Footer from "../../components/common/Footer.vue";
 
 export default {
   name: "HomePage",
+  inject: ['eventBus'],
   components: { Footer },
   data() {
     return {
+      consultationName: "",
+      consultationEmail: "",
+      consultationPhone: "",
+      consultationMessage: "",
       tutors: [
         {
           id: 1,
@@ -231,6 +210,45 @@ export default {
       ],
     };
   },
+  methods: {
+    async sendConsultationRequest(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn gửi yêu cầu tư vấn?",
+          method: this.sendConsultationRequest,
+          params: false
+        })
+      } else {
+        const request = {
+          name: this.consultationName,
+          email: this.consultationEmail,
+          phone: this.consultationPhone,
+          consultationContent: this.consultationMessage
+        }
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.post(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/register', request)
+          this.consultationName = "",
+          this.consultationEmail = ""
+          this.consultationPhone = ""
+          this.consultationMessage = ""
+          this.eventBus.emit("open-result-dialog", {
+            message: "Gửi yêu cầu thành công",
+            type: "Success"
+          })
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Có vấn đề xảy ra khi gửi yêu cầu",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    },
+  }
 };
 </script>
 
