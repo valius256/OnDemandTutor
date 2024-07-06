@@ -86,7 +86,8 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
                 recordInDb.HandleById = operatorId;
                 _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
             }
-            
+
+            await _unitOfWorkRepository.SaveChangesAsync();
             return true;
 
         }

@@ -68,6 +68,7 @@ public class UserServices : IUserServices
         var mappedUser = registerDtos.Adapt<Models.Models.User>();
         mappedUser.Role = RoleStatus.Customer;
         mappedUser.FireBaseid = fireBaseAuthId;
+        mappedUser.CreatedDate = DateTime.Now;
         // mappedUser.Password = passwordHash; // open when present 
         await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
@@ -199,8 +200,7 @@ public class UserServices : IUserServices
 
     public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
     {
-        var tutorList = await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
-        return tutorList.Adapt<PagedResult<TutorSimpleProfileDto>>();
+        return await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
     }
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
@@ -295,6 +295,21 @@ public class UserServices : IUserServices
         record.Balance = amount;
         _unitOfWorkRepository.UserRepository.Update(record);
         await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeaActiveAccount(DeaActiveAccountDto request)
+    {
+        var modelInDB = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == request.Id);
+        
+        if (modelInDB.IsActive == false)
+            throw new ModelException($"{modelInDB.IsActive}", "is not active", "not_active");
+
+        modelInDB.IsActive = false;
+        modelInDB.DeaActiveReason = request.DeaActiveReason;
+        _unitOfWorkRepository.UserRepository.Update(modelInDB);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        
         return true;
     }
 }

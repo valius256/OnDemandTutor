@@ -49,7 +49,8 @@ namespace OnDemandTutor.API.Controllers
         }
 
         // [AllowAnonymous]
-        [HttpPost("Handle")]
+        [Authorize]
+        [HttpPatch("Handle")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDto requestDto)

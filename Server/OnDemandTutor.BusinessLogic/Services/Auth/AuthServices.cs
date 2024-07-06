@@ -27,7 +27,7 @@ public class AuthServices : IAuthServices
         _fireBaseAuthServices = fireBaseAuthServices;
     }
 
-    public async Task<string> LoginWithFireBase(LoginDtos loginDto)
+    public async Task<AuthenResponseDto> LoginWithFireBase(LoginDtos loginDto)
     {
         var listUser = await _fireBaseAuthServices.GetAllUserRecord();
         await _userServices.SyncUserAsync(listUser);
