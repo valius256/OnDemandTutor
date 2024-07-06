@@ -25,7 +25,7 @@ public class MapsterConfig : IRegister
         config.NewConfig<User, TutorSimpleProfileDto>()
             .Map(dest => dest.FullName, src => src.FirstName + " " + src.LastName)
             .Map(dest => dest.Description, src => src.ScheduleDesciption)
-            .Map(dest => dest.Subject, src => src.SubjectCreateBy.Select(l => l.Name).ToList())
+            .Map(dest => dest.Subject, src => src.TutorSubjects.Select(ts => ts.Subject.Name).ToList());
             ;
     }
 }

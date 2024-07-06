@@ -6,7 +6,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Auth;
 
 public interface IAuthServices
 {
-    Task<string> LoginWithFireBase(LoginDtos loginDto);
+    Task<AuthenResponseDto> LoginWithFireBase(LoginDtos loginDto);
     Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
     Task<string> ForgotPassword(string email);
     Task<bool> DeleteUserAsync(string? email);

@@ -28,9 +28,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 ld.FirstName.Contains(request.Name) || ld.LastName.Contains(request.Name));
         }
 
+        if (request.IsActive.HasValue)
+        {
+            userListQuery = userListQuery.Where(ld => ld.IsActive == request.IsActive);
+        }
+
         if (!string.IsNullOrEmpty(request.Email))
         {
-            userListQuery = userListQuery.Where(ld => ld.Email == request.Email);
+            userListQuery = userListQuery.Where(ld => ld.Email.Contains(request.Email));
         }
 
         if (!string.IsNullOrEmpty(request.Phone))
@@ -62,6 +67,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
+        
+        if (request.JoinFromDate != null && request.JoinToDate != null)
+        {
+            userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+        }
+        
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
@@ -100,26 +111,27 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return tutorList;
     }
 
-    public async Task<PagedResult<User>> ViewTutorListAsync(TutorFilterDto request)
+    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
     {
         var tutorListQuery = dbSet
-            .Include(u => u.SubjectCreateBy)
+            .Include(u => u.TutorSubjects)
+            .ThenInclude(d => d.Subject)
             .Where(ld => ld.Role == RoleStatus.Tutor);
 
-        if (!string.IsNullOrEmpty(request.name))
+        if (!string.IsNullOrEmpty(request.Name))
         {
             tutorListQuery = tutorListQuery.Where(ld =>
-                ld.FirstName.Contains(request.name) || ld.LastName.Contains(request.name));
+                ld.FirstName.Contains(request.Name) || ld.LastName.Contains(request.Name));
         }
 
-        if (!string.IsNullOrEmpty(request.email))
+        if (!string.IsNullOrEmpty(request.Email))
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Email == request.email);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Email.Contains(request.Email));
         }
 
-        if (!string.IsNullOrEmpty(request.phone))
+        if (!string.IsNullOrEmpty(request.Phone))
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Phone == request.phone);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Phone == request.Phone);
         }
 
         if (!string.IsNullOrEmpty(request.Address))
@@ -127,9 +139,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.Address == request.Address);
         }
 
-        if (request.sex != Sex.Other)
+        if (request.Sex.HasValue)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Sex == request.sex);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Sex == request.Sex);
         }
 
         if (request.DobFromDate != null && request.DobToDate != null)
@@ -142,22 +154,33 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
         }
 
-        if (!string.IsNullOrEmpty(request.Subject))
+        if (request.Subject != null)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
-        }
-
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
+        } 
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
+        
         tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
-        var filteredUsers = await tutorListQuery
+        var filteredTutors = await tutorListQuery
             .AsNoTracking()
+            .Select(u => new TutorSimpleProfileDto
+            {
+                FullName = u.FirstName + " " + u.LastName,
+                Email = u.Email,
+                Phone = u.Phone,
+                Dob = u.Dob ?? default, // Handle nullable DateTime
+                JoiningDate = u.CreatedDate.Value, // Assuming CreatedDate is the joining date
+                Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
+                Description = u.ScheduleDesciption
+            })
             .ToNewPagingAsync(page, limit);
 
-        return filteredUsers;
+
+        return filteredTutors;
     }
 
 

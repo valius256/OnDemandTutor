@@ -27,5 +27,5 @@ public interface IUserServices
     Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);
     Task<decimal?> GetBalanceAsync(int userId);
     Task<bool> UpdateBalance(int userId, decimal amount);
-
+    Task<bool> DeaActiveAccount(DeaActiveAccountDto request);
 }

@@ -30,10 +30,10 @@ public class UserController : BaseController<UserController>
     }
 
     [Authorize]
-    [HttpPost("profile")]
+    [HttpGet("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-    public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromBody] int userId)
+    public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromQuery] int userId)
     {
         var result = await _userService.GetProfile(userId, null);
         return OKAsync(result);
@@ -95,7 +95,15 @@ public class UserController : BaseController<UserController>
     {
         return OKAsync(await _userService.DeleteTutor(requestDto));
     }
-
+    
+    [Authorize]
+    [HttpPatch("deaactive-account")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> DeactiveAccount([FromBody] DeaActiveAccountDto requestDto)
+    {
+        return OKAsync(await _userService.DeaActiveAccount(requestDto));
+    }
 
 
 }
