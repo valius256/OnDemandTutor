@@ -21,6 +21,7 @@ public interface IUnitOfWorkRepository
     public INotificationRepository NotificationRepository { get; }
     public IStudentClassRepository StudentClassRepository { get; }
 
+
     int SaveChanges();
     Task<int> SaveChangesAsync();
     Task MigrateAsync();

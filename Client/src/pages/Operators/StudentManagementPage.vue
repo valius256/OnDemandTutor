@@ -29,13 +29,14 @@
             <tbody>
                 <tr v-for="student in students" :key="student.id">
                     <td>{{ student.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ student.name }}</button></td>
+                    <td><button class="font-bold underline text-blue-400 break-words w-32">{{ student.firstName + " " + student.lastName }}</button></td>
                     <td class="break-all">{{ student.email }}</td>
                     <td>{{ student.phone }}</td>
-                    <td>{{ this.sqlDateStringToSlashFormat(student.joinDate) }}</td>
+                    <td>{{ this.beautifyDatetime(student.createdDate) }}</td>
                     <td>{{ student.address }}</td>
                     <td>
-                        <div :class="getStatusStyle(student.status)">{{ student.status }}</div>
+                        <div v-if="student.isActive" :class="getStatusStyle(student.isActive)">Hoạt động</div>
+                        <div v-else :class="getStatusStyle(student.isActive)">Đình chỉ</div>
                     </td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -49,7 +50,7 @@
                                     <i class="fa fa-user mr-4"></i>Xem hồ sơ
                                 </button>
                                 <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                                <button v-if="student.status == 'Active'" class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
+                                <button v-if="student.isActive" class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                     <i class="fa fa-remove mr-4"></i>Đình chỉ
                                 </button>
                                 <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
@@ -95,49 +96,7 @@ export default {
             currentPage: 1,
             selectId: 0,
             isOpenFilterPopup : false,
-            students: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    address: "279, Lê Thánh Tông, Q1, TPHCM",
-                    joinDate : "2024-01-01",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    address: "279, Lê Thánh Tông, Q1, TPHCM",
-                    joinDate : "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    address: "279, Lê Thánh Tông, Q1, TPHCM",
-                    joinDate : "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    address: "279, Lê Thánh Tông, Q1, TPHCM",
-                    joinDate : "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                },
-            ],
+            students: [],
             filterDto: {
                 gender: "All",
                 status: "All",
@@ -145,16 +104,48 @@ export default {
                 email: "",
                 phone: "",
                 address: "",
-                fromDob: null,
-                toDob: null,
-                fromJoinDate: null,
-                toJoinDate: null,
+                fromDob: "",
+                toDob: "",
+                fromJoinDate: "",
+                toJoinDate: "",
                 isChanged : false
             },
         }
     },
     methods: {
-        resetFilter(){
+        async fetchData() {
+            let query = {
+                Name : this.filterDto.name,
+                Email : this.filterDto.email,
+                Phone : this.filterDto.phone,
+                Address : this.filterDto.address,
+                DobFromDate : this.filterDto.fromDob ?? "",
+                DobToDate : this.filterDto.toDob ?? "",
+                JoinFromDate : this.filterDto.fromJoinDate ?? "",
+                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Role : 0,
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            if (this.filterDto.gender != "All") {
+                query['Sex'] = this.filterDto.gender
+            }
+            if (this.filterDto.status != "All") {
+                query['Status'] = this.filterDto.status
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 
+            this.jsonToQueryString(query),{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.students = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async resetFilter(){
             this.filterDto = {
                 gender: "All",
                 status: "All",
@@ -168,9 +159,11 @@ export default {
                 toJoinDate : null,
                 isChanged : false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto) {
+        async handleFilter(filterDto) {
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -192,9 +185,9 @@ export default {
         getStatusStyle(status) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (status) {
-                case "Active":
+                case true:
                     return css + " bg-green-400"
-                case "Inactive":
+                case false:
                     return css + " bg-gray-400"
             }
         },
@@ -205,7 +198,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -219,6 +212,7 @@ export default {
         
     },
     mounted() {
+        this.fetchData()
     }
 }
 </script>
