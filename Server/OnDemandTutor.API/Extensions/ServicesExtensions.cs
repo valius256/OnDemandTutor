@@ -21,6 +21,8 @@ using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorDegree;
+using OnDemandTutor.BusinessLogic.Interfaces.TutorSubject;
+using OnDemandTutor.BusinessLogic.Interfaces.TutorVideo;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services;
@@ -38,6 +40,8 @@ using OnDemandTutor.BusinessLogic.Services.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.StudentClass;
 using OnDemandTutor.BusinessLogic.Services.Transaction;
 using OnDemandTutor.BusinessLogic.Services.TutorDegreeService;
+using OnDemandTutor.BusinessLogic.Services.TutorSubject;
+using OnDemandTutor.BusinessLogic.Services.TutorVideo;
 using OnDemandTutor.BusinessLogic.Services.Upload;
 using OnDemandTutor.BusinessLogic.Services.User;
 using OnDemandTutor.DataAccess;
@@ -72,6 +76,8 @@ public static class ServiceExtensions
         services.AddScoped<IFAQRepository, FAQRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IStudentClassRepository, StudentClassRepository>();
+        services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
+        services.AddScoped<ITutorVideoRepository, TutorVideoRepository>();
         services.AddProblemDetails();
         return services;
     }
@@ -96,6 +102,8 @@ public static class ServiceExtensions
         services.AddScoped<IRequestWithDrawServices, RequestWithDrawServices>();
         services.AddScoped<IFAQService, FAQService>();
         services.AddScoped<IStudentClassService, StudentClassService>();
+        services.AddScoped<ITutorSubjectService, TutorSubjectService>();
+        services.AddScoped<ITutorVideoService, TutorVideoService>();
         services.AddTransient<IMailServices, MailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();
