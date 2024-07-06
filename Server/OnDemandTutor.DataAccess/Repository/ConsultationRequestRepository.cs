@@ -53,6 +53,8 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 consultListQuery = consultListQuery.Where(cs => cs.Status == request.ConsultationStatus.Value);
             }
+
+      
             
             consultListQuery = consultListQuery.OrderBy(cr => cr.CreatedDate);
            var   consultListQuery1 = await consultListQuery.OrderBy(cr => cr.CreatedDate).ToListAsync();

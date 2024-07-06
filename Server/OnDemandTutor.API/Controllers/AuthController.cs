@@ -47,8 +47,8 @@ public class AuthController : BaseController<AuthController>
 
     [HttpPost("login-firebase")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<string>), 200)]
-    public async Task<IApiResult<string>> LoginFireBase([FromBody] LoginDtos body)
+    [ProducesResponseType(typeof(IApiResult<AuthenResponseDto>), 200)]
+    public async Task<IApiResult<AuthenResponseDto>> LoginFireBase([FromBody] LoginDtos body)
     {
         return OKAsync(await _authServices.LoginWithFireBase(body));
     }

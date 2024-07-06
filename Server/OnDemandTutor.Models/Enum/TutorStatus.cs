@@ -2,7 +2,9 @@
 
 public enum TutorStatus
 {
+    Un_Verified,
+    Sent_Verification_Requested,
+    Verification_Request_Rejected,
     Verified,
-    Not_Verified,
-    Rejected,
+    Banned,
 }

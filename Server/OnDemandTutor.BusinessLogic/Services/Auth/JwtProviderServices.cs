@@ -5,6 +5,8 @@ using OnDemandTutor.Models.Enum;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using OnDemandTutor.Models.Dtos;
+using OnDemandTutor.Models.Dtos.Authen;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -24,61 +26,80 @@ public class JwtProviderServices : IJwtProviderServices
         _fireBaseAuthServices = fireBaseAuthServices;
     }
 
-    public async Task<string> GetForCredentialsAsync(string email, string password)
+public async Task<AuthenResponseDto> GetForCredentialsAsync(string email, string password)
+{
+    var responseModel = new AuthenResponseDto();
+
+    try
     {
-        try
+        var request = new
         {
-            var request = new
-            {
-                email,
-                password,
-                returnSecureToken = true
-            };
+            email,
+            password,
+            returnSecureToken = true
+        };
 
-            var response = await _httpClient.PostAsJsonAsync("", request);
-            if (!response.IsSuccessStatusCode)
+        var response = await _httpClient.PostAsJsonAsync("", request);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+
+            try
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new UnauthorizedAccessException("Invalid credentials provided");
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                    throw new HttpRequestException($"Bad request: {errorContent}");
-                throw new HttpRequestException(
-                    $"Request failed with status code {response.StatusCode}: {errorContent}");
+                // Parse the error content as JSON
+                var parsedJson = Newtonsoft.Json.Linq.JObject.Parse(errorContent);
+                responseModel.code = parsedJson["error"]?["code"]?.ToString();
+                responseModel.message = parsedJson["error"]?["message"]?.ToString();
+            }
+            catch (Exception)
+            {
+                // If parsing fails, set code to the status code and use raw content as message
+                responseModel.code = response.StatusCode.ToString();
+                responseModel.message = errorContent;
             }
 
-            var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
-            var userInDb = _unitOfWorkRepository.UserRepository.FirstOrDefault(x => x.FireBaseid == authToken.LocalId);
-            if (userInDb == null)
-            {
-                _unitOfWorkRepository.UserRepository.Add(new Models.Models.User
-                {
-                    Email = authToken.Email,
-                    Password = password,
-                    FireBaseid = authToken.LocalId,
-                    FirstName = authToken.DisplayName,
-                    Role = RoleStatus.Customer,
-                    Sex = Sex.Male
-                });
-                await _unitOfWorkRepository.SaveChangesAsync();
-            }
-
-            if (authToken == null) throw new InvalidOperationException("Authentication token is null");
-
-            var customClaims = new Dictionary<string, object>
-            {
-                { "role", userInDb.Role.ToString() },
-                { "id", userInDb.Id.ToString() }
-            };
-
-            await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
-            return authToken.IdToken;
+            return responseModel;
         }
-        catch (Exception exception)
+
+        var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
+        if (authToken == null)
+            throw new InvalidOperationException("Authentication token is null");
+
+        var userInDb = _unitOfWorkRepository.UserRepository.FirstOrDefault(x => x.FireBaseid == authToken.LocalId);
+        if (userInDb == null)
         {
-            return exception.Message;
+            _unitOfWorkRepository.UserRepository.Add(new Models.Models.User
+            {
+                Email = authToken.Email,
+                Password = password,
+                FireBaseid = authToken.LocalId,
+                FirstName = authToken.DisplayName,
+                Role = RoleStatus.Customer,
+                Sex = Sex.Male
+            });
+            await _unitOfWorkRepository.SaveChangesAsync();
         }
+
+        var customClaims = new Dictionary<string, object>
+        {
+            { "role", userInDb.Role.ToString() },
+            { "id", userInDb.Id.ToString() }
+        };
+
+        await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
+
+        responseModel.code = response.StatusCode.ToString();
+        responseModel.message = authToken.IdToken;
     }
+    catch (Exception exception)
+    {
+        responseModel.code = "Error";
+        responseModel.message = exception.Message;
+    }
+
+    return responseModel;
+}
+
 
     public class AuthToken
     {
