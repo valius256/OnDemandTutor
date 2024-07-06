@@ -20,7 +20,9 @@ public interface IUnitOfWorkRepository
     public IRequestWithDrawRepository RequestWithDrawRepository { get; }
     public INotificationRepository NotificationRepository { get; }
     public IStudentClassRepository StudentClassRepository { get; }
+    public ITutorSubjectRepository TutorSubjectRepository { get; }
 
+    public ITutorVideoRepository TutorVideoRepository { get; }
 
     int SaveChanges();
     Task<int> SaveChangesAsync();
@@ -36,7 +38,8 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         IClassRepository classRepository, IConsultationRequestRepository consultationRequestRepository,
         IEmailTemplateRepository emailTemplateRepository, ITransactionRepository transactionRepository, ITutorDegreeRepository tutorDegreeRepository,
             ISlotStudentRepository slotStudentRepository, IFAQRepository fAQRepository, IRequestWithDrawRepository requestWithDrawRepository,
-            INotificationRepository notificationRepository, IStudentClassRepository studentClassRepository
+            INotificationRepository notificationRepository, IStudentClassRepository studentClassRepository, ITutorSubjectRepository tutorSubjectRepository,
+            ITutorVideoRepository tutorVideoRepository
         )
     {
         _context = context;
@@ -54,6 +57,9 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
         RequestWithDrawRepository = requestWithDrawRepository;
         NotificationRepository = notificationRepository;
         StudentClassRepository = studentClassRepository;
+        TutorSubjectRepository = tutorSubjectRepository;
+        TutorVideoRepository = tutorVideoRepository;
+
     }
 
     public IUserRepository Users { get; }
@@ -87,6 +93,9 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
 
     public IStudentClassRepository StudentClassRepository { get; }
 
+    public ITutorSubjectRepository TutorSubjectRepository { get; }
+
+    public ITutorVideoRepository TutorVideoRepository { get; }
     public Task MigrateAsync()
     {
         return _context.Database.MigrateAsync();

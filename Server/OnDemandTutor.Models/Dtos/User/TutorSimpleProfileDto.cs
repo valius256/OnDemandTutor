@@ -1,4 +1,5 @@
-﻿using OnDemandTutor.Models.Models;
+﻿using OnDemandTutor.Models.Dtos.TutorSubject;
+using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.User;
 
@@ -11,5 +12,5 @@ public class TutorSimpleProfileDto
     public DateTime JoiningDate { get; set; }
     public List<string> Subject { get; set; }
     public string Description { get; set; }
-    public virtual TutorSubject SubjectTutor { get; set; }
+    public virtual GetTutorSubjectDto SubjectTutor { get; set; }
 }
