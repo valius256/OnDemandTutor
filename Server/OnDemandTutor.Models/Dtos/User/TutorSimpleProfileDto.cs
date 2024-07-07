@@ -1,9 +1,11 @@
 ﻿using OnDemandTutor.Models.Dtos.TutorSubject;
+using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Dtos.User;
 
 public class TutorSimpleProfileDto
 {
+    public int Id { get; set; }
     public string FullName { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
@@ -11,6 +13,8 @@ public class TutorSimpleProfileDto
     public DateTime JoiningDate { get; set; }
     public List<string> Subject { get; set; }
     public string Description { get; set; }
+    public bool IsActive { get; set; } = true;
+    public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;
     public virtual GetTutorSubjectDto SubjectTutor { get; set; }
 
 }

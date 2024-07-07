@@ -36,15 +36,21 @@
             <tbody>
                 <tr v-for="operator in operators" :key="operator.id">
                     <td>{{ operator.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ operator.name }}</button></td>
+                    <td><div class="w-32 break-words font-bold">{{ operator.firstName + " " + operator.lastName }}</div></td>
                     <td class="break-all">{{ operator.email }}</td>
                     <td>{{ operator.phone }}</td>
-                    <td>{{ this.sqlDateStringToSlashFormat(operator.joinDate) }}</td>
+                    <td>{{ this.beautifyDatetime(operator.createdDate) }}</td>
                     <td>
-                        <div :class="getRoleStyle(operator.role)">{{ operator.role }}</div>
+                        <div v-if="operator.role == 2" :class="getRoleStyle(operator.role)">
+                            Operator
+                        </div>
+                        <div v-if="operator.role == 3" :class="getRoleStyle(operator.role)">
+                            Admin
+                        </div>
                     </td>
                     <td>
-                        <div :class="getStatusStyle(operator.status)">{{ operator.status }}</div>
+                        <div v-if="operator.isActive" :class="getStatusStyle(operator.isActive)">Hoạt động</div>
+                        <div v-else :class="getStatusStyle(operator.isActive)">Đình chỉ</div>
                     </td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -98,6 +104,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import OperatorEditAddPopup from '../../components/Operators/OperatorEditAddPopup.vue'
 import OperatorFilterPopup from '../../components/Operators/OperatorFilterPopup.vue'
@@ -114,53 +121,12 @@ export default {
             isOpenEditPopup: false,
             isOpenFilterPopup: false,
             operators: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Admin"
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Operator"
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
             ],
             filterDto: {
                 name: "",
                 email: "",
                 phone: "",
-                status: "All",
+                isActive: "All",
                 role: "All",
                 fromJoinDate: null,
                 toJoinDate: null,
@@ -175,20 +141,50 @@ export default {
         }
     },
     methods: {
-        resetFilter() {
+        async fetchData() {
+            let query = {
+                Name : this.filterDto.name,
+                Email : this.filterDto.email,
+                Phone : this.filterDto.phone,
+                JoinFromDate : this.filterDto.fromJoinDate ?? "",
+                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            if (this.filterDto.role != "All") {
+                query['Role'] = this.filterDto.role
+            }
+            if (this.filterDto.isActive != "All") {
+                query['IsActive'] = this.filterDto.isActive
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 
+            this.jsonToQueryString(query),{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.operators = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async resetFilter() {
             this.filterDto = {
                 name: "",
                 email: "",
                 phone: "",
-                status: "All",
+                isActive: "All",
                 role: "All",
                 fromJoinDate: null,
                 toJoinDate: null,
                 isChanged: false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto) {
+        async handleFilter(filterDto) {
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -227,18 +223,18 @@ export default {
         getStatusStyle(status) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (status) {
-                case "Active":
+                case true:
                     return css + " bg-green-400"
-                case "Inactive":
+                case false:
                     return css + " bg-gray-400"
             }
         },
         getRoleStyle(role) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (role) {
-                case "Admin":
+                case 3:
                     return css + " bg-blue-400"
-                case "Operator":
+                case 2:
                     return css + " bg-gray-400"
             }
         },
@@ -249,7 +245,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -262,6 +258,7 @@ export default {
         },
     },
     mounted() {
+        this.fetchData()
     }
 }
 </script>

@@ -1,5 +1,4 @@
 ﻿using FirebaseAdmin.Auth;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -14,6 +13,7 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using System.Security.Claims;
 using OnDemandTutor.Models.Paging;
+using Mapster;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -319,7 +319,7 @@ public class UserServices : IUserServices
         modelInDb.DeaActiveReason = request.DeaActiveReason;
         _unitOfWorkRepository.UserRepository.Update(modelInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
-        
+
         return true;
     }
 
@@ -366,7 +366,7 @@ public class UserServices : IUserServices
                 break;
         
             case TutorStatus.Verified:
-                if (newStatus == TutorStatus.Banned)
+                if (newStatus == TutorStatus.Banned || newStatus == TutorStatus.Un_Verified)
                     isValidTransition = true;
                 break;
 
@@ -376,7 +376,7 @@ public class UserServices : IUserServices
 
         if (!isValidTransition)
         {
-            throw new InvalidOperationException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
+            throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
         }
         
         await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)

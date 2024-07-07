@@ -23,7 +23,8 @@
             </thead>
             <tbody>
                 <tr v-for="tutor in tutors" :key="tutor.id">
-                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button></td>
+                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
+                    </td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td>
                         <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subject)"></div>
@@ -31,7 +32,7 @@
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
                     <td>
-                        <div :class="getStatusStyle(tutor.status)">{{ tutor.status }}</div>
+                        <div :class="getStatusStyle(tutor)">{{ getStatusDisplay(tutor) }}</div>
                     </td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -39,17 +40,21 @@
                             <i class="fa fa-ellipsis-h	"></i>
                         </button>
                         <div v-if="selectId == tutor.id"
-                            class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-48 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
+                            class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-64 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
                             <!-- Content of your menu -->
                             <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left">
                                 <i class="fa fa-user mr-4"></i>Xem hồ sơ
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                            <button v-if="tutor.status == 'Active'"
-                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
-                                <i class="fa fa-remove mr-4"></i>Đình chỉ
+                            <button v-if="tutor.isActive" @click="toggleReasonPopup(tutor.id, 1)"
+                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-300">
+                                <i class="fa fa-remove mr-4" ></i>Đình chỉ
                             </button>
-                            <button v-if="tutor.status == 'Fired'"
+                            <button v-if="tutor.isActive && tutor.tutorStatus != 4" @click="toggleReasonPopup(tutor.id, 2)"
+                                class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-red-500">
+                                <i class="fa fa fa-ban mr-4"></i>Cấm khỏi nền tảng
+                            </button>
+                            <button v-if="!tutor.isActive && tutor.tutorStatus < 3" @click="handleActivate({confirmation : true , id : tutor.id})"
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
                                 <i class="fa fa fa-check mr-4"></i>Kích hoạt
                             </button>
@@ -75,6 +80,9 @@
             :notOverflow="true">
             <tutor-filter-popup :close="toggleFilterPopup" :filterDto="filterDto" :action="handleFilter" />
         </generic-popup>
+        <generic-popup v-if="isOpenReasonPopup" title="Cung cấp lý do vô hiệu hóa" :closeFunction="toggleReasonPopup">
+            <account-deactivate-reason-popup :close="toggleReasonPopup" :id="activatingId" :action="fetchData" :mode="deactivatingMode"/>
+        </generic-popup>
     </div>
 </template>
 
@@ -82,8 +90,10 @@
 import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import TutorFilterPopup from './TutorFilterPopup.vue'
+import AccountDeactivateReasonPopup from './AccountDeactivateReasonPopup.vue'
 export default {
-    components: { GenericPopup, TutorFilterPopup },
+    components: { GenericPopup, TutorFilterPopup, AccountDeactivateReasonPopup },
+    inject : ['eventBus'],
     name: "AdminTutorList",
     data() {
         return {
@@ -93,8 +103,11 @@ export default {
             selectId: 0,
             isShowPopup: false,
             isOpenFilterPopup: false,
+            isOpenReasonPopup : false,
+            activatingId : 0,
+            deactivatingMode : 0,
             tutors: [
-               
+
             ],
             filterDto: {
                 gender: "All",
@@ -105,45 +118,57 @@ export default {
                 address: "",
                 fromDob: "",
                 toDob: "",
-                fromJoinDate : "",
-                toJoinDate : "",
+                fromJoinDate: "",
+                toJoinDate: "",
                 selectedSubjects: [],
-                isChanged : false
+                isChanged: false
             }
         }
     },
     methods: {
-        async fetchData(){
+        async fetchData() {
             let query = {
-                Name : this.filterDto.name,
-                Email : this.filterDto.email,
-                Phone : this.filterDto.phone,
-                Address : this.filterDto.address,
-                DobFromDate : this.filterDto.fromDob ?? "",
-                DobToDate : this.filterDto.toDob ?? "",
-                JoinFromDate : this.filterDto.fromJoinDate ?? "",
-                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Name: this.filterDto.name,
+                Email: this.filterDto.email,
+                Phone: this.filterDto.phone,
+                Address: this.filterDto.address,
+                DobFromDate: this.filterDto.fromDob ?? "",
+                DobToDate: this.filterDto.toDob ?? "",
+                JoinFromDate: this.filterDto.fromJoinDate ?? "",
+                JoinToDate: this.filterDto.toJoinDate ?? "",
+                TutorStatus : 3,
                 Page: this.currentPage,
-                Limit: this.pageSize
+                Limit: this.pageSize,
             }
             if (this.filterDto.gender != "All") {
                 query['Sex'] = this.filterDto.gender
             }
             if (this.filterDto.status != "All") {
-                query['Status'] = this.filterDto.status
+                if (this.filterDto.status == 1 ){
+                    query['IsActive'] = true
+                }else if (this.filterDto.status == 2 ){
+                    query['IsActive'] = false
+                    query['TutorStatus'] = 3
+                }else if (this.filterDto.status == 3 ){
+                    query['IsActive'] = false
+                    query['TutorStatus'] = 0
+                }else if (this.filterDto.status == 4 ){
+                    query['IsActive'] = false
+                    query['TutorStatus'] = 4
+                }
             }
             if (this.filterDto.selectedSubjects.length > 0) {
                 query['Subject'] = this.filterDto.selectedSubjects
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?'+ 
-            this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?' +
+                this.jsonToQueryString(query))
             if (response.data) {
                 this.tutors = response.data.data.items
                 this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
             }
         },
-        async resetFilter(){
+        async resetFilter() {
             this.filterDto = {
                 gender: "All",
                 status: "All",
@@ -153,10 +178,10 @@ export default {
                 address: "",
                 fromDob: null,
                 toDob: null,
-                fromJoinDate : null,
-                toJoinDate : null,
+                fromJoinDate: null,
+                toJoinDate: null,
                 selectedSubjects: [],
-                isChanged : false
+                isChanged: false
             }
             await this.fetchData()
         },
@@ -169,7 +194,7 @@ export default {
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
         },
-        clearSelectId() {
+        clearSelectId() { 
             if (this.isShowPopup) {
                 this.selectId = 0
                 this.isShowPopup = false
@@ -203,15 +228,29 @@ export default {
             }
             return html
         },
-        getStatusStyle(status) {
+        getStatusStyle(tutor) {
             let css = "text-center font-bold text-white rounded-lg p-1"
-            switch (status) {
-                case 0:
-                    return css + " bg-green-400"
-                case 1:
-                    return css + " bg-gray-400"
-                case 2:
-                    return css + " bg-red-400"
+            if (tutor.tutorStatus == 4){
+                return css + " bg-red-500"
+            } else if (!tutor.isActive && tutor.tutorStatus == 3){
+                return css + " bg-gray-400"
+            } else if (tutor.isActive){
+                return css + " bg-green-400"
+            } else {
+                return css + " bg-gray-400"
+            }
+        },
+        getStatusDisplay(tutor) {
+            if (tutor.tutorStatus == 4){
+                return "Đã bị cấm"
+            } else if (!tutor.isActive && tutor.tutorStatus == 3){
+                return " Đã rời"
+            } else if (!tutor.isActive && tutor.tutorStatus != 3){
+                return " Đình chỉ"
+            }else if (tutor.isActive){
+                return " Hoạt động"
+            } else {
+                return ""
             }
         },
         async handlePageChange() {
@@ -231,6 +270,48 @@ export default {
                 this.currentPage--
                 await this.handlePageChange()
             }
+        },
+        async handleActivate(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có muốn kích hoạt lại tài khoản này không?",
+                    method: this.handleActivate,
+                    params: { confirmation: false, id: option.id }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const request = {
+                        id: option.id,
+                    }
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/active-account', request, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    await this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã gặp sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
+        toggleReasonPopup(id, mode) {
+            if (id) {
+                this.activatingId = id
+                this.deactivatingMode = mode
+            }
+            this.isOpenReasonPopup = !this.isOpenReasonPopup
         },
     },
     mounted() {

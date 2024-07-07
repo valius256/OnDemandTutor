@@ -9,27 +9,32 @@
 
       <router-link class="flex justify-center items-center px-4 hover:bg-slate-300" to="/blogs">Blogs</router-link>
       <router-link class="flex justify-center items-center px-4 hover:bg-slate-300" to="/faqs">FAQs</router-link>
-      <router-link v-if="user && user.role == 'Student'"
+      <router-link v-if="user && user.role == 0"
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/student">
         <div class="flex gap-4 items-center">
-          <div>{{ user?.name }}</div>
+          <div>{{ user?.firstName }}</div>
           <img class="rounded-full w-8 h-8" :src="user.avatar" />
         </div>
       </router-link>
-      <router-link v-if="user && user.role == 'Tutor'"
+      <router-link v-if="user && user.role == 1"
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/tutor">
         <div class="flex gap-4 items-center">
           <div>{{ user?.name }}</div>
           <img class="rounded-full w-8 h-8" :src="user.avatar" />
         </div>
       </router-link>
-      <div class="flex gap-4 items-center mr-4" to="/login">
+      <div class="flex gap-4 items-center mr-4" to="/login" v-if="!user">
         <button class="rounded-md shadow-md px-2 py-2 font-bold bg-white" @click='$router.push("/login")'>
           Đăng nhập
         </button>
         <button class="rounded-md shadow-md px-2 py-2 font-bold text-white bg-blue-400"
           @click='$router.push("/register")'>
           Đăng ký
+        </button>
+      </div>
+      <div class="flex gap-4 items-center mr-4" to="/login" v-else>
+        <button class="rounded-md shadow-md px-2 py-2 font-bold bg-white" @click="handleLogout">
+          Đăng xuất
         </button>
       </div>
     </div>
@@ -44,6 +49,7 @@
 </template>
 
 <script>
+
 export default {
   name: "NavBar",
   inject: ["eventBus"],
@@ -53,20 +59,22 @@ export default {
     };
   },
   methods: {
-    async getUser() {
-      const userPromise = new Promise((resolve) => {
-        this.eventBus.emit("get-user", resolve);
-      });
-      const user = await userPromise;
-      this.user = user;
+    async refresh(){
+      this.user = await this.getUserFromToken()
     },
     toggleResponsive(){
       this.eventBus.emit("header-toggle-responsive")
+    },
+    handleLogout(){
+      this.eventBus.emit("logout")
     }
-    
   },
   mounted() {
-    this.getUser();
+    this.refresh();
+
+    this.eventBus.on("update-navbar", async () => {
+      await this.refresh()
+    })
   },
 };
 </script>

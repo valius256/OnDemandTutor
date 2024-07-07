@@ -3,11 +3,7 @@
         <div class="relative">
             <div class="h-screen bg-blue-950 text-white overflow-y-auto change-width"
             :class="{'w-[18rem]' : !isCollapse, 'w-16' : isCollapse}">
-                <div class="text-3xl font-bold py-5 px-5" v-if="!isCollapse">
-                    <span>On</span>
-                    <span class="text-blue-600">Demand</span>
-                    <span>Tutor</span>
-                </div>
+                <logo/>
                 <div class="mt-8">
                     <div class="flex flex-col font-bold text-white">
                         <router-link to="/admin/accounts" class="px-2 py-4 hover:bg-blue-800 ">
@@ -48,7 +44,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col ">
-                    <button class="px-2 py-4 font-bold text-white text-left hover:bg-blue-800">
+                    <button class="px-2 py-4 font-bold text-white text-left hover:bg-blue-800" @click="handleLogout">
                         <i class="fa fa-sign-out text-2xl mr-2"></i>
                         <span v-if="!isCollapse">Đăng xuất</span>
                     </button>
@@ -63,8 +59,11 @@
 </template>
 
 <script>
+import Logo from './Logo.vue'
 export default {
+  components: { Logo },
     name: "VerticalNavbar",
+    inject : ['eventBus'],
     data() {
         return {
             isCollapse: false
@@ -73,6 +72,9 @@ export default {
     methods: {
         toggleCollapse() {
             this.isCollapse = !this.isCollapse
+        },
+        handleLogout(){
+            this.eventBus.emit("logout")
         }
     },
 }
