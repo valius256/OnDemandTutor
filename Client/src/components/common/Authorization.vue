@@ -88,8 +88,8 @@ export default {
     this.eventBus.on("close-loading-popup", () => {
       this.closeLoadingPopup();
     });
-    this.eventBus.on("test", () => {
-      console.log("Test")
+    this.eventBus.on("update-everything", () => {
+      this.updateApp()
     })
     this.eventBus.on("get-current-user", (callback) => {
       callback(this.user);

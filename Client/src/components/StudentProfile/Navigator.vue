@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="flex flex-col ">
-            <button class="px-2 py-4 font-bold  text-left hover:bg-blue-800">
+            <button class="px-2 py-4 font-bold  text-left hover:bg-blue-800" @click="handleLogout">
                 <i class="fa fa-sign-out text-2xl mr-2"></i>Đăng xuất
             </button>
         </div>
@@ -26,7 +26,13 @@
 <script>
 
 export default {
-    name: "StudentProfileNavigator"
+    name: "StudentProfileNavigator",
+    inject : ['eventBus'],
+    methods : {
+        handleLogout(){
+            this.eventBus.emit("logout")
+        }
+    }
 }
 </script>
 
