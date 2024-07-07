@@ -23,8 +23,8 @@ public class User : BaseEntity
     public Sex? Sex { get; set; }
     public bool IsActive { get; set; } = true;
     public string? DeaActiveReason { get; set; }
-    public bool? TutorVerified { get; set; }
-    public TutorStatus? TutorStatus { get; set; }
+    
+    public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;
 
     // for relationship
     public virtual ICollection<Blog> BlogCreateBy { get; set; } = new List<Blog>();

@@ -75,6 +75,16 @@ public class UserController : BaseController<UserController>
         var result = await _userService.UpdateProfile(requestDto, HttpContext.User);
         return OKAsync(result);
     }
+    
+    [Authorize]
+    [HttpPost("update-avatar")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(bool), 200)]
+    public async Task<IApiResult<bool>> UpdateAvatar([FromBody] string imageUrl)
+    {
+        var result = await _userService.UpdateAvatarImage(imageUrl, HttpContext.User);
+        return OKAsync(result);
+    }
 
     [AllowAnonymous]
     [HttpGet("view-tutor-list")]
@@ -87,6 +97,13 @@ public class UserController : BaseController<UserController>
 
     }
 
+    
+    /// <summary>
+    ///    update tutor status to Banned 
+    /// </summary>
+    /// <param ></param>
+    /// 
+    /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("remove-tutor")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -96,14 +113,30 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.DeleteTutor(requestDto));
     }
     
-    [Authorize]
-    [HttpPatch("deaactive-account")]
+    [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [HttpPatch("deactive-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
     public async Task<IApiResult<bool>> DeactiveAccount([FromBody] DeaActiveAccountDto requestDto)
     {
         return OKAsync(await _userService.DeaActiveAccount(requestDto));
     }
-
-
+    
+    [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [HttpPatch("active-account")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> ActiveAccount([FromBody] int Id)
+    {
+        return OKAsync(await _userService.ActiveAccount(Id));
+    }
+    
+    [AllowAnonymous]
+    [HttpPatch("change-status")] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> ChangeStatusTutor([FromBody] int Id)
+    {
+        return OKAsync(await _userService.ActiveAccount(Id));
+    }
 }

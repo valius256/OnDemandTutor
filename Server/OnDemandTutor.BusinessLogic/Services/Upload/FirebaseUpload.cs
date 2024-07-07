@@ -130,6 +130,8 @@ public class FirebaseUploadServices : IFirebaseUploadServices
                 }
                 var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
                 var videoUrl = await UploadMediaToFirebaseStorage(userUid, fileName, fileStream, contentType);
+                
+                
                 return videoUrl;
             }
             catch (Exception ex)
