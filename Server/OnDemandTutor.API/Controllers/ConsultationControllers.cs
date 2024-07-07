@@ -61,7 +61,7 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [HttpDelete("delete")]
-        [Authorize(Roles = "Operator, Admin")]
+        [Authorize]//[Authorize(Roles = "Operator, Admin")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery]int id)

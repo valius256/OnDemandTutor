@@ -2,7 +2,7 @@
 
 public class DeaActiveAccountDto
 {
-    public int Id;
-    public bool IsActive;
+    public int Id { get; set; }
+    public bool IsActive { get; set; }
     public string? DeaActiveReason { get; set; }
 }   

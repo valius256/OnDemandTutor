@@ -75,18 +75,13 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
 
             var recordInDb = await _unitOfWorkRepository.ConsultationRequestRepository
-                .FirstOrDefaultAsync(l => l.Id == requestDtos.Id && l.Status != ConsultationRequestStatus.Solved);
+                .FirstOrDefaultAsync(l => l.Id == requestDtos.Id);
 
             if (recordInDb == null) return false;
 
             recordInDb.HandleById = operatorId;
-            if (requestDtos.Status == ConsultationRequestStatus.Solved)
-            {
-                recordInDb.Status = ConsultationRequestStatus.Solved;
-                recordInDb.HandleById = operatorId;
-                _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
-            }
-
+            recordInDb.Status = requestDtos.Status;
+            _unitOfWorkRepository.ConsultationRequestRepository.Update(recordInDb);
             await _unitOfWorkRepository.SaveChangesAsync();
             return true;
 

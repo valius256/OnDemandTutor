@@ -24,12 +24,15 @@
             <router-link class="hover:bg-blue-200 px-4 py-5 text-left" to="/faqs">
                 FAQ
             </router-link>
-            <router-link class="hover:bg-blue-200 px-4 py-5 text-left" to="/student/profile">
+            <router-link v-if="user" class="hover:bg-blue-200 px-4 py-5 text-left" to="/student/profile">
                 Hồ sơ cá nhân
             </router-link>
-            <router-link class="hover:bg-blue-200 px-4 py-5 text-left" to="/login">
+            <router-link v-if="!user" class="hover:bg-blue-200 px-4 py-5 text-left" to="/login">
                 Đăng nhập
             </router-link>
+            <button v-else class="hover:bg-blue-200 px-4 py-5 text-left" @click="handleLogout">
+                Đăng xuất
+            </button>
         </div>
     </div>
 </template>
@@ -43,23 +46,23 @@ export default {
     components: { Navbar },
     data() {
         return {
+            user: null,
             responsive: false
         }
     },
     methods: {
-        async getUser() {
-            const userPromise = new Promise((resolve) => {
-                this.eventBus.emit("get-user", resolve);
-            });
-            const user = await userPromise;
-            this.user = user;
+        async refresh() {
+            this.user = await this.getUserFromToken()
         },
         toggleResponsive() {
             this.responsive = !this.responsive
+        },
+        handleLogout() {
+            this.eventBus.emit("logout")
         }
     },
     mounted() {
-        this.getUser()
+        this.refresh()
 
         this.eventBus.on("header-toggle-responsive", () => {
             this.toggleResponsive()

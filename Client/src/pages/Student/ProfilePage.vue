@@ -1,10 +1,10 @@
 <template>
-    <div class="flex">
+    <div class="flex" v-if="user">
         <Navigator></Navigator>
         <div class="w-full ">
-            <profile v-if="$route.path == '/student/profile'"></profile>
-            <schedule v-if="$route.path == '/student/schedule'"></schedule>
-            <payment v-if="$route.path == '/student/payment'"></payment>
+            <profile :id="user.id" v-if="$route.path == '/student/profile'"></profile>
+            <schedule :id="user.id" v-if="$route.path == '/student/schedule'"></schedule>
+            <payment :id="user.id" v-if="$route.path == '/student/payment'"></payment>
         </div>
     </div>
 
@@ -19,5 +19,15 @@ import Schedule from '../../components/StudentProfile/Schedule.vue'
 export default {
     name: "ProfilePage",
     components: { Profile, Schedule, Payment, Navigator },
+    data() {
+        return {
+            user : null
+        }
+    },
+    methods : {
+        async refresh(){
+            this.user = await this.getUserFromToken()
+        }
+    }
 }
 </script>

@@ -16,7 +16,7 @@ public class GetProfileUserDtos
     public string? Sex { get; set; }
     public string? BankAccount { get; set; }
     public bool IsActive { get; set; } = true;
-
+    public string? DeaActiveReason { get; set; }
     public DateTime? CreatedDate { get; set; }
 
     public DateTime? UpdatedDate { get; set; }

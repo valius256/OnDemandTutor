@@ -1,16 +1,16 @@
 <template>
   <div>
     <Authorization>
-      <div v-if="user?.role == 'Student'">
+      <div v-if="user?.role == 0 || !user">
         <StudentLayout />
       </div>
-      <div v-else-if="user?.role == 'Tutor'">
-        <TutorLayout />
+      <div v-else-if="user?.role == 1">
+        <TutorLayout /> 
       </div>
-      <div v-else-if="user?.role == 'Operator'">
+      <!-- <div v-else-if="user?.role == 2">
         <OperatorLayout />
-      </div>
-      <div v-else-if="user?.role == 'Admin'">
+      </div> -->
+      <div v-else-if="user?.role == 3 || user?.role == 2">
         <AdminLayout />
       </div>
       <div v-else>
@@ -48,14 +48,11 @@ export default {
   },
   methods: {
     async getUser() {
-      console.log("getUser method called");
       const userPromise = new Promise((resolve) => {
         this.eventBus.emit("get-user", resolve);
       });
       const user = await userPromise;
-      console.log("User data fetched:", user);
       this.user = user;
-      console.log("User data set in the component:", this.user);
     },
     clearUser() {
       console.log("Clearing user data");
@@ -73,8 +70,8 @@ export default {
     },
   },
   mounted() {
-    console.log("App component mounted");
-    console.log("Token found in localStorage");
+    //console.log("App component mounted");
+    //console.log("Token found in localStorage");
     this.getUser();
     this.eventBus.on("update-app-user", async () => {
       console.log("Received update-app-user event");

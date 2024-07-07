@@ -302,10 +302,10 @@ public class UserServices : IUserServices
     {
         var modelInDB = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == request.Id);
         
-        if (modelInDB.IsActive == false)
-            throw new ModelException($"{modelInDB.IsActive}", "is not active", "not_active");
+        //if (modelInDB.IsActive == false)
+        //    throw new ModelException($"{modelInDB.IsActive}", "is not active", "not_active");
 
-        modelInDB.IsActive = false;
+        modelInDB.IsActive = request.IsActive;
         modelInDB.DeaActiveReason = request.DeaActiveReason;
         _unitOfWorkRepository.UserRepository.Update(modelInDB);
         await _unitOfWorkRepository.SaveChangesAsync();

@@ -34,18 +34,18 @@
                 </div>
                 <div class="flex mt-4">
                     <span class="w-24 p-1 font-bold">Trạng thái</span>
-                    <select v-model="formFilterDto.status" class="p-1 border rounded-lg">
+                    <select v-model="formFilterDto.isActive" class="p-1 border rounded-lg">
                         <option value="All">Tất cả</option>
-                        <option value="Active">Hoạt động</option>
-                        <option value="Inactive">Không hoạt động</option>
+                        <option :value="true">Hoạt động</option>
+                        <option :value="false">Không hoạt động</option>
                     </select>
                 </div>
                 <div class="flex mt-4">
                     <span class="w-24 p-1 font-bold">Quyền hạn</span>
                     <select v-model="formFilterDto.role" class="p-1 border rounded-lg">
                         <option value="All">Tất cả</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Operator">Operator</option>
+                        <option :value="3">Admin</option>
+                        <option :value="2">Operator</option>
                     </select>
                 </div>
             </div>
@@ -70,7 +70,7 @@ export default {
                 name: "",
                 email: "",
                 phone: "",
-                status: "All",
+                isActive: "All",
                 role: "All",
                 fromJoinDate: null,
                 toJoinDate: null,
