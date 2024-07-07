@@ -1,8 +1,9 @@
-﻿namespace OnDemandTutor.Models.Dtos.User;
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Dtos.User;
 
 public class DeaActiveAccountDto
 {
-    public int Id;
-    public bool IsActive;
+    public int Id { get; set; }
     public string? DeaActiveReason { get; set; }
 }   
