@@ -13,14 +13,14 @@
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/student">
         <div class="flex gap-4 items-center">
           <div>{{ user?.firstName }}</div>
-          <img class="rounded-full w-8 h-8" :src="user.avatar" />
+          <img class="rounded-full w-8 h-8" :src="user.avatarImageUrl" />
         </div>
       </router-link>
       <router-link v-if="user && user.role == 1"
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/tutor">
         <div class="flex gap-4 items-center">
           <div>{{ user?.name }}</div>
-          <img class="rounded-full w-8 h-8" :src="user.avatar" />
+          <img class="rounded-full w-8 h-8" :src="user.avatarImageUrl" />
         </div>
       </router-link>
       <div class="flex gap-4 items-center mr-4" to="/login" v-if="!user">
