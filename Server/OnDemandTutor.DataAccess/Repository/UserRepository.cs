@@ -179,13 +179,16 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .AsNoTracking()
             .Select(u => new TutorSimpleProfileDto
             {
+                Id = u.Id,
                 FullName = u.FirstName + " " + u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
                 JoiningDate = u.CreatedDate.Value, // Assuming CreatedDate is the joining date
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
-                Description = u.ScheduleDesciption
+                Description = u.ScheduleDesciption,
+                IsActive = u.IsActive,
+                TutorStatus = u.TutorStatus
             })
             .ToNewPagingAsync(page, limit);
 

@@ -36,7 +36,7 @@
             <tbody>
                 <tr v-for="operator in operators" :key="operator.id">
                     <td>{{ operator.id }}</td>
-                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ operator.firstName + " " + operator.lastName }}</button></td>
+                    <td><div class="w-32 break-words font-bold">{{ operator.firstName + " " + operator.lastName }}</div></td>
                     <td class="break-all">{{ operator.email }}</td>
                     <td>{{ operator.phone }}</td>
                     <td>{{ this.beautifyDatetime(operator.createdDate) }}</td>
@@ -121,47 +121,6 @@ export default {
             isOpenEditPopup: false,
             isOpenFilterPopup: false,
             operators: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Admin"
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Operator"
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
             ],
             filterDto: {
                 name: "",
@@ -187,7 +146,6 @@ export default {
                 Name : this.filterDto.name,
                 Email : this.filterDto.email,
                 Phone : this.filterDto.phone,
-                IsActive : this.filterDto.isActive,
                 JoinFromDate : this.filterDto.fromJoinDate ?? "",
                 JoinToDate : this.filterDto.toJoinDate ?? "",
                 Page: this.currentPage,
@@ -196,8 +154,8 @@ export default {
             if (this.filterDto.role != "All") {
                 query['Role'] = this.filterDto.role
             }
-            if (this.filterDto.status != "All") {
-                query['Status'] = this.filterDto.status
+            if (this.filterDto.isActive != "All") {
+                query['IsActive'] = this.filterDto.isActive
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 

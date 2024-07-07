@@ -138,7 +138,7 @@ export default {
             this.editDto.gender = this.user.gender == "Male" ? 1 : (this.user.gender == "Female" ? 0 : 2)
         },
         async refresh() {
-            this.loginedUser = this.getUserFromToken()
+            this.loginedUser = await this.getUserFromToken()
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/profile?userId=' + this.id, {
                 headers: {
                     "Authorization": "Bearer " + localStorage.token

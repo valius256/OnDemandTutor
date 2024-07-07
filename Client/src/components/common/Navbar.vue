@@ -71,6 +71,10 @@ export default {
   },
   mounted() {
     this.refresh();
+
+    this.eventBus.on("update-navbar", async () => {
+      await this.refresh()
+    })
   },
 };
 </script>

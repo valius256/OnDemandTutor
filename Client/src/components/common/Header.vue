@@ -1,10 +1,6 @@
 <template>
     <div class="shadow-md flex place-content-between bg-blue-50 relative">
-        <div class="text-3xl font-bold p-3 ">
-            <span>On</span>
-            <span class="text-blue-600">Demand</span>
-            <span>Tutor</span>
-        </div>
+        <logo />
         <Navbar />
         <div v-if="responsive" @click="toggleResponsive"
             class="absolute left-0 top-12 bg-blue-50 rounded-b-lg shadow-lg z-[100] w-full animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col lg:hidden">
@@ -38,12 +34,13 @@
 </template>
 
 <script>
+import Logo from './Logo.vue';
 import Navbar from './Navbar.vue';
 
 export default {
     name: "Header",
     inject: ['eventBus'],
-    components: { Navbar },
+    components: { Navbar, Logo },
     data() {
         return {
             user: null,
@@ -66,6 +63,9 @@ export default {
 
         this.eventBus.on("header-toggle-responsive", () => {
             this.toggleResponsive()
+        })
+        this.eventBus.on("update-header", async () => {
+            await this.refresh()
         })
     }
 }

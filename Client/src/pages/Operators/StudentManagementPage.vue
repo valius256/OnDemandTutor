@@ -30,7 +30,7 @@
                 <tbody>
                     <tr v-for="student in students" :key="student.id">
                         <td>{{ student.id }}</td>
-                        <td><button class="font-bold underline text-blue-400 break-words w-32">{{ student.firstName + " " + student.lastName }}</button></td>
+                        <td><button @click="accessProfile(student.id)" class="font-bold underline text-blue-400 break-words w-32">{{ student.firstName + " " + student.lastName }}</button></td>
                         <td class="break-all">{{ student.email }}</td>
                         <td>{{ student.phone }}</td>
                         <td>{{ this.beautifyDatetime(student.createdDate) }}</td>
@@ -192,10 +192,8 @@ export default {
                 try {
                     const request = {
                         id: option.id,
-                        isActive: true,
-                        deaActiveReason: ""
                     }
-                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/deaactive-account', request, {
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/active-account', request, {
                         headers: {
                             "Authorization": "Bearer " + localStorage.token
                         }

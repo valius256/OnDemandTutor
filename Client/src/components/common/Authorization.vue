@@ -30,7 +30,7 @@
       </div>
     </div>
   </div>
-</template> 
+</template>
 
 <script>
 import axios from "axios";
@@ -94,20 +94,6 @@ export default {
     this.eventBus.on("get-current-user", (callback) => {
       callback(this.user);
     });
-    this.eventBus.on("get-user", async (resolve) => {
-      let user = null;
-      if (localStorage.token) {
-        user = await this.getUser(localStorage.token) 
-      }
-      this.user = user
-      resolve(user)
-    });
-
-    this.eventBus.on("get-operator-user", async (resolve) => {
-      let user = null;
-      user = await this.getOperator();
-      resolve(user);
-    });
     this.eventBus.on("login", (loginDto) => {
       this.login(loginDto);
     });
@@ -121,11 +107,9 @@ export default {
   },
   methods: {
     updateApp() {
-      this.eventBus.emit("update-app-user");
       this.eventBus.emit("update-header");
-      this.eventBus.emit("update-profile");
-      this.eventBus.emit("update-home-page");
-      this.eventBus.emit("update-class-page");
+      this.eventBus.emit("update-navbar");
+      this.eventBus.emit("update-app-user");
     },
     toggleLoginPopup() {
       this.isOpenLoginPopup = !this.isOpenLoginPopup;
@@ -163,28 +147,35 @@ export default {
     },
     async login(loginDto) {
       try {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
         const response = await axios.post(
-          import.meta.env.VITE_API_URL + "/api/auth/login",
+          import.meta.env.VITE_API_URL + "/api/auth/login-firebase",
           {
-            emailOrPhone: loginDto.emailOrPhone,
+            email: loginDto.emailOrPhone,
             password: loginDto.password,
           }
         );
         if (response.data) {
-          localStorage.setItem("token", response.data.token);
-          this.toggleLoginPopup();
-          this.updateApp();
+          if (response.data.data.code == "400") {
+            this.eventBus.emit(
+              "login-set-error",
+              "Email hoặc mật khẩu không chính xác"
+            );
+          } else {
+            localStorage.setItem("token", response.data.data.message);
+            this.updateApp();
+            this.$router.push("/")
+          }
         }
       } catch (e) {
-        if (e.response.data) {
-          this.eventBus.emit("login-set-error", e.response.data.ErrorMessage);
-        } else {
-          this.eventBus.emit(
-            "login-set-error",
-            "Something went wrong. Please try again later!"
-          );
-        }
+        this.eventBus.emit(
+          "login-set-error",
+          "Đã xảy ra lỗi. Vui lòng thử lại sau!"
+        );
       }
+      this.eventBus.emit("close-loading-popup")
     },
     async register(registerDto) {
       try {

@@ -5,18 +5,25 @@ import axios from 'axios';
 export default {
   methods: {
     async getUserFromToken() {
-      const response = await axios.get(
-        import.meta.env.VITE_API_URL + "/api/auth/who-am-i",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.token,
-          },
-        }
-      );
-      //this.eventBus.emit("close-loading-popup")
-      if (response.data) {
-        return response.data.data;
+      if (localStorage.token) {
+        try {
+          const response = await axios.get(
+            import.meta.env.VITE_API_URL + "/api/auth/who-am-i",
+            {
+              headers: {
+                Authorization: "Bearer " + localStorage.token,
+              },
+            }
+          );
+          if (response.data) {
+            return response.data.data;
+          }
+        } catch (e){
+          console.log("Token can't be used")
+        }        
       }
+      //this.eventBus.emit("close-loading-popup")
+
       return null
     },
     getWeeksOfYear(year) {

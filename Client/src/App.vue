@@ -48,11 +48,7 @@ export default {
   },
   methods: {
     async getUser() {
-      const userPromise = new Promise((resolve) => {
-        this.eventBus.emit("get-user", resolve);
-      });
-      const user = await userPromise;
-      this.user = user;
+      this.user = await this.getUserFromToken();
     },
     clearUser() {
       console.log("Clearing user data");

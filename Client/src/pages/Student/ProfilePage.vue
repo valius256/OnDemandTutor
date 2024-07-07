@@ -27,7 +27,10 @@ export default {
     methods : {
         async refresh(){
             this.user = await this.getUserFromToken()
-        }
+        },
+    },
+    mounted(){
+        this.refresh()
     }
 }
 </script>

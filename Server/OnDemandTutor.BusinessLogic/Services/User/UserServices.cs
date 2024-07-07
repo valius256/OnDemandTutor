@@ -366,7 +366,7 @@ public class UserServices : IUserServices
                 break;
         
             case TutorStatus.Verified:
-                if (newStatus == TutorStatus.Banned)
+                if (newStatus == TutorStatus.Banned || newStatus == TutorStatus.Un_Verified)
                     isValidTransition = true;
                 break;
 
@@ -376,7 +376,7 @@ public class UserServices : IUserServices
 
         if (!isValidTransition)
         {
-            throw new InvalidOperationException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
+            throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
         }
         
         await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)

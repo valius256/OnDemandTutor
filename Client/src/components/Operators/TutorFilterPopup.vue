@@ -18,9 +18,10 @@
                     <span class="w-24 p-1 font-bold">Trạng thái</span>
                     <select v-model="formFilterDto.status" class="p-1 border rounded-lg">
                         <option value="All">Tất cả</option>
-                        <option value="Active">Active</option>
-                        <option value="Left">Left</option>
-                        <option value="Fired">Fired</option>
+                        <option :value="1">Hoạt động</option>
+                        <option :value="2">Đã rời</option>
+                        <option :value="3">Đình chỉ</option>
+                        <option :value="4">Đã bị cấm</option>
                     </select>
                 </div>
             </div>
