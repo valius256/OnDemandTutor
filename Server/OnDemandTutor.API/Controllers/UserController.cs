@@ -75,7 +75,7 @@ public class UserController : BaseController<UserController>
         var result = await _userService.UpdateProfile(requestDto, HttpContext.User);
         return OKAsync(result);
     }
-    
+
     [Authorize]
     [HttpPost("update-avatar")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -97,7 +97,7 @@ public class UserController : BaseController<UserController>
 
     }
 
-    
+
     /// <summary>
     ///    update tutor status to Banned 
     /// </summary>
@@ -112,7 +112,7 @@ public class UserController : BaseController<UserController>
     {
         return OKAsync(await _userService.DeleteTutor(requestDto));
     }
-    
+
     [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
     [HttpPatch("deactive-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -121,22 +121,22 @@ public class UserController : BaseController<UserController>
     {
         return OKAsync(await _userService.DeaActiveAccount(requestDto));
     }
-    
+
     [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
     [HttpPatch("active-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
-    public async Task<IApiResult<bool>> ActiveAccount([FromBody] int Id)
+    public async Task<IApiResult<bool>> ActiveAccount([FromBody] GetModelDto request)
     {
-        return OKAsync(await _userService.ActiveAccount(Id));
+        return OKAsync(await _userService.ActiveAccount(request.Id));
     }
-    
+
     [AllowAnonymous]
     [HttpPatch("change-status")] // sau sửa lại thành authorize r gán thêm operatorId vào 
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
-    public async Task<IApiResult<bool>> ChangeStatusTutor([FromBody] int Id)
+    public async Task<IApiResult<bool>> ChangeStatusTutor([FromBody] GetModelDto request)
     {
-        return OKAsync(await _userService.ActiveAccount(Id));
+        return OKAsync(await _userService.ActiveAccount(request.Id));
     }
 }
