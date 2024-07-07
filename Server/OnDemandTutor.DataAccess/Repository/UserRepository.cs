@@ -53,10 +53,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => ld.Sex == request.Sex);
         }
 
-        if (request.Role.HasValue)
+        if (request.Role != null && request.Role.Any())
         {
-            userListQuery = userListQuery.Where(ld => ld.Role == request.Role);
+            userListQuery = userListQuery.Where(ld => request.Role.Contains(ld.Role));
         }
+
 
         if (request.DobFromDate != null && request.DobToDate != null)
         {
@@ -68,9 +69,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
 
-        if (request.JoinFromDate != null && request.JoinToDate != null)
+        if (request.JoinFromDate.HasValue)
         {
-            userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+            userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate);
+        }
+
+        if (request.JoinToDate.HasValue)
+        {
+            userListQuery = userListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
         }
 
 
@@ -134,9 +140,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.IsActive == request.IsActive);
         }
 
-        if (request.TutorStatus.HasValue)
+        if (request.TutorStatus != null && request.TutorStatus.Any())
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.TutorStatus == request.TutorStatus);
+            tutorListQuery = tutorListQuery.Where(ld => request.TutorStatus.Contains(ld.TutorStatus.Value));
+            var lis2 = await tutorListQuery.ToListAsync();
+
         }
 
         if (!string.IsNullOrEmpty(request.Phone))
@@ -149,19 +157,19 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.Address == request.Address);
         }
 
-        if (request.Sex.HasValue)
+        if (request.Sex != null && request.Sex.Any())
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Sex == request.Sex);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Sex.HasValue && request.Sex.Contains(ld.Sex.Value));
         }
-
-        if (request.DobFromDate != null && request.DobToDate != null)
+        
+        if (request.JoinFromDate.HasValue)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.Dob <= request.DobToDate);
+            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate);
         }
-
-        if (request.JoinFromDate != null && request.JoinToDate != null)
+        
+        if (request.JoinFromDate.HasValue)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
         }
 
         if (request.Subject != null)
@@ -169,6 +177,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
         }
 
+        var lis = await tutorListQuery.ToListAsync();
+        
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
@@ -182,6 +192,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 FullName = u.FirstName + " " + u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
+                Sex =  u.Sex.Value,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
                 JoiningDate = u.CreatedDate.Value, // Assuming CreatedDate is the joining date
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names

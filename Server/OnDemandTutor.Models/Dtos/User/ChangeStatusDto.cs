@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.User
 {
-    public class ChangStatusDto
+    public class ChangeStatusDto
     {
         public int Id { get; set; }
         public TutorStatus Status { get; set; }

@@ -19,7 +19,7 @@ public class UserController : BaseController<UserController>
         _userService = userService;
     }
 
-    [Authorize]
+    // [Authorize]
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(PagedResult<GetProfileUserDtos>), 200)]
@@ -80,9 +80,9 @@ public class UserController : BaseController<UserController>
     [HttpPost("update-avatar")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(bool), 200)]
-    public async Task<IApiResult<bool>> UpdateAvatar([FromBody] string imageUrl)
+    public async Task<IApiResult<bool>> UpdateAvatar([FromBody] ChangeAvatarUrlDto request)
     {
-        var result = await _userService.UpdateAvatarImage(imageUrl, HttpContext.User);
+        var result = await _userService.UpdateAvatarImage(request.Url, HttpContext.User);
         return OKAsync(result);
     }
 
@@ -135,7 +135,7 @@ public class UserController : BaseController<UserController>
     [HttpPatch("change-status")] // sau sửa lại thành authorize r gán thêm operatorId vào 
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<CompareStatusDto>), 200)]
-    public async Task<IApiResult<CompareStatusDto>> ChangeStatusTutor([FromBody] ChangStatusDto request)
+    public async Task<IApiResult<CompareStatusDto>> ChangeStatusTutor([FromBody] ChangeStatusDto request)
     {
         return OKAsync(await _userService.ChangeTutorStatus(request.Id, request.Status));
     }
