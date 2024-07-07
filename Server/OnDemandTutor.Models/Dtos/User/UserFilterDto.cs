@@ -16,7 +16,7 @@ public class UserFilterDto
     public DateTime? JoinToDate  { get; set; }
 
     public string? Subject { get; set; }
-    public RoleStatus? Role { get; set; }
+    public List<RoleStatus>? Role { get; set; }
     public int Limit { get; set; }
     public int Page { get; set; }
 }

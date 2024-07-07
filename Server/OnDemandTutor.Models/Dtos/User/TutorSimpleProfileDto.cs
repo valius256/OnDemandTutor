@@ -11,6 +11,7 @@ public class TutorSimpleProfileDto
     public string? Phone { get; set; }
     public DateTime Dob { get; set; }
     public DateTime JoiningDate { get; set; }
+    public Sex Sex { get; set; }
     public List<string> Subject { get; set; }
     public string Description { get; set; }
     public bool IsActive { get; set; } = true;
