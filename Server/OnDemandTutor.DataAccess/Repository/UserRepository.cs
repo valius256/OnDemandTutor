@@ -67,12 +67,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
-        
+
         if (request.JoinFromDate != null && request.JoinToDate != null)
         {
             userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
         }
-        
+
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
@@ -129,6 +129,16 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.Email.Contains(request.Email));
         }
 
+        if (request.IsActive.HasValue)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.IsActive == request.IsActive);
+        }
+
+        if (request.TutorStatus.HasValue)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorStatus == request.TutorStatus);
+        }
+
         if (!string.IsNullOrEmpty(request.Phone))
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.Phone == request.Phone);
@@ -157,12 +167,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         if (request.Subject != null)
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
-        } 
+        }
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
-        
+
         tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
         var filteredTutors = await tutorListQuery

@@ -1,5 +1,4 @@
 ﻿using OnDemandTutor.Models.Dtos.TutorSubject;
-using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.Dtos.User;
 
