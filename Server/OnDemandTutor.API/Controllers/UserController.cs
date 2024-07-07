@@ -134,9 +134,9 @@ public class UserController : BaseController<UserController>
     [AllowAnonymous]
     [HttpPatch("change-status")] // sau sửa lại thành authorize r gán thêm operatorId vào 
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
-    public async Task<IApiResult<bool>> ChangeStatusTutor([FromBody] GetModelDto request)
+    [ProducesResponseType(typeof(IApiResult<CompareStatusDto>), 200)]
+    public async Task<IApiResult<CompareStatusDto>> ChangeStatusTutor([FromBody] ChangStatusDto request)
     {
-        return OKAsync(await _userService.ActiveAccount(request.Id));
+        return OKAsync(await _userService.ChangeTutorStatus(request.Id, request.Status));
     }
 }
