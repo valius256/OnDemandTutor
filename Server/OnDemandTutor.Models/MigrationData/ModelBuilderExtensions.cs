@@ -673,12 +673,12 @@ namespace OnDemandTutor.Models.MigrationData
 
             #region TutorSubject
             modelBuilder.Entity<TutorSubject>().HasData(
-                new TutorSubject { UserId = 1, SubjectId = 1 },
-                new TutorSubject { UserId = 1, SubjectId = 2 },
-                new TutorSubject { UserId = 2, SubjectId = 3 },
-                new TutorSubject { UserId = 3, SubjectId = 1 },
-                new TutorSubject { UserId = 3, SubjectId = 4 }
-                // Add more as needed
+                new TutorSubject {Id = 1,UserId = 1, SubjectId = 1 },
+                new TutorSubject {Id = 2 ,UserId = 1, SubjectId = 2 },
+                new TutorSubject {Id = 3 ,UserId = 2, SubjectId = 3 },
+                new TutorSubject {Id = 4 ,UserId = 3, SubjectId = 1 },
+                new TutorSubject {Id = 5 ,UserId = 3, SubjectId = 4 }
+              
             );
 
 
