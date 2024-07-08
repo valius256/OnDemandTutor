@@ -122,7 +122,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
             .ThenInclude(d => d.Subject)
-            .Where(ld => ld.Role == RoleStatus.Tutor);
+            .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -143,8 +143,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         if (request.TutorStatus != null && request.TutorStatus.Any())
         {
             tutorListQuery = tutorListQuery.Where(ld => request.TutorStatus.Contains(ld.TutorStatus.Value));
-            var lis2 = await tutorListQuery.ToListAsync();
-
         }
 
         if (!string.IsNullOrEmpty(request.Phone))
@@ -176,8 +174,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
         }
-
-        var lis = await tutorListQuery.ToListAsync();
         
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
