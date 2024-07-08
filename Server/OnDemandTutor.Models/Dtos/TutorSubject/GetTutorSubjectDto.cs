@@ -12,6 +12,6 @@ namespace OnDemandTutor.Models.Dtos.TutorSubject
         public string UserName { get; set; }
         public int SubjectId { get; set; }
         public string SubjectName { get; set; }
-        public SubjectStatus Status { get; set; }
+        public TutorSubjectStatus Status { get; set; }
     }
 }
