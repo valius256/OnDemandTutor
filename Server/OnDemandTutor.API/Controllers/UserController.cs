@@ -97,7 +97,16 @@ public class UserController : BaseController<UserController>
 
     }
 
+    [AllowAnonymous]
+    [HttpGet("outstanding-tutors")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<PagedResult<GetOutstandingTutorDto>>), 200)]
+    public async Task<IApiResult<PagedResult<GetOutstandingTutorDto>>> GetOutstandingTutor([FromQuery]
+        int limit = 10, [FromQuery] int page = 1)
+    {
+        return OKAsync(await _userService.GetOutstandingTutor(limit, page));
 
+    }
     /// <summary>
     ///    update tutor status to Banned 
     /// </summary>

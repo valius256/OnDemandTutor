@@ -10,4 +10,6 @@ public interface IUserRepository : IGenericRepository<User>
     Task<List<User>> GetUsersListDegreeData();
     Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId);
     Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request);
+    Task<PagedResult<GetOutstandingTutorDto>> GetOutStandingTutors(int limit, int page);
+
 }

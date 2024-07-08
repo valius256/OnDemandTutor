@@ -42,12 +42,13 @@
                     <img class="w-36 h-36" :src="blog.thumbnail">
                     <div class="w-full">
                         <div class="flex flex-col lg:flex-row lg:place-content-between">
-                            <div class="italic">Tạo bởi : {{ blog.createdBy?.name }}</div>
+                            <div class="italic">Tạo bởi : {{ blog.createdBy?.username }}</div>
                             <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createAt) }}</div>
                             <div class="italic">Chỉnh sửa lần cuối : {{ blog.updatedAt }}</div>
                         </div>
-                        <button class="font-bold text-xl hover:underline hover:text-purple-600">{{ blog.title
-                            }}</button>
+                        <router-link :to="`/admin/blogs/editor/${blog.id}`" class="font-bold text-xl hover:underline hover:text-purple-600">
+                            {{ blog.title}}
+                        </router-link>
                         <div class="max-h-28 overflow-hidden text-ellipsis line-clamp-4">
                             {{ convertHtmlToText(blog.content) }}
                         </div>
@@ -95,20 +96,7 @@ export default {
             pageSize: 5,
             currentPage: 1,
             blogs: [],
-            operators: [
-                {
-                    id: 1,
-                    name: "Thomas"
-                },
-                {
-                    id: 2,
-                    name: "Arthur"
-                },
-                {
-                    id: 3,
-                    name: "John"
-                },
-            ],
+            operators: [],
             filterDto: {
                 keyword: "",
                 fromCreateAt: "",
@@ -159,6 +147,16 @@ export default {
                 this.totalPage = Math.ceil(response.data.total / this.pageSize)
             }
             this.eventBus.emit("close-loading-popup")
+        },
+        async fetchOperators(){
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?Role=2&Role=3',{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.operators = response.data.data.items
+            }
         },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
@@ -214,6 +212,7 @@ export default {
     },
     mounted() {
         this.fetchBlogs()
+        this.fetchOperators()
     }
 }
 </script>
