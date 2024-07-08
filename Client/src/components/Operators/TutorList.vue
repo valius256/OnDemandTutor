@@ -27,7 +27,7 @@
                     </td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td>
-                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subject)"></div>
+                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subjectTutor)"></div>
                     </td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
@@ -212,6 +212,9 @@ export default {
             let color = "gray"
             let html = ""
             for (var subject of subjects) {
+                if (subject.status != 3){
+                    continue;
+                }
                 switch (subject) {
                     case "Toán":
                         color = "border-orange-400"
@@ -224,7 +227,7 @@ export default {
                         break;
                 }
                 var style = `rounded-lg py-2 px-6 border ${color}`
-                html += `<span class="${style}">${subject}</span>`
+                html += `<span class="${style}">${subject.subjectName}</span>`
             }
             return html
         },

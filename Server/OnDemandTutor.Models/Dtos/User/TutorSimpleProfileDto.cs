@@ -16,6 +16,6 @@ public class TutorSimpleProfileDto
     public string Description { get; set; }
     public bool IsActive { get; set; } = true;
     public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;
-    public virtual GetTutorSubjectDto SubjectTutor { get; set; }
+    public List<GetTutorSubjectDto> SubjectTutor { get; set; } = new List<GetTutorSubjectDto>();
 
 }

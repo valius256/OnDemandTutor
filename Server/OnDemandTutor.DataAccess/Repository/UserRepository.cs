@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
@@ -121,8 +123,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
-            .ThenInclude(d => d.Subject)
-            .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+                .ThenInclude(d => d.Subject)
+               // .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+            .Where(u => u.Role == RoleStatus.Tutor);
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -195,7 +198,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
                 Description = u.ScheduleDesciption,
                 IsActive = u.IsActive,
-                TutorStatus = u.TutorStatus
+                TutorStatus = u.TutorStatus,
+                SubjectTutor = u.TutorSubjects.Adapt<List<GetTutorSubjectDto>>()
             })
             .ToNewPagingAsync(page, limit);
 
