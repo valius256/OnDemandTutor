@@ -5,7 +5,7 @@
                 <span class="w-48 p-1 font-bold">Sắp xếp theo</span>
                 <select v-model="formSortDto.sortProp" class="p-1 border rounded-lg w-full">
                     <option value="Id">Id</option>
-                    <option value="CreatedBy">Người tạo</option>
+                    <option value="CreatedBy.username">Người tạo</option>
                     <option value="CreatedAt">Thời gian tạo</option>
                     <option value="UpdatedAt">Thời gian chỉnh sửa</option>
                 </select>

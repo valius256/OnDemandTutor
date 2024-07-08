@@ -269,80 +269,80 @@ public class UserServices : IUserServices
         return true;
     }
 
-public async Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
-{
-    var userIdClaim = userClaims.FindFirst(c => c.Type == "id")?.Value;
-    if (string.IsNullOrEmpty(userIdClaim))
+    public async Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
     {
-        throw new ArgumentException("User ID claim is missing.");
-    }
+        var userIdClaim = userClaims.FindFirst(c => c.Type == "id")?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
+        {
+            throw new ArgumentException("User ID claim is missing.");
+        }
 
-    if (requestDto.Id == null || requestDto.Id == 0)
-    {
-        requestDto.Id = int.Parse(userIdClaim);
-    }
+        if (requestDto.Id == null || requestDto.Id == 0)
+        {
+            requestDto.Id = int.Parse(userIdClaim);
+        }
 
-    var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
-    if (userInDb == null)
-    {
-        throw new InvalidOperationException("User not found.");
-    }
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
+        if (userInDb == null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
 
-    UpdateUserFields(userInDb, requestDto);
+        UpdateUserFields(userInDb, requestDto);
     
-    _unitOfWorkRepository.UserRepository.Update(userInDb);
-    await _unitOfWorkRepository.SaveChangesAsync();
-    return true;
-}
+        _unitOfWorkRepository.UserRepository.Update(userInDb);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
 
-private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto requestDto)
-{
-    if (!string.IsNullOrEmpty(requestDto.FirstName))
+    private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto requestDto)
     {
-        userInDb.FirstName = requestDto.FirstName;
-    }
-    if (!string.IsNullOrEmpty(requestDto.LastName))
-    {
-        userInDb.LastName = requestDto.LastName;
-    }
-    if (!string.IsNullOrEmpty(requestDto.Phone))
-    {
-        userInDb.Phone = requestDto.Phone;
-    }
-    if (!string.IsNullOrEmpty(requestDto.Email))
-    {
-        userInDb.Email = requestDto.Email;
-    }
-    if (!string.IsNullOrEmpty(requestDto.Address))
-    {
-        userInDb.Address = requestDto.Address;
-    }
-    if (!string.IsNullOrEmpty(requestDto.AvatarImageUrl))
-    {
-        userInDb.AvatarImageUrl = requestDto.AvatarImageUrl;
-    }
-    if (requestDto.Dob.HasValue)
-    {
-        userInDb.Dob = requestDto.Dob.Value;
-    }
-    if (requestDto.Sex.HasValue)
-    {
-        userInDb.Sex = requestDto.Sex.Value;
-    }
-    if (requestDto.TutorFeePerHour.HasValue)
-    {
-        userInDb.TutorFeePerHour = requestDto.TutorFeePerHour.Value;
-    }
-    if (!string.IsNullOrEmpty(requestDto.IdCardImageUrl))
-    {
-        userInDb.IdCardImageUrl = requestDto.IdCardImageUrl;
-    }
-    if (!string.IsNullOrEmpty(requestDto.ScheduleDesciption))
-    {
-        userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
-    }
+        if (!string.IsNullOrEmpty(requestDto.FirstName))
+        {
+            userInDb.FirstName = requestDto.FirstName;
+        }
+        if (!string.IsNullOrEmpty(requestDto.LastName))
+        {
+            userInDb.LastName = requestDto.LastName;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Phone))
+        {
+            userInDb.Phone = requestDto.Phone;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Email))
+        {
+            userInDb.Email = requestDto.Email;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Address))
+        {
+            userInDb.Address = requestDto.Address;
+        }
+        if (!string.IsNullOrEmpty(requestDto.AvatarImageUrl))
+        {
+            userInDb.AvatarImageUrl = requestDto.AvatarImageUrl;
+        }
+        if (requestDto.Dob.HasValue)
+        {
+            userInDb.Dob = requestDto.Dob.Value;
+        }
+        if (requestDto.Sex.HasValue)
+        {
+            userInDb.Sex = requestDto.Sex.Value;
+        }
+        if (requestDto.TutorFeePerHour.HasValue)
+        {
+            userInDb.TutorFeePerHour = requestDto.TutorFeePerHour.Value;
+        }
+        if (!string.IsNullOrEmpty(requestDto.IdCardImageUrl))
+        {
+            userInDb.IdCardImageUrl = requestDto.IdCardImageUrl;
+        }
+        if (!string.IsNullOrEmpty(requestDto.ScheduleDesciption))
+        {
+            userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
+        }
     
-}
+    }
 
 
 
@@ -456,5 +456,10 @@ private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto request
             OldStatus = oldRecord.TutorStatus,
             NewStatus = newRecord.TutorStatus
         };
+    }
+
+    public async Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page)
+    {
+        return await _unitOfWorkRepository.UserRepository.GetOutStandingTutors(limit, page);
     }
 }

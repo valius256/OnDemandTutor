@@ -25,9 +25,9 @@
                 <tr v-for="tutor in tutors" :key="tutor.id">
                     <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
                     </td>
-                    <td><img :src="tutor.avatar" class="w-24 h-24"></td>
+                    <td><img :src="tutor.avatarImageUrl" class="w-24 h-24"></td>
                     <td>
-                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subject)"></div>
+                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subjectTutor)"></div>
                     </td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
@@ -136,7 +136,6 @@ export default {
                 DobToDate: this.filterDto.toDob ?? "",
                 JoinFromDate: this.filterDto.fromJoinDate ?? "",
                 JoinToDate: this.filterDto.toJoinDate ?? "",
-                TutorStatus : 3,
                 Page: this.currentPage,
                 Limit: this.pageSize,
             }
@@ -157,12 +156,19 @@ export default {
                     query['TutorStatus'] = 4
                 }
             }
+            let queryStr = this.jsonToQueryString(query)
+            if (this.filterDto.status == "All"){
+                queryStr += "&TutorStatus=3&TutorStatus=4"
+            }
+            console.log(this.filterDto.selectedSubjects)
             if (this.filterDto.selectedSubjects.length > 0) {
-                query['Subject'] = this.filterDto.selectedSubjects
+                for (var s of this.filterDto.selectedSubjects){
+                    queryStr += "&Subject=" + s.id
+                }
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?' +
-                this.jsonToQueryString(query))
+                queryStr)
             if (response.data) {
                 this.tutors = response.data.data.items
                 this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
@@ -212,6 +218,9 @@ export default {
             let color = "gray"
             let html = ""
             for (var subject of subjects) {
+                if (subject.status != 3){
+                    continue;
+                }
                 switch (subject) {
                     case "Toán":
                         color = "border-orange-400"
@@ -224,7 +233,7 @@ export default {
                         break;
                 }
                 var style = `rounded-lg py-2 px-6 border ${color}`
-                html += `<span class="${style}">${subject}</span>`
+                html += `<span class="${style}">${subject.subjectName}</span>`
             }
             return html
         },

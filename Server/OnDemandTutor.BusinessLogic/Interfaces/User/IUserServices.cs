@@ -33,4 +33,6 @@ public interface IUserServices
     Task<bool> ActiveAccount(int id);
     Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus status);
 
+    Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
+
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
@@ -121,8 +123,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
-            .ThenInclude(d => d.Subject)
-            .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+                .ThenInclude(d => d.Subject)
+               // .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+            .Where(u => u.Role == RoleStatus.Tutor);
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -195,7 +198,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
                 Description = u.ScheduleDesciption,
                 IsActive = u.IsActive,
-                TutorStatus = u.TutorStatus
+                TutorStatus = u.TutorStatus,
+                TutorSubjects = u.TutorSubjects.Adapt<List<GetTutorSubjectDto>>()
             })
             .ToNewPagingAsync(page, limit);
 
@@ -203,6 +207,44 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return filteredTutors;
     }
 
+    public async Task<PagedResult<GetOutstandingTutorDto>> GetOutStandingTutors(int limit, int page)
+    {
+        var tutorListQuery = dbSet
+            .Include(u => u.TutorSubjects)
+                .ThenInclude(d => d.Subject)
+            .Include(u => u.Slots)
+                .ThenInclude(s => s.SlotStudents)
+            .Include(u => u.Classes)
+                .ThenInclude(s => s.StudentClasses)
+            .Where(u => u.Role == RoleStatus.Tutor && u.TutorStatus == TutorStatus.Verified && u.IsActive);
 
+        int skip = (page - 1) * limit;
+        tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
+
+        // Materialize the query into a list
+        var tutors = await tutorListQuery.ToListAsync();
+
+        // Perform the aggregation in memory
+        var outstandingTutors = tutors
+            .Select(u => new GetOutstandingTutorDto
+            {
+                Tutor = u.Adapt<TutorSimpleProfileDto>(),
+                NumberOfBooker = u.Slots.Sum(s => s.SlotStudents.Count),
+                NumberOfStudentClass = u.Classes.Sum(s => s.StudentClasses.Count),
+            })
+            .OrderByDescending(u => u.NumberOfBooker + u.NumberOfStudentClass)
+            .ToList();
+
+        // Implement your own paging logic here since we materialized the query already
+        var pagedResult = new PagedResult<GetOutstandingTutorDto>
+        {
+            Items = outstandingTutors.Skip(skip).Take(limit).ToList(),
+            Page = page,
+            Limit = limit,
+            Total = outstandingTutors.Count
+        };
+
+        return pagedResult;
+    }
 
 }
