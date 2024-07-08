@@ -65,16 +65,15 @@
                                 <i class="fa fa-edit mr-4"></i>Chỉnh sửa
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                            <button v-if="operator.status == 'Active'"
+                            <button v-if="operator.isActive" @click="toggleReasonPopup(operator.id)"
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                 <i class="fa fa-remove mr-4"></i>Đình chỉ
                             </button>
-                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
+                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500" @click="handleActivate({confirmation : true, id : operator.id})">
                                 <i class="fa fa fa-check mr-4"></i>Kích hoạt
                             </button>
                         </div>
                     </td>
-
                 </tr>
             </tbody>
         </table>
@@ -100,6 +99,9 @@
         <generic-popup v-if="isOpenFilterPopup" title="Bộ lọc tài khoản vận hành" :closeFunction="toggleFilterPopup">
             <operator-filter-popup :close="toggleFilterPopup" :action="handleFilter" :filterDto="filterDto" />
         </generic-popup>
+        <generic-popup v-if="isOpenReasonPopup" title="Cung cấp lý do vô hiệu hóa" :closeFunction="toggleReasonPopup">
+            <account-deactivate-reason-popup :close="toggleReasonPopup" :id="activatingId" :action="fetchData" />
+        </generic-popup>
     </div>
 </template>
 
@@ -108,8 +110,10 @@ import axios from 'axios'
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import OperatorEditAddPopup from '../../components/Operators/OperatorEditAddPopup.vue'
 import OperatorFilterPopup from '../../components/Operators/OperatorFilterPopup.vue'
+import AccountDeactivateReasonPopup from '../../components/Operators/AccountDeactivateReasonPopup.vue'
 export default {
-    components: { OperatorEditAddPopup, GenericPopup, OperatorFilterPopup },
+    components: { OperatorEditAddPopup, GenericPopup, OperatorFilterPopup, AccountDeactivateReasonPopup },
+    inject : ['eventBus'],
     name: "OperatorManagementPage",
     data() {
         return {
@@ -117,6 +121,8 @@ export default {
             pageSize: 10,
             currentPage: 1,
             selectId: 0,
+            activatingId: 0,
+            isOpenReasonPopup: false,
             isOpenAddPopup: false,
             isOpenEditPopup: false,
             isOpenFilterPopup: false,
@@ -151,15 +157,19 @@ export default {
                 Page: this.currentPage,
                 Limit: this.pageSize
             }
+            let queryStr = ""
             if (this.filterDto.role != "All") {
                 query['Role'] = this.filterDto.role
+            } else {
+                queryStr += "Role=2&Role=3&"
             }
             if (this.filterDto.isActive != "All") {
                 query['IsActive'] = this.filterDto.isActive
             }
+            queryStr += this.jsonToQueryString(query)
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 
-            this.jsonToQueryString(query),{
+            queryStr,{
                 headers : {
                     "Authorization" : "Bearer " + localStorage.token
                 }
@@ -205,6 +215,12 @@ export default {
         },
         toggleOpenEditPopup() {
             this.isOpenEditPopup = !this.isOpenEditPopup
+        },
+        toggleReasonPopup(id) {
+            if (id) {
+                this.activatingId = id
+            }
+            this.isOpenReasonPopup = !this.isOpenReasonPopup
         },
         clearSelectId() {
             if (this.isShowPopup) {
@@ -254,6 +270,41 @@ export default {
             } else if (!forward && this.currentPage > 1) {
                 this.currentPage--
                 await this.handlePageChange()
+            }
+        },
+        async handleActivate(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có muốn kích hoạt lại tài khoản này không?",
+                    method: this.handleActivate,
+                    params: { confirmation: false, id: option.id }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const request = {
+                        id: option.id,
+                    }
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/active-account', request, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    await this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã gặp sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
             }
         },
     },

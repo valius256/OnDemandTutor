@@ -13,52 +13,40 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     name: "SubjectListForFilter",
     props : ['selectFunction','close'],
     data() {
         return {
             subjects: [
-                {
-                    id: 1,
-                    name: "Toán"
-                },
-                {
-                    id: 2,
-                    name: "Vật lý"
-                },
-                {
-                    id: 3,
-                    name: "Hóa học"
-                },
-                {
-                    id: 4,
-                    name: "Tiếng Anh"
-                },
-                {
-                    id: 5,
-                    name: "Tiếng Nhật"
-                },
-                {
-                    id: 6,
-                    name: "Tiếng Trung"
-                },
-                {
-                    id: 7,
-                    name: "Piano"
-                },
-                {
-                    id: 8,
-                    name: "Guitar"
-                }
+                
             ],
         }
     },
     methods : {
+        async fetchSubject(){
+            let query = {
+                Sorts: {
+                    column: "Id",
+                    isDesc: true
+                },
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?'+ 
+            this.jsonToQueryString(query))
+            if (response.data) {
+                this.subjects = response.data.items
+            }
+        },
         handleSelect(id,name){
             this.selectFunction(id,name),
             this.close()
         }
+    },
+    mounted(){
+        this.fetchSubject()
     }
 
 }
