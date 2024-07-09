@@ -14,9 +14,10 @@ public static class IQueryableExtensions
         Func<List<TEntity>, List<T>>? mapper = null
     )
     {
+        var totalCount = await query.CountAsync();
         var result = new PagedResult<T>
         {
-            Total = await query.CountAsync(),
+            Total = totalCount,
             Page = page,
             Limit = limit
         };
@@ -48,9 +49,10 @@ public static class IQueryableExtensions
         int page, int limit
     )
     {
+        var totalCount = await query.CountAsync();
         var result = new PagedResult<T>
         {
-            Total = await query.CountAsync(),
+            Total = totalCount,
             Page = page,
             Limit = limit
         };

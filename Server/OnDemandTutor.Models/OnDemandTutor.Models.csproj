@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Google.Api.CommonProtos" Version="2.15.0" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
@@ -25,7 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Dtos\Blog\" />
         <Folder Include="Dtos\Subject\" />
         <Folder Include="Dtos\Class\" />
         <Folder Include="Dtos\EmailTemplate\" />

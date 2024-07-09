@@ -19,8 +19,8 @@
                     <span class="w-24 p-1 font-bold">Trạng thái</span>
                     <select v-model="formFilterDto.status" class="p-1 border rounded-lg">
                         <option value="All">Tất cả</option>
-                        <option value="Active">Công Khai</option>
-                        <option value="Inactive">Đã Ẩn</option>
+                        <option :value="false">Công Khai</option>
+                        <option :value="true">Đã Ẩn</option>
                     </select>
                 </div>
             </div>

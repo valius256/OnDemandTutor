@@ -20,7 +20,7 @@ namespace OnDemandTutor.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<GetBlogDtos>), 200)]
-        public async Task<IActionResult> GetBlogs([FromQuery] PagingModel<GetBlogDtos> pagingModel)
+        public async Task<IActionResult> GetBlogs([FromQuery] PagingModel<QueryBlogDto> pagingModel)
         {
             var blogs = await _blogService.GetBlogsAsync(pagingModel);
             return Ok(blogs);

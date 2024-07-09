@@ -10,13 +10,13 @@
 
         public int CreateById { get; set; }
 
-        public DateTime CreateAt { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public bool? IsHidden { get; set; }
 
         public int? UpdateById { get; set; }
 
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdatedDate { get; set; }
 
         public string? Thumbnail { get; set; }
 
@@ -27,7 +27,15 @@
         public class UserDto
         {
             public int Id { get; set; }
-            public string Username { get; set; }
+            public string FirstName { get; set; } = string.Empty;
+            public string LastName { get; set; } = string.Empty;
+            public string Name
+            {
+                get
+                {
+                    return FirstName + " " + LastName;
+                }
+            }
         }
     }
 }
