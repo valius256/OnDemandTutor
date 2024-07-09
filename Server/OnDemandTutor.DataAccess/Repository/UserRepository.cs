@@ -182,7 +182,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
 
-        tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
+        //tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
         var filteredTutors = await tutorListQuery
             .AsNoTracking()
@@ -194,7 +194,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 Phone = u.Phone,
                 Sex =  u.Sex.Value,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
-                JoiningDate = u.CreatedDate.Value, // Assuming CreatedDate is the joining date
+                JoiningDate = u.CreatedDate, // Assuming CreatedDate is the joining date
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
                 Description = u.ScheduleDesciption,
                 IsActive = u.IsActive,
@@ -219,7 +219,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             .Where(u => u.Role == RoleStatus.Tutor && u.TutorStatus == TutorStatus.Verified && u.IsActive);
 
         int skip = (page - 1) * limit;
-        tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
+        //tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
         // Materialize the query into a list
         var tutors = await tutorListQuery.ToListAsync();

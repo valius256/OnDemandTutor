@@ -16,11 +16,11 @@
         </div>
         <Editor v-model="content" class="mt-8" editorStyle="height: 390px" />
         <div class="flex flex-col lg:flex-row justify-center mt-8 gap-4">
-            <button @click="handleSave({confirmation : false, status : 0})"
+            <button @click="handleSave({ confirmation: false, status: false })"
                 class="rounded-lg bg-blue-400 hover:bg-blue-200 text-white font-bold py-2 px-12">
                 Hoàn thành
             </button>
-            <button @click="handleSave({confirmation : false, status : 1})" 
+            <button @click="handleSave({ confirmation: false, status: true })"
                 class="rounded-lg bg-gray-400 hover:bg-gray-200 text-white font-bold py-2 px-12">
                 Lưu dưới dạng Blog ẩn
             </button>
@@ -47,6 +47,7 @@ export default {
             blogId: 0,
             blog: null,
             newImage: "",
+            file: null
         }
     },
     methods: {
@@ -69,27 +70,37 @@ export default {
                 this.eventBus.emit("open-confirmation-popup", {
                     message: "Bạn có chắc chắn muốn đăng bài Blog này?",
                     method: this.handleSave,
-                    params: {confirmation : false, status : saveOption.status}
+                    params: { confirmation: false, status: saveOption.status }
                 })
             } else {
-                const request = {
-                    id: this.blogId,
-                    title: this.title,
-                    content: this.content,
-                    createById: 1,
-                    updateById: 1,
-                    createAt: "2024-07-05",
-                    updateAt: "2024-07-05",
-                    status : saveOption.status
-                }
                 this.eventBus.emit("open-loading-popup", {
                     message: "Vui lòng chờ..."
                 })
                 try {
+                    var uploadResponse
+                    if (this.file != null){
+                        const fileName = "Thumbnail_of_blog_" + (this.getMillisecondsFromMinDate(new Date()))
+                        const formData = new FormData();
+                        formData.append('file', this.file);
+                        uploadResponse = await axios.post(import.meta.env.VITE_API_URL + "/api/Upload/upload-image?fileName=" + fileName, formData, {
+                            headers: {
+                                'Authorization': "Bearer " + localStorage.token,
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        });
+                    }              
+                    const imageUrl = uploadResponse.data ?? this.blog.thumbnail
+                    const request = {
+                        id: this.blogId,
+                        title: this.title,
+                        content: this.content,
+                        thumbnail: imageUrl,
+                        isHidden: saveOption.status
+                    }
                     if (this.blogId == 0) {
                         await axios.post(import.meta.env.VITE_API_URL + '/api/Blog', request, {
-                            headers : {
-                                "Authorization" : "bearer " + localStorage.token
+                            headers: {
+                                "Authorization": "bearer " + localStorage.token
                             }
                         })
                         this.eventBus.emit("open-result-dialog", {
@@ -98,8 +109,8 @@ export default {
                         })
                     } else {
                         await axios.put(import.meta.env.VITE_API_URL + '/api/Blog/' + this.blogId, request, {
-                            headers : {
-                                "Authorization" : "bearer " + localStorage.token
+                            headers: {
+                                "Authorization": "bearer " + localStorage.token
                             }
                         })
                         this.eventBus.emit("open-result-dialog", {
@@ -119,7 +130,7 @@ export default {
             }
         },
         previewFiles(event) {
-            const file = event.target.files[0];
+            this.file = event.target.files[0];
 
             const theReader = new FileReader();
             // Nhớ sử dụng async/await để chờ khi đã convert thành công image sang base64 thì mới bắt đầu gán cho biến newImage
@@ -127,8 +138,13 @@ export default {
             theReader.onloadend = async () => {
                 this.newImage = await theReader.result;
             };
-            theReader.readAsDataURL(file);
-        }
+            theReader.readAsDataURL(this.file);
+        },
+        getMillisecondsFromMinDate(date) {
+            // The minimum date value is January 1, 1970, 00:00:00 UTC
+            const minDate = new Date(0);
+            return date.getTime() - minDate.getTime();
+        },
 
     },
     mounted() {

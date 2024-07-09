@@ -13,10 +13,10 @@
                 <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
                     Reset bộ lọc
                 </button>
-                <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
+                <!-- <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
                     @click="toggleSortPopup">
                     <i class="fa fa-sort-amount-asc	"></i> Sắp xếp
-                </button>
+                </button> -->
 
                 <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
                     @click="toggleFilterPopup">
@@ -26,9 +26,19 @@
 
         </div>
         <div class="mt-8">
-            <div class="p-6 rounded-lg border mt-4" v-for="blog in blogs" :key="blog.id">
+            <div :class="`p-6 rounded-lg border mt-4 ${blog.isHidden ? 'bg-gray-200' : ''}`" v-for="blog in blogs"
+                :key="blog.id">
+                <div v-if="blog.isHidden" class="font-bold">Đã ẩn</div>
                 <div class="flex flex-wrap justify-end gap-4">
-                    <button class="p-2 text-white bg-blue-400 hover:bg-blue-200 font-bold rounded-lg">
+                    <button v-if="blog.isHidden" @click="handleChangeVisibility({confirmation : true, id : blog.id, isHidden : false})" class="p-2 text-white bg-green-400 hover:bg-green-200 font-bold rounded-lg">
+                        <i class="fa fa-eye mr-4"></i>Hiện blog
+                    </button>
+                    <button v-if="blog.isHidden" @click="handleDelete({confirmation : true, id : blog.id})"
+                        class="p-2 text-white bg-red-400 hover:bg-red-200 font-bold rounded-lg">
+                        <i class="fa fa-trash mr-4"></i>Xóa blog
+                    </button>
+                    <button v-else class="p-2 text-white bg-blue-400 hover:bg-blue-200 font-bold rounded-lg"
+                    @click="handleChangeVisibility({confirmation : true, id : blog.id, isHidden : true})" >
                         <i class="fa fa-eye-slash mr-4"></i>Ẩn blog
                     </button>
                     <router-link :to="`/admin/blogs/editor/${blog.id}`">
@@ -42,12 +52,13 @@
                     <img class="w-36 h-36" :src="blog.thumbnail">
                     <div class="w-full">
                         <div class="flex flex-col lg:flex-row lg:place-content-between">
-                            <div class="italic">Tạo bởi : {{ blog.createdBy?.username }}</div>
-                            <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createAt) }}</div>
-                            <div class="italic">Chỉnh sửa lần cuối : {{ blog.updatedAt }}</div>
+                            <div class="italic">Tạo bởi : {{ blog.createBy?.name }}</div>
+                            <div class="italic">Tạo lúc : {{ this.beautifyDatetime(blog.createdDate) }}</div>
+                            <div class="italic">Chỉnh sửa lần cuối : {{ this.beautifyDatetime(blog.updatedDate) }}</div>
                         </div>
-                        <router-link :to="`/admin/blogs/editor/${blog.id}`" class="font-bold text-xl hover:underline hover:text-purple-600">
-                            {{ blog.title}}
+                        <router-link :to="`/admin/blogs/editor/${blog.id}`"
+                            class="font-bold text-xl hover:underline hover:text-purple-600">
+                            {{ blog.title }}
                         </router-link>
                         <div class="max-h-28 overflow-hidden text-ellipsis line-clamp-4">
                             {{ convertHtmlToText(blog.content) }}
@@ -120,38 +131,43 @@ export default {
         async fetchBlogs() {
             let query = {
                 "Filter.Keyword": this.filterDto.keyword,
-                "Filter.Status": this.filterDto.status,
-                "Filter.FromCreateAt": this.filterDto.fromCreateAt,
-                "Filter.ToCreateAt": this.filterDto.toCreateAt,
-                "Filter.fromUpdateAt": this.filterDto.fromUpdateAt,
-                "Filter.toUpdateAt": this.filterDto.toUpdateAt,
-                "Filter.CreateBy.Name": "",
+                "Filter.CreateFrom": this.filterDto.fromCreateAt,
+                "Filter.CreateTo": this.filterDto.toCreateAt,
+                "Filter.UpdateFrom": this.filterDto.fromUpdateAt,
+                "Filter.UpdateTo": this.filterDto.toUpdateAt,
                 Sorts: {
                     column: this.sortDto.sortProp,
                     isDesc: !this.sortDto.isSortAsc
                 },
-                Page: this.currentPage - 1,
+                Page: this.currentPage,
                 Limit: this.pageSize
             }
             if (this.filterDto.createdBy != "All") {
-                query['Filter.CreateBy.Id'] = this.filterDto.createdBy
+                query['Filter.CreateBy'] = this.filterDto.createdBy
+            }
+            if (this.filterDto.status != "All") {
+                query['Filter.IsHidden'] = this.filterDto.status
             }
             this.eventBus.emit("open-loading-popup", {
                 message: "Vui lòng chờ..."
             })
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog?' +
-                this.jsonToQueryString(query))
-            if (response.data) {
-                this.blogs = response.data.items
-                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            try {
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/blog?' +
+                    this.jsonToQueryString(query))
+                if (response.data) {
+                    this.blogs = response.data.items
+                    this.totalPage = Math.ceil(response.data.total / this.pageSize)
+                }
+            } catch (e) {
+                console.log(e)
             }
             this.eventBus.emit("close-loading-popup")
         },
-        async fetchOperators(){
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?Role=2&Role=3',{
-                headers : {
-                    "Authorization" : "Bearer " + localStorage.token
+        async fetchOperators() {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?Role=2&Role=3', {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.token
                 }
             })
             if (response.data) {
@@ -208,7 +224,78 @@ export default {
         convertHtmlToText(html) {
             const doc = new DOMParser().parseFromString(html, 'text/html');
             return doc.body.textContent || '';
-        }
+        },
+        async handleChangeVisibility(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn " + (option.isHidden ? "ẨN" : "HIỆN") + " Blog này không?",
+                    method: this.handleChangeVisibility,
+                    params: {confirmation : false, id : option.id, isHidden : option.isHidden }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const blog = this.blogs.find(b => b.id == option.id)
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/Blog/' + blog.id , {
+                        id : blog.id,
+                        title : blog.title,
+                        thumbnail : blog.thumbnail,
+                        content : blog.content,
+                        isHidden : option.isHidden
+                    }, {
+                        headers : {
+                            'Authorization' : "Bearer " + localStorage.token
+                        }
+                    })
+                    await this.fetchBlogs()
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã xảy ra sự cố, vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
+        async handleDelete(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn xóa Blog này không?",
+                    method: this.handleDelete,
+                    params: {confirmation : false, id : option.id }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.delete(import.meta.env.VITE_API_URL + '/api/Blog/' + option.id , {
+                        headers : {
+                            'Authorization' : "Bearer " + localStorage.token
+                        }
+                    })
+                    await this.fetchBlogs()
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Xóa thành công",
+                        type: "Success"
+                    })
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã xảy ra sự cố, vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
     },
     mounted() {
         this.fetchBlogs()

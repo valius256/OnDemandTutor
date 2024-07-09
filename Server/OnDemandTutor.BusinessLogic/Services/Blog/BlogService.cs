@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using HtmlAgilityPack;
+using LinqKit;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -21,15 +23,16 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             _authService = authService;
             _httpContextAccessor = HttpContextAccessor;
         }
-        public async Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<GetBlogDtos> request)
+        public async Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<QueryBlogDto> request)
         {
-            var pagedBlogs = await _unitOfWork.BlogRepository.PagingAsync(request);
+            var pagedBlogs = await _unitOfWork.BlogRepository.GetBlogs(request);
+            pagedBlogs.Items.ForEach(b => b.Content = ConvertHtmlToPlainText(b.Content ?? ""));
             return pagedBlogs.Adapt<PagedResult<GetBlogDtos>>();
         }
 
         public async Task<GetBlogDtos> GetBlogByIdAsync(int id)
         {
-            var blogEntity = await _unitOfWork.BlogRepository.FirstOrDefaultAsync(b => b.Id == id);
+            var blogEntity = await _unitOfWork.BlogRepository.GetBlogDetail(id);
             if (blogEntity == null)
             {
                 throw new NotFoundException($"Blog with ID {id} not found.");
@@ -41,6 +44,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
         {
             var blogEntity = blogDto.Adapt<Models.Models.Blog>();
             var createdBlogEntity = await _unitOfWork.BlogRepository.AddAsync(blogEntity);
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+            createdBlogEntity.Entity.CreatedDate = DateTime.Now;
+            createdBlogEntity.Entity.CreateById = user.Id;
             await _unitOfWork.SaveChangesAsync();
             return createdBlogEntity.Entity.Adapt<CreateBlogDtos>();
         }
@@ -78,6 +84,20 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
 
             return true;
         }
+
+        private static string ConvertHtmlToPlainText(string html)
+        {
+            if (string.IsNullOrWhiteSpace(html))
+            {
+                return string.Empty;
+            }
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            return htmlDoc.DocumentNode.InnerText;
+        }
+
     }
 }
 

@@ -42,7 +42,6 @@ namespace OnDemandTutor.API.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("all")]
         [ProducesResponseType(typeof(PagedResult<FAQDTO>), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
@@ -60,7 +59,6 @@ namespace OnDemandTutor.API.Controllers
             }
         }
 
-       [Authorize]
         [HttpGet("get-by-id")]
         [ProducesResponseType(typeof(FAQDTO), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]

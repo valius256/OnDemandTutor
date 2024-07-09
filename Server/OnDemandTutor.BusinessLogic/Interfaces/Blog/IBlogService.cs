@@ -5,7 +5,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces
 {
     public interface IBlogService
     {
-        Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<GetBlogDtos> request);
+        Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<QueryBlogDto> request);
         Task<GetBlogDtos> GetBlogByIdAsync(int id);
         Task<CreateBlogDtos> CreateBlogAsync(CreateBlogDtos blogDto);
         Task<UpdateBlogDtos> UpdateBlogAsync(UpdateBlogDtos blogDto);
