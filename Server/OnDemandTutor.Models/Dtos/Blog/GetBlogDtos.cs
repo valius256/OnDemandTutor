@@ -12,9 +12,13 @@
 
         public DateTime CreateAt { get; set; }
 
+        public bool? IsHidden { get; set; }
+
         public int? UpdateById { get; set; }
 
         public DateTime? UpdateAt { get; set; }
+
+        public string? Thumbnail { get; set; }
 
         public virtual UserDto? CreateBy { get; set; }
 
