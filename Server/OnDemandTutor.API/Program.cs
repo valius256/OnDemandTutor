@@ -50,7 +50,7 @@ internal class Program
 
         // Add global exception handler
         builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
-
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddAutoMapper(typeof(MapperConfig))
             //.AddAuthenticationService(builder.Configuration)
             .AddMapster();
