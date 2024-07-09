@@ -53,8 +53,11 @@ public class SlotEntityTypeConfiguration : IEntityTypeConfiguration<Slot>
             .HasForeignKey(t => t.SlotId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(s => s.Classes).WithMany(s => s.Slots).HasForeignKey(t => t.ClassId)
-            .OnDelete(DeleteBehavior.NoAction);
+        
+       
+        builder.HasOne(sc => sc.Class)
+            .WithMany(c => c.Slots)
+            .HasForeignKey(sc => sc.ClassId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

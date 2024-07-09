@@ -614,8 +614,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Toán học cơ bản",
                     TutorId = 1, // Thay bằng TutorId đã có
                     SubjectId = 1, // Thay bằng SubjectId đã có
-                    StudentName = "Quang Phát",
-                    SlotId = 1, // Thay bằng SlotId đã có
+                
                 },
                 new Class
                 {
@@ -623,8 +622,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Văn học",
                     TutorId = 2, // Thay bằng TutorId đã có
                     SubjectId = 2, // Thay bằng SubjectId đã có
-                    StudentName = "Quang Lâm ",
-                    SlotId = 2, // Thay bằng SlotId đã có
+                
                 },
                 new Class
                 {
@@ -632,8 +630,6 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Thí nghiệm Vật lý",
                     TutorId = 1, // Thay bằng TutorId đã có
                     SubjectId = 3, // Thay bằng SubjectId đã có
-                    StudentName = "Thanh Hưng",
-                    SlotId = 3, // Thay bằng SlotId đã có
                 },
                 new Class
                 {
@@ -641,8 +637,6 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Lịch sử thế giới",
                     TutorId = 3, // Thay bằng TutorId đã có
                     SubjectId = 4, // Thay bằng SubjectId đã có
-                    StudentName = "Thanh Phúc",
-                    SlotId = 4, // Thay bằng SlotId đã có
                 },
                 new Class
                 {
@@ -650,8 +644,6 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Hóa học nâng cao",
                     TutorId = 2, // Thay bằng TutorId đã có
                     SubjectId = 5, // Thay bằng SubjectId đã có
-                    StudentName = "Nhât Linh",
-                    SlotId = 5, // Thay bằng SlotId đã có
                 }
             );
 
@@ -661,11 +653,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1, StudentId = 1, ClassId = 1, Rating = 5, RatingForTutorId = 1 },
-                new StudentClass { Id = 2, StudentId = 2, ClassId = 1, Rating = 2, RatingForTutorId = 2 },
-                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, RatingForTutorId = 1 },
-                new StudentClass { Id = 4, StudentId = 4, ClassId = 2, Rating = 4, RatingForTutorId = 2 },
-                new StudentClass { Id = 5, StudentId = 5, ClassId = 3, Rating = 4, RatingForTutorId = 1 }
+                new StudentClass { Id = 1, StudentId = 1, ClassId = 1, Rating = 5, TutorId = 1 },
+                new StudentClass { Id = 2, StudentId = 2, ClassId = 1, Rating = 2, TutorId = 2 },
+                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, TutorId = 1 },
+                new StudentClass { Id = 4, StudentId = 4, ClassId = 2, Rating = 4, TutorId = 2 },
+                new StudentClass { Id = 5, StudentId = 5, ClassId = 3, Rating = 4, TutorId = 1 }
                 // Add more as needed
             );
 

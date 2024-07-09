@@ -1,5 +1,4 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Class
+﻿namespace OnDemandTutor.Models.Dtos.Class
 {
 	public class CreateClassDTO
 	{
@@ -7,6 +6,8 @@ namespace OnDemandTutor.Models.Dtos.Class
         public int TutorId { get; set; }
         public int SubjectId { get; set; }
         public string? StudentName { get; set; }
+        public string? Location { get; set; }
+        public string? Method { get; set; }
         public List<int> SlotIds { get; set; }
     }
 }
