@@ -55,7 +55,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
 
             var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
             existingBlogEntity = blogDto.Adapt(existingBlogEntity);
-            existingBlogEntity.CreateById = user.Id; // Update this field if needed
+
+            existingBlogEntity.UpdateById = user.Id;
             existingBlogEntity.UpdatedDate = DateTime.Now; // Update this field if needed
 
             var updatedBlogEntity = _unitOfWork.BlogRepository.Update(existingBlogEntity);
