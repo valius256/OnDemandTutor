@@ -18,6 +18,8 @@ public abstract class BaseEntityEmpty : IBaseEntity
 
 public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
 {
+    public int UpdatedById { get; set; }
+
     public DateTime? CreatedDate { get; set; }
 
     public DateTime? UpdatedDate { get; set; }

@@ -1,5 +1,7 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Blog;
@@ -10,10 +12,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
     public class BlogService : IBlogService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
+        private readonly IAuthServices _authService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BlogService(IUnitOfWorkRepository unitOfWork)
+        public BlogService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _authService = authService;
+            _httpContextAccessor = HttpContextAccessor;
         }
         public async Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<GetBlogDtos> request)
         {
@@ -47,7 +53,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
                 throw new NotFoundException($"Blog with ID {blogDto.Id} not found.");
             }
 
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
             existingBlogEntity = blogDto.Adapt(existingBlogEntity);
+            existingBlogEntity.CreateById = user.Id; // Update this field if needed
+            existingBlogEntity.UpdatedDate = DateTime.Now; // Update this field if needed
 
             var updatedBlogEntity = _unitOfWork.BlogRepository.Update(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();

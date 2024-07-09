@@ -1,5 +1,7 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -12,10 +14,14 @@ namespace OnDemandTutor.BusinessLogic.Services
     public class SubjectService : ISubjectService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
+        private readonly IAuthServices _authService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SubjectService(IUnitOfWorkRepository unitOfWork)
+        public SubjectService(IUnitOfWorkRepository unitOfWork, IHttpContextAccessor httpContextAccessor, IAuthServices authService)
         {
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
+            _authService = authService;
         }
 
         public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> request)
@@ -42,6 +48,8 @@ namespace OnDemandTutor.BusinessLogic.Services
             await _unitOfWork.SaveChangesAsync();
             return createdSubjectEntity.Adapt<CreateSubjectDtos>();
         }
+   
+
         public async Task<GetSubjectDtos> UpdateSubjectAsync(GetSubjectDtos subjectGetDto)
         {
             var existingSubject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == subjectGetDto.Id);
@@ -50,12 +58,15 @@ namespace OnDemandTutor.BusinessLogic.Services
                 throw new NotFoundException($"Subject with ID {subjectGetDto.Id} not found.");
             }
 
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
             existingSubject = subjectGetDto.Adapt(existingSubject);
+            existingSubject.CreateById = user.Id; // Update this field if needed
+            existingSubject.UpdatedDate = DateTime.Now; // Update this field if needed
 
             var updatedSubject = _unitOfWork.SubjectRepository.Update(existingSubject);
             await _unitOfWork.SaveChangesAsync();
 
-            return updatedSubject.Adapt<GetSubjectDtos>();
+            return updatedSubject.Entity.Adapt<GetSubjectDtos>();
         }
 
         public async Task<bool> DeleteSubjectAsync(int id)

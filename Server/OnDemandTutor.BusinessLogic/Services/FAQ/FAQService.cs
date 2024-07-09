@@ -63,7 +63,7 @@ public class FAQService : IFAQService
         var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
         existingFAQEntity = faqDto.Adapt(existingFAQEntity);
         existingFAQEntity.CreateById = user.Id; // Update this field if needed
-        existingFAQEntity.CreateAt = DateTime.Now; // Update this field if needed
+        existingFAQEntity.UpdatedDate = DateTime.Now; // Update this field if needed
 
         var updatedFAQEntity = _unitOfWorkRepository.FAQRepository.Update(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();

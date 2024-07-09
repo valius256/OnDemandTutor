@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorDegree;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -14,10 +16,15 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
     public class TutorDegreeService : ITutorDegreeService
     {
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+        private readonly IAuthServices _authService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TutorDegreeService(IUnitOfWorkRepository unitOfWorkRepository)
+
+        public TutorDegreeService(IUnitOfWorkRepository unitOfWorkRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWorkRepository = unitOfWorkRepository;
+            _authService = authService;
+            _httpContextAccessor = HttpContextAccessor;
         }
 
         public async Task<PagedResult<GetTutorDegreeDto>> GetTutorDegreesAsync(PagingModel<GetTutorDegreeDto> request)
@@ -46,16 +53,32 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
 
         public async Task<UpdateTutorDegreeDto> UpdateTutorDegreeAsync(UpdateTutorDegreeDto tutorDegreeDto)
         {
+            // Retrieve the existing tutor degree entity from the database
             var existingTutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.FirstOrDefaultAsync(td => td.Id == tutorDegreeDto.Id);
+
+            // Check if the entity is null
             if (existingTutorDegree == null)
             {
                 throw new NotFoundException($"TutorDegree with ID {tutorDegreeDto.Id} not found.");
             }
 
+            // Get the current user from the authentication service
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+
+            // Adapt the incoming DTO to the existing entity
             existingTutorDegree = tutorDegreeDto.Adapt(existingTutorDegree);
+
+            // Set the updated fields
+            existingTutorDegree.UpdatedById = user.Id; // Assuming there is an UpdatedById property
+            existingTutorDegree.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
+
+            // Update the entity in the database
             var updatedTutorDegree = _unitOfWorkRepository.TutorDegreeRepository.Update(existingTutorDegree);
+
+            // Save the changes
             await _unitOfWorkRepository.SaveChangesAsync();
 
+            // Return the updated DTO
             return updatedTutorDegree.Entity.Adapt<UpdateTutorDegreeDto>();
         }
 
