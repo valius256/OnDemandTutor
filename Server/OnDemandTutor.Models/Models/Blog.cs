@@ -11,7 +11,7 @@ public class Blog : BaseEntity
     public int CreateById { get; set; }
 
     public DateTime CreateAt { get; set; }
-
+    public bool? IsHidden { get; set; }
     public int? UpdateById { get; set; }
 
     public DateTime? UpdateAt { get; set; }
