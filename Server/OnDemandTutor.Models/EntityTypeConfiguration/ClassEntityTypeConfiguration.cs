@@ -11,8 +11,7 @@ public class ClassEntityTypeConfiguration : IEntityTypeConfiguration<Class>
         builder.HasKey(c => c.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         // Define properties
-        builder.Property(c => c.Name).HasMaxLength(100); // Adjust the maximum length as needed
-        builder.Property(c => c.StudentName).HasMaxLength(100); // Adjust the maximum length as needed
+        builder.Property(c => c.Name).HasMaxLength(100);
 
         // Define relationships
         builder.HasOne(c => c.Subject)
@@ -21,25 +20,18 @@ public class ClassEntityTypeConfiguration : IEntityTypeConfiguration<Class>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(c => c.User)
-            .WithMany() // Assuming User can have many classes
+            .WithMany() 
             .HasForeignKey(c => c.TutorId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(c => c.StudentClasses)
+            .WithOne(sc => sc.Class)
+            .HasForeignKey(sc => sc.ClassId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(c => c.Students)
-            .WithMany(u => u.Classes)
-            .UsingEntity<StudentClass>(
-                j => j
-                    .HasOne(sc => sc.Student)
-                    .WithMany()
-                    .HasForeignKey(sc => sc.StudentId),
-                j => j
-                    .HasOne(sc => sc.Class)
-                    .WithMany()
-                    .HasForeignKey(sc => sc.ClassId)
-            );
-
+        
         builder.HasMany(c => c.Slots)
-            .WithOne(s => s.Classes)
+            .WithOne(s => s.Class)
             .HasForeignKey(s => s.ClassId)
             .OnDelete(DeleteBehavior.Restrict);
     }

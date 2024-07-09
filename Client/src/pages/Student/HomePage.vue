@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-blue-50">
+  <div class="min-h-screen bg-blue-50 overflow-x-hidden">
     <main>
       <section class="bg-blue-500 text-white py-20 relative">
         <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"></div>
@@ -16,16 +16,38 @@
           </button>
         </div>
       </section>
-      <section id="popular-tutors" class="py-20">
-        <div class="container mx-auto text-center">
+      <section id="popular-tutors" class="relative">
+        <div class="absolute inset-0 flex justify-end">
+          <div class="relative">
+            <div class="bg-[#deefff] w-[100px] h-full transform -skew-x-12">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#d6ebff] w-[300px] h-full transform -skew-x-12 -mr-48">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#c5e3ff] w-[400px] h-full transform -skew-x-12 -mr-48">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>   
+        </div>
+
+        <div class="relative mx-auto text-center py-20 w-10/12">
           <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
           <div class="flex flex-wrap -mx-4">
-            <div v-for="tutor in tutors" :key="tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8">
+            <div v-for="tutor in tutors" :key="tutor.tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8">
               <div class="bg-white rounded-lg shadow p-6">
-                <img :src="tutor.avatar" />
-                <p class="mt-4 font-bold">{{ tutor.name }}</p>
+                <img :src="tutor.tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
+                <p class="mt-4 font-bold">{{ tutor.tutor.fullName }}</p>
+                <p class="flex justify-center my-2">
+                  <star-rating :star-size="20" :rating="tutor.tutor.rating" :round-start-rating="false"
+                    :read-only="true" />
+                </p>
                 <p class="mt-2 italic">
-                  {{ tutor.bookerNumber }} người đã đặt dạy
+                  {{ tutor.numberOfStudentClass + tutor.numberOfBooker }} lượt đặt dạy
                 </p>
                 <button class="mt-3 bg-slate-50 text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
                   Đặt ngay
@@ -33,36 +55,57 @@
               </div>
             </div>
           </div>
+          <button class="mt-3 bg-white hover:bg-slate-200 text-blue-600 py-3 px-12 rounded-full text-lg font-bold">
+            Xem thêm gia sư
+          </button>
         </div>
       </section>
-      <section id="features" class="bg-blue-100 py-20">
-        <div class="container mx-auto text-center">
+
+      <section id="features" class="bg-blue-100 py-20 relative">
+        <div class="absolute inset-0 flex ">
+          <div class="relative">
+            <div class="bg-[#b5dbff] w-[400px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#c5e3ff] w-[200px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#d6ebff] w-[100px] h-full transform skew-x-12">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+        </div>
+        <div class="relative container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Tính Năng Của Chúng Tôi</h2>
           <div class="flex flex-wrap -mx-4">
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">Gia sư chuyên môn cao</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow rounded-t-lg">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">Gia sư chuyên môn cao</h3>
+                <p class="px-6 pb-6">
                   Chúng tôi chỉ thuê những gia sư có kinh nghiệm và là chuyên
                   gia trong lĩnh vực của họ.
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">
                   Sắp xếp lịch học linh hoạt
                 </h3>
-                <p>
+                <p class="px-6 pb-6">
                   Trang web chúng tôi cho phép các bạn đặt lịch học với gia sư
                   một cách linh hoạt và thuận tiện nhất cho cả hai
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div v class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">Giá cả phải chăng</h3>
-                <p>
+              <div v class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">Giá cả phải chăng</h3>
+                <p class="px-6 pb-6">
                   Nhận những dịch vụ gia sư theo yêu cầu tốt nhất với giá cả hợp
                   lý.
                 </p>
@@ -72,32 +115,49 @@
         </div>
       </section>
 
-      <section id="how-it-works" class=" py-20">
-        <div class="container mx-auto text-center">
+      <section id="how-it-works" class=" py-20 relative">
+        <div class="absolute inset-0 flex justify-end">
+          <div class="relative">
+            <div class="bg-[#deefff] w-[100px] h-full transform -skew-x-12">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#d6ebff] w-[300px] h-full transform -skew-x-12 -mr-48">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#c5e3ff] w-[400px] h-full transform -skew-x-12 -mr-48">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>   
+        </div>
+        <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
           <div class="flex flex-wrap -mx-4">
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">1. Đăng ký</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">1. Đăng ký</h3>
+                <p class="px-6 pb-6">
                   Tạo một tài khoản và nói cho chúng tôi biết về nhu cầu dạy kèm
                   của bạn.
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">2. Chọn Gia Sư</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">2. Chọn Gia Sư</h3>
+                <p class="px-6 pb-6">
                   Duyệt qua danh sách các gia sư có trình độ của chúng tôi và
                   chọn một gia sư phù hợp nhất với nhu cầu của bạn.
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">3. Bắt Đầu Học</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">3. Bắt Đầu Học</h3>
+                <p class="px-6 pb-6">
                   Lên lịch buổi học đầu tiên và bắt đầu quá trình chinh phục mục
                   tiêu học tập của bạn.
                 </p>
@@ -109,32 +169,49 @@
 
 
 
-      <section id="how-to-tutor" class="bg-blue-100 py-20">
-        <div class="container mx-auto text-center">
+      <section id="how-to-tutor" class="bg-blue-100 py-20 relative">
+        <div class="absolute inset-0 flex ">
+          <div class="relative">
+            <div class="bg-[#b5dbff] w-[400px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#c5e3ff] w-[200px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#d6ebff] w-[100px] h-full transform skew-x-12">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+        </div>
+        <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Bạn Muốn Trở Thành Gia Sư?</h2>
           <div class="flex flex-wrap -mx-4">
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">1. Tạo tài khoản</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">1. Tạo tài khoản</h3>
+                <p class="px-6 pb-6">
                   Tạo một tài khoản gia sư và cung cấp các loại bằng cấp của
                   bạn.
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">2. Cập nhật hồ sơ</h3>
-                <p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">2. Cập nhật hồ sơ</h3>
+                <p class="px-6 pb-6">
                   Quảng bá chuyên môn và dịch vụ học tập của bạn bằng các video
                   học tập để thu hút học viên. Họ sẽ tìm đến bạn và đăng ký học
                 </p>
               </div>
             </div>
             <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-2xl font-bold mb-4">3. Bắt Đầu Dạy</h3>
-                <p>Bắt đầu làm việc dựa trên lịch dạy của bạn</p>
+              <div class="bg-white rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">3. Bắt Đầu Dạy</h3>
+                <p class="px-6 pb-6">Bắt đầu làm việc dựa trên lịch dạy của bạn</p>
               </div>
             </div>
           </div>
@@ -171,11 +248,12 @@
 <script>
 import axios from "axios";
 import Footer from "../../components/common/Footer.vue";
+import StarRating from 'vue-star-rating'
 
 export default {
   name: "HomePage",
   inject: ['eventBus'],
-  components: { Footer },
+  components: { Footer, StarRating },
   data() {
     return {
       consultationName: "",
@@ -183,30 +261,7 @@ export default {
       consultationPhone: "",
       consultationMessage: "",
       tutors: [
-        {
-          id: 1,
-          name: "Nguyen Van A",
-          avatar: "/src/assets/noavatar.jpg",
-          bookerNumber: 10,
-        },
-        {
-          id: 2,
-          name: "Nguyen Van A",
-          avatar: "/src/assets/noavatar.jpg",
-          bookerNumber: 10,
-        },
-        {
-          id: 3,
-          name: "Nguyen Van A",
-          avatar: "/src/assets/noavatar.jpg",
-          bookerNumber: 10,
-        },
-        {
-          id: 4,
-          name: "Nguyen Van A",
-          avatar: "/src/assets/noavatar.jpg",
-          bookerNumber: 10,
-        },
+
       ],
     };
   },
@@ -231,7 +286,7 @@ export default {
         try {
           await axios.post(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/register', request)
           this.consultationName = "",
-          this.consultationEmail = ""
+            this.consultationEmail = ""
           this.consultationPhone = ""
           this.consultationMessage = ""
           this.eventBus.emit("open-result-dialog", {
@@ -248,6 +303,21 @@ export default {
         this.eventBus.emit("close-loading-popup")
       }
     },
+    async fetchOutstandingTutors() {
+      let query = {
+        Page: 1,
+        Limit: 4,
+      }
+      //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+      const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/outstanding-tutors?' +
+        this.jsonToQueryString(query))
+      if (response.data) {
+        this.tutors = response.data.data.items
+      }
+    },
+  },
+  mounted() {
+    this.fetchOutstandingTutors()
   }
 };
 </script>

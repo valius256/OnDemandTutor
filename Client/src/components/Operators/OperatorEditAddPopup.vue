@@ -24,10 +24,10 @@
                 <div class="flex mt-4">
                     <span class="w-24 p-1 font-bold">Quyền</span>
                     <select v-model="role" class="p-1 border rounded-lg" placeholder="Nhập email">
-                        <option>
+                        <option :value="3">
                             Admin
                         </option>
-                        <option>
+                        <option :value="2">
                             Operator
                         </option>
                     </select>

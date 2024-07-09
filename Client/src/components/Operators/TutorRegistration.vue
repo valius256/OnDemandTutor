@@ -4,7 +4,8 @@
             <button class="p-2 font-bold text-blue-400 underline" v-if="filterDto.isChanged" @click="resetFilter">
                 Reset bộ lọc
             </button>
-            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg" @click="toggleFilterPopup">
+            <button class="py-2 px-4 bg-slate-500 hover:bg-slate-300 text-white font-bold rounded-lg"
+                @click="toggleFilterPopup">
                 <i class="fa fa-search	"></i> Filter
             </button>
         </div>
@@ -20,22 +21,26 @@
                     <th class="w-2/12">Hành động</th>
                 </tr>
             </thead>
-            <tbody>                
+            <tbody>
                 <tr v-for="tutor in tutors" :key="tutor.id">
                     <td>{{ tutor.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ tutor.name }}</button></td>
+                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
+                    </td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
-                    <td>{{ this.sqlDateStringToSlashFormat(tutor.createdAt) }}</td>
+                    <td>{{ this.beautifyDatetime(tutor.joiningDate) }}</td>
                     <td class="flex flex-col gap-2">
-                        <button class="text-white rounded-lg bg-blue-500 hover:bg-blue-200 font-bold text-lg p-2"  @click="handleAccept(registration.id)">
+                        <button class="text-white rounded-lg bg-blue-500 hover:bg-blue-200 font-bold text-lg p-2"
+                            @click="handleAccept(tutor.id)">
                             Chi Tiết
                         </button>
-                        <button class="text-white rounded-lg bg-lime-500 hover:bg-lime-200 font-bold text-lg p-2"  @click="handleAccept(registration.id)">
+                        <button class="text-white rounded-lg bg-lime-500 hover:bg-lime-200 font-bold text-lg p-2"
+                            @click="handleApprove({ confirmation: true, id: tutor.id, isApprove: true })">
                             Duyệt
                         </button>
-                        <button class="text-white rounded-lg bg-red-500 hover:bg-red-200 font-bold text-lg p-2" @click="handleReject(registration.id)">
+                        <button class="text-white rounded-lg bg-red-500 hover:bg-red-200 font-bold text-lg p-2"
+                            @click="handleApprove({ confirmation: true, id: tutor.id, isApprove: false })">
                             Từ chối
                         </button>
                     </td>
@@ -56,16 +61,19 @@
             </button>
         </div>
         <generic-popup v-if="isOpenFilterPopup" :closeFunction="toggleFilterPopup" title="Bộ lọc gia sư">
-            <tutor-registration-filter-popup :filter-dto="filterDto" :action="handleFilter" :close="toggleFilterPopup"/>
+            <tutor-registration-filter-popup :filter-dto="filterDto" :action="handleFilter"
+                :close="toggleFilterPopup" />
         </generic-popup>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 import GenericPopup from '../common/GenericPopup.vue';
 import TutorRegistrationFilterPopup from './TutorRegistrationFilterPopup.vue';
 export default {
-  components: { GenericPopup, TutorRegistrationFilterPopup },
+    components: { GenericPopup, TutorRegistrationFilterPopup },
+    inject: ['eventBus'],
     name: "TutorRegistration",
     data() {
         return {
@@ -74,41 +82,6 @@ export default {
             currentPage: 1,
             isOpenFilterPopup: false,
             tutors: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    createdAt: "2024-01-01",
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    createdAt: "2024-01-01",
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Fired",
-                    createdAt: "2024-01-01",
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Left",
-                    createdAt: "2024-01-01",
-                },
             ],
             filterDto: {
                 gender: "All",
@@ -118,14 +91,42 @@ export default {
                 address: "",
                 fromDob: null,
                 toDob: null,
-                fromJoinDate : null,
-                toJoinDate : null,
-                isChanged : false
+                fromJoinDate: null,
+                toJoinDate: null,
+                isChanged: false
             }
         }
     },
     methods: {
-        resetFilter(){
+        async fetchData() {
+            let query = {
+                Name: this.filterDto.name,
+                Email: this.filterDto.email,
+                Phone: this.filterDto.phone,
+                Address: this.filterDto.address,
+                DobFromDate: this.filterDto.fromDob ?? "",
+                DobToDate: this.filterDto.toDob ?? "",
+                JoinFromDate: this.filterDto.fromJoinDate ?? "",
+                JoinToDate: this.filterDto.toJoinDate ?? "",
+                TutorStatus: 1,
+                Page: this.currentPage,
+                Limit: this.pageSize,
+            }
+            if (this.filterDto.gender != "All") {
+                query['Sex'] = this.filterDto.gender
+            }
+            if (this.filterDto.status != "All") {
+                query['Status'] = this.filterDto.status
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?' +
+                this.jsonToQueryString(query))
+            if (response.data) {
+                this.tutors = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async resetFilter() {
             this.filterDto = {
                 gender: "All",
                 name: "",
@@ -134,36 +135,18 @@ export default {
                 address: "",
                 fromDob: null,
                 toDob: null,
-                fromJoinDate : null,
-                toJoinDate : null,
-                isChanged : false
+                fromJoinDate: null,
+                toJoinDate: null,
+                isChanged: false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto) {
+        async handleFilter(filterDto) {
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
-        },
-        displaySubjects(subjects){
-            let color = "gray"
-            let html = ""
-            for (var subject of subjects){
-                switch(subject.name){
-                    case "Toán" :
-                        color = "border-orange-400"
-                        break;
-                    case "Tiếng Anh" :
-                        color = "border-green-400"
-                        break;
-                    case "Tiếng Nhật" :
-                        color = "border-pink-400"
-                        break;
-                }
-                var style = `rounded-lg py-2 px-6 border ${color}`
-                html += `<span class="${style}">${subject.name}</span>`
-            }
-            return html
         },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
@@ -172,7 +155,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -183,6 +166,45 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async handleApprove(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: `Bạn có chắc chắn muốn ${option.isApprove ? "đồng ý duyệt" : "từ chối duyệt"} tài khoản này?`,
+                    method: this.handleApprove,
+                    params: { confirmation: false, id: option.id, isApprove: option.isApprove }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const request = {
+                        id: option.id,
+                        status: option.isApprove ? 3 : 2
+                    }
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/change-status', request, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    await this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã gặp sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        }
+    },
+    mounted() {
+        this.fetchData()
     }
 }
 </script>

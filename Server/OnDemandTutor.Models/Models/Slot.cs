@@ -23,5 +23,5 @@ public class Slot : BaseEntity
     public virtual User CreatedBy { get; set; }
     public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>();
     public virtual ICollection<Transaction> SlotTransaction { get; set; } = new List<Transaction>();
-    public virtual Class Classes { get; set; }
+    public virtual Class Class { get; set; }
 }

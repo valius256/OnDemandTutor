@@ -2,6 +2,7 @@
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using System.Security.Claims;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -25,7 +26,13 @@ public interface IUserServices
     Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
     Task<bool> DeleteTutor(DeleteTutorDto requestDto);
     Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);
+    Task<bool> UpdateAvatarImage(string imageUrl, ClaimsPrincipal claims);
     Task<decimal?> GetBalanceAsync(int userId);
     Task<bool> UpdateBalance(int userId, decimal amount);
     Task<bool> DeaActiveAccount(DeaActiveAccountDto request);
+    Task<bool> ActiveAccount(int id);
+    Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus status);
+
+    Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
+
 }

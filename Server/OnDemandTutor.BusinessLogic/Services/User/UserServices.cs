@@ -1,5 +1,4 @@
 ﻿using FirebaseAdmin.Auth;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -14,6 +13,7 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using System.Security.Claims;
 using OnDemandTutor.Models.Paging;
+using Mapster;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -108,6 +108,8 @@ public class UserServices : IUserServices
         userInDb.ScheduleDesciption = registerTutorDtos.ScheduleDescription;
         userInDb.IdCardImageUrl = registerTutorDtos.IdentityCardUrl;
         userInDb.Role = RoleStatus.Tutor;
+        userInDb.TutorStatus = TutorStatus.Un_Verified;
+        
         if (userInDb.AvatarImageUrl == registerTutorDtos.AvatarImageurl)
         {
             throw new ModelException("AvatarImageUrl", "AvatarImageUrl is dupplicated", "AvatarImageUrl is dupplicated");
@@ -157,7 +159,6 @@ public class UserServices : IUserServices
     public async Task<bool> RechargeAccount(int uId, decimal money)
     {
         var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
-        if (recordInDb == null) return false;
 
         recordInDb.Balance += money;
         _unitOfWorkRepository.UserRepository.Update(recordInDb);
@@ -253,13 +254,14 @@ public class UserServices : IUserServices
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
         if (userInDb.IsActive == false)
         {
-            throw new ModelException("user status", $"{userInDb.IsActive} already delete",
+            throw new ModelException("Tutor status", $"{userInDb.IsActive} already delete",
                 "This account is already deleted");
         }
 
         await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == requestDto.userId)
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.IsActive, false)
                                                     .SetProperty(s => s.RecordStatus, RecordStatus.Inactive)
+                                                    .SetProperty(s => s.TutorStatus, TutorStatus.Banned)
                                                     .SetProperty(s => s.DeaActiveReason, requestDto.DeaActiveReason)
 
             );
@@ -269,13 +271,87 @@ public class UserServices : IUserServices
 
     public async Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
     {
-        var userid = userClaims.FindFirst(c => c.Type == "id")?.Value;
-        if (requestDto.Id is 0 or null)
+        var userIdClaim = userClaims.FindFirst(c => c.Type == "id")?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
         {
-            requestDto.Id = int.Parse(userid);
+            throw new ArgumentException("User ID claim is missing.");
         }
+
+        if (requestDto.Id == null || requestDto.Id == 0)
+        {
+            requestDto.Id = int.Parse(userIdClaim);
+        }
+
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
-        var rs = requestDto.Adapt(userInDb);
+        if (userInDb == null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+
+        UpdateUserFields(userInDb, requestDto);
+    
+        _unitOfWorkRepository.UserRepository.Update(userInDb);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
+    private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto requestDto)
+    {
+        if (!string.IsNullOrEmpty(requestDto.FirstName))
+        {
+            userInDb.FirstName = requestDto.FirstName;
+        }
+        if (!string.IsNullOrEmpty(requestDto.LastName))
+        {
+            userInDb.LastName = requestDto.LastName;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Phone))
+        {
+            userInDb.Phone = requestDto.Phone;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Email))
+        {
+            userInDb.Email = requestDto.Email;
+        }
+        if (!string.IsNullOrEmpty(requestDto.Address))
+        {
+            userInDb.Address = requestDto.Address;
+        }
+        if (!string.IsNullOrEmpty(requestDto.AvatarImageUrl))
+        {
+            userInDb.AvatarImageUrl = requestDto.AvatarImageUrl;
+        }
+        if (requestDto.Dob.HasValue)
+        {
+            userInDb.Dob = requestDto.Dob.Value;
+        }
+        if (requestDto.Sex.HasValue)
+        {
+            userInDb.Sex = requestDto.Sex.Value;
+        }
+        if (requestDto.TutorFeePerHour.HasValue)
+        {
+            userInDb.TutorFeePerHour = requestDto.TutorFeePerHour.Value;
+        }
+        if (!string.IsNullOrEmpty(requestDto.IdCardImageUrl))
+        {
+            userInDb.IdCardImageUrl = requestDto.IdCardImageUrl;
+        }
+        if (!string.IsNullOrEmpty(requestDto.ScheduleDesciption))
+        {
+            userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
+        }
+    
+    }
+
+
+
+
+    public async Task<bool> UpdateAvatarImage(string imageUrl, ClaimsPrincipal claims)
+    {
+        var userid = claims.FindFirst(c => c.Type == "id")?.Value;
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => userid != null && l.Id == int.Parse(userid));
+        userInDb.AvatarImageUrl = imageUrl;
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -300,16 +376,90 @@ public class UserServices : IUserServices
 
     public async Task<bool> DeaActiveAccount(DeaActiveAccountDto request)
     {
-        var modelInDB = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == request.Id);
-        
-        if (modelInDB.IsActive == false)
-            throw new ModelException($"{modelInDB.IsActive}", "is not active", "not_active");
+        var modelInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == request.Id);
+        if (modelInDb == null) throw new ArgumentNullException(nameof(modelInDb));
 
-        modelInDB.IsActive = false;
-        modelInDB.DeaActiveReason = request.DeaActiveReason;
-        _unitOfWorkRepository.UserRepository.Update(modelInDB);
+        if (modelInDb.IsActive == false)
+            throw new ModelException($"{modelInDb.IsActive}", "is not active", "not_active");
+
+        modelInDb.IsActive = false;
+        modelInDb.DeaActiveReason = request.DeaActiveReason;
+        _unitOfWorkRepository.UserRepository.Update(modelInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
-        
+
         return true;
+    }
+
+    public async Task<bool> ActiveAccount(int id)
+    {
+        await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == id)
+                                                        .ExecuteUpdateAsync(setter => setter
+                                                            .SetProperty(s => s.IsActive, true)
+                                                            .SetProperty(s => s.TutorStatus, TutorStatus.Un_Verified)
+                                                            .SetProperty(s => s.RecordStatus, RecordStatus.Active)
+                                                            .SetProperty(s => s.DeaActiveReason, String.Empty)
+
+                                                        );
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus newStatus)
+    {
+        var oldRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
+        if (oldRecord == null)
+        {
+            throw new ArgumentException("Tutor not found");
+        }
+
+        // Validate state transitions
+        bool isValidTransition = false;
+
+        switch (oldRecord.TutorStatus)
+        {
+            case TutorStatus.Un_Verified:
+                if (newStatus == TutorStatus.Sent_Verification_Requested)
+                    isValidTransition = true;
+                break;
+        
+            case TutorStatus.Sent_Verification_Requested:
+                if (newStatus == TutorStatus.Verified || newStatus == TutorStatus.Verification_Request_Rejected)
+                    isValidTransition = true;
+                break;
+        
+            case TutorStatus.Verification_Request_Rejected:
+                if (newStatus == TutorStatus.Un_Verified)
+                    isValidTransition = true;
+                break;
+        
+            case TutorStatus.Verified:
+                if (newStatus == TutorStatus.Banned || newStatus == TutorStatus.Un_Verified)
+                    isValidTransition = true;
+                break;
+
+            case TutorStatus.Banned:
+                break;
+        }
+
+        if (!isValidTransition)
+        {
+            throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
+        }
+        
+        await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, newStatus));
+
+        var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
+
+        return new CompareStatusDto()
+        {
+            OldStatus = oldRecord.TutorStatus,
+            NewStatus = newRecord.TutorStatus
+        };
+    }
+
+    public async Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page)
+    {
+        return await _unitOfWorkRepository.UserRepository.GetOutStandingTutors(limit, page);
     }
 }

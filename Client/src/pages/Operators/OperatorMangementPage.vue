@@ -36,15 +36,21 @@
             <tbody>
                 <tr v-for="operator in operators" :key="operator.id">
                     <td>{{ operator.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ operator.name }}</button></td>
+                    <td><div class="w-32 break-words font-bold">{{ operator.firstName + " " + operator.lastName }}</div></td>
                     <td class="break-all">{{ operator.email }}</td>
                     <td>{{ operator.phone }}</td>
-                    <td>{{ this.sqlDateStringToSlashFormat(operator.joinDate) }}</td>
+                    <td>{{ this.beautifyDatetime(operator.createdDate) }}</td>
                     <td>
-                        <div :class="getRoleStyle(operator.role)">{{ operator.role }}</div>
+                        <div v-if="operator.role == 2" :class="getRoleStyle(operator.role)">
+                            Operator
+                        </div>
+                        <div v-if="operator.role == 3" :class="getRoleStyle(operator.role)">
+                            Admin
+                        </div>
                     </td>
                     <td>
-                        <div :class="getStatusStyle(operator.status)">{{ operator.status }}</div>
+                        <div v-if="operator.isActive" :class="getStatusStyle(operator.isActive)">Hoạt động</div>
+                        <div v-else :class="getStatusStyle(operator.isActive)">Đình chỉ</div>
                     </td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -59,16 +65,15 @@
                                 <i class="fa fa-edit mr-4"></i>Chỉnh sửa
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                            <button v-if="operator.status == 'Active'"
+                            <button v-if="operator.isActive" @click="toggleReasonPopup(operator.id)"
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                 <i class="fa fa-remove mr-4"></i>Đình chỉ
                             </button>
-                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500">
+                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500" @click="handleActivate({confirmation : true, id : operator.id})">
                                 <i class="fa fa fa-check mr-4"></i>Kích hoạt
                             </button>
                         </div>
                     </td>
-
                 </tr>
             </tbody>
         </table>
@@ -94,15 +99,21 @@
         <generic-popup v-if="isOpenFilterPopup" title="Bộ lọc tài khoản vận hành" :closeFunction="toggleFilterPopup">
             <operator-filter-popup :close="toggleFilterPopup" :action="handleFilter" :filterDto="filterDto" />
         </generic-popup>
+        <generic-popup v-if="isOpenReasonPopup" title="Cung cấp lý do vô hiệu hóa" :closeFunction="toggleReasonPopup">
+            <account-deactivate-reason-popup :close="toggleReasonPopup" :id="activatingId" :action="fetchData" />
+        </generic-popup>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import OperatorEditAddPopup from '../../components/Operators/OperatorEditAddPopup.vue'
 import OperatorFilterPopup from '../../components/Operators/OperatorFilterPopup.vue'
+import AccountDeactivateReasonPopup from '../../components/Operators/AccountDeactivateReasonPopup.vue'
 export default {
-    components: { OperatorEditAddPopup, GenericPopup, OperatorFilterPopup },
+    components: { OperatorEditAddPopup, GenericPopup, OperatorFilterPopup, AccountDeactivateReasonPopup },
+    inject : ['eventBus'],
     name: "OperatorManagementPage",
     data() {
         return {
@@ -110,57 +121,18 @@ export default {
             pageSize: 10,
             currentPage: 1,
             selectId: 0,
+            activatingId: 0,
+            isOpenReasonPopup: false,
             isOpenAddPopup: false,
             isOpenEditPopup: false,
             isOpenFilterPopup: false,
             operators: [
-                {
-                    id: 1,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    phone: "0987654321",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Admin"
-                },
-                {
-                    id: 2,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Active",
-                    role: "Operator"
-                },
-                {
-                    id: 3,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
-                {
-                    id: 4,
-                    name: "Nguyen Van A",
-                    email: "abc@gmail.com",
-                    phone: "0987654321",
-                    joinDate: "2024-01-01",
-                    avatar: "/src/assets/noavatar.jpg",
-                    status: "Inactive",
-                    role: "Operator"
-                },
             ],
             filterDto: {
                 name: "",
                 email: "",
                 phone: "",
-                status: "All",
+                isActive: "All",
                 role: "All",
                 fromJoinDate: null,
                 toJoinDate: null,
@@ -175,20 +147,54 @@ export default {
         }
     },
     methods: {
-        resetFilter() {
+        async fetchData() {
+            let query = {
+                Name : this.filterDto.name,
+                Email : this.filterDto.email,
+                Phone : this.filterDto.phone,
+                JoinFromDate : this.filterDto.fromJoinDate ?? "",
+                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            let queryStr = ""
+            if (this.filterDto.role != "All") {
+                query['Role'] = this.filterDto.role
+            } else {
+                queryStr += "Role=2&Role=3&"
+            }
+            if (this.filterDto.isActive != "All") {
+                query['IsActive'] = this.filterDto.isActive
+            }
+            queryStr += this.jsonToQueryString(query)
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 
+            queryStr,{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.operators = response.data.data.items
+                this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
+            }
+        },
+        async resetFilter() {
             this.filterDto = {
                 name: "",
                 email: "",
                 phone: "",
-                status: "All",
+                isActive: "All",
                 role: "All",
                 fromJoinDate: null,
                 toJoinDate: null,
                 isChanged: false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto) {
+        async handleFilter(filterDto) {
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -210,6 +216,12 @@ export default {
         toggleOpenEditPopup() {
             this.isOpenEditPopup = !this.isOpenEditPopup
         },
+        toggleReasonPopup(id) {
+            if (id) {
+                this.activatingId = id
+            }
+            this.isOpenReasonPopup = !this.isOpenReasonPopup
+        },
         clearSelectId() {
             if (this.isShowPopup) {
                 this.selectId = 0
@@ -227,18 +239,18 @@ export default {
         getStatusStyle(status) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (status) {
-                case "Active":
+                case true:
                     return css + " bg-green-400"
-                case "Inactive":
+                case false:
                     return css + " bg-gray-400"
             }
         },
         getRoleStyle(role) {
             let css = "text-center font-bold text-white rounded-lg p-1"
             switch (role) {
-                case "Admin":
+                case 3:
                     return css + " bg-blue-400"
-                case "Operator":
+                case 2:
                     return css + " bg-gray-400"
             }
         },
@@ -249,7 +261,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -260,8 +272,44 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async handleActivate(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có muốn kích hoạt lại tài khoản này không?",
+                    method: this.handleActivate,
+                    params: { confirmation: false, id: option.id }
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const request = {
+                        id: option.id,
+                    }
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/User/active-account', request, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    await this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã gặp sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
     },
     mounted() {
+        this.fetchData()
     }
 }
 </script>

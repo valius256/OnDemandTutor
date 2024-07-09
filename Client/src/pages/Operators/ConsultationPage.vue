@@ -52,7 +52,7 @@
                                     <i class="fa fa-close mr-4"></i>Chưa giải quyết
                                 </button>
                                 <!-- <li class="hover:bg-slate-200 p-2"></li> -->
-                                <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left">
+                                <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left" @click="handleDelete( {confirmation : true, id : request.id})">
                                     <i class="fa fa-trash mr-4"></i>Xóa
                                 </button>
                             </div>
@@ -99,7 +99,7 @@ export default {
         async fetchData() {
             let queryString = `?limit=${this.pageSize}&page=${this.currentPage}`
             if (this.isShowPending) {
-                queryString += "&status=0"
+                queryString += "&ConsultationStatus=0"
             }
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/all' + queryString, {
                 headers: {
@@ -128,7 +128,7 @@ export default {
                     message: "Vui lòng chờ..."
                 })
                 try {
-                    await axios.post(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/Handle', request,{
+                    await axios.patch(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/Handle', request,{
                         headers : {
                             "Authorization" : "Bearer " + localStorage.token
                         }
@@ -183,6 +183,38 @@ export default {
                 this.isShowPopup = true
             }
         },
+        async handleDelete(option) {
+            if (option.confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn xóa yêu cầu tư vấn này?",
+                    method: this.handleDelete,
+                    params: {confirmation : false, id : option.id}
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.delete(import.meta.env.VITE_API_URL + '/api/ConsultationControllers/delete?id=' + option.id,{
+                        headers : {
+                            "Authorization" : "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Xóa thành công",
+                        type: "Success"
+                    })
+                    await this.fetchData()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Không thể xóa được. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        }
     },
     mounted() {
         this.fetchData()

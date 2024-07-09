@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
@@ -53,10 +55,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => ld.Sex == request.Sex);
         }
 
-        if (request.Role.HasValue)
+        if (request.Role != null && request.Role.Any())
         {
-            userListQuery = userListQuery.Where(ld => ld.Role == request.Role);
+            userListQuery = userListQuery.Where(ld => request.Role.Contains(ld.Role));
         }
+
 
         if (request.DobFromDate != null && request.DobToDate != null)
         {
@@ -67,12 +70,17 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             userListQuery = userListQuery.Where(ld => ld.TutorSubjects.Any(ts => ts.Subject.Name == request.Subject));
         }
-        
-        if (request.JoinFromDate != null && request.JoinToDate != null)
+
+        if (request.JoinFromDate.HasValue)
         {
-            userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+            userListQuery = userListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate);
         }
-        
+
+        if (request.JoinToDate.HasValue)
+        {
+            userListQuery = userListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
+        }
+
 
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
@@ -115,8 +123,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
-            .ThenInclude(d => d.Subject)
-            .Where(ld => ld.Role == RoleStatus.Tutor);
+                .ThenInclude(d => d.Subject)
+               // .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+            .Where(u => u.Role == RoleStatus.Tutor);
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -129,6 +138,16 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.Email.Contains(request.Email));
         }
 
+        if (request.IsActive.HasValue)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.IsActive == request.IsActive);
+        }
+
+        if (request.TutorStatus != null && request.TutorStatus.Any())
+        {
+            tutorListQuery = tutorListQuery.Where(ld => request.TutorStatus.Contains(ld.TutorStatus.Value));
+        }
+
         if (!string.IsNullOrEmpty(request.Phone))
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.Phone == request.Phone);
@@ -139,43 +158,48 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             tutorListQuery = tutorListQuery.Where(ld => ld.Address == request.Address);
         }
 
-        if (request.Sex.HasValue)
+        if (request.Sex != null && request.Sex.Any())
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Sex == request.Sex);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Sex.HasValue && request.Sex.Contains(ld.Sex.Value));
         }
-
-        if (request.DobFromDate != null && request.DobToDate != null)
+        
+        if (request.JoinFromDate.HasValue)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.Dob <= request.DobToDate);
+            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate);
         }
-
-        if (request.JoinFromDate != null && request.JoinToDate != null)
+        
+        if (request.JoinFromDate.HasValue)
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate && ld.CreatedDate <= request.JoinToDate);
+            tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
         }
 
         if (request.Subject != null)
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
-        } 
-
+        }
+        
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
-        
+
         tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
 
         var filteredTutors = await tutorListQuery
             .AsNoTracking()
             .Select(u => new TutorSimpleProfileDto
             {
+                Id = u.Id,
                 FullName = u.FirstName + " " + u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
+                Sex =  u.Sex.Value,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
                 JoiningDate = u.CreatedDate.Value, // Assuming CreatedDate is the joining date
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
-                Description = u.ScheduleDesciption
+                Description = u.ScheduleDesciption,
+                IsActive = u.IsActive,
+                TutorStatus = u.TutorStatus,
+                TutorSubjects = u.TutorSubjects.Adapt<List<GetTutorSubjectDto>>()
             })
             .ToNewPagingAsync(page, limit);
 
@@ -183,6 +207,44 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return filteredTutors;
     }
 
+    public async Task<PagedResult<GetOutstandingTutorDto>> GetOutStandingTutors(int limit, int page)
+    {
+        var tutorListQuery = dbSet
+            .Include(u => u.TutorSubjects)
+                .ThenInclude(d => d.Subject)
+            .Include(u => u.Slots)
+                .ThenInclude(s => s.SlotStudents)
+            .Include(u => u.Classes)
+                .ThenInclude(s => s.StudentClasses)
+            .Where(u => u.Role == RoleStatus.Tutor && u.TutorStatus == TutorStatus.Verified && u.IsActive);
 
+        int skip = (page - 1) * limit;
+        tutorListQuery = tutorListQuery.Skip(skip).Take(limit);
+
+        // Materialize the query into a list
+        var tutors = await tutorListQuery.ToListAsync();
+
+        // Perform the aggregation in memory
+        var outstandingTutors = tutors
+            .Select(u => new GetOutstandingTutorDto
+            {
+                Tutor = u.Adapt<TutorSimpleProfileDto>(),
+                NumberOfBooker = u.Slots.Sum(s => s.SlotStudents.Count),
+                NumberOfStudentClass = u.Classes.Sum(s => s.StudentClasses.Count),
+            })
+            .OrderByDescending(u => u.NumberOfBooker + u.NumberOfStudentClass)
+            .ToList();
+
+        // Implement your own paging logic here since we materialized the query already
+        var pagedResult = new PagedResult<GetOutstandingTutorDto>
+        {
+            Items = outstandingTutors.Skip(skip).Take(limit).ToList(),
+            Page = page,
+            Limit = limit,
+            Total = outstandingTutors.Count
+        };
+
+        return pagedResult;
+    }
 
 }
