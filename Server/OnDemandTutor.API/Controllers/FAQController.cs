@@ -26,13 +26,13 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpPost("create")]
-        [ProducesResponseType(typeof(FAQDto), 200)]
+        [ProducesResponseType(typeof(FAQDTO), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
-        public async Task<IActionResult> CreateFAQ([FromBody] FAQDto faqDto)
+        public async Task<IActionResult> CreateFAQ([FromBody] CreateFAQDto FAQDTO)
         {
             try
             {
-                var createdFaq = await _faqService.CreateFAQAsync(faqDto);
+                var createdFaq = await _faqService.CreateFAQAsync(FAQDTO);
                 return Ok(createdFaq);
             }
             catch (Exception ex)
@@ -44,9 +44,9 @@ namespace OnDemandTutor.API.Controllers
 
         //[Authorize]
         [HttpGet("all")]
-        [ProducesResponseType(typeof(PagedResult<FAQDto>), 200)]
+        [ProducesResponseType(typeof(PagedResult<FAQDTO>), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
-        public async Task<IActionResult> GetFAQs([FromQuery] PagingModel<FAQDto> pagingModel)
+        public async Task<IActionResult> GetFAQs([FromQuery] PagingModel<FAQDTO> pagingModel)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace OnDemandTutor.API.Controllers
 
       //  [Authorize]
         [HttpGet("get-by-id")]
-        [ProducesResponseType(typeof(FAQDto), 200)]
+        [ProducesResponseType(typeof(FAQDTO), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> GetFAQById(int id)
         {
@@ -80,13 +80,13 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        [ProducesResponseType(typeof(FAQDto), 200)]
+        [ProducesResponseType(typeof(FAQDTO), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel)   , 400)]
-        public async Task<IActionResult> UpdateFAQ([FromBody] FAQDto faqDto)
+        public async Task<IActionResult> UpdateFAQ([FromBody] UpdateFAQDto FAQDTO)
         {
             try
             {
-                var updatedFaq = await _faqService.UpdateFAQAsync(faqDto);
+                var updatedFaq = await _faqService.UpdateFAQAsync(FAQDTO);
                 return Ok(updatedFaq);
             }
             catch (Exception ex)
