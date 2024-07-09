@@ -1,70 +1,87 @@
-﻿using System;
-using Mapster;
+﻿using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
 using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.IRepository;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.FAQ;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.BusinessLogic.Services.FAQ
+public class FAQService : IFAQService
 {
-    public class FAQService : IFAQService
+    private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+    private readonly IAuthServices _authService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public FAQService(IUnitOfWorkRepository unitOfWorkRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
     {
-        private readonly IUnitOfWorkRepository _unitOfWork;
+        _unitOfWorkRepository = unitOfWorkRepository;
+        _authService = authService;
+        _httpContextAccessor = HttpContextAccessor;
+    }
 
-        public FAQService(IUnitOfWorkRepository unitOfWork)
+    public async Task<PagedResult<FAQDTO>> GetFAQsAsync(PagingModel<FAQDTO> request)
+    {
+        var pagedFAQs = await _unitOfWorkRepository.FAQRepository.PagingAsync(request.Adapt<PagingModel<FAQDTO>>());
+        return pagedFAQs.Adapt<PagedResult<FAQDTO>>();
+    }
+
+    public async Task<FAQDTO> GetFAQByIdAsync(int id)
+    {
+        var faqEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == id);
+        if (faqEntity == null)
         {
-            _unitOfWork = unitOfWork;
+            throw new NotFoundException($"FAQ with ID {id} not found.");
+        }
+        return faqEntity.Adapt<FAQDTO>();
+    }
+
+    public async Task<CreateFAQDto> CreateFAQAsync(CreateFAQDto faqDto)
+    {
+        var user = _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+
+        var faqEntity = faqDto.Adapt<FAQ>();
+        faqEntity.CreateById = user.Id;
+        faqEntity.CreateAt = DateTime.Now;
+
+        var createdFAQEntity = await _unitOfWorkRepository.FAQRepository.AddAsync(faqEntity);
+        await _unitOfWorkRepository.SaveChangesAsync();
+
+        return createdFAQEntity.Entity.Adapt<CreateFAQDto>();
+    }
+
+    public async Task<UpdateFAQDto> UpdateFAQAsync(UpdateFAQDto faqDto)
+    {
+        var existingFAQEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == faqDto.Id);
+        if (existingFAQEntity == null)
+        {
+            throw new NotFoundException($"FAQ with ID {faqDto.Id} not found.");
         }
 
-        public async Task<PagedResult<FAQDto>> GetFAQsAsync(PagingModel<FAQDto> pagingModel)
+        var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+        existingFAQEntity = faqDto.Adapt(existingFAQEntity);
+        existingFAQEntity.CreateById = user.Id; // Update this field if needed
+        existingFAQEntity.CreateAt = DateTime.Now; // Update this field if needed
+
+        var updatedFAQEntity = _unitOfWorkRepository.FAQRepository.Update(existingFAQEntity);
+        await _unitOfWorkRepository.SaveChangesAsync();
+
+        return updatedFAQEntity.Entity.Adapt<UpdateFAQDto>();
+    }
+
+    public async Task<bool> DeleteFAQAsync(int id)
+    {
+        var existingFAQEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == id);
+        if (existingFAQEntity == null)
         {
-            var pagedResult = await _unitOfWork.FAQRepository.PagingAsync(pagingModel);
-            return pagedResult.Adapt<PagedResult<FAQDto>>();
+            throw new NotFoundException($"FAQ with ID {id} not found.");
         }
 
-        public async Task<FAQDto> GetFAQByIdAsync(int id)
-        {
-            var faq = await _unitOfWork.FAQRepository.FirstOrDefaultAsync(c => c.Id == id);
-            return faq?.Adapt<FAQDto>();
-        }
+        _unitOfWorkRepository.FAQRepository.Remove(existingFAQEntity);
+        await _unitOfWorkRepository.SaveChangesAsync();
 
-        public async Task<FAQDto> CreateFAQAsync(FAQDto faqDto)
-        {
-            var faqEntity = faqDto.Adapt<Models.Models.FAQ>();
-            var addedEntity = _unitOfWork.FAQRepository.Add(faqEntity);
-            await _unitOfWork.SaveChangesAsync();
-            return addedEntity.Entity.Adapt<FAQDto>();
-        }
-
-        public async Task<FAQDto> UpdateFAQAsync(FAQDto faqDto)
-        {
-            var faqEntity = await _unitOfWork.FAQRepository.FirstOrDefaultAsync(c => c.Id == faqDto.Id);
-            if (faqEntity == null)
-            {
-                throw new KeyNotFoundException($"FAQ with ID {faqDto.Id} not found.");
-            }
-
-            faqEntity.Question = faqDto.Question;
-            faqEntity.Answer = faqDto.Answer;
-
-            var updatedEntity = _unitOfWork.FAQRepository.Update(faqEntity);
-            await _unitOfWork.SaveChangesAsync();
-            return updatedEntity.Entity.Adapt<FAQDto>();
-        }
-
-        public async Task<bool> DeleteFAQAsync(int id)
-        {
-            var faqEntity = await _unitOfWork.FAQRepository.FirstOrDefaultAsync(c => c.Id == id);
-            if (faqEntity == null)
-            {
-                throw new KeyNotFoundException($"FAQ with ID {id} not found.");
-            }
-
-            _unitOfWork.FAQRepository.Remove(faqEntity);
-            await _unitOfWork.SaveChangesAsync();
-            return true;
-        }
+        return true;
     }
 }
-

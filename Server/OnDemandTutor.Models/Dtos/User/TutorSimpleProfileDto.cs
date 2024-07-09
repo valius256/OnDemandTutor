@@ -12,8 +12,5 @@ public class TutorSimpleProfileDto
     public DateTime JoiningDate { get; set; }
     public List<string> Subject { get; set; }
     public string Description { get; set; }
-<<<<<<< HEAD
     public virtual GetTutorSubjectDto SubjectTutor { get; set; }
-=======
->>>>>>> a30ffdd27a876d4d871337759b2c2d2dda0cfb04
 }
