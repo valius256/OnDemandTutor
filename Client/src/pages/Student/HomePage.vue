@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <button class="mt-3 bg-white hover:bg-slate-200 text-blue-600 py-3 px-12 rounded-full text-lg font-bold">
+          <button class="mt-3 bg-white hover:bg-slate-200 text-blue-600 py-3 px-12 rounded-full text-lg font-bold" @click="$router.push('/tutors')">
             Xem thêm gia sư
           </button>
         </div>

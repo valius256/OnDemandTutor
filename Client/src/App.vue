@@ -1,7 +1,11 @@
 <template>
   <div>
     <Authorization>
+<<<<<<< HEAD
       <div v-if="user?.role == 0 || !user">
+=======
+      <div v-if="!user || user?.role == 'Student'">
+>>>>>>> 67e22300bea71de8552e1139027008474a535a0e
         <StudentLayout />
       </div>
       <div v-else-if="user?.role == 1">
