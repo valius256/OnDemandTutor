@@ -1,6 +1,10 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
@@ -11,10 +15,15 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
     public class ConsultationRequestService : IConsultationRequestService
     {
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+        private readonly IAuthServices _authService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ConsultationRequestService(IUnitOfWorkRepository unitOfWorkRepository)
+
+        public ConsultationRequestService(IUnitOfWorkRepository unitOfWorkRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWorkRepository = unitOfWorkRepository;
+            _authService = authService;
+            _httpContextAccessor = HttpContextAccessor;
         }
 
         public async Task<PagedResult<GetConsultationRequestDto>> GetConsultationRequestsAsync(PagingModel<GetConsultationRequestDto> pagingModel)
@@ -47,16 +56,35 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
 
         public async Task<GetConsultationRequestDto> UpdateConsultationRequestAsync(GetConsultationRequestDto consultationRequestDto)
         {
+            // Retrieve the existing consultation request entity from the database
             var consultationRequest = await _unitOfWorkRepository.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == consultationRequestDto.Id);
+
+            // Check if the entity is null
             if (consultationRequest == null)
             {
-                return null;
+                throw new NotFoundException($"Consultation request with ID {consultationRequestDto.Id} not found.");
             }
+
+            // Get the current user from the authentication service
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+
+            // Adapt the incoming DTO to update the existing entity
             consultationRequestDto.Adapt(consultationRequest);
-            _unitOfWorkRepository.ConsultationRequestRepository.Update(consultationRequest);
+
+            // Set the updated fields
+            consultationRequest.UpdatedById = user.Id; // Assuming there is an UpdatedById property
+            consultationRequest.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
+
+            // Update the entity in the repository
+            var updatedConsultationRequestEntity = _unitOfWorkRepository.ConsultationRequestRepository.Update(consultationRequest);
+
+            // Save changes to the database
             await _unitOfWorkRepository.SaveChangesAsync();
-            return consultationRequest.Adapt<GetConsultationRequestDto>();
+
+            // Return the updated DTO
+            return updatedConsultationRequestEntity.Adapt<GetConsultationRequestDto>();
         }
+
 
         public async Task<bool> DeleteConsultationRequestAsync(int id)
         {

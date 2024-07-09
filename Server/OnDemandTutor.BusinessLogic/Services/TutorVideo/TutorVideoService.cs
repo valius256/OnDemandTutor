@@ -1,4 +1,6 @@
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorVideo;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -11,9 +13,14 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
 
-        public TutorVideoService(IUnitOfWorkRepository unitOfWork)
+        private readonly IAuthServices _authService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public TutorVideoService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWork;
+            _authService = authService;
+            _httpContextAccessor = HttpContextAccessor;
         }
 
         public async Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<GetTutorVideoDto> request)
@@ -42,19 +49,35 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
 
         public async Task<UpdateTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto)
         {
+            // Retrieve the existing tutor video entity from the database
             var existingTutorVideoEntity = await _unitOfWork.TutorVideoRepository.FirstOrDefaultAsync(tv => tv.Id == tutorVideoDto.Id);
+
+            // Check if the entity is null
             if (existingTutorVideoEntity == null)
             {
                 throw new NotFoundException($"TutorVideo with ID {tutorVideoDto.Id} not found.");
             }
 
+            // Get the current user from the authentication service
+            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+
+            // Adapt the incoming DTO to the existing entity
             existingTutorVideoEntity = tutorVideoDto.Adapt(existingTutorVideoEntity);
 
+            // Set the updated fields
+            existingTutorVideoEntity.UpdatedById = user.Id; // Assuming there is an UpdatedById property
+            existingTutorVideoEntity.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
+
+            // Update the entity in the repository
             var updatedTutorVideoEntity = _unitOfWork.TutorVideoRepository.Update(existingTutorVideoEntity);
+
+            // Save changes to the database
             await _unitOfWork.SaveChangesAsync();
 
+            // Return the updated DTO
             return updatedTutorVideoEntity.Adapt<UpdateTutorVideoDto>();
         }
+
 
         public async Task<bool> DeleteTutorVideoAsync(int id)
         {
