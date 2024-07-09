@@ -30,7 +30,6 @@ using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.BusinessLogic.Services.Blog;
 using OnDemandTutor.BusinessLogic.Services.Class;
 using OnDemandTutor.BusinessLogic.Services.ConsultationRequest;
-using OnDemandTutor.BusinessLogic.Services.FAQ;
 using OnDemandTutor.BusinessLogic.Services.Mail;
 using OnDemandTutor.BusinessLogic.Services.Notification;
 using OnDemandTutor.BusinessLogic.Services.Payment;
