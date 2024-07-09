@@ -1,7 +1,7 @@
 <template>
   <div>
     <Authorization>
-      <div v-if="user?.role == 'Student'">
+      <div v-if="!user || user?.role == 'Student'">
         <StudentLayout />
       </div>
       <div v-else-if="user?.role == 'Tutor'">

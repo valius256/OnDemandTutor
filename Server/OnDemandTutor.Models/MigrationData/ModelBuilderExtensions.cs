@@ -42,7 +42,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0987654321",
                     Email = "tranthib@example.com",
                     Address = "456 Đường Phụ",
-                    AvatarImageUrl = "http://example.com/avatar2.png",
+                    AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/7de5f02b1fdbfb2a5dc39b4916366176e32c1c9b4fe38e83b644b542847ff5b1?w=1024&h=1024&pmaid=110607675",
                     Dob = new DateTime(1985, 2, 2),
                     Role = RoleStatus.Tutor,
                     Balance = 200.0m,
@@ -52,6 +52,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ScheduleDesciption = "Có mặt vào các ngày trong tuần",
                     Password = "matkhau123",
                     Sex = Sex.Female,
+                    TutorStatus = TutorStatus.Verified,
                     IsActive = true
                 },
                 new User
@@ -84,7 +85,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Phone = "0233445566",
                     Email = "phamvand@example.com",
                     Address = "101 Đường Phong",
-                    AvatarImageUrl = "http://example.com/avatar4.png",
+                    AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/f2a40547791c296c19b1ea354ed8dbd3e327be21637b64ebf612837de36c5e2b?w=1024&h=1024&pmaid=110608381",
                     Dob = new DateTime(1975, 4, 4),
                     Role = RoleStatus.Tutor,
                     Balance = 400.0m,
@@ -94,6 +95,7 @@ namespace OnDemandTutor.Models.MigrationData
                     ScheduleDesciption = "Có mặt vào cuối tuần",
                     Password = "matkhau123",
                     Sex = Sex.Male,
+                    TutorStatus = TutorStatus.Verified,
                     IsActive = true
                 },
                 new User
@@ -141,7 +143,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Nguyễn Văn A",
                     Phone = "0123456789",
                     HandleById = 1,
-                    ConsultationContent = "Nội dung tư vấn cho yêu cầu 1.",
+                    ConsultationContent = "Tôi cần hỗ trợ đăng ký làm gia sư",
                     RequestDate = DateTime.UtcNow.Date,
                     Status = ConsultationRequestStatus.Pending,
                 },
@@ -151,7 +153,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Trần Thị B",
                     Phone = "0987654321",
                     HandleById = 2,
-                    ConsultationContent = "Nội dung tư vấn cho yêu cầu 2.",
+                    ConsultationContent = "Làm thế nào để đặt 1 gia sư",
                     RequestDate = DateTime.Today,
                     Status = ConsultationRequestStatus.Solved,
                 },
@@ -161,7 +163,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Lê Văn C",
                     Phone = "0122334455",
                     HandleById = 1,
-                    ConsultationContent = "Nội dung tư vấn cho yêu cầu 3.",
+                    ConsultationContent = "Tôi cần hỗ trợ rút tiền",
                     RequestDate = DateTime.UtcNow.AddDays(-3),
                     Status = ConsultationRequestStatus.Pending,
 
@@ -172,7 +174,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Name = "Phạm Thị D",
                     Phone = "0233445566",
                     HandleById = 2,
-                    ConsultationContent = "Nội dung tư vấn cho yêu cầu 4.",
+                    ConsultationContent = "Web có cho mở lớp trên đây không?",
                     RequestDate = DateTime.UtcNow.AddDays(-5),
                     Status = ConsultationRequestStatus.Solved,
                 },
@@ -196,40 +198,48 @@ namespace OnDemandTutor.Models.MigrationData
                 new FAQ
                 {
                     Id = 1,
-                    Question = "Lorem Ipsum là gì?",
-                    Answer = "Lorem Ipsum chỉ đơn giản là văn bản giả của ngành in ấn và sắp chữ.",
+                    Question = "OnDemandTutor là gì?",
+                    Answer = "Là 1 website kết nối giữa học viên và người dạy kèm theo yêu cầu. Học viên có thể tìm được gia sư phù hợp và đúng " +
+                    "yêu cầu của mình để giải quyết các vấn đề học tập của mình. Gia sư có thể lên website và quảng bá dịch vụ dạy học của mình để nhiều " +
+                    "học viên biết tới mình hơn",
                     CreateById = 1,
                     CreateAt = createAt
                 },
                 new FAQ
                 {
                     Id = 2,
-                    Question = "Tại sao chúng ta sử dụng nó?",
-                    Answer = "Nó là một sự thật lâu đời rằng một người đọc sẽ bị phân tâm bởi nội dung dễ đọc của một trang khi nhìn vào bố cục của nó.",
+                    Question = "Làm thế nào để trờ thành gia sư?",
+                    Answer = "Như đã hướng dẫn tại trang chủ. Đầu tiên bạn cần ấn vào nút đăng ký và chọn 'Gia sư'. Sau đó điền các thông tin cần thiết. " +
+                    "Chúng tôi sẽ yêu cầu bạn tải lên ảnh giấy tờ tuy thân để xác minh danh tính của bạn và từ đó bạn có thể hoạt động trên website này. Quá " +
+                    "trình xem xét thường không quá 48h.",
                     CreateById = 2,
                     CreateAt = createAt.AddDays(-1)
                 },
                 new FAQ
                 {
                     Id = 3,
-                    Question = "Nó xuất phát từ đâu?",
-                    Answer = "Trái với quan niệm phổ biến, Lorem Ipsum không chỉ là văn bản ngẫu nhiên.",
+                    Question = "Đặt 1 gia sư như thế nào?",
+                    Answer = "Tìm 1 gia sư theo yêu cầu của bạn, sau đó vô trang của họ. Tại đây bạn sẽ thấy các khung giờ mà gia sư đã tạo sẵn và bạn có thể " +
+                    "nhấn vào để đặt những khung giờ này. Bạn sẽ được yêu cầu trả trước phí thuê gia sư để tránh tình trạng nhiễu loạn.",
                     CreateById = 1,
                     CreateAt = createAt.AddDays(-2)
                 },
                 new FAQ
                 {
                     Id = 4,
-                    Question = "Tôi có thể lấy nó ở đâu?",
-                    Answer = "Có nhiều biến thể của các đoạn văn Lorem Ipsum có sẵn, nhưng phần lớn đã bị thay đổi dưới một số hình thức.",
+                    Question = "Tôi có thể tham gia 1 lớp nào đó của gia sư không?",
+                    Answer = "Có, bạn có thể tham gia 1 lớp. Gia sư có thể tạo lớp trên nền tảng và mở cho mọi người đăng ký học trước khi nó bắt đầu. " +
+                    "Ban sẽ được yêu cầu thanh toán tiền cọc trước khi có thể tham gia lớp này.",
                     CreateById = 2,
                     CreateAt = createAt.AddDays(-3)
                 },
                 new FAQ
                 {
                     Id = 5,
-                    Question = "Đoạn văn Lorem Ipsum chuẩn là gì?",
-                    Answer = "Đoạn văn Lorem Ipsum chuẩn, được sử dụng từ những năm 1500, được tái tạo dưới đây cho những ai quan tâm.",
+                    Question = "Thanh toán trên OnDemandTutor như thế nào?",
+                    Answer = "Các giao dịch trên OnDemandTutor sẽ được thực hiện trên ví của người dùng trên hệ thống. Bạn có thể nạp tiền vào ví sẵn để trả " +
+                    "cho các yêu cầu đặt lịch hoặc trả cọc. Nền tảng chúng tôi chấp nhận thanh toán bằng cổng VnPay. Bạn có thể rút tiền ra khi có nhu cầu. Tiền" +
+                    "sẽ được rút ra bằng cách chuyển lại vào tài khoản ngân hàng của bạn.",
                     CreateById = 1,
                     CreateAt = createAt.AddDays(-4)
                 }
@@ -366,50 +376,70 @@ namespace OnDemandTutor.Models.MigrationData
                 new Subject
                 {
                     Id = 1,
-                    Name = "Mathematics",
-                    SubjectType = "Science",
+                    Name = "Toán",
+                    SubjectType = "Khoa học tự nhiên",
                     CreateById = 1,
-                    Description = "Basic mathematics subject",
+                    Description = "Nền tảng của các môn khoa học tự nhiên",
                     CreateAt = createAt,
                     IsEnable = true,
                 },
                 new Subject
                 {
                     Id = 2,
-                    Name = "English",
-                    SubjectType = "Language",
+                    Name = "Tiếng Anh",
+                    SubjectType = "Ngôn ngữ",
                     CreateById = 2,
-                    Description = "Language arts subject",
+                    Description = "Nghệ thuật ngôn ngữ Anh",
                     CreateAt = createAt.AddDays(-1),
                     IsEnable = true,
                 },
                 new Subject
                 {
                     Id = 3,
-                    Name = "Physics",
-                    SubjectType = "Science",
+                    Name = "Vật lý",
+                    SubjectType = "Khoa học tự nhiên",
                     CreateById = 1,
-                    Description = "Study of matter and energy",
+                    Description = "Khoa học nghiên cứu về vật chất và năng lượng",
                     CreateAt = createAt.AddDays(-2),
                     IsEnable = true,
                 },
                 new Subject
                 {
                     Id = 4,
-                    Name = "History",
-                    SubjectType = "Social Science",
+                    Name = "Lịch sử",
+                    SubjectType = "Khoa học xã hội",
                     CreateById = 2,
-                    Description = "Study of past events",
+                    Description = "Học về những sự kiện trong quá khứ",
                     CreateAt = createAt.AddDays(-3),
                     IsEnable = true,
                 },
                 new Subject
                 {
                     Id = 5,
-                    Name = "Computer Science",
-                    SubjectType = "Science",
+                    Name = "Khoa học máy tính",
+                    SubjectType = "Khoa học",
                     CreateById = 1,
-                    Description = "Study of computers and computational systems",
+                    Description = "Học hỏi về khoa học bên trong 1 chiếc máy tính",
+                    CreateAt = createAt.AddDays(-4),
+                    IsEnable = true,
+                },
+                new Subject
+                {
+                    Id = 6,
+                    Name = "Piano, Organ",
+                    SubjectType = "Năng khiếu",
+                    CreateById = 1,
+                    Description = "Học đàn piano hoặc organ căn bản hoặc nâng cao",
+                    CreateAt = createAt.AddDays(-4),
+                    IsEnable = true,
+                },
+                new Subject
+                {
+                    Id = 7,
+                    Name = "Vẽ chân dung",
+                    SubjectType = "Năng khiếu",
+                    CreateById = 1,
+                    Description = "Học vẽ chân dung, nâng cao tay nghề",
                     CreateAt = createAt.AddDays(-4),
                     IsEnable = false,
                 }
@@ -611,41 +641,56 @@ namespace OnDemandTutor.Models.MigrationData
                 new Class
                 {
                     Id = 1,
-                    Name = "Toán học cơ bản",
-                    TutorId = 1, // Thay bằng TutorId đã có
+                    Name = "Nhập môn toán cao cấp",
+                    TutorId = 2, // Thay bằng TutorId đã có
                     SubjectId = 1, // Thay bằng SubjectId đã có
+                    Location = "meet.google.com",
+                    Method = "Online",
+                    Status = ClassStatus.OnGoing
                 
                 },
                 new Class
                 {
                     Id = 2,
-                    Name = "Văn học",
-                    TutorId = 2, // Thay bằng TutorId đã có
+                    Name = "Luyên thi IELTS 7+",
+                    TutorId = 4, // Thay bằng TutorId đã có
                     SubjectId = 2, // Thay bằng SubjectId đã có
-                
+                    Location = "Gò vấp, TPHCM",
+                    Method = "Online",
+                    Status = ClassStatus.NotStart
+
                 },
                 new Class
                 {
                     Id = 3,
-                    Name = "Thí nghiệm Vật lý",
-                    TutorId = 1, // Thay bằng TutorId đã có
+                    Name = "Luyện thi Vật lý 9+ THPTQG",
+                    TutorId = 2, // Thay bằng TutorId đã có
                     SubjectId = 3, // Thay bằng SubjectId đã có
+                    Location = "meet.google.com",
+                    Method = "Online",
+                    Status = ClassStatus.NotStart
                 },
                 new Class
                 {
                     Id = 4,
-                    Name = "Lịch sử thế giới",
-                    TutorId = 3, // Thay bằng TutorId đã có
+                    Name = "Bí quyết học môn Lịch sử",
+                    TutorId = 4, // Thay bằng TutorId đã có
                     SubjectId = 4, // Thay bằng SubjectId đã có
+                    Location = "Q9, TPHCM",
+                    Method = "Offline",
+                    Status = ClassStatus.Disabled
                 },
                 new Class
                 {
                     Id = 5,
-                    Name = "Hóa học nâng cao",
+                    Name = "Học thêm hóa 12",
                     TutorId = 2, // Thay bằng TutorId đã có
                     SubjectId = 5, // Thay bằng SubjectId đã có
+                    Location = "Thủ Đức, TPHCM",
+                    Method = "Offline",
+                    Status = ClassStatus.Finished
                 }
-            );
+            );;
 
             #endregion
 
@@ -653,11 +698,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1, StudentId = 1, ClassId = 1, Rating = 5, TutorId = 1 },
-                new StudentClass { Id = 2, StudentId = 2, ClassId = 1, Rating = 2, TutorId = 2 },
+                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5, TutorId = 1 },
+                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2, TutorId = 2 },
                 new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, TutorId = 1 },
-                new StudentClass { Id = 4, StudentId = 4, ClassId = 2, Rating = 4, TutorId = 2 },
-                new StudentClass { Id = 5, StudentId = 5, ClassId = 3, Rating = 4, TutorId = 1 }
+                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4, TutorId = 2 },
+                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4, TutorId = 1 }
                 // Add more as needed
             );
 
@@ -665,11 +710,11 @@ namespace OnDemandTutor.Models.MigrationData
 
             #region TutorSubject
             modelBuilder.Entity<TutorSubject>().HasData(
-                new TutorSubject {Id = 1,UserId = 1, SubjectId = 1 },
-                new TutorSubject {Id = 2 ,UserId = 1, SubjectId = 2 },
-                new TutorSubject {Id = 3 ,UserId = 2, SubjectId = 3 },
-                new TutorSubject {Id = 4 ,UserId = 3, SubjectId = 1 },
-                new TutorSubject {Id = 5 ,UserId = 3, SubjectId = 4 }
+                new TutorSubject {Id = 1,UserId = 2, SubjectId = 1 },
+                new TutorSubject {Id = 2 ,UserId = 2, SubjectId = 2 },
+                new TutorSubject {Id = 3 ,UserId = 4, SubjectId = 3 },
+                new TutorSubject {Id = 4 ,UserId = 4, SubjectId = 1 },
+                new TutorSubject {Id = 5 ,UserId = 4, SubjectId = 4 }
               
             );
 
