@@ -11,5 +11,6 @@ public class TransactionDto
     public PaymentStatus? Status { get; set; }
     public string? Notes { get; set; }
     public int? SlotId { get; set; }
+    public int? ClassId { get; set; }
     public int CreatedById { get; set; }
 }

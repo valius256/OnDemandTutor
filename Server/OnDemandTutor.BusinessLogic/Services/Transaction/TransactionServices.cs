@@ -4,8 +4,8 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
-using System.Security.Claims;
 using OnDemandTutor.Models.Paging;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -18,11 +18,11 @@ public class TransactionServices : ITransactionServices
         _unitOfWorkRepository = unitOfWorkRepository;
     }
 
-    public async Task<int> CreateTransactionDb(TransactionDto transaction)
+    public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
     {
         var transactionModel = transaction.Adapt<Models.Models.Transaction>();
         await _unitOfWorkRepository.TransactionRepository
-            .AddAsync(transactionModel);
+            .AddRangeAsync(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
         return transactionModel.Id;
     }

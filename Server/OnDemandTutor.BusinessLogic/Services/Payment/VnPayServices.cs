@@ -9,6 +9,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Payment;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.Transaction;
@@ -29,7 +30,7 @@ public class VnPayServices : IVnPayServices
 
     public VnPayServices(IOptions<VnPay> vnPay, IConfiguration configuration,
         IUnitOfWorkRepository unitOfWorkRepository, ITransactionServices transactionServices,
-        ISlotStudentServices slotStudentServices, IPaymentProcessor paymentProcessor, 
+        ISlotStudentServices slotStudentServices, IPaymentProcessor paymentProcessor,
         IClassService classService,
         IUserServices userServices)
     {
@@ -47,10 +48,10 @@ public class VnPayServices : IVnPayServices
     {
         List<int> listSlotId = new List<int> { slot.Id };
         var tick = DateTime.Now.Ticks.ToString();
-        var paymentUrl = CreateVnPayRequest(model, context,new List<int>{slot.Id}, null, (decimal)(model.Price * model.Time), model.OrderDescription, false, tick, model.ReturnUrl);
+        var paymentUrl = CreateVnPayRequest(model, context, new List<int> { slot.Id }, null, (decimal)(model.Price * model.Time), model.OrderDescription, false, tick, model.ReturnUrl);
 
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", (decimal)(model.Price * model.Time), model.OrderDescription, listSlotId, null, context);
-        await _transactionServices.CreateTransactionsDb(transactionDto);
+        await _transactionServices.CreateTransactionDb(transactionDto);
 
 
         return paymentUrl;
@@ -104,8 +105,8 @@ public class VnPayServices : IVnPayServices
             }
 
         }
-        
-        
+
+
         return new PaymentSlotResponseModel
         {
             PaymentStatus = PaymentStatus.Paid,
@@ -130,7 +131,7 @@ public class VnPayServices : IVnPayServices
         var paymentUrl = CreateVnPayRequest(model, context, null, null, model.Amount, model.Notes, true, tick, model.returnUrl);
 
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, null, null, context);
-        await _transactionServices.CreateTransactionsDb(transactionDto);
+        await _transactionServices.CreateTransactionDb(transactionDto);
 
 
         return paymentUrl;
@@ -160,7 +161,7 @@ public class VnPayServices : IVnPayServices
 
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", totalAmount, model.OrderDescription, slotIds, classDto.Id, context);
 
-        await _transactionServices.CreateTransactionsDb(transactionDto);
+        await _transactionServices.CreateTransactionDb(transactionDto);
 
         return paymentUrl;
     }
