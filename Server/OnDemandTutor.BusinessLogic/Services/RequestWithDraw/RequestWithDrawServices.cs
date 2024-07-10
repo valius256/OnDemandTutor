@@ -152,7 +152,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             Notes = $"Request withdrawal #{withdraw.Id}",
             Status = PaymentStatus.Paid,
             CreatedDate = DateTime.Now,
-            CreatedById = operatorId,
+            CreatedById = withdraw.UserId,
         };
 
 
