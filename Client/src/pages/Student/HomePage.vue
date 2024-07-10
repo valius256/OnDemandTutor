@@ -38,9 +38,11 @@
         <div class="relative mx-auto text-center py-20 w-10/12">
           <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
           <div class="flex flex-wrap -mx-4">
-            <div v-for="tutor in tutors" :key="tutor.tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8">
+            <div v-for="tutor in tutors" :key="tutor.tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8 transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow p-6">
-                <img :src="tutor.tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
+                <router-link to="/tutor">
+                  <img :src="tutor.tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
+                </router-link>
                 <p class="mt-4 font-bold">{{ tutor.tutor.fullName }}</p>
                 <p class="flex justify-center my-2">
                   <star-rating :star-size="20" :rating="tutor.tutor.rating" :round-start-rating="false"
@@ -81,9 +83,9 @@
         </div>
         <div class="relative container mx-auto text-center">
           <h2 class="text-3xl font-bold mb-10">Tính Năng Của Chúng Tôi</h2>
-          <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
-              <div class="bg-white rounded-lg shadow rounded-t-lg">
+          <div class="flex flex-wrap -mx-4 ">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
+              <div class="bg-white rounded-lg shadow rounded-t-lg ">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">Gia sư chuyên môn cao</h3>
                 <p class="px-6 pb-6">
                   Chúng tôi chỉ thuê những gia sư có kinh nghiệm và là chuyên
@@ -91,7 +93,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">
                   Sắp xếp lịch học linh hoạt
@@ -102,7 +104,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div v class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">Giá cả phải chăng</h3>
                 <p class="px-6 pb-6">
@@ -136,7 +138,7 @@
         <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">1. Đăng ký</h3>
                 <p class="px-6 pb-6">
@@ -145,7 +147,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">2. Chọn Gia Sư</h3>
                 <p class="px-6 pb-6">
@@ -154,7 +156,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg">3. Bắt Đầu Học</h3>
                 <p class="px-6 pb-6">
@@ -190,7 +192,7 @@
         <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Bạn Muốn Trở Thành Gia Sư?</h2>
           <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">1. Tạo tài khoản</h3>
                 <p class="px-6 pb-6">
@@ -199,7 +201,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">2. Cập nhật hồ sơ</h3>
                 <p class="px-6 pb-6">
@@ -208,7 +210,7 @@
                 </p>
               </div>
             </div>
-            <div class="w-full md:w-1/3 px-4 mb-8 flex">
+            <div class="w-full md:w-1/3 px-4 mb-8 flex transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow">
                 <h3 class="text-2xl font-bold mb-4 py-3 px-6 bg-blue-300 rounded-t-lg ">3. Bắt Đầu Dạy</h3>
                 <p class="px-6 pb-6">Bắt đầu làm việc dựa trên lịch dạy của bạn</p>

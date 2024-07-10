@@ -30,21 +30,48 @@ public class UserServices : IUserServices
         _mailServices = mailServices;
     }
 
-    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request)
+    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request, GetProfileUserDtos? accessor)
     {
         var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
+        if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
+        {
+            userList.Items.ToList().ForEach(u => u.Balance = 0);
+        }
         return userList.Adapt<PagedResult<GetProfileUserDtos>>();
     }
 
-    public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail)
+    public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail, GetProfileUserDtos? accessor)
+    {
+        var userModel = await GetUserById(userId);
+        if (accessor == null || ( accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
+        {
+            userModel.Balance = 0;
+        }
+        return userModel.Adapt<GetProfileUserDtos>();
+    }
+    public async Task<GetProfileUserDtos> GetUserById(int? userId)
     {
         var userModel =
-            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId || u.Email == userEmail);
+            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
         if (userModel == null) throw new BadRequestException("User not found");
-
+        return userModel.Adapt<GetProfileUserDtos>();
+    }
+    public async Task<GetProfileUserDtos> GetUserByEmail(string email)
+    {
+        var userModel =
+            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Email == email);
+        if (userModel == null) throw new BadRequestException("User not found");
         return userModel.Adapt<GetProfileUserDtos>();
     }
 
+    public async Task<GetUserBalanceDto> GetUserBalance(int? userId)
+    {
+        var userModel =
+            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
+        if (userModel == null) throw new BadRequestException("User not found");
+
+        return userModel.Adapt<GetUserBalanceDto>();
+    }
 
     public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
     {

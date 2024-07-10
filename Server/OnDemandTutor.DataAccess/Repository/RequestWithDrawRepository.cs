@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.WithDrawDto;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -12,11 +15,20 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
     {
     }
 
-    public async Task<List<RequestWithDraw>> GetAllRequestWithDraws(RequestWithDrawFilterDto request, int userId)
+    public async Task<PagedResult<RequestWithDraw>> GetAllRequestWithDraws(RequestWithDrawFilterDto request, int userId = 0)
     {
         var queryFilter = dbSet
-             .Where(ld => ld.UserId == userId)
+            .Include(rq => rq.Operator)
+            .Include(rq => rq.User)
             .AsQueryable();
+
+        if (userId != 0)
+        {
+            queryFilter = queryFilter.Where(ld => ld.UserId == userId);
+        } else
+        {
+            queryFilter = queryFilter.Where(ld => ld.Status == WithDrawStatus.Pending);
+        }
 
         if (request.FromDate != null && request.ToDate != null)
         {
@@ -38,11 +50,11 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
-        queryFilter = queryFilter.Skip(skip).Take(limit);
+        //queryFilter = queryFilter.Skip(skip).Take(limit);
 
         var filteredUsers = await queryFilter
             .AsNoTracking()
-            .ToListAsync();
+            .ToNewPagingAsync(page,limit);
 
         return filteredUsers;
 

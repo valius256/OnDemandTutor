@@ -15,7 +15,6 @@ public class TutorSimpleProfileDto
     public Sex Sex { get; set; }
     public List<string> Subject { get; set; }
     public string Description { get; set; }
-    public virtual GetTutorSubjectDto SubjectTutor { get; set; }
     public bool IsActive { get; set; } = true;
     public double? Rating { get; set; }
     public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;

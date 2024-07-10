@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.RequestWithDraw;
 using OnDemandTutor.Models.Dtos.WithDrawDto;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers;
 
@@ -19,19 +20,30 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
     [Authorize]
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(List<RequestWithDrawDto>), 200)]
+    [ProducesResponseType(typeof(PagedResult<GetRequestWithdrawDto>), 200)]
     public async Task<IActionResult> ViewRequestWithDraw([FromQuery] RequestWithDrawFilterDto request)
     {
 
         var result = await _requestWithDrawServices.ViewAllRequestWithDraw(request, HttpContext.User);
         return Ok(result);
     }
+    [Authorize]
+    [HttpGet("admin-get-all")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(PagedResult<GetRequestWithdrawDto>), 200)]
+    public async Task<IActionResult> ViewRequestWithDrawAsAdmin([FromQuery] RequestWithDrawFilterDto request)
+    {
+
+        var result = await _requestWithDrawServices.ViewAllRequestWithDrawAsAdmin(request);
+        return Ok(result);
+    }
+
 
     [Authorize]
     [HttpPost("create-withdraw")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(bool), 200)]
-    public async Task<IActionResult> CreateWithdrawRequest([FromBody] RequestWithDrawDto request)
+    public async Task<IActionResult> CreateWithdrawRequest([FromBody] CreateRequestWithdrawDto request)
     {
         var result = await _requestWithDrawServices.CreateWithdrawRequest(request, HttpContext.User);
         return Ok(result);

@@ -20,11 +20,11 @@ public class TransactionServices : ITransactionServices
 
     public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
     {
-        var transactionModel = transaction.Adapt<Models.Models.Transaction>();
+        var transactionModel = transaction.Adapt<List<Models.Models.Transaction>>();
         await _unitOfWorkRepository.TransactionRepository
             .AddRangeAsync(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
-        return transactionModel.Id;
+        return transactionModel[0].Id;
     }
 
     public async Task<int> TransactionPaid(string transactionId, DateTime paidTime)

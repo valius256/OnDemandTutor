@@ -27,7 +27,7 @@
                     </td>
                     <td><img :src="tutor.avatarImageUrl" class="w-24 h-24"></td>
                     <td>
-                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.subjectTutor)"></div>
+                        <div class="flex flex-wrap gap-1" v-html="displaySubjects(tutor.tutorSubjects)"></div>
                     </td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
@@ -221,7 +221,7 @@ export default {
                 if (subject.status != 3){
                     continue;
                 }
-                switch (subject) {
+                switch (subject.subjectName) {
                     case "Toán":
                         color = "border-orange-400"
                         break;

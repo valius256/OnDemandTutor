@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
@@ -13,10 +14,12 @@ namespace OnDemandTutor.API.Controllers;
 public class UserController : BaseController<UserController>
 {
     private readonly IUserServices _userService;
+    private readonly IAuthServices _authServices;
 
-    public UserController(ILogger<UserController> logger, IUserServices userService) : base(logger)
+    public UserController(ILogger<UserController> logger, IUserServices userService, IAuthServices authServices) : base(logger)
     {
         _userService = userService;
+        _authServices = authServices;
     }
 
     // [Authorize]
@@ -25,17 +28,30 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(PagedResult<GetProfileUserDtos>), 200)]
     public async Task<IApiResult<PagedResult<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
     {
-        var result = await _userService.GetAllUsers(request);
+        var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
+        var result = await _userService.GetAllUsers(request, user);
         return OKAsync(result);
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
     public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromQuery] int userId)
     {
-        var result = await _userService.GetProfile(userId, null);
+        var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
+        var result = await _userService.GetProfile(userId, null,user);
+        return OKAsync(result);
+    }
+
+    [Authorize]
+    [HttpGet("balance")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(GetUserBalanceDto), 200)]
+    public async Task<IApiResult<GetUserBalanceDto>> GetUserBalance()
+    {
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _userService.GetUserBalance(user.Id);
         return OKAsync(result);
     }
 
