@@ -25,9 +25,9 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasColumnType("money")
             .IsRequired();
 
-        builder.Property(t => t.CreatedDate)
-            .HasColumnType("datetime")
-            .IsRequired();
+        //builder.Property(t => t.CreatedDate)
+        //    .HasColumnType("datetime")
+        //    .IsRequired();
 
         builder.Property(t => t.Notes)
             .IsRequired(false);

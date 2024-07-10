@@ -6,6 +6,20 @@
                 <logo/>
                 <div class="mt-8">
                     <div class="flex flex-col font-bold text-white">
+                        <router-link to="/admin/transactions" class="px-2 py-4 hover:bg-blue-800 ">
+                            <i class="fa fa-dollar text-2xl mr-2"></i>
+                            <span v-if="!isCollapse">Quản lý giao dịch</span>
+                        </router-link>
+                        <div class="flex flex-col sub-nav" v-if="$route.path.startsWith('/admin/transactions')">
+                            <router-link to="/admin/transactions/statistic" class="py-4 bg-[#1c2e5f] hover:bg-blue-800" :class="{'px-2' : isCollapse, 'px-8' : !isCollapse}">
+                                <i class="fa fa-signal text-2xl mr-2"></i>
+                                <span  v-if="!isCollapse" >Thống kê</span>
+                            </router-link>
+                            <router-link to="/admin/transactions/withdraw" class="py-4 bg-[#1c2e5f] hover:bg-blue-800" :class="{'px-2' : isCollapse, 'px-8' : !isCollapse}">
+                                <i class="fa fa-money text-2xl mr-2"></i>
+                                <span  v-if="!isCollapse" >Yêu cầu rút tiền</span>
+                            </router-link>
+                        </div>
                         <router-link to="/admin/accounts" class="px-2 py-4 hover:bg-blue-800 ">
                             <i class="fa fa-users text-2xl mr-2"></i>
                             <span v-if="!isCollapse">Quản lý tài khoản</span>

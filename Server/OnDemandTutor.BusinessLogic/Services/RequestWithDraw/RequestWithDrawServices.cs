@@ -9,6 +9,7 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Dtos.WithDrawDto;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
@@ -20,32 +21,39 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     private readonly IUserServices _userServices;
     private readonly ITransactionServices _transactionServices;
 
-    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IMailServices mailServices, IUserServices userServices)
+    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IMailServices mailServices, IUserServices userServices, ITransactionServices transactionServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _mailServices = mailServices;
         _userServices = userServices;
+        _transactionServices = transactionServices;
     }
 
-    public async Task<List<RequestWithDrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, ClaimsPrincipal userClaims)
+    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, ClaimsPrincipal userClaims)
     {
         var id = userClaims.FindFirst(c => c.Type == "id")?.Value;
         var requestWithDrawModelList = await
             _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, int.Parse(id));
-        return requestWithDrawModelList.Adapt<List<RequestWithDrawDto>>();
+        return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
+    }
+    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDrawAsAdmin(RequestWithDrawFilterDto request)
+    {
+        var requestWithDrawModelList = await
+            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, 0);
+        return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 
-    public async Task<bool> CreateWithdrawRequest(RequestWithDrawDto request, ClaimsPrincipal userClaims)
+    public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, ClaimsPrincipal userClaims)
     {
         var uid = userClaims.FindFirst(cl => cl.Type == "id")?.Value;
-        var userInfo = await _userServices.GetProfile(int.Parse(uid), null);
+        var userInfo = await _userServices.GetUserById(int.Parse(uid));
         // check money 
         var balanceFromSoureAcc = await _userServices.GetBalanceAsync(userInfo.Id);
-        // if (balanceFromSoureAcc - request.Amount < 0)
-        // {
-        //     throw new ModelException("Insufficient balance", "Insufficient balance to make withdraw request",
-        //         "Insufficient balance to make withdraw request");
-        // }
+        if (balanceFromSoureAcc - request.Amount < 0)
+        {
+            throw new ModelException("Insufficient balance", "Insufficient balance to make withdraw request",
+                "Insufficient balance to make withdraw request");
+        }
         // update balance for src acc 
         var newSrcBalance = balanceFromSoureAcc - request.Amount;
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();
@@ -65,7 +73,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             { "Amount", $"{request.Amount}"},
             { "BankAccountNumber", $"{request.BankAccountNumber}"},
             { "BankName", $"{request.BankName}"},
-            { "Reason", $"{request.Reason}" }
+            { "Reason", $"{request.Description}" }
         };
 
         await _mailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
@@ -115,13 +123,14 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         withdraw.Status = request.Status;
         withdraw.Reply = request.Reply;
         withdraw.OperatorId = operatorId;
-
+        withdraw.UpdatedDate = DateTime.Now;
+        withdraw.UpdatedById = operatorId;
         _unitOfWorkRepository.RequestWithDrawRepository.Update(withdraw);
     }
 
     private async Task SendWithdrawApprovalEmail(Models.Models.RequestWithDraw withdraw, ApproveWithDrawDto request)
     {
-        var withDrawCreatedBy = await _userServices.GetProfile(withdraw.UserId, null);
+        var withDrawCreatedBy = await _userServices.GetUserById(withdraw.UserId);
         var toAddress = new List<string> { withDrawCreatedBy.Email };
         var emailParams = new Dictionary<string, string>
     {
@@ -143,11 +152,11 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             Notes = $"Request withdrawal #{withdraw.Id}",
             Status = PaymentStatus.Paid,
             CreatedDate = DateTime.Now,
-            CreatedById = operatorId,
+            CreatedById = withdraw.UserId,
         };
 
 
-        _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });
+        await _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });
     }
 
 }

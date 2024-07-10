@@ -11,11 +11,15 @@ public interface IUserServices
 {
     Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos);
     Task<GetProfileUserDtos> VerifyLogin(string? email, string? password);
-    Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request);
-    Task<GetProfileUserDtos> GetProfile(int? userId, string? email);
+    Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request, GetProfileUserDtos? accessor);
+    Task<GetProfileUserDtos> GetProfile(int? userId, string? email, GetProfileUserDtos? accessor);
     Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
+    Task<GetProfileUserDtos> GetUserById(int? userId);
+    Task<GetProfileUserDtos> GetUserByEmail(string email);   
     Task<GetProfileUserDtos> GetUserProfileById(int id);
     Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
+
+    Task<GetUserBalanceDto> GetUserBalance(int? userId);
     Task<bool> RechargeAccount(int uId, decimal money);
     Task<bool> DeleteUserAsync(string? email);
 

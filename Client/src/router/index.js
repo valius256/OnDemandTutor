@@ -19,6 +19,8 @@ import BlogManagementPage from "../pages/Operators/BlogManagementPage.vue";
 import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue"
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
+import WithdrawRequestPage from "../pages/Operators/WithdrawRequestsPage.vue";
+
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
@@ -86,6 +88,10 @@ const routes = [
       },
       {
         path: "payment",
+        component: StudentProfile,
+      },
+      {
+        path : "withdraw",
         component: StudentProfile,
       },
     ],
@@ -161,7 +167,24 @@ const routes = [
       {
         path : "detail/:id",
         component: SubjectRegistrationDetailPage,
-      }
+      },
+      
+    ]
+  },
+  {
+    path: "/admin/transactions",
+    name: "Transactions",
+    redirect : "/admin/transactions/statistic",
+    children : [
+      {
+        path : "statistic",
+        component: SubjectManagementPage,
+      },
+      {
+        path : "withdraw",
+        component: WithdrawRequestPage,
+      },
+      
     ]
   },
   {

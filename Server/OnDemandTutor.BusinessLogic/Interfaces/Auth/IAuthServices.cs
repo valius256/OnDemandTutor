@@ -8,6 +8,8 @@ public interface IAuthServices
 {
     Task<AuthenResponseDto> LoginWithFireBase(LoginDtos loginDto);
     Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
+
+    Task<GetProfileUserDtos?> GetUserByClaimsNotRequired(ClaimsPrincipal claimsPrincipal);
     Task<string> ForgotPassword(string email);
     Task<bool> DeleteUserAsync(string? email);
     Task<string> GrantRole(GrantRoleDto request);

@@ -48,9 +48,20 @@ public class AuthServices : IAuthServices
         return user;
     }
 
+    public async Task<GetProfileUserDtos?> GetUserByClaimsNotRequired(ClaimsPrincipal claimsPrincipal)
+    {
+        if (claimsPrincipal.Identities == null) return null;
+
+        var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+        if (userId.IsNullOrEmpty()) return null;
+
+        var user = await _userServices.GetUserProfileByFireBaseId(userId);
+        return user;
+    }
+
     public async Task<string> ForgotPassword(string email)
     {
-        var userExist = await _userServices.GetProfile(null, email);
+        var userExist = await _userServices.GetUserByEmail(email);
         if (userExist == null) throw new BadRequestException("User not found");
 
         return await _fireBaseAuthServices.ForgotPassword(email);

@@ -7,7 +7,7 @@
             <div class="text-3xl font-bold py-1">
                 <div class="mb-4">Số dư hiện tại </div>
                 <div class="text-green-200 p-1 bg-green-600 rounded-lg text-center">
-                    {{ user.balance.toLocaleString('vi-VN', {
+                    {{ balance.toLocaleString('vi-VN', {
                         style: 'currency',
                         currency: 'VND',
                     }) }} </div>
@@ -16,7 +16,7 @@
         <div class="flex gap-4 justify-center mt-4 text-2xl mb-6">
             <button @click="null"
                 class="mr-6 px-6 py-4 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">Nạp tiền</button>
-            <button @click="null" class="px-6 py-4 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg">Rút
+            <button @click="toggleWithdrawPopup" class="px-6 py-4 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg">Rút
                 tiền</button>
         </div>
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
@@ -25,7 +25,6 @@
         <div class="px-4 mb-4">
             <table class="bg-slate-50 p-6 rounded-xl text-center w-full" v-if="transactions.length > 0">
                 <thead>
-                    <th>Id</th>
                     <th>Code</th>
                     <th>Date</th>
                     <th>Amount</th>
@@ -33,11 +32,10 @@
                 </thead>
                 <tbody>
                     <tr v-for="transaction in transactions" :key="transaction.id">
-                        <td>{{ transaction.id }}</td>
-                        <td>{{ transaction.code }}</td>
-                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.transactionCode }}</td>
+                        <td>{{ this.beautifyDatetime(transaction.createdDate) }}</td>
                         <td :class="getAmountStyle(transaction.amount)">{{ transaction.amount }}</td>
-                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.notes }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -58,44 +56,38 @@
                 Hiện chưa có giao dịch nào
             </div>
         </div>
-
+        <generic-popup v-if="isOpenWithdrawPopup" :title="'Tạo yêu cầu rút tiền'" :closeFunction="toggleWithdrawPopup" :notOverflow="true">
+            <request-withdraw-popup :close="toggleWithdrawPopup" :action="navigateToPayment"></request-withdraw-popup>
+        </generic-popup>
     </div>
 
 </template>
 
 <script>
+import axios from 'axios'
+import GenericPopup from '../common/GenericPopup.vue'
+import RequestWithdrawPopup from './RequestWithdrawPopup.vue'
 export default {
+    components: { GenericPopup, RequestWithdrawPopup },
+    props : ['id'],
     name: "StudentProfilePayment",
     data() {
         return {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
-            user: {
-                balance: 100000
-            },
+            balance : 0,
+            user: null,
             transactions: [
-                {
-                    id: 1,
-                    code: 129389102,
-                    date: "2024-01-01 12:00:01",
-                    amount: 80000,
-                    description: "Nap cho slot 1"
-                },
-                {
-                    id: 2,
-                    code: 2189479,
-                    date: "2024-01-03 12:00:01",
-                    amount: -80000,
-                    description: "Tru tien slot 1"
-                },
-            ]
+                
+            ],
+            isOpenWithdrawPopup : false
         }
     },
-    methods : {
+    methods: {
         getAmountStyle(amount) {
             let css = "font-bold"
-            if (amount < 0){
+            if (amount < 0) {
                 return css + " text-red-400"
             } else {
                 return css + " text-green-400"
@@ -119,6 +111,68 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async fetchTranscations() {
+            let query = {
+                Page: this.currentPage,
+                Limit: this.pageSize,
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Transaction/all?' +
+                this.jsonToQueryString(query),{
+                    headers : {
+                        'Authorization' : "Bearer " + localStorage.token
+                    }
+                })
+            if (response.data) {
+                this.transactions = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+        },
+        async fetchTranscations() {
+            let query = {
+                Page: this.currentPage,
+                Limit: this.pageSize,
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Transaction/all?' +
+                this.jsonToQueryString(query),{
+                    headers : {
+                        'Authorization' : "Bearer " + localStorage.token
+                    }
+                })
+            if (response.data) {
+                this.transactions = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+        },
+        toggleWithdrawPopup(){
+            this.isOpenWithdrawPopup = !this.isOpenWithdrawPopup
+        },
+        navigateToPayment(){
+            this.$router.push('/student/withdraw')
+        },
+        async fetchUser(){
+            console.log(this.id)
+            if (this.id){
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/profile?userId='+this.id)
+                if (response.data){
+                    this.user = response.data.data
+                }
+                const balanceResponse = await axios.get(import.meta.env.VITE_API_URL + '/api/User/balance',{
+                    headers : {
+                        'Authorization' : "Bearer " + localStorage.token
+                    }
+                })
+                if (balanceResponse.data){
+                    this.balance = balanceResponse.data.data.balance
+                }
+            }
+        }
+
+    },
+    mounted(){
+        this.fetchTranscations()
+        this.fetchUser()
     }
 }
 </script>
