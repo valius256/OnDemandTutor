@@ -6,6 +6,6 @@ public class PaySlotDto
     public double Price { get; set; }
     public double Time { get; set; }
     public int? SlotId { get; set; }
-    // public string? ReturnUrl { get; set; }
+    public string? ReturnUrl { get; set; }
 
 }

@@ -12,6 +12,6 @@ public class SlotStudent : BaseEntity
     public virtual User User { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; }
-    public string Feedback { get; set; }
+    public string? Feedback { get; set; }
 }
 

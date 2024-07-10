@@ -1,4 +1,7 @@
-﻿namespace OnDemandTutor.Models;
+﻿using Google.Type;
+using DateTime = System.DateTime;
+
+namespace OnDemandTutor.Models;
 
 public enum RecordStatus
 {
@@ -20,7 +23,7 @@ public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
 {
     public int UpdatedById { get; set; }
 
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
     public DateTime? UpdatedDate { get; set; }
 

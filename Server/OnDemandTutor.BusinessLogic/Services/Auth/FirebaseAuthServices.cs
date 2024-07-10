@@ -14,7 +14,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
             Email = registerDtos.Email,
             Password = registerDtos.Password
         };
-
+        
         var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userForFireBaseAuth);
         await FirebaseAuth.DefaultInstance.GenerateEmailVerificationLinkAsync(userRecord.Email);
         return userRecord.Uid;
@@ -79,4 +79,12 @@ public class FirebaseAuthServices : IFireBaseAuthServices
 
         return users;
     }
+
+    public async Task<string> CreateSessionCookieAsync(string idToken, SessionCookieOptions options)
+    {
+        var sessionCookie  = await FirebaseAuth.DefaultInstance
+            .CreateSessionCookieAsync(idToken, options);
+        return sessionCookie;
+    }
+    
 }

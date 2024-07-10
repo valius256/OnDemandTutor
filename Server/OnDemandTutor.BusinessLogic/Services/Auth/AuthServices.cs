@@ -55,7 +55,8 @@ public class AuthServices : IAuthServices
 
         return await _fireBaseAuthServices.ForgotPassword(email);
     }
-
+    
+    
     public async Task<bool> DeleteUserAsync(string? email)
     {
         await _fireBaseAuthServices.DeleteUserAsync(email);
@@ -65,5 +66,13 @@ public class AuthServices : IAuthServices
         return true;
     }
 
+    public async Task<string> GrantRole(GrantRoleDto request)
+    {
+        var record = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Email == request.email || l.Id == request.id);
 
+        record.Role = request.Role;
+        _unitOfWorkRepository.UserRepository.Update(record);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return record.Role.ToString();
+    }
 }
