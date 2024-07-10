@@ -147,17 +147,14 @@ public static class ServiceExtensions
     })
     .AddJwtBearer(options =>
     {
-        options.SaveToken = true;
         options.Authority = $"https://session.firebase.google.com/ondemandtutor-a049e";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            // ValidIssuer = $"https://securetoken.google.com/{projectId}", // Uncomment if not using cookies
             ValidIssuer = $"https://session.firebase.google.com/ondemandtutor-a049e",
             ValidateAudience = true,
             ValidAudience = projectId,
             ValidateLifetime = true,
-            LogTokenId = true,
         };
 
        
@@ -169,6 +166,7 @@ public static class ServiceExtensions
         options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
         options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
         options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
+        
     });
 
     return services;

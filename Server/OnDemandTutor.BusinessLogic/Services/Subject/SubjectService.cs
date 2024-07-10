@@ -42,6 +42,10 @@ namespace OnDemandTutor.BusinessLogic.Services
         public async Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectCreateDto)
         {
             var subjectEntity = subjectCreateDto.Adapt<Models.Models.Subject>();
+            if (await _unitOfWork.SubjectRepository.AnyAsync(sb => sb.Name == subjectCreateDto.Name))
+            {
+                throw new ModelException($"{subjectEntity}", "has dupplicated", "dupplicated");
+            }
             var createdSubjectEntity = await _unitOfWork.SubjectRepository.AddAsync(subjectEntity);
             await _unitOfWork.SaveChangesAsync();
             return createdSubjectEntity.Adapt<CreateSubjectDtos>();

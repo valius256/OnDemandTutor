@@ -64,7 +64,7 @@ public class AuthController : BaseController<AuthController>
     }
 
     
-    [Authorize(Policy = "Admin, Operator")]
+    [Authorize(Roles = "Admin, Operator")]
     [HttpGet("who-am-i")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]

@@ -41,11 +41,11 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         var userInfo = await _userServices.GetProfile(int.Parse(uid), null);
         // check money 
         var balanceFromSoureAcc = await _userServices.GetBalanceAsync(userInfo.Id);
-        if (balanceFromSoureAcc - request.Amount < 0)
-        {
-            throw new ModelException("Insufficient balance", "Insufficient balance to make withdraw request",
-                "Insufficient balance to make withdraw request");
-        }
+        // if (balanceFromSoureAcc - request.Amount < 0)
+        // {
+        //     throw new ModelException("Insufficient balance", "Insufficient balance to make withdraw request",
+        //         "Insufficient balance to make withdraw request");
+        // }
         // update balance for src acc 
         var newSrcBalance = balanceFromSoureAcc - request.Amount;
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();

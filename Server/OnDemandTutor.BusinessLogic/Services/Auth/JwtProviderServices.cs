@@ -5,6 +5,8 @@ using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Enum;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Http;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -80,14 +82,19 @@ public class JwtProviderServices : IJwtProviderServices
 
             var customClaims = new Dictionary<string, object>
         {
-            { "role", userInDb.Role.ToString() },
+            { "roles", userInDb.Role.ToString() },
             { "id", userInDb.Id.ToString() }
-        };
-
+        }; 
             await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
+            var options = new SessionCookieOptions
+            {
+                ExpiresIn = TimeSpan.FromDays(7),
+            };
 
+
+         var cookieExtendSession =   await _fireBaseAuthServices.CreateSessionCookieAsync(authToken.IdToken, options);
             responseModel.code = response.StatusCode.ToString();
-            responseModel.message = authToken.IdToken;
+            responseModel.message = cookieExtendSession;
         }
         catch (Exception exception)
         {
