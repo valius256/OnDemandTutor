@@ -18,7 +18,7 @@ public class GetProfileUserDtos
     public bool IsActive { get; set; } = true;
     public string? DeaActiveReason { get; set; }
     public DateTime? CreatedDate { get; set; }
-
+    public decimal TutorFeePerHour { get; set; }
     public DateTime? UpdatedDate { get; set; }
 
 }
