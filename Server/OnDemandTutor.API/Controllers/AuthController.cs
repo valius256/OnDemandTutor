@@ -63,8 +63,9 @@ public class AuthController : BaseController<AuthController>
 
     }
 
+    
+    [Authorize(Policy = "Admin, Operator")]
     [HttpGet("who-am-i")]
-    [Authorize]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
     public async Task<IApiResult<GetProfileUserDtos>> GetProfile()
@@ -80,5 +81,13 @@ public class AuthController : BaseController<AuthController>
     public async Task<IApiResult<bool>> DeleteUser([FromBody] string userEmail)
     {
         return OKAsync(await _authServices.DeleteUserAsync(userEmail));
+    }
+    
+    [HttpPost("grant-role")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    public async Task<IApiResult<string>> GrantRole([FromBody] GrantRoleDto request)
+    {
+        return OKAsync(await _authServices.GrantRole(request));
     }
 }

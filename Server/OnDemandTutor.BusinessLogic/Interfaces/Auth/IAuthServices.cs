@@ -10,4 +10,5 @@ public interface IAuthServices
     Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal);
     Task<string> ForgotPassword(string email);
     Task<bool> DeleteUserAsync(string? email);
+    Task<string> GrantRole(GrantRoleDto request);
 }

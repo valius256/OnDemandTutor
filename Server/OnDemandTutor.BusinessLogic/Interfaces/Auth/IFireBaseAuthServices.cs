@@ -11,4 +11,5 @@ public interface IFireBaseAuthServices
     Task<bool> DeleteUserAsync(string? email);
     Task SetCustomClaimsAsync(string userId, Dictionary<string, object> claims);
     Task<List<ExportedUserRecord>> GetAllUserRecord();
+    Task<string> CreateSessionCookieAsync(string idToken, SessionCookieOptions options);
 }

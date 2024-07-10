@@ -32,7 +32,7 @@ namespace OnDemandTutor.API.Controllers
 
         // [AllowAnonymous]
         [HttpGet("all")]
-        [Authorize]
+        // [Authorize]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(IApiResult<PagedResult<GetConsultationRequestDto>>), 200)]
         public async Task<IApiResult<PagedResult<GetConsultationRequestDto>>> GetAllConsultationRequest([FromQuery] ConsultationRequestFilterDto requestDtos)

@@ -24,7 +24,7 @@ namespace OnDemandTutor.Models.MigrationData
                     AvatarImageUrl = "http://example.com/avatar1.png",
                     Dob = new DateTime(1990, 1, 1),
                     Role = RoleStatus.Admin,
-                    Balance = 100.0m,
+                    Balance = 100000000000,
                     TutorFeePerHour = 50.0m,
                     Rating = 4.5,
                     IdCardImageUrl = "http://example.com/id1.png",
@@ -121,8 +121,7 @@ namespace OnDemandTutor.Models.MigrationData
                 }
             );
             #endregion
-
-
+            
             #region  Blog
             var createAt = DateTime.Now;
             modelBuilder.Entity<Blog>().HasData(
@@ -133,8 +132,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new Blog { Id = 5, Title = "Bài Blog Thứ Năm", Content = "Nội dung của bài blog thứ năm.", CreateById = 2, CreateAt = createAt }
               );
             #endregion
-
-
+            
             #region ConsultationRequets 
             modelBuilder.Entity<ConsultationRequest>().HasData(
                 new ConsultationRequest
@@ -297,8 +295,7 @@ namespace OnDemandTutor.Models.MigrationData
                 }
             );
             #endregion
-
-
+            
             #region Slot
             modelBuilder.Entity<Slot>().HasData(
                 new Slot
@@ -368,8 +365,7 @@ namespace OnDemandTutor.Models.MigrationData
                 }
             );
             #endregion
-
-
+            
             #region Subject
 
             modelBuilder.Entity<Subject>().HasData(
@@ -513,8 +509,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-
-
+            
             #region TutorDegree
 
             modelBuilder.Entity<TutorDegree>().HasData(
@@ -576,8 +571,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-
-
+            
             #region TutorVideo
 
             modelBuilder.Entity<TutorVideo>().HasData(
@@ -619,8 +613,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-
-
+            
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
@@ -633,8 +626,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-
-
+            
             #region Class
 
             modelBuilder.Entity<Class>().HasData(
@@ -693,8 +685,7 @@ namespace OnDemandTutor.Models.MigrationData
             );;
 
             #endregion
-
-
+            
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(

@@ -4,7 +4,9 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Enum;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json.Serialization;
+using FirebaseAdmin.Auth;
 using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.Authen;
 
@@ -85,11 +87,17 @@ public async Task<AuthenResponseDto> GetForCredentialsAsync(string email, string
             { "role", userInDb.Role.ToString() },
             { "id", userInDb.Id.ToString() }
         };
-
         await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
-
+        
+        var options = new SessionCookieOptions
+        {
+            ExpiresIn = TimeSpan.FromDays(7),
+        };
+        
+        var sessionCookie = await _fireBaseAuthServices.CreateSessionCookieAsync(authToken.IdToken, options);
+        
         responseModel.code = response.StatusCode.ToString();
-        responseModel.message = authToken.IdToken;
+        responseModel.message = sessionCookie;
     }
     catch (Exception exception)
     {

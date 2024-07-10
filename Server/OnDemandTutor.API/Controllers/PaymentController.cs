@@ -57,13 +57,16 @@ public class PaymentController : BaseController<PaymentController>
         return Ok(classPaymentUrl);
     }
 
-    [HttpGet("execute")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<PaymentSlotResponseModel>), 200)]
-    public async Task<IApiResult<PaymentSlotResponseModel>> PaymentExecute()
+    [HttpGet("execute")] // demo xóa di
+    public async Task<IActionResult> PaymentExecute()
     {
         var response = await _vnPayServices.PaymentExecute(Request.Query);
-        return OKAsync(response);
+        var redirectTo = Redirect(response.RedirectResult);
+        if (redirectTo == null)
+        {
+            return Ok(response);
+        }
+        return redirectTo;
     }
 
     [HttpPost("create-recharge")]

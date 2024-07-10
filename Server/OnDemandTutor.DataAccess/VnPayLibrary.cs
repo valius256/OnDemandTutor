@@ -33,6 +33,7 @@ public class VnPayLibrary
         var money = vnPay.GetResponseData("vnp_Amount");
         var orderDescription = vnPay.GetResponseData("vnp_OrderDescription");
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
+        // Split the orderInfo string
         var orderInfoParts = orderInfo.Split('|');
 
         bool isRecharge = false;
@@ -40,14 +41,33 @@ public class VnPayLibrary
         {
             bool.TryParse(orderInfoParts[0], out isRecharge);
         }
+
         var description = orderInfoParts.Length > 1 ? orderInfoParts[1] : "";
         var userId = orderInfoParts.Length > 2 ? Convert.ToInt32(orderInfoParts[2]) : 0;
-        int? slotId = null;
+
+        int? classId = null;
         if (orderInfoParts.Length > 3 && !string.IsNullOrEmpty(orderInfoParts[3]))
         {
-            if (int.TryParse(orderInfoParts[3], out int tempSlotId))
+            if (int.TryParse(orderInfoParts[3], out int tempClassId))
             {
-                slotId = tempSlotId;
+                classId = tempClassId;
+            }
+        }
+
+        var returnUrl  = orderInfoParts.Length > 4 ? orderInfoParts[4] : "";
+        
+        // Parse slotIds
+        List<int> slotIds = new List<int>();
+        if (orderInfoParts.Length > 5)
+        {
+            var slotIdParts = orderInfoParts[4].Split(' ');
+
+            foreach (var slotIdPart in slotIdParts)
+            {
+                if (!string.IsNullOrEmpty(slotIdPart) && int.TryParse(slotIdPart, out int tempSlotId))
+                {
+                    slotIds.Add(tempSlotId);
+                }
             }
         }
 
@@ -69,13 +89,15 @@ public class VnPayLibrary
             TransactionCode = orderId.ToString(),
             Token = vnpSecureHash,
             VnPayResponseCode = vnpResponseCode,
-            SlotId = slotId.HasValue ? slotId.Value : (int?)null,
+            SlotId = slotIds,
             UserId = userId,
             Money = decimal.Parse(money),
             IsRechargePayment = isRecharge,
+            RedirectResult = returnUrl
         };
         return rs1;
     }
+    
     public string GetIpAddress(HttpContext context)
     {
         var ipAddress = string.Empty;

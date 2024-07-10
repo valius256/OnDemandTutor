@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Services.Auth;

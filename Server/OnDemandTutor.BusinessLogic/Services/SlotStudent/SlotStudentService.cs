@@ -39,4 +39,22 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
+
+    public async Task CreateSlotStudentIfNotExist(int slotId, int studentId)
+    {
+        var recordInDb =  await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
+            st.SlotId == slotId && st.UserId == studentId);
+        if (recordInDb == null)
+        {
+            recordInDb = new Models.Models.SlotStudent()
+            {
+                SlotId = slotId,
+                UserId = studentId,
+                PaymentStatus = PaymentStatus.Notpaid,
+            }; 
+            await _unitOfWorkRepository.SlotStudentRepository.AddAsync(recordInDb);
+            await  _unitOfWorkRepository.SaveChangesAsync();
+        }
+        
+    }
 }

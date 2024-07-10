@@ -32,6 +32,7 @@ public class VnPayProcessor : IPaymentProcessor
             PaymentMethod = response.PaymentMethod,
             OrderDescription = response.OrderDescription,
             VnPayResponseCode = response.VnPayResponseCode,
+            returnUrl = response.RedirectResult,
             PaymentStatus = response.Success ? PaymentStatus.Paid : PaymentStatus.Notpaid
         };
         return rs;

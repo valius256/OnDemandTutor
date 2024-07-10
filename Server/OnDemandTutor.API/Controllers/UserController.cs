@@ -65,6 +65,7 @@ public class UserController : BaseController<UserController>
     /// </summary>
     /// if the fe don;t place Id in UpdateUserDto.Id it will take the id from the Claims when login scf
     /// <param Name="body"></param>
+    /// <param name="requestDto"></param>
     /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("update-profile")]
@@ -107,6 +108,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.GetOutstandingTutor(limit, page));
 
     }
+    
     /// <summary>
     ///    update tutor status to Banned 
     /// </summary>
