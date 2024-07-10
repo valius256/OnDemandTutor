@@ -1,4 +1,5 @@
 ﻿using FirebaseAdmin.Auth;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -11,9 +12,8 @@ using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
-using System.Security.Claims;
 using OnDemandTutor.Models.Paging;
-using Mapster;
+using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
@@ -109,7 +109,7 @@ public class UserServices : IUserServices
         userInDb.IdCardImageUrl = registerTutorDtos.IdentityCardUrl;
         userInDb.Role = RoleStatus.Tutor;
         userInDb.TutorStatus = TutorStatus.Un_Verified;
-        
+
         if (userInDb.AvatarImageUrl == registerTutorDtos.AvatarImageurl)
         {
             throw new ModelException("AvatarImageUrl", "AvatarImageUrl is dupplicated", "AvatarImageUrl is dupplicated");
@@ -289,7 +289,7 @@ public class UserServices : IUserServices
         }
 
         UpdateUserFields(userInDb, requestDto);
-    
+
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -341,7 +341,7 @@ public class UserServices : IUserServices
         {
             userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
         }
-    
+
     }
 
 
@@ -421,17 +421,17 @@ public class UserServices : IUserServices
                 if (newStatus == TutorStatus.Sent_Verification_Requested)
                     isValidTransition = true;
                 break;
-        
+
             case TutorStatus.Sent_Verification_Requested:
                 if (newStatus == TutorStatus.Verified || newStatus == TutorStatus.Verification_Request_Rejected)
                     isValidTransition = true;
                 break;
-        
+
             case TutorStatus.Verification_Request_Rejected:
                 if (newStatus == TutorStatus.Un_Verified)
                     isValidTransition = true;
                 break;
-        
+
             case TutorStatus.Verified:
                 if (newStatus == TutorStatus.Banned || newStatus == TutorStatus.Un_Verified)
                     isValidTransition = true;
@@ -445,7 +445,7 @@ public class UserServices : IUserServices
         {
             throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
         }
-        
+
         await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, newStatus));
 

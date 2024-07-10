@@ -1,5 +1,4 @@
-﻿using System;
-using Mapster;
+﻿using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;

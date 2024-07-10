@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
-using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 
@@ -117,7 +115,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
 
         public async Task<PagedResult<GetConsultationRequestDto>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request)
         {
-            var rs=  await _unitOfWorkRepository.ConsultationRequestRepository.ViewAllConsultationsRequestAsync(request);
+            var rs = await _unitOfWorkRepository.ConsultationRequestRepository.ViewAllConsultationsRequestAsync(request);
             return rs.Adapt<PagedResult<GetConsultationRequestDto>>();
         }
     }

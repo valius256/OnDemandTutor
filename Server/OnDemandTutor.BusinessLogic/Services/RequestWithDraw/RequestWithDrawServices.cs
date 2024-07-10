@@ -51,7 +51,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();
         requestWithDrawModel.UserId = int.Parse(uid);
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
-        
+
         await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
         await _userServices.UpdateBalance(int.Parse(uid), newSrcBalance.Value);
         await _unitOfWorkRepository.SaveChangesAsync();
@@ -146,7 +146,8 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             CreatedById = operatorId,
         };
 
-        _transactionServices.CreateTransactionDb(transaction);
+
+        _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });
     }
 
 }

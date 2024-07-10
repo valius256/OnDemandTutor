@@ -124,7 +124,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
                 .ThenInclude(d => d.Subject)
-               // .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
+            // .Where(ld => ld.Role == RoleStatus.Tutor && ld.TutorSubjects.Any(ts => ts.Status == TutorSubjectStatus.Approved));
             .Where(u => u.Role == RoleStatus.Tutor);
 
         if (!string.IsNullOrEmpty(request.Name))
@@ -162,12 +162,12 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.Sex.HasValue && request.Sex.Contains(ld.Sex.Value));
         }
-        
+
         if (request.JoinFromDate.HasValue)
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate >= request.JoinFromDate);
         }
-        
+
         if (request.JoinFromDate.HasValue)
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
@@ -177,7 +177,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
         }
-        
+
         int limit = request.Limit > 0 ? request.Limit : 10;
         int page = request.Page > 0 ? request.Page : 1;
         int skip = (page - 1) * limit;
@@ -192,10 +192,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 FullName = u.FirstName + " " + u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
-                Sex =  u.Sex.Value,
+                Sex = u.Sex.Value,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
-                JoiningDate = u.CreatedDate, // Assuming CreatedDate is the joining date
-                Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(), // Map subject names
+                JoiningDate = u.CreatedDate.Value,
+                Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(),
                 Description = u.ScheduleDesciption,
                 IsActive = u.IsActive,
                 TutorStatus = u.TutorStatus,

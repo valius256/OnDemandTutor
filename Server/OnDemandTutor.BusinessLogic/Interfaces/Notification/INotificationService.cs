@@ -1,5 +1,4 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.Notification;
+﻿using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Notification

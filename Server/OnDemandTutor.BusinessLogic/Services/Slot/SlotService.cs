@@ -1,9 +1,7 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
-using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
@@ -45,7 +43,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
         {
-          
+
             var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
 
             // Add the new Slot entity to repository

@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
-using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Paging;
@@ -44,14 +43,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             var classEntity = classDto.Adapt<Models.Models.Class>();
             var createdClass = await _unitOfWork.ClassRepository.AddAsync(classEntity);
             var rs = createdClass.Entity.Adapt<CreateClassDTO>();
-                foreach (var slotId in classDto.SlotIds)
+            foreach (var slotId in classDto.SlotIds)
             {
                 var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(slotId);
                 if (slot != null)
                 {
                     var mapper = slot.Adapt<Models.Models.Slot>();
                     slot.ClassId = createdClass.Entity.Id;
-                    
+
                     _unitOfWork.SlotRepository.Update(mapper);
                 }
             }

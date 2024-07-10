@@ -1,5 +1,4 @@
-﻿using System;
-using OnDemandTutor.Models.Dtos.FAQ;
+﻿using OnDemandTutor.Models.Dtos.FAQ;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.FAQ

@@ -1,13 +1,11 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
-using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
-using System.Threading.Tasks;
 
 namespace OnDemandTutor.BusinessLogic.Services
 {
@@ -38,7 +36,7 @@ namespace OnDemandTutor.BusinessLogic.Services
                 throw new NotFoundException($"Subject with ID {id} not found.");
             }
             var subjectDto = subject.Adapt<GetSubjectDtos>();
-          
+
             return subjectDto;
         }
         public async Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectCreateDto)
@@ -48,7 +46,7 @@ namespace OnDemandTutor.BusinessLogic.Services
             await _unitOfWork.SaveChangesAsync();
             return createdSubjectEntity.Adapt<CreateSubjectDtos>();
         }
-   
+
 
         public async Task<GetSubjectDtos> UpdateSubjectAsync(GetSubjectDtos subjectGetDto)
         {
@@ -83,6 +81,6 @@ namespace OnDemandTutor.BusinessLogic.Services
             return true;
         }
 
-       
+
     }
 }

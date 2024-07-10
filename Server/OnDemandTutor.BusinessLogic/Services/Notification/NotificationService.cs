@@ -1,28 +1,19 @@
-﻿using System;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Paging;
-using Mapster;
-using Microsoft.AspNetCore.Http;
-using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Services.Auth;
-using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.BusinessLogic.Services.Notification
 {
     public class NotificationService : INotificationService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
-        private readonly IAuthServices _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public NotificationService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        public NotificationService(IUnitOfWorkRepository unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _authService = authService;
-            _httpContextAccessor = HttpContextAccessor;
         }
 
         public async Task<PagedResult<NotificationGetDto>> GetNotificationsAsync(PagingModel<NotificationGetDto> request)
@@ -58,14 +49,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             {
                 throw new NotFoundException($"Notification with ID {notificationGetDto.Id} not found.");
             }
-            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
 
             existingNotification = notificationGetDto.Adapt(existingNotification);
-
-            // Set the updated fields
-            existingNotification.UpdatedById = user.Id; // Assuming there is an UpdatedById property
-            existingNotification.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
-
 
             var updatedNotification = _unitOfWork.NotificationRepository.Update(existingNotification);
             await _unitOfWork.SaveChangesAsync();

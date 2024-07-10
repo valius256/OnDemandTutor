@@ -120,71 +120,71 @@ public class FirebaseUploadServices : IFirebaseUploadServices
     }
 
     public async Task<string> UploadVideoAsync(ClaimsPrincipal claimsPrincipal, string fileName, Stream fileStream)
+    {
+        try
         {
-            try
+            var contentType = GetContentType(fileName);
+            if (string.IsNullOrEmpty(contentType))
             {
-                var contentType = GetContentType(fileName);
-                if (string.IsNullOrEmpty(contentType))
-                {
-                    throw new ArgumentException("Invalid video file type");
-                }
-                var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
-                var videoUrl = await UploadMediaToFirebaseStorage(userUid, fileName, fileStream, contentType);
-                
-                
-                return videoUrl;
+                throw new ArgumentException("Invalid video file type");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to upload video: {ex.Message}");
-                throw;
-            }
+            var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+            var videoUrl = await UploadMediaToFirebaseStorage(userUid, fileName, fileStream, contentType);
+
+
+            return videoUrl;
         }
-
-        private async Task<string> UploadMediaToFirebaseStorage(string uid, string fileName, Stream fileStream,
-            string contentType)
+        catch (Exception ex)
         {
-            try
-            {
-                var storage = StorageClient.Create();
-                await EnsurePublicAccess(storage);
-
-                var storageFileName = $"video/{uid}/{fileName}";
-                await storage.UploadObjectAsync(StorageBucketName, storageFileName, contentType, fileStream);
-
-                var storageObject = await storage.GetObjectAsync(StorageBucketName, storageFileName);
-                storage.UpdateObject(storageObject,
-                    new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
-
-                return $"https://storage.googleapis.com/{StorageBucketName}/{storageFileName}";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to upload media to Firebase Storage: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                // Dispose the stream to release resources
-                fileStream.Dispose();
-            }
-        }
-        
-        // handle multiple type vide 
-        
-        private string GetContentType(string fileName)
-        {
-            var extension = Path.GetExtension(fileName).ToLowerInvariant();
-            return extension switch
-            {
-                ".mp4" => "video/mp4",
-                ".avi" => "video/x-msvideo",
-                ".mov" => "video/quicktime",
-                ".wmv" => "video/x-ms-wmv",
-                ".flv" => "video/x-flv",
-                ".mkv" => "video/x-matroska",
-                ".webm" => "video/webm",
-                _ => null
-            };
+            Console.WriteLine($"Failed to upload video: {ex.Message}");
+            throw;
         }
     }
+
+    private async Task<string> UploadMediaToFirebaseStorage(string uid, string fileName, Stream fileStream,
+        string contentType)
+    {
+        try
+        {
+            var storage = StorageClient.Create();
+            await EnsurePublicAccess(storage);
+
+            var storageFileName = $"video/{uid}/{fileName}";
+            await storage.UploadObjectAsync(StorageBucketName, storageFileName, contentType, fileStream);
+
+            var storageObject = await storage.GetObjectAsync(StorageBucketName, storageFileName);
+            storage.UpdateObject(storageObject,
+                new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
+
+            return $"https://storage.googleapis.com/{StorageBucketName}/{storageFileName}";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to upload media to Firebase Storage: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+            // Dispose the stream to release resources
+            fileStream.Dispose();
+        }
+    }
+
+    // handle multiple type vide 
+
+    private string GetContentType(string fileName)
+    {
+        var extension = Path.GetExtension(fileName).ToLowerInvariant();
+        return extension switch
+        {
+            ".mp4" => "video/mp4",
+            ".avi" => "video/x-msvideo",
+            ".mov" => "video/quicktime",
+            ".wmv" => "video/x-ms-wmv",
+            ".flv" => "video/x-flv",
+            ".mkv" => "video/x-matroska",
+            ".webm" => "video/webm",
+            _ => null
+        };
+    }
+}
