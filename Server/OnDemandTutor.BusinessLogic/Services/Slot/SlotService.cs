@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
@@ -16,13 +20,21 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly ISlotRepository _slotRepository;
         private readonly IAuthServices _authService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public SlotService(IUnitOfWorkRepository unitOfWorkRepository, ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        private readonly ISlotStudentServices _slotStudentServices;
+        private readonly IUserServices _userServices;
+        private readonly ITransactionServices _transactionServices;
+        
+        public SlotService(IUnitOfWorkRepository unitOfWorkRepository, 
+            ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
+            ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
             _slotRepository = slotRepository;
             _authService = authService;
             _httpContextAccessor = HttpContextAccessor;
+            _slotStudentServices = slotStudentServices;
+            _transactionServices = transactionServices;
+            _userServices = userServices;
         }
 
 
@@ -96,6 +108,42 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 throw new NotFoundException($"Slot with ID {id} not found.");
             }
             return isDeleted;
+        }
+
+        public async Task CronJobForAutoDereasedMoneyAfterSlotStart()
+        {
+            var listSlotDb = await _unitOfWork.SlotRepository.ToListAsync();
+            
+            var slots = listSlotDb
+                .Where(slot => slot.StartTime >= DateTime.Now.AddHours(-1)).ToList(); 
+            foreach (var slot in slots)
+            {
+                var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
+                if (slotStudent.PaymentStatus == PaymentStatus.Notpaid)
+                {
+                    var tutor = await _userServices.GetProfile(slot.CreateById, null);
+                    var duration = (slot.EndTime - slot.StartTime).TotalHours;
+                    
+                    var studentBalance = await _userServices.GetBalanceAsync(slotStudent.UserId);
+                    var amountToDecrease = tutor.TutorFeePerHour * (decimal)duration;
+                    decimal slotCost = tutor.TutorFeePerHour * (decimal)duration;
+                    if (studentBalance - slotCost >= 0)
+                    {
+                        await _userServices.UpdateBalance(slotStudent.UserId,  0,  slotCost);
+                        await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
+                        await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
+                    }
+                    else
+                    {
+                        await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
+                            -amountToDecrease);
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
 
     }

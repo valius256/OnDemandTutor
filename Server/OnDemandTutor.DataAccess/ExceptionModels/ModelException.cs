@@ -9,5 +9,5 @@ public class ModelException : Exception
     }
 
     public string PropertyName { get; }
-    public string ErrorCode { get; }
+    public string? ErrorCode { get; }
 }

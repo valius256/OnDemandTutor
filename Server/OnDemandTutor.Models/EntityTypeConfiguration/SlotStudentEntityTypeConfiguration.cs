@@ -12,7 +12,7 @@ public class SlotStudentEntityTypeConfiguration : IEntityTypeConfiguration<SlotS
         builder.HasKey(ss => ss.Id);
         builder.Property(ss => ss.Id).ValueGeneratedOnAdd();
         builder.Property(ss => ss.PaymentStatus).HasDefaultValue(PaymentStatus.Notpaid);
-
+        builder.Property(ss => ss.Feedback).IsRequired(false);
         builder.HasOne(ss => ss.Slot)
             .WithMany(s => s.SlotStudents)
             .HasForeignKey(ss => ss.SlotId)
