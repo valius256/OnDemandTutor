@@ -19,7 +19,7 @@
       <router-link v-if="user && user.role == 1"
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/tutor">
         <div class="flex gap-4 items-center">
-          <div>{{ user?.name }}</div>
+          <div>{{ user?.firstName }}</div>
           <img class="rounded-full w-8 h-8" :src="user.avatarImageUrl" />
         </div>
       </router-link>
@@ -32,11 +32,11 @@
           Đăng ký
         </button>
       </div>
-      <div class="flex gap-4 items-center mr-4" to="/login" v-else>
+      <!-- <div class="flex gap-4 items-center mr-4" to="/login" v-else>
         <button class="rounded-md shadow-md px-2 py-2 font-bold bg-white" @click="handleLogout">
           Đăng xuất
         </button>
-      </div>
+      </div> -->
     </div>
     <div class="flex items-center lg:hidden h-full mr-2">
       <button class="shadow-md rounded-md py-2 px-4 bg-white text-2xl font-bold" @click="toggleResponsive">

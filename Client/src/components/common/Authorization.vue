@@ -100,9 +100,6 @@ export default {
     this.eventBus.on("logout", () => {
       this.logout();
     });
-    this.eventBus.on("register", (registerDto) => {
-      this.register(registerDto);
-    });
     this.updateApp();
   },
   methods: {
@@ -176,43 +173,6 @@ export default {
         );
       }
       this.eventBus.emit("close-loading-popup")
-    },
-    async register(registerDto) {
-      try {
-        const response = await axios.post(
-          import.meta.env.VITE_API_URL + "/api/auth/register",
-          {
-            name: registerDto.name,
-            password: registerDto.password,
-            phone: registerDto.phone,
-            email: registerDto.email,
-            dob: registerDto.dob,
-            address: registerDto.address,
-            gender: registerDto.gender,
-            bankAccount: registerDto.bankAccount,
-          }
-        );
-        if (response.data) {
-          await this.login({
-            emailOrPhone: registerDto.phone,
-            password: registerDto.password,
-          });
-          this.toggleRegsiterPopup();
-          this.toggleLoginPopup();
-        }
-      } catch (e) {
-        if (e.response.data) {
-          this.eventBus.emit(
-            "register-set-error",
-            e.response.data.ErrorMessage
-          );
-        } else {
-          this.eventBus.emit(
-            "register-set-error",
-            "Something went wrong. Please try again later!"
-          );
-        }
-      }
     },
     async getUser(token) {
       // this.eventBus.emit("open-loading-popup", {

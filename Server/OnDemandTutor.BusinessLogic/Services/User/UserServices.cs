@@ -96,6 +96,11 @@ public class UserServices : IUserServices
         mappedUser.Role = RoleStatus.Customer;
         mappedUser.FireBaseid = fireBaseAuthId;
         mappedUser.CreatedDate = DateTime.Now;
+        mappedUser.Balance = 0;
+        if(registerDtos.isTutor)
+        {
+            mappedUser.Role = RoleStatus.Tutor;
+        }
         // mappedUser.Password = passwordHash; // open when present 
         await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
