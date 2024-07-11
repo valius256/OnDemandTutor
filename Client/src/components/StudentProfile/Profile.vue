@@ -1,5 +1,5 @@
 <template>
-    <div v-if="user">
+    <div>
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Thông tin cá nhân
         </div>

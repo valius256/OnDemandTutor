@@ -14,7 +14,7 @@ public class User : BaseEntity
     public string? AvatarImageUrl { get; set; }
     public DateTime? Dob { get; set; }
     public RoleStatus Role { get; set; }
-    public decimal? Balance { get; set; }
+    public decimal Balance { get; set; }
     public decimal? TutorFeePerHour { get; set; }
     public double? Rating { get; set; }
     public string? IdCardImageUrl { get; set; }

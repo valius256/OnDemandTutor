@@ -19,4 +19,6 @@ public class RegisterDtos
     public required string ConfirmPassword { get; set; }
 
     public DateTime? Dob { get; set; }
+    public bool isTutor { get; set; }
+
 }

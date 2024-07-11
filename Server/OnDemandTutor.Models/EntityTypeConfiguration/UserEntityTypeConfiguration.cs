@@ -18,14 +18,13 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Phone).IsRequired(false).HasMaxLength(10);
         builder.Property(x => x.Role).IsRequired();
         builder.HasIndex(x => x.FireBaseid).IsUnique();
-        builder.Property(x => x.Balance).HasColumnType("money").IsRequired(false);
         builder.Property(x => x.TutorFeePerHour).HasColumnType("money").IsRequired(false);
         builder.Property(x => x.AvatarImageUrl).HasMaxLength(1000);
         builder.Property(x => x.IdCardImageUrl).HasMaxLength(1000);
         builder.Property(x => x.IsActive).HasDefaultValue(true);
         builder.Property(x => x.DeaActiveReason).IsRequired(false);
         builder.Property(x => x.CreatedDate).ValueGeneratedOnAdd().HasDefaultValueSql("CURRENT_TIMESTAMP");
-        builder.Property(x => x.Balance).HasDefaultValue(0);
+        builder.Property(x => x.Balance).HasColumnType("money").HasDefaultValue(0);
         // default will query the user with active status
         // builder.HasQueryFilter(x => x.IsActive);
 

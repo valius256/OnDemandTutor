@@ -517,7 +517,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 1,
                     TutorId = 1,
-                    DegreeImgUrl = "https://example.com/degree1.jpg",
+                    DegreeImgUrl = "https://images2.thanhnien.vn/zoom/686_429/Uploaded/quannt/2022_07_08/bang-gia-1463.jpg",
                     Description = "Cử nhân Toán học",
                     SubjectId = 1,
                     DegreeNumber = "12345",
@@ -528,7 +528,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 2,
                     TutorId = 2,
-                    DegreeImgUrl = "https://example.com/degree2.jpg",
+                    DegreeImgUrl = "https://cdn.cmp.edu.vn/wp-content/uploads/2024/03/thac-si-tien-si-la-gi-1.jpg",
                     Description = "Thạc sĩ Văn học Anh",
                     SubjectId = 2,
                     DegreeNumber = "54321",
@@ -539,7 +539,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 3,
                     TutorId = 1,
-                    DegreeImgUrl = "https://example.com/degree3.jpg",
+                    DegreeImgUrl = "https://baoxinviec.org/wp-content/uploads/2021/08/tien-si-y-hoc-600x416.jpg",
                     Description = "Tiến sĩ Vật lý",
                     SubjectId = 3,
                     DegreeNumber = "98765",
@@ -550,7 +550,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 4,
                     TutorId = 2,
-                    DegreeImgUrl = "https://example.com/degree4.jpg",
+                    DegreeImgUrl = "https://lambangdaihocgiare.com.vn/wp-content/uploads/2019/01/ba%CC%86%CC%80ng-tie%CC%82%CC%81n-si%CC%83-1024x701.jpg",
                     Description = "Cử nhân Lịch sử",
                     SubjectId = 4,
                     DegreeNumber = "24680",
@@ -561,7 +561,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 5,
                     TutorId = 1,
-                    DegreeImgUrl = "https://example.com/degree5.jpg",
+                    DegreeImgUrl = "https://file3.qdnd.vn/data/images/0/2023/12/02/upload_2324/untitled-2.jpg?dpi=150&quality=100&w=870",
                     Description = "Thạc sĩ Khoa học Máy tính",
                     SubjectId = 5,
                     DegreeNumber = "13579",
