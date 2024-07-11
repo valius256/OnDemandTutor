@@ -1,4 +1,5 @@
 using Mapster;
+using OnDemandTutor.BusinessLogic.Interfaces.TutorDegree;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorSubject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -10,26 +11,30 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
     public class TutorSubjectService : ITutorSubjectService
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
+        private readonly ITutorDegreeService _tutorDegreeService;
 
-        public TutorSubjectService(IUnitOfWorkRepository unitOfWork)
+        public TutorSubjectService(IUnitOfWorkRepository unitOfWork, ITutorDegreeService tutorDegreeService)
         {
             _unitOfWork = unitOfWork;
+            _tutorDegreeService = tutorDegreeService;
         }
 
-        public async Task<PagedResult<GetTutorSubjectDto>> GetTutorSubjectsAsync(PagingModel<GetTutorSubjectDto> request)
+        public async Task<PagedResult<GetTutorSubjectDto>> GetTutorSubjectsAsync(PagingModel<QueryTutorSubjectDto> request)
         {
-            var pagedTutorSubjects = await _unitOfWork.TutorSubjectRepository.PagingAsync(request.Adapt<PagingModel<GetTutorSubjectDto>>());
+            var pagedTutorSubjects = await _unitOfWork.TutorSubjectRepository.GetTutorSubjects(request);
             return pagedTutorSubjects.Adapt<PagedResult<GetTutorSubjectDto>>();
         }
 
-        public async Task<GetTutorSubjectDto> GetTutorSubjectByIdAsync(int id)
+        public async Task<GetTutorSubjectDetailDto> GetTutorSubjectByIdAsync(int id)
         {
-            var tutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.UserId == id);
+            var tutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.GetTutorSubjectById(id);
             if (tutorSubjectEntity == null)
             {
                 throw new NotFoundException($"TutorSubject with ID {id} not found.");
             }
-            return tutorSubjectEntity.Adapt<GetTutorSubjectDto>();
+            var mappedTutorSubject = tutorSubjectEntity.Adapt<GetTutorSubjectDetailDto>();
+            mappedTutorSubject.Degrees = await _tutorDegreeService.GetTutorDegreesByTutorIdAndSubjectId(mappedTutorSubject.UserId, mappedTutorSubject.SubjectId);
+            return mappedTutorSubject;
         }
 
         public async Task<CreateTutorSubjectDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto)

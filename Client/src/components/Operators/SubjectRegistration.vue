@@ -23,12 +23,16 @@
             <tbody>
                 <tr v-for="registration in registrations" :key="registration.id">
                     <td>{{ registration.id }}</td>
-                    <td><button class="font-bold underline text-blue-400">{{ registration.user.name }}</button></td>
-                    <td><img :src="registration.user.avatar" class="w-24 h-24"></td>
+                    <td>
+                        <button class="font-bold underline text-blue-400">
+                            {{ (registration.user.firstName ?? "") + " " + (registration.user.lastName ?? "") }}
+                        </button>
+                    </td>
+                    <td><img :src="registration.user.avatarImageUrl" class="w-24 h-24"></td>
                     <td>
                         <div class="flex flex-wrap gap-1" v-html="displaySubjects(registration.subject.name)"></div>
                     </td>
-                    <td>{{ registration.createAt }}</td>
+                    <td>{{ this.beautifyDatetime(registration.createdDate) }}</td>
                     <td class="relative">
                         <router-link :to="`/admin/subjects/detail/${registration.id}`">
                             <div class="p-2 bg-blue-400 hover:bg-blue-200 text-white font-bold rounded-lg">
@@ -62,6 +66,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import SubjectRegistrationFilterPopup from './SubjectRegistrationFilterPopup.vue'
 export default {
@@ -76,50 +81,7 @@ export default {
             isShowPopup: false,
             isOpenFilterPopup: false,
             registrations: [
-                {
-                    id: 1,
-                    user: {
-                        name: "Nguyen Van A",
-                        avatar: "/src/assets/noavatar.jpg",
-                    },
-                    createAt: "2000-01-01 15:00:00",
-                    subject: {
-                        name: "Tiếng Anh"
-                    }
-                },
-                {
-                    id: 2,
-                    user: {
-                        name: "Nguyen Van A",
-                        avatar: "/src/assets/noavatar.jpg",
-                    },
-                    createAt: "2000-01-01 15:00:00",
-                    subject: {
-                        name: "Toán"
-                    }
-                },
-                {
-                    id: 3,
-                    user: {
-                        name: "Nguyen Van A",
-                        avatar: "/src/assets/noavatar.jpg",
-                    },
-                    createAt: "2000-01-01 15:00:00",
-                    subject: {
-                        name: "Toán"
-                    }
-                },
-                {
-                    id: 4,
-                    user: {
-                        name: "Nguyen Van A",
-                        avatar: "/src/assets/noavatar.jpg",
-                    },
-                    createAt: "2000-01-01 15:00:00",
-                    subject: {
-                        name: "Vật lý"
-                    }
-                },
+                
             ],
             filterDto: {
                 name: "",
@@ -131,7 +93,7 @@ export default {
         }
     },
     methods: {
-        resetFilter() {
+        async resetFilter() {
             this.filterDto = {
                 name: "",
                 fromCreateDate: null,
@@ -139,11 +101,13 @@ export default {
                 selectedSubjects: [],
                 isChanged: false
             }
+            await this.fetchData()
         },
-        handleFilter(filterDto, selectedSubjects) {
+        async handleFilter(filterDto, selectedSubjects) {
             console.log(filterDto)
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
             this.filterDto.selectedSubjects = selectedSubjects
+            await this.fetchData()
         },
         toggleFilterPopup() {
             this.isOpenFilterPopup = !this.isOpenFilterPopup
@@ -166,17 +130,6 @@ export default {
             html += `<span class="${style}">${subject}</span>`
             return html
         },
-        getStatusStyle(status) {
-            let css = "text-center font-bold text-white rounded-lg p-1"
-            switch (status) {
-                case "Active":
-                    return css + " bg-green-400"
-                case "Left":
-                    return css + " bg-gray-400"
-                case "Fired":
-                    return css + " bg-red-400"
-            }
-        },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {
                 this.currentPage = this.totalPage
@@ -184,7 +137,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -195,8 +148,37 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async fetchData() {
+            let query = {
+                "Filter.TutorName": this.filterDto.name,
+                "Filter.CreateFrom": this.filterDto.fromCreateDate ?? "",
+                "Filter.CreateTo": this.filterDto.toCreateDate ?? "",
+                "Filter.Status" : 0,
+                Page: this.currentPage,
+                Limit: this.pageSize,
+                Sorts : {
+                    column : "Id",
+                    isDesc : true
+                }
+            }
+            let queryStr = this.jsonToQueryString(query)
+            console.log(this.filterDto.selectedSubjects)
+            if (this.filterDto.selectedSubjects.length > 0) {
+                for (var s of this.filterDto.selectedSubjects){
+                    queryStr += "&Filter.SubjectIds=" + s.id
+                }
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/TutorSubject?' +
+                queryStr)
+            if (response.data) {
+                this.registrations = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+        },
     },
     mounted() {
+        this.fetchData()
     }
 }
 </script>

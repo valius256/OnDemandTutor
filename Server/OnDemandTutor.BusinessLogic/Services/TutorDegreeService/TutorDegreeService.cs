@@ -38,6 +38,11 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
             }
             return tutorDegree.Adapt<GetTutorDegreeDto>();
         }
+        public async Task<List<GetTutorDegreeDto>> GetTutorDegreesByTutorIdAndSubjectId(int tutorId, int subjectId)
+        {
+            var tutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.WhereAsync(td => td.TutorId == tutorId && td.SubjectId == subjectId);
+            return tutorDegree.Adapt<List<GetTutorDegreeDto>>();
+        }
 
         public async Task<CreateTutorDegreeDto> CreateTutorDegreeAsync(CreateTutorDegreeDto tutorDegreeDto)
         {

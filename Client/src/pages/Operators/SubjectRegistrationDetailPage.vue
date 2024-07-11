@@ -1,25 +1,24 @@
 <template>
-    <div class="w-full -ml-4" v-if="tutor">
+    <div class="w-full -ml-4 relative" v-if="tutor">
         <div class="px-4 pb-32 bg-slate-300">
             <div class="flex flex-wrap lg:place-content-between pt-2">
                 <div class="flex gap-2">
-                    <button @click="$router.go(-1)" class="p-2 bg-blue-300 hover:bg-blue-100 font-bold text-white rounded-lg">Trở về</button>
+                    <button @click="$router.go(-1)"
+                        class="p-2 bg-blue-300 hover:bg-blue-100 font-bold text-white rounded-lg">Trở về</button>
                     <router-link to="/tutor/profile">
-                        <div class="p-2 bg-cyan-500 hover:bg-cyan-300 font-bold text-white rounded-lg">Xem hồ sơ đầy đủ</div>
+                        <div class="p-2 bg-cyan-500 hover:bg-cyan-300 font-bold text-white rounded-lg">Xem hồ sơ đầy đủ
+                        </div>
                     </router-link>
-                    
+
                 </div>
-                <div class="flex gap-2">
-                    <button class="py-2 px-6 bg-green-500 hover:bg-green-300 font-bold text-white rounded-lg">Duyệt</button>
-                    <button @click="toggleRejectPopup" class="py-2 px-6 bg-red-500 hover:bg-red-300 font-bold text-white rounded-lg">Từ chối</button>
-                </div>
+
             </div>
         </div>
 
         <div class="ml-8 -mt-24 flex gap-4">
-            <img class="w-48 h-48 rounded-full " :src="tutor.user.avatar" />
+            <img class="w-48 h-48 rounded-full " :src="tutor.user.avatarImageUrl" />
             <div class="mt-8">
-                <div class="font-bold text-4xl  ">{{ tutor.user.name }}</div>
+                <div class="font-bold text-4xl  ">{{ (tutor.user.firstName ?? "") + " " + (tutor.user.lastName ?? "") }}</div>
                 <div class="text-lg  mt-8">{{ tutor.user.address }}</div>
             </div>
 
@@ -34,7 +33,7 @@
                     </div>
                     <div>
                         <span class="font-bold">Ngày sinh : </span>
-                        <span>{{ tutor.user.dob }}</span>
+                        <span>{{ tutor.user.dob?.substring(0,10) ?? "" }}</span>
                     </div>
                     <div>
                         <span class="font-bold">Tuối tác : </span>
@@ -46,10 +45,10 @@
                     </div>
                     <div>
                         <span class="font-bold">Giá dịch vụ (VND/h) : </span>
-                        <span>{{ (tutor.user.price.toLocaleString('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-    })) }}
+                        <span>{{ (tutor.user.tutorFeePerHour.toLocaleString('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                        })) }}
                         </span>
                     </div>
                     <div class="flex gap-4 ">
@@ -61,7 +60,7 @@
                     </div>
                     <div>
                         <span class="font-bold">Mô tả khác : </span>
-                        <span>{{ tutor.user.otherDescription }}</span>
+                        <span>{{ tutor.user.scheduleDesciption }}</span>
                     </div>
                 </div>
             </div>
@@ -85,12 +84,12 @@
                             {{ degree.name }}
                         </div>
                         <div class="mt-2 w-5/6">
-                            <img :src="degree.degreeImageUrl" />
+                            <img :src="degree.degreeImgUrl" />
                         </div>
                         <div class="flex flex-col gap-2 mb-8 mt-4">
                             <div>
                                 <span class="font-bold">Số bằng</span>
-                                <span class="ml-4">{{ degree.number }}</span>
+                                <span class="ml-4">{{ degree.degreeNumber }}</span>
                             </div>
                             <div>
                                 <span class="font-bold">Ngày cấp</span>
@@ -101,74 +100,89 @@
                 </div>
             </div>
         </div>
+        <div class="flex justify-center py-4 bg-slate-400 sticky bottom-0 bg-opacity-50">
+            <div class="flex gap-4">
+                <button @click="handleApprove(true)"
+                    class="py-2 px-12 bg-green-500 hover:bg-green-300 font-bold text-white rounded-lg">Duyệt</button>
+                <button @click="toggleRejectPopup"
+                    class="py-2 px-12 bg-red-500 hover:bg-red-300 font-bold text-white rounded-lg">Từ chối</button>
+            </div>
+        </div>
+
         <generic-popup v-if="isOpenRejectPopup" :closeFunction="toggleRejectPopup" title="Lý do từ chối">
-            <subject-registration-reject-popup :close="toggleRejectPopup" :tutorId="tutor.id"/>
+            <subject-registration-reject-popup :close="toggleRejectPopup" :tutorId="tutor.user.id" :id="tutor.id" :subjectId="tutor.subject.id" />
         </generic-popup>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 import StarRating from 'vue-star-rating'
 import GenericPopup from '../../components/common/GenericPopup.vue'
 import SubjectRegistrationRejectPopup from '../../components/Operators/SubjectRegistrationRejectPopup.vue'
 
 export default {
     name: "SubjectRegistrationDetailPage",
-    components: { StarRating,GenericPopup, SubjectRegistrationRejectPopup },
+    inject : ['eventBus'],
+    components: { StarRating, GenericPopup, SubjectRegistrationRejectPopup },
     data() {
         return {
-            tutor: {
-                id : 1,
-                user: {
-                    name: "Nguyễn Văn A",
-                    phone: "0987654321",
-                    email: "abc@gmail.com",
-                    avatar: "/src/assets/noavatar.jpg",
-                    address: "Long Thạnh Mỹ, Q9, TPHCM",
-                    dob: "2000-01-01",
-                    bio: "Mot cay lam chang nen non. Ba cay chum lai len hon nui cao",
-                    otherDescription: "Kinh nghiệm trong lĩnh vực gia sư 10 năm",
-                    rating: 4.5,
-                    price: 100000
-                },
-                teachingSubject: [
-                    {
-                        id: 1,
-                        name: "Toán"
-                    },
-                    {
-                        id: 2,
-                        name: "Tiếng Việt"
-                    }
-                ],
-                subject: {
-                    name: "Hóa học"
-                },
-                otherDescription: "some thing here",
-                degrees: [
-                    {
-                        id: 1,
-                        name: "Bằng đại học",
-                        degreeImageUrl: "https://m.media-amazon.com/images/I/91P-zQwO+-L.jpg",
-                        number: 12345,
-                        issuranceDate: "2024-01-01"
-                    },
-                    {
-                        id: 2,
-                        name: "Bằng tiến sĩ hóa học",
-                        degreeImageUrl: "https://i.fbcd.co/products/resized/resized-750-500/1-a13569940017b5386bde69bb118cb096e1cbfbf17aec2fa75856394b5384f18b.jpg",
-                        number: 12345,
-                        issuranceDate: "2024-01-01"
-                    }
-                ]
-            },
-            isOpenRejectPopup : false,
+            tutor: null,
+            isOpenRejectPopup: false,
         }
     },
-    methods : {
-        toggleRejectPopup(){
+    methods: {
+        toggleRejectPopup() {
             this.isOpenRejectPopup = !this.isOpenRejectPopup
         },
+        async fetchData() {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/TutorSubject/' +
+                this.$route.params.id)
+            if (response.data) {
+                this.tutor = response.data
+            }
+        },
+        async handleApprove(confirmation) {
+            if (confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: `Bạn có chắc chắn muốn duyệt đơn đăng ký này?`,
+                    method: this.handleApprove,
+                    params: false
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    const request = {
+                        id: this.tutor.id,
+                        userId : this.tutor.user.id,
+                        subjectId : this.tutor.subject.id,
+                        status : 3
+                    }
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject/' + this.tutor.id, request, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                    this.$router.push("/admin/subjects/registration")
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Đã gặp sự cố. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        }
+    },
+    mounted() {
+        this.fetchData()
     }
 }
 </script>

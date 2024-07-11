@@ -15,11 +15,12 @@ public class GetProfileUserDtos
     public DateTime? Dob { get; set; }
     public string? Sex { get; set; }
     public string? BankAccount { get; set; }
+    public string? ScheduleDesciption { get; set; }
+    public string? DeaActiveReason { get; set; }
     public decimal? Balance { get; set; }
     public bool IsActive { get; set; } = true;
-    public string? DeaActiveReason { get; set; }
-    public DateTime? CreatedDate { get; set; }
     public decimal TutorFeePerHour { get; set; }
+    public DateTime? CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
 
 }

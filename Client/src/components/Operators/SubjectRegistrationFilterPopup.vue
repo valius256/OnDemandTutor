@@ -13,12 +13,12 @@
                     <div>
                         <div class="flex">
                             <span class="w-10 p-1">Từ</span>
-                            <input type="date" v-model="formFilterDto.fromDob" class="p-1 border rounded-lg"
+                            <input type="date" v-model="formFilterDto.fromCreateDate" class="p-1 border rounded-lg"
                                 placeholder="Nhập địa chỉ" />
                         </div>
                         <div class="flex mt-2">
                             <span class="w-10 p-1">Đến</span>
-                            <input type="date" v-model="formFilterDto.toDob" class="p-1 border rounded-lg"
+                            <input type="date" v-model="formFilterDto.toCreateDate" class="p-1 border rounded-lg"
                                 placeholder="Nhập địa chỉ" />
                         </div>
                     </div>
