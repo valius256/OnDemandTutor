@@ -212,7 +212,7 @@ public class VnPayServices : IVnPayServices
                 SlotId = slotId,
                 ClassId = classId,
                 Status = PaymentStatus.Notpaid,
-                CreatedDate = timeNow,
+                CreatedDate = DateTime.Now,
                 CreatedById = int.Parse(currUid),
             };
 

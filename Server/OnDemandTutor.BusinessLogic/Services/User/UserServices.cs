@@ -371,9 +371,6 @@ public class UserServices : IUserServices
 
     }
 
-
-
-
     public async Task<bool> UpdateAvatarImage(string imageUrl, ClaimsPrincipal claims)
     {
         var userid = claims.FindFirst(c => c.Type == "id")?.Value;
@@ -391,12 +388,26 @@ public class UserServices : IUserServices
         return record.Balance;
     }
 
-    public async Task<bool> UpdateBalance(int userId, decimal amount)
+    public async Task<bool> UpdateBalance(int userId, decimal moneyIncrease, decimal moneyDecrease)
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
-        record.Balance = amount;
+        if (moneyDecrease > 0)
+        {
+            record.Balance += moneyIncrease;
+        }
+        else if(moneyDecrease == 0)
+        {
+            record.Balance -= moneyDecrease;
+        }
+
         _unitOfWorkRepository.UserRepository.Update(record);
+        if (record.Balance < 0)
+        {
+            throw new ModelException($"{record.Balance}", "The balance cannot be negative",
+                "The balance cannot be negative");
+        }
+        
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }

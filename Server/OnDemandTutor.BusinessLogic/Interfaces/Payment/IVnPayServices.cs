@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Payment;
 using OnDemandTutor.Models.Dtos.Slot;
 
@@ -10,4 +11,5 @@ public interface IVnPayServices
     Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections);
     Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context);
     // Task<bool> ProcessCashbackAsync(CashBackDto cashbackDto, HttpContext context);
+    Task<string> CreatePaymentForClassUrl(PayClassDto model, HttpContext context, GetClassFullDataSlotDto classDto);
 }

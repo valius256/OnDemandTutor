@@ -44,16 +44,16 @@ public class PaymentController : BaseController<PaymentController>
     }
 
     [Authorize]
-    [HttpPost("create-payment-class/{classId}")]
+    [HttpPost("create-payment-class")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
-    public async Task<IActionResult> PurchaseClass(int classId)
+    public async Task<IActionResult> PurchaseClass(PayClassDto request)
     {
-        var classDtos = _classService.GetClassByIdAsync(classId);
-        if (classDtos == null)
+        var classDto = await _classService.GetClassWithFullDataSlotId(request.ClassId);
+        if (classDto == null)
             return BadRequest("Class not found");
 
-        var classPaymentUrl = Task.CompletedTask;
+        var classPaymentUrl = await _vnPayServices.CreatePaymentForClassUrl(request, HttpContext, classDto);
         return Ok(classPaymentUrl);
     }
 

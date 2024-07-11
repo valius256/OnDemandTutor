@@ -4,6 +4,6 @@ namespace OnDemandTutor.Models.Dtos.TutorSubject
     {
         public int UserId { get; set; }
         public int SubjectId { get; set; }
-
+        public string? Description { get; set; }
     }
 }

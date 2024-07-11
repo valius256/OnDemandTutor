@@ -57,4 +57,10 @@ public class SlotStudentService : ISlotStudentServices
         }
         
     }
+
+    public async Task<SlotStudentDto> GetSlotStudentById(int slotId)
+    {
+        var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(u => u.SlotId == slotId);
+        return recordInDb.Adapt<SlotStudentDto>();
+    }
 }

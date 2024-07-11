@@ -220,7 +220,7 @@ public static class ServiceExtensions
                 new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(15),
                     QueuePollInterval = TimeSpan.Zero,
                     UseRecommendedIsolationLevel = true,
                     DisableGlobalLocks = true
@@ -232,7 +232,7 @@ public static class ServiceExtensions
 
         // Register any other required services here
         services.AddTransient<IDefaultScheduleJob, DefaultScheduleJob>();
-
+        
         return services;
     }
 

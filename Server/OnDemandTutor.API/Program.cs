@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.API.Extensions;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic;
+using OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
+using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.BusinessLogic.StartupExtension;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
@@ -78,9 +80,13 @@ internal class Program
             IsReadOnlyFunc = (DashboardContext context) => false,
             TimeZoneResolver = new DefaultTimeZoneResolver()
         });
-
+        
+        
         // Enable processing Hangfire jobs
         app.UseHangfireServer();
+        
+        RecurringJob.AddOrUpdate<SlotService>(x => 
+           x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
 
         // Swagger
         app.UseSwagger();
@@ -104,6 +110,12 @@ internal class Program
 
 
 
+        
         app.Run();
+        
+        
     }
+    
+    
+   
 }

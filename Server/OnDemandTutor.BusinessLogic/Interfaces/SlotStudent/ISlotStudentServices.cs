@@ -7,4 +7,5 @@ public interface ISlotStudentServices
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
     Task CreateSlotStudentIfNotExist(int slotId, int studentId);
+    Task<SlotStudentDto> GetSlotStudentById(int slotId);
 }

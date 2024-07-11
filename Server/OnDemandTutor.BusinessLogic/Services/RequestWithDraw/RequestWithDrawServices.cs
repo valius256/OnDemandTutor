@@ -55,13 +55,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
                 "Insufficient balance to make withdraw request");
         }
         // update balance for src acc 
-        var newSrcBalance = balanceFromSoureAcc - request.Amount;
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();
         requestWithDrawModel.UserId = int.Parse(uid);
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
         await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
-        await _userServices.UpdateBalance(int.Parse(uid), newSrcBalance.Value);
+        await _userServices.UpdateBalance(int.Parse(uid), 0, request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
         // send Email 
@@ -97,6 +96,8 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         return true;
     }
+
+
 
     private int GetOperatorIdFromClaims(ClaimsPrincipal userClaims)
     {

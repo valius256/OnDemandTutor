@@ -6,25 +6,27 @@ using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
 public class TransactionServices : ITransactionServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-
-    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository)
+    public readonly ISlotStudentServices _SlotStudentServices;
+    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, ISlotStudentServices slotStudentServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
+        _SlotStudentServices = slotStudentServices;
     }
 
     public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
     {
-        var transactionModel = transaction.Adapt<List<Models.Models.Transaction>>();
-        await _unitOfWorkRepository.TransactionRepository
-            .AddRangeAsync(transactionModel);
-        await _unitOfWorkRepository.SaveChangesAsync();
-        return transactionModel[0].Id;
+        var transactionModels = transaction.Adapt<List<Models.Models.Transaction>>();
+       await _unitOfWorkRepository.TransactionRepository
+            .AddRangeAsync(transactionModels);
+        var rs = await _unitOfWorkRepository.SaveChangesAsync();
+        return rs;
     }
 
     public async Task<int> TransactionPaid(string transactionId, DateTime paidTime)
@@ -57,5 +59,43 @@ public class TransactionServices : ITransactionServices
         var id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
+    }
+
+    public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
+    {
+        var slotInfor = await _SlotStudentServices.GetSlotStudentById(slotId);
+        TransactionDto transaction = new TransactionDto()
+        {
+            TransactionCode = $"AutoPaid_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
+            Status = PaymentStatus.Paid,
+            SlotId = slotInfor.SlotId,
+            CreatedById = slotInfor.UserId,
+            Amount = amount,
+            CreatedDate = DateTime.UtcNow,
+            PaymentMethod = "Internal"
+        };
+        var transactionModel = transaction.Adapt<Models.Models.Transaction>();
+        _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount)
+    {
+        var slotInfor = await _SlotStudentServices.GetSlotStudentById(slotId);
+        TransactionDto transaction = new TransactionDto()
+        {
+            TransactionCode =  $"AutoPaid_NotSuccess_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
+            Status = PaymentStatus.Notpaid,
+            SlotId = slotInfor.SlotId,
+            CreatedById = slotInfor.UserId,
+            Amount = amount,
+            CreatedDate = DateTime.UtcNow,
+            PaymentMethod = "Internal"
+        };
+        var transactionModel = transaction.Adapt<Models.Models.Transaction>();
+        _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
     }
 }
