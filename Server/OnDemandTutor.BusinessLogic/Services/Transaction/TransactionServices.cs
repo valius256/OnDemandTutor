@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -6,25 +7,24 @@ using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
-using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
 public class TransactionServices : ITransactionServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-    public readonly ISlotStudentServices _SlotStudentServices;
+    public readonly ISlotStudentServices _slotStudentServices;
     public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, ISlotStudentServices slotStudentServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
-        _SlotStudentServices = slotStudentServices;
+        _slotStudentServices = slotStudentServices;
     }
 
     public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
     {
         var transactionModels = transaction.Adapt<List<Models.Models.Transaction>>();
-       await _unitOfWorkRepository.TransactionRepository
-            .AddRangeAsync(transactionModels);
+        await _unitOfWorkRepository.TransactionRepository
+             .AddRangeAsync(transactionModels);
         var rs = await _unitOfWorkRepository.SaveChangesAsync();
         return rs;
     }
@@ -63,7 +63,7 @@ public class TransactionServices : ITransactionServices
 
     public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
     {
-        var slotInfor = await _SlotStudentServices.GetSlotStudentById(slotId);
+        var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
         TransactionDto transaction = new TransactionDto()
         {
             TransactionCode = $"AutoPaid_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
@@ -82,10 +82,10 @@ public class TransactionServices : ITransactionServices
 
     public async Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount)
     {
-        var slotInfor = await _SlotStudentServices.GetSlotStudentById(slotId);
+        var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
         TransactionDto transaction = new TransactionDto()
         {
-            TransactionCode =  $"AutoPaid_NotSuccess_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
+            TransactionCode = $"AutoPaid_NotSuccess_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
             Status = PaymentStatus.Notpaid,
             SlotId = slotInfor.SlotId,
             CreatedById = slotInfor.UserId,
