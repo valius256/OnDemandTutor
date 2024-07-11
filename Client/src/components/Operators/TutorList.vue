@@ -221,7 +221,7 @@ export default {
                 if (subject.status != 3){
                     continue;
                 }
-                switch (subject.subjectName) {
+                switch (subject.subject.name) {
                     case "Toán":
                         color = "border-orange-400"
                         break;
@@ -233,7 +233,7 @@ export default {
                         break;
                 }
                 var style = `rounded-lg py-2 px-6 border ${color}`
-                html += `<span class="${style}">${subject.subjectName}</span>`
+                html += `<span class="${style}">${subject.subject.name}</span>`
             }
             return html
         },

@@ -23,14 +23,14 @@ namespace OnDemandTutor.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<GetTutorSubjectDto>), 200)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        public async Task<IActionResult> GetTutorSubjects([FromQuery] PagingModel<GetTutorSubjectDto> pagingModel)
+        public async Task<IActionResult> GetTutorSubjects([FromQuery] PagingModel<QueryTutorSubjectDto> pagingModel)
         {
             var tutorSubjects = await _tutorSubjectService.GetTutorSubjectsAsync(pagingModel);
             return Ok(tutorSubjects);
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(GetTutorSubjectDto), 200)]
+        [ProducesResponseType(typeof(GetTutorSubjectDetailDto), 200)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         public async Task<IActionResult> GetTutorSubjectById(int id)
         {

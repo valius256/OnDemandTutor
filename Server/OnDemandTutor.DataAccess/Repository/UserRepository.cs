@@ -194,9 +194,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
                 Phone = u.Phone,
                 Sex = u.Sex.Value,
                 Dob = u.Dob ?? default, // Handle nullable DateTime
+                AvatarImageUrl = u.AvatarImageUrl,
                 JoiningDate = u.CreatedDate.Value,
                 Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(),
-                Description = u.ScheduleDesciption,
+                ScheduleDesciption = u.ScheduleDesciption,
                 IsActive = u.IsActive,
                 TutorStatus = u.TutorStatus,
                 TutorSubjects = u.TutorSubjects.Adapt<List<GetTutorSubjectDto>>()
