@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using LinqKit;
+using Mapster;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
@@ -6,6 +8,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
+using OnDemandTutor.Helper;
 
 namespace OnDemandTutor.BusinessLogic.Services
 {
@@ -22,9 +25,15 @@ namespace OnDemandTutor.BusinessLogic.Services
             _authService = authService;
         }
 
-        public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> request)
+        //public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<GetSubjectDtos> request)
+        //{
+        //    var pagedSubjects = await _unitOfWork.SubjectRepository.PagingAsync(request.Adapt<PagingModel<Models.Models.Subject>>());
+        //    return pagedSubjects.Adapt<PagedResult<GetSubjectDtos>>();
+        //}
+        public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<QuerySubjectDTO> request)
         {
-            var pagedSubjects = await _unitOfWork.SubjectRepository.PagingAsync(request.Adapt<PagingModel<Models.Models.Subject>>());
+            var pagedSubjects = await _unitOfWork.SubjectRepository.GetSubjects(request);
+            pagedSubjects.Items.ForEach(s => s.Name = ConverterHelper.ConvertHtmlToPlainText(s.Name ?? ""));
             return pagedSubjects.Adapt<PagedResult<GetSubjectDtos>>();
         }
 

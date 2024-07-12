@@ -22,7 +22,7 @@ namespace OnDemandTutor.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<GetSubjectDtos>), 200)]
-        public async Task<IActionResult> GetSubjects([FromQuery] PagingModel<GetSubjectDtos> pagingModel)
+        public async Task<IActionResult> GetSubjects([FromQuery] PagingModel<QuerySubjectDTO> pagingModel)
         {
             var subjects = await _subjectService.GetSubjectsAsync(pagingModel);
             return Ok(subjects);
