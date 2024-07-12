@@ -12,11 +12,13 @@ public class TutorSimpleProfileDto
     public DateTime Dob { get; set; }
     public DateTime JoiningDate { get; set; }
     public string? AvatarImageUrl { get; set; }
+    public string? Address { get; set; }
     public Sex Sex { get; set; }
     public List<string> Subject { get; set; }
     public string ScheduleDesciption { get; set; }
     public bool IsActive { get; set; } = true;
     public double? Rating { get; set; }
+    public decimal? TutorFeePerHour { get; set; }
     public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;
-    public List<GetTutorSubjectDto> TutorSubjects { get; set; } = new List<GetTutorSubjectDto>();
+    public List<GetTutorSubjectWithSubjectDto> TutorSubjects { get; set; } = new List<GetTutorSubjectWithSubjectDto>();
 }

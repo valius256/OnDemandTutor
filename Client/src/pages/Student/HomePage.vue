@@ -1,9 +1,25 @@
 <template>
   <div class="min-h-screen bg-blue-50 overflow-x-hidden">
     <main>
-      <section class="bg-blue-500 text-white py-20 relative">
-        <div class="absolute inset-0 z-0 bg-home-banner bg-cover bg-center bg-no-repeat opacity-100"></div>
-        <div class="container mx-auto text-center relative z-10">
+      <section class="bg-blue-200 text-white py-24 relative flex flex-col lg:flex-row gap-4">
+        <div class="absolute inset-0 flex ">
+          <div class="relative">
+            <div class="bg-[rgb(116,168,218)] w-[400px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#a3cdf5] w-[200px] h-full transform skew-x-12 -ml-24">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+          <div class="relative">
+            <div class="bg-[#c4e2fd] w-[100px] h-full transform skew-x-12">
+              <!-- This div creates the trapezoid shape -->
+            </div>
+          </div>
+        </div>
+        <div class="container mx-auto text-center relative z-10  animate-fade-down">
           <h2 class="text-4xl font-bold mb-8">
             Tìm Gia Sư Hoàn Hảo Cho Bạn Ngay Hôm Nay
           </h2>
@@ -15,6 +31,8 @@
             Bắt Đầu Ngay
           </button>
         </div>
+        <img class="mr-4 relative" src="https://www.greatschools.org/gk/wp-content/uploads/2010/01/Looking-for-a-tutor.jpg">
+        
       </section>
       <section id="popular-tutors" class="relative">
         <div class="absolute inset-0 flex justify-end">

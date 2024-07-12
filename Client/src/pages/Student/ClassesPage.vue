@@ -2,7 +2,7 @@
     <div class="p-4 flex gap-4">
         <div class="w-1/4 border-r-2">
             <div class="font-bold text-xl">Bộ lọc</div>
-            <div class="border rounded-lg p-2 mt-4 mr-2">
+            <div class="border rounded-lg p-2 mt-4 mr-2 shadow-lg">
                 <div>
                     <div>Tên lớp</div>
                     <input class="border rounded-lg p-1 w-full" placeholder="Nhập tên lớp"

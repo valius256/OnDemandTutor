@@ -1,8 +1,10 @@
 ﻿using Mapster;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Notification
@@ -16,9 +18,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<NotificationGetDto>> GetNotificationsAsync(PagingModel<NotificationGetDto> request)
+        public async Task<PagedResult<NotificationGetDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user)
         {
-            var pagedNotifications = await _unitOfWork.NotificationRepository.PagingAsync(request.Adapt<PagingModel<Models.Models.Notification>>());
+            var pagedNotifications = await _unitOfWork.NotificationRepository.GetNotificationByReceiverId(user.Id,page,limit);
             return pagedNotifications.Adapt<PagedResult<NotificationGetDto>>();
         }
 
@@ -42,16 +44,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             return createdNotificationEntity.Adapt<NotificationGetDto>();
         }
 
-        public async Task<NotificationGetDto> UpdateNotificationAsync(NotificationGetDto notificationGetDto)
+        public async Task<NotificationGetDto> UpdateViewStatus(int id)
         {
-            var existingNotification = await _unitOfWork.NotificationRepository.GetNotificationWithReceiverByIdAsync(notificationGetDto.Id);
+            var existingNotification = await _unitOfWork.NotificationRepository.FirstOrDefaultAsync(n => n.Id == id);
             if (existingNotification == null)
             {
-                throw new NotFoundException($"Notification with ID {notificationGetDto.Id} not found.");
+                throw new NotFoundException($"Notification with ID {id} not found.");
             }
-
-            existingNotification = notificationGetDto.Adapt(existingNotification);
-
+            existingNotification.IsViewed = true;
             var updatedNotification = _unitOfWork.NotificationRepository.Update(existingNotification);
             await _unitOfWork.SaveChangesAsync();
 

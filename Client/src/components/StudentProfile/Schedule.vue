@@ -12,9 +12,9 @@
                         currency: 'VND',
                     }) }} </span>
                 </div>
-                <button class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
+                <router-link to="/student/payment" class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
                     Nạp tiền
-                </button>
+                </router-link >
 
             </div>
             <div v-if="upcomingSlot">

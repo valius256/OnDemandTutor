@@ -233,7 +233,7 @@ public class UserServices : IUserServices
 
     public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
     {
-        return await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request);
+        return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request)).Adapt<PagedResult<TutorSimpleProfileDto>>();
     }
 
     public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
