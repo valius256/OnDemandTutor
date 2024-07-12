@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
+
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Dtos.TutorSubject
 {
-    public class GetTutorSubjectDto
+    public class GetTutorSubjectWithSubjectDto
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public GetTutorDto User { get; set; } = default!;
         public int SubjectId { get; set; }
         public GetSubjectDtos Subject { get; set; } = default!;
         public string Description { get; set; } = string.Empty;

@@ -10,6 +10,8 @@ namespace OnDemandTutor.Models.Dtos.Notification
         public string? RefImageUrl { get; set; }
         public bool IsViewed { get; set; }
         public string? ReceiverName { get; set; } // Assuming User has a Name property
+
+        public DateTime CreatedDate { get; set; }
     }
 }
 

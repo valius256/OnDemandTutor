@@ -21,7 +21,7 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PagedResult<GetTutorSubjectDto>), 200)]
+        [ProducesResponseType(typeof(PagedResult<GetTutorSubjectWithUserAndSubjectDto>), 200)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         public async Task<IActionResult> GetTutorSubjects([FromQuery] PagingModel<QueryTutorSubjectDto> pagingModel)
         {

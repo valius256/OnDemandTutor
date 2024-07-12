@@ -19,10 +19,10 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             _tutorDegreeService = tutorDegreeService;
         }
 
-        public async Task<PagedResult<GetTutorSubjectDto>> GetTutorSubjectsAsync(PagingModel<QueryTutorSubjectDto> request)
+        public async Task<PagedResult<GetTutorSubjectWithUserAndSubjectDto>> GetTutorSubjectsAsync(PagingModel<QueryTutorSubjectDto> request)
         {
             var pagedTutorSubjects = await _unitOfWork.TutorSubjectRepository.GetTutorSubjects(request);
-            return pagedTutorSubjects.Adapt<PagedResult<GetTutorSubjectDto>>();
+            return pagedTutorSubjects.Adapt<PagedResult<GetTutorSubjectWithUserAndSubjectDto>>();
         }
 
         public async Task<GetTutorSubjectDetailDto> GetTutorSubjectByIdAsync(int id)

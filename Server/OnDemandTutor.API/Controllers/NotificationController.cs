@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.BusinessLogic.Interfaces;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Notification;
@@ -13,20 +14,25 @@ namespace OnDemandTutor.API.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
+        private readonly IAuthServices _authServices;
 
-        public NotificationController(INotificationService notificationService)
+        public NotificationController(INotificationService notificationService, IAuthServices authServices)
         {
             _notificationService = notificationService;
+            _authServices = authServices;
         }
 
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<NotificationGetDto>), 200)]
-        public async Task<IActionResult> GetNotifications([FromQuery] PagingModel<NotificationGetDto> pagingModel)
+        public async Task<IActionResult> GetNotifications([FromQuery] int page = 0, [FromQuery] int limit = 20)
         {
-            var notifications = await _notificationService.GetNotificationsAsync(pagingModel);
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User); 
+            var notifications = await _notificationService.GetNotificationsAsync(page, limit, user);
             return Ok(notifications);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(NotificationGetDto), 200)]
         [ProducesResponseType(404)]
@@ -60,27 +66,10 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(NotificationGetDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateNotification(int id, [FromBody] NotificationGetDto notificationGetDto)
+        public async Task<IActionResult> UpdateNotification(int id)
         {
-            if (id != notificationGetDto.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var updatedNotification = await _notificationService.UpdateNotificationAsync(notificationGetDto);
-                return Ok(updatedNotification);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var updatedNotification = await _notificationService.UpdateViewStatus(id);
+            return Ok(updatedNotification);
         }
 
         [Authorize]

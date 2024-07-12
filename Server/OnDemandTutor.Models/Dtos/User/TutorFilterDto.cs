@@ -13,6 +13,9 @@ public class TutorFilterDto
     public DateTime? DobToDate { get; set; }
     public DateTime? JoinFromDate { get; set; }
     public DateTime? JoinToDate { get; set; }
+
+    public decimal? FeeFrom { get; set; }
+    public decimal? FeeTo { get; set; }
     public bool? IsActive { get; set; }
     public List<TutorStatus>? TutorStatus { get; set; }
     public List<int>? Subject { get; set; }

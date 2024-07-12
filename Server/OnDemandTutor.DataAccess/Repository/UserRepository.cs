@@ -47,7 +47,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         if (!string.IsNullOrEmpty(request.Address))
         {
-            userListQuery = userListQuery.Where(ld => ld.Address == request.Address);
+            userListQuery = userListQuery.Where(ld => ld.Address != null && ld.Address.Contains(request.Address));
         }
 
         if (request.Sex.HasValue)
@@ -60,10 +60,13 @@ public class UserRepository : GenericRepository<User>, IUserRepository
             userListQuery = userListQuery.Where(ld => request.Role.Contains(ld.Role));
         }
 
-
-        if (request.DobFromDate != null && request.DobToDate != null)
+        if (request.DobFromDate != null)
         {
-            userListQuery = userListQuery.Where(ld => ld.Dob >= request.DobFromDate && ld.Dob <= request.DobToDate);
+            userListQuery = userListQuery.Where(ld => ld.Dob >= request.DobFromDate);
+        }
+        if (request.DobToDate != null)
+        {
+            userListQuery = userListQuery.Where(ld =>ld.Dob <= request.DobToDate);
         }
 
         if (!string.IsNullOrEmpty(request.Subject))
@@ -119,7 +122,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return tutorList;
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
+    public async Task<PagedResult<User>> ViewTutorListAsync(TutorFilterDto request)
     {
         var tutorListQuery = dbSet
             .Include(u => u.TutorSubjects)
@@ -155,7 +158,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         if (!string.IsNullOrEmpty(request.Address))
         {
-            tutorListQuery = tutorListQuery.Where(ld => ld.Address == request.Address);
+            tutorListQuery = tutorListQuery.Where(ld => ld.Address != null && ld.Address.Contains(request.Address));
         }
 
         if (request.Sex != null && request.Sex.Any())
@@ -172,7 +175,23 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.CreatedDate <= request.JoinToDate);
         }
+        if (request.FeeFrom.HasValue)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorFeePerHour >= request.FeeFrom);
+        }
 
+        if (request.FeeTo.HasValue)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorFeePerHour <= request.FeeTo);
+        }
+        if (request.DobFromDate != null)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Dob >= request.DobFromDate);
+        }
+        if (request.DobToDate != null)
+        {
+            tutorListQuery = tutorListQuery.Where(ld => ld.Dob <= request.DobToDate);
+        }
         if (request.Subject != null)
         {
             tutorListQuery = tutorListQuery.Where(ld => ld.TutorSubjects.Any(ts => request.Subject.Contains(ts.SubjectId)));
@@ -186,22 +205,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         var filteredTutors = await tutorListQuery
             .AsNoTracking()
-            .Select(u => new TutorSimpleProfileDto
-            {
-                Id = u.Id,
-                FullName = u.FirstName + " " + u.LastName,
-                Email = u.Email,
-                Phone = u.Phone,
-                Sex = u.Sex.Value,
-                Dob = u.Dob ?? default, // Handle nullable DateTime
-                AvatarImageUrl = u.AvatarImageUrl,
-                JoiningDate = u.CreatedDate.Value,
-                Subject = u.TutorSubjects.Select(ts => ts.Subject.Name).ToList(),
-                ScheduleDesciption = u.ScheduleDesciption,
-                IsActive = u.IsActive,
-                TutorStatus = u.TutorStatus,
-                TutorSubjects = u.TutorSubjects.Adapt<List<GetTutorSubjectDto>>()
-            })
             .ToNewPagingAsync(page, limit);
 
 

@@ -9,6 +9,7 @@
 
       <router-link class="flex justify-center items-center px-4 hover:bg-slate-300" to="/blogs">Blogs</router-link>
       <router-link class="flex justify-center items-center px-4 hover:bg-slate-300" to="/faqs">FAQs</router-link>
+      <bell-notification v-if="user" />
       <router-link v-if="user && user.role == 0"
         class="flex justify-center items-center px-4 hover:bg-slate-300 font-bold" to="/student">
         <div class="flex gap-4 items-center">
@@ -38,7 +39,8 @@
         </button>
       </div> -->
     </div>
-    <div class="flex items-center lg:hidden h-full mr-2">
+    <div class="flex items-center lg:hidden h-full mr-2 gap-4">
+      <bell-notification />
       <button class="shadow-md rounded-md py-2 px-4 bg-white text-2xl font-bold" @click="toggleResponsive">
         <i class="fa fa-reorder	"></i>
       </button>
@@ -49,8 +51,10 @@
 </template>
 
 <script>
+import BellNotification from './BellNotification.vue';
 
 export default {
+  components: { BellNotification },
   name: "NavBar",
   inject: ["eventBus"],
   data() {
