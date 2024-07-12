@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace OnDemandTutor.Helper;
 
@@ -76,6 +77,18 @@ public static class ConverterHelper
         return string.Concat(pascalCase);
     }
 
+    public static string? ConvertHtmlToPlainText(string html)
+    {
+        if (string.IsNullOrWhiteSpace(html))
+        {
+            return string.Empty;
+        }
+
+        var htmlDoc = new HtmlDocument();
+        htmlDoc.LoadHtml(html);
+
+        return htmlDoc.DocumentNode.InnerText;
+    }
 
     public static string ToCamelCase(this string str)
     {

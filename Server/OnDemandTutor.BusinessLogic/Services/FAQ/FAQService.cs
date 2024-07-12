@@ -1,9 +1,11 @@
-﻿using Mapster;
+﻿using LinqKit;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Helper;
 using OnDemandTutor.Models.Dtos.FAQ;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
@@ -21,9 +23,14 @@ public class FAQService : IFAQService
         _httpContextAccessor = HttpContextAccessor;
     }
 
-    public async Task<PagedResult<FAQDTO>> GetFAQsAsync(PagingModel<FAQDTO> request)
+    public async Task<PagedResult<FAQDTO>> GetFAQsAsync(PagingModel<QueryFAQDTO> request)
     {
-        var pagedFAQs = await _unitOfWorkRepository.FAQRepository.PagingAsync(request.Adapt<PagingModel<FAQDTO>>());
+        var pagedFAQs = await _unitOfWorkRepository.FAQRepository.GetFAQs(request);
+        if (pagedFAQs is null)
+        {
+            throw new NotFoundException($"FAQs not found.");
+        }
+        pagedFAQs.Items.ForEach(b => b.Question = ConverterHelper.ConvertHtmlToPlainText(b.Question ?? ""));
         return pagedFAQs.Adapt<PagedResult<FAQDTO>>();
     }
 

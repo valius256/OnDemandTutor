@@ -1,14 +1,15 @@
-﻿namespace OnDemandTutor.Models.Dtos.Blog
+﻿using System;
+namespace OnDemandTutor.Models.Dtos.FAQ
 {
-    public class QueryBlogDto
-    {
-        public string? Keyword { get; set; }
+	public class QueryFAQDTO
+	{
+        public string? Question { get; set; }
+        public string? Answer { get; set; }
         public DateTime? CreateFrom { get; set; }
         public DateTime? CreateTo { get; set; }
         public DateTime? UpdateFrom { get; set; }
         public DateTime? UpdateTo { get; set; }
         public int? CreateBy { get; set; }
-        public bool? IsHidden { get; set; }
-
     }
 }
+

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OnDemandTutor.Models.EntityTypeConfiguration;
 using OnDemandTutor.Models.MigrationData;
 using OnDemandTutor.Models.Models;
@@ -16,6 +17,7 @@ public class ApplicationDbContext : DbContext
     {
     }
 
+ 
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ConsultationRequest> ConsultationRequests { get; set; }

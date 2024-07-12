@@ -8,6 +8,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Paging;
+using OnDemandTutor.Helper;
 
 namespace OnDemandTutor.BusinessLogic.Services.Blog
 {
@@ -26,7 +27,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
         public async Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<QueryBlogDto> request)
         {
             var pagedBlogs = await _unitOfWork.BlogRepository.GetBlogs(request);
-            pagedBlogs.Items.ForEach(b => b.Content = ConvertHtmlToPlainText(b.Content ?? ""));
+            pagedBlogs.Items.ForEach(b => b.Content = ConverterHelper.ConvertHtmlToPlainText(b.Content ?? ""));
             return pagedBlogs.Adapt<PagedResult<GetBlogDtos>>();
         }
 
@@ -85,18 +86,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             return true;
         }
 
-        private static string ConvertHtmlToPlainText(string html)
-        {
-            if (string.IsNullOrWhiteSpace(html))
-            {
-                return string.Empty;
-            }
-
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            return htmlDoc.DocumentNode.InnerText;
-        }
+       
 
     }
 }

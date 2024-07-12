@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.FAQ;
 using OnDemandTutor.Models.Paging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using OnDemandTutor.DataAccess.ExceptionModels;
+using ValidationErrorModel = OnDemandTutor.API.Middlesware.ValidationErrorModel;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -24,39 +24,32 @@ namespace OnDemandTutor.API.Controllers
             _faqService = faqService;
         }
 
+
         [Authorize]
         [HttpPost("create")]
         [ProducesResponseType(typeof(FAQDTO), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> CreateFAQ([FromBody] CreateFAQDto FAQDTO)
         {
-            try
+            var createdFaq = await _faqService.CreateFAQAsync(FAQDTO);
+            if (createdFaq == null)
             {
-                var createdFaq = await _faqService.CreateFAQAsync(FAQDTO);
-                return Ok(createdFaq);
+                throw new BadRequestException("Failed to create FAQ.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to create FAQ: {ex.Message}");
-                return BadRequest(new ValidationErrorModel(ex.Message));
-            }
+            return Ok(createdFaq);
         }
 
         [HttpGet("all")]
         [ProducesResponseType(typeof(PagedResult<FAQDTO>), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
-        public async Task<IActionResult> GetFAQs([FromQuery] PagingModel<FAQDTO> pagingModel)
+        public async Task<IActionResult> GetFAQs([FromQuery] PagingModel<QueryFAQDTO> pagingModel)
         {
-            try
+            var faqs = await _faqService.GetFAQsAsync(pagingModel);
+            if (faqs == null)
             {
-                var faqs = await _faqService.GetFAQsAsync(pagingModel);
-                return Ok(faqs);
+                throw new BadRequestException("Failed to retrieve FAQs.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to retrieve FAQs: {ex.Message}");
-                return BadRequest(new ValidationErrorModel(ex.Message));
-            }
+            return Ok(faqs);
         }
 
         [HttpGet("get-by-id")]
@@ -64,34 +57,26 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> GetFAQById(int id)
         {
-            try
+            var faq = await _faqService.GetFAQByIdAsync(id);
+            if (faq == null)
             {
-                var faq = await _faqService.GetFAQByIdAsync(id);
-                return Ok(faq);
+                throw new BadRequestException($"Failed to retrieve FAQ by ID {id}.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to retrieve FAQ by ID {id}: {ex.Message}");
-                return BadRequest(new ValidationErrorModel(ex.Message));
-            }
+            return Ok(faq);
         }
 
         [Authorize]
         [HttpPut("update")]
         [ProducesResponseType(typeof(FAQDTO), 200)]
-        [ProducesResponseType(typeof(ValidationErrorModel)   , 400)]
+        [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> UpdateFAQ([FromBody] UpdateFAQDto FAQDTO)
         {
-            try
+            var updatedFaq = await _faqService.UpdateFAQAsync(FAQDTO);
+            if (updatedFaq == null)
             {
-                var updatedFaq = await _faqService.UpdateFAQAsync(FAQDTO);
-                return Ok(updatedFaq);
+                throw new BadRequestException("Failed to update FAQ.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to update FAQ: {ex.Message}");
-                return BadRequest(new ValidationErrorModel(ex.Message));
-            }
+            return Ok(updatedFaq);
         }
 
         [Authorize]
@@ -100,16 +85,12 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> DeleteFAQ(int id)
         {
-            try
+            var isDeleted = await _faqService.DeleteFAQAsync(id);
+            if (!isDeleted)
             {
-                var isDeleted = await _faqService.DeleteFAQAsync(id);
-                return Ok(isDeleted);
+                throw new BadRequestException($"Failed to delete FAQ with ID {id}.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to delete FAQ with ID {id}: {ex.Message}");
-                return BadRequest(new ValidationErrorModel(ex.Message));
-            }
+            return Ok(isDeleted);
         }
     }
 }
