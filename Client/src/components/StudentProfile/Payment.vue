@@ -57,7 +57,7 @@
             </div>
         </div>
         <generic-popup v-if="isOpenWithdrawPopup" :title="'Tạo yêu cầu rút tiền'" :closeFunction="toggleWithdrawPopup" :notOverflow="true">
-            <request-withdraw-popup :close="toggleWithdrawPopup" :action="navigateToPayment"></request-withdraw-popup>
+            <request-withdraw-popup :close="toggleWithdrawPopup" :action="navigateToPayment" :balance="balance"></request-withdraw-popup>
         </generic-popup>
     </div>
 

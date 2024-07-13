@@ -39,7 +39,7 @@
                     <td>
                         {{ faq.createBy?.name }}
                     </td>
-                    <td>{{ this.beautifyDatetime(faq.createAt) }}</td>
+                    <td>{{ this.beautifyDatetime(faq.createdDate) }}</td>
                     <td>{{ this.beautifyDatetime(faq.updatedDate) }}</td>
                     <td class="relative">
                         <button class="p-2 bg-slate-200 hover:bg-slate-400 font-bold rounded-full"
@@ -54,7 +54,7 @@
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->
                             <button class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500"
-                            @click="handleDeleteFAQ({confirmation : true, id : faq.id})">
+                                @click="handleDeleteFAQ({ confirmation: true, id: faq.id })">
                                 <i class="fa fa-remove mr-4"></i>Xóa
                             </button>
                         </div>
@@ -141,21 +141,37 @@ export default {
         }
     },
     methods: {
+        async fetchOperators() {
+            try {
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all-operators',{
+                    headers : {
+                        'Authorization' : "Bearer " + localStorage.token
+                    }
+                })
+                if (response.data) {
+                    this.operators = response.data.data
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        },
         async fetchFAQ() {
             let query = {
                 "Filter.Question": this.filterDto.question,
                 "Filter.Answer": this.filterDto.answer,
-                "Filter.FromCreateAt": this.filterDto.fromCreateAt,
-                "Filter.ToCreateAt": this.filterDto.toCreateAt,
-                "Filter.fromUpdateAt": this.filterDto.fromUpdateAt,
-                "Filter.toUpdateAt": this.filterDto.toUpdateAt,
-                "Filter.CreateByName": this.filterDto.createdBy,
+                "Filter.CreateFrom": this.filterDto.fromCreateAt,
+                "Filter.CreateTo": this.filterDto.toCreateAt,
+                "Filter.UpdateFrom": this.filterDto.fromUpdateAt,
+                "Filter.UpdateTo": this.filterDto.toUpdateAt,
                 Sorts: {
                     column: "Id",
                     isDesc: true
                 },
                 Page: this.currentPage - 1,
                 Limit: this.pageSize
+            }
+            if (this.filterDto.createdBy != "All") {
+                query["Filter.CreateBy"] = this.filterDto.createdBy
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/FAQ/all?' +
@@ -239,16 +255,16 @@ export default {
                 this.eventBus.emit("open-confirmation-popup", {
                     message: "Bạn có chắc chắn muốn xóa FAQ này không?",
                     method: this.handleDeleteFAQ,
-                    params: {confirmation : false, id : request.id}
+                    params: { confirmation: false, id: request.id }
                 })
             } else {
                 this.eventBus.emit("open-loading-popup", {
                     message: "Vui lòng chờ..."
                 })
                 try {
-                    await axios.delete(import.meta.env.VITE_API_URL + '/api/FAQ/delete?id=' + request.id,{
-                        headers : {
-                            "Authorization" : "Bearer " + localStorage.token 
+                    await axios.delete(import.meta.env.VITE_API_URL + '/api/FAQ/delete?id=' + request.id, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
                         }
                     })
                     this.eventBus.emit("open-result-dialog", {
@@ -269,6 +285,7 @@ export default {
     },
     mounted() {
         this.fetchFAQ()
+        this.fetchOperators()
     }
 }
 </script>

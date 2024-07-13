@@ -1,8 +1,8 @@
 <template>
     <div class="container mx-auto py-8">
         <h1 class="text-3xl font-bold mb-6 text-center">Những câu hỏi thường gặp (FAQ)</h1>
-        <div class="mb-4 flex justify-end">
-            <input v-model="keyword" placeholder="Tìm kiếm..." class="p-2 w-64 bg-gray-100 rounded-lg" @change="debouncedSearch">
+        <div class="mb-4 flex justify-center ">
+            <input v-model="keyword" placeholder="Tìm kiếm..." class="p-2 w-96 bg-gray-50 shadow-md rounded-2xl text-center" @change="FetchFAQ">
         </div>
         <div v-for="(faq, index) in faqs" :key="index" class="mb-4">
             <button @click="toggle(index)" class="w-full text-left p-4 bg-gray-100 rounded-lg shadow-md">
@@ -40,7 +40,7 @@ export default {
                 },
             }
             if (this.keyword){
-                query["Filter.Question"] = this.keyword
+                query["Filter.Keyword"] = this.keyword
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/FAQ/all?' +
@@ -54,7 +54,7 @@ export default {
         },
         debouncedSearch: debounce(async function (event) {
             await this.FetchFAQ();
-        }, 300) // Adjust the debounce delay as needed
+        }, 50) // Adjust the debounce delay as needed
     },
     mounted() {
         this.FetchFAQ()

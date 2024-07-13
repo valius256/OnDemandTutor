@@ -42,13 +42,22 @@
                     </select>
                 </div>
                 <div class="mt-4">
-                    <div>Môn học</div>
-                    <select class="border rounded-lg p-1 w-full" v-model="filterDto.subject">
-                        <option :value="0">Tất cả</option>
-                        <option :value="subject.id" v-for="subject in subjects" :key="subject.id">
-                            {{ subject.name }}
-                        </option>
-                    </select>
+                    <div>Môn dậy</div>
+                    <div class="flex ">
+                        <div class="flex flex-wrap gap-2 w-96">
+                            <div v-for="subject in selectedSubjects" :key="subject.id" class="p-1 border rounded-xl"
+                                :style="{ 'border-color': subject.color }">
+                                {{ subject.name }}
+                                <button @click="removeSubject(subject.id)">
+                                    <i class="fa fa-remove ml-2"></i>
+                                </button>
+                            </div>
+                            <button class="p-1 border rounded-xl" @click.stop="toggleSubjectPopup">
+                                <span>Thêm môn dậy</span>
+                                <i class="fa fa-plus ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex justify-center mt-4">
                     <button class="bg-blue-500 text-white font-bold p-2 rounded-lg" @click="fetchData">Áp dụng</button>
@@ -58,10 +67,10 @@
         </div>
         <div class="w-3/4 px-4 py-2">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div v-for="tutor in tutors" :key="tutor.id" class="shadow-md rounded-lg"> 
+                <div v-for="tutor in tutors" :key="tutor.id" class="shadow-md rounded-lg">
                     <div class="flex justify-center">
-                        <img :src="tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" class="w-48 h-48">      
-                    </div>   
+                        <img :src="tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" class="w-48 h-48">
+                    </div>
                     <div class="text-xl font-bold text-center">
                         {{ tutor.fullName }}
                     </div>
@@ -73,16 +82,16 @@
                         {{ tutor.dob ? (new Date().getFullYear() - new Date(tutor.dob).getFullYear()) : "" }} tuổi
                     </div>
                     <div class="flex justify-center gap-2" v-html="displaySubjects(tutor.tutorSubjects)">
-                        
+
                     </div>
                     <div class="text-xl font-bold text-blue-300 text-center">
                         {{ tutor.tutorFeePerHour?.toLocaleString('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }) }} / giờ
+                        style: 'currency',
+                        currency: 'VND',
+                    }) }} / giờ
                     </div>
-                    <star-rating class="flex justify-center" :star-size="20" :rating="tutor.rating" :round-start-rating="false"
-                    :read-only="true" />
+                    <star-rating class="flex justify-center" :star-size="20" :rating="tutor.rating"
+                        :round-start-rating="false" :read-only="true" />
                     <div class="flex justify-center my-2">
                         <button class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
                     </div>
@@ -102,48 +111,59 @@
                 </button>
             </div>
         </div>
+        <generic-popup v-if="isOpenSubjectPopup" title="Chọn môn học" :closeFunction="toggleSubjectPopup">
+            <subject-list-for-filter-popup :close="toggleSubjectPopup" :selectFunction="selectSubject" />
+        </generic-popup>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
 import StarRating from 'vue-star-rating'
- 
+import GenericPopup from '../../components/common/GenericPopup.vue'
+import SubjectListForFilterPopup from '../../components/Operators/SubjectListForFilterPopup.vue'
+
 export default {
     name: "TutorPage",
-    components : {StarRating},
+    components: { StarRating, GenericPopup, SubjectListForFilterPopup },
     data() {
         return {
             totalPage: 100,
             pageSize: 12,
             currentPage: 1,
+            isOpenSubjectPopup: false,
             tutors: [
 
             ],
             subjects: [
 
             ],
-            selectedSubject : [],
+            selectedSubjects: [],
             filterDto: {
                 gender: -1,
                 subject: 0,
                 tutorName: "",
                 address: "",
-                fromAge : null,
-                toAge : null,
+                fromAge: null,
+                toAge: null,
                 fromPrice: null,
                 toPrice: null,
             }
         }
     },
     methods: {
-        getMethodStyle(method) {
-            let general = "ml-4 rounded-lg px-3 py-1 text-white font-bold"
-            switch (method) {
-                case "Online":
-                    return general + " bg-green-400"
-                default:
-                    return general + " bg-gray-400"
+        toggleSubjectPopup() {
+            this.isOpenSubjectPopup = !this.isOpenSubjectPopup
+        },
+        selectSubject(id, name) {
+            const existedSubject = this.selectedSubjects.find(s => s.id == id)
+            if (!existedSubject) {
+                const randomHex = Math.floor(Math.random() * 0xFFFFFF).toString(16).padStart(6, '0');
+                this.selectedSubjects.push({
+                    id: id,
+                    name: name,
+                    color: `#${randomHex}`
+                })
             }
         },
         getStatusStyleHeader(status) {
@@ -201,51 +221,42 @@ export default {
         async fetchData() {
             try {
                 let query = {
-                    Name : this.filterDto.tutorName,
-                    Address : this.filterDto.address,
+                    Name: this.filterDto.tutorName,
+                    Address: this.filterDto.address,
                     Sorts: {
                         column: "Id",
                         isDesc: true
                     },
-                    Page : 0,
-                    Limit : 12
+                    Page: 0,
+                    Limit: 12
                 }
-                if (this.filterDto.fromAge != null){
-                    var date = new Date(new Date().getFullYear() - this.filterDto.fromAge,11,31)
+                if (this.filterDto.fromAge != null) {
+                    var date = new Date(new Date().getFullYear() - this.filterDto.fromAge, 11, 31)
                     query.DobToDate = this.toSqlDateString(date)
                 }
-                if (this.filterDto.toAge != null){
-                    var date = new Date(new Date().getFullYear() - this.filterDto.toAge,0,1)
-                    query.DobFromDate =  this.toSqlDateString(date)
+                if (this.filterDto.toAge != null) {
+                    var date = new Date(new Date().getFullYear() - this.filterDto.toAge, 0, 1)
+                    query.DobFromDate = this.toSqlDateString(date)
                 }
-                if (this.filterDto.fromPrice != null){
+                if (this.filterDto.fromPrice != null) {
                     query.FeeFrom = this.filterDto.fromPrice
                 }
-                if (this.filterDto.toPrice != null){
-                    query.FeeTo =  this.filterDto.toPrice
+                if (this.filterDto.toPrice != null) {
+                    query.FeeTo = this.filterDto.toPrice
                 }
-                if (this.filterDto.gender != -1){
-                    query.Sex =  this.filterDto.gender
+                if (this.filterDto.gender != -1) {
+                    query.Sex = this.filterDto.gender
                 }
-                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?tutorStatus=3&' +
-                    this.jsonToQueryString(query))
+                let queryStr = this.jsonToQueryString(query) 
+                if (this.selectedSubjects.length > 0) {
+                    for (var s of this.selectedSubjects) {
+                        queryStr += "&Subject=" + s.id
+                    }
+                }
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?tutorStatus=3&' + queryStr)
                 if (response.data) {
                     this.tutors = response.data.data.items
                     this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
-                }
-
-
-                let querySubject = {
-                    Sorts: {
-                        column: "Id",
-                        isDesc: true
-                    },
-                }
-                //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-                const responseSubject = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?' +
-                    this.jsonToQueryString(querySubject))
-                if (responseSubject.data) {
-                    this.subjects = response.data.items
                 }
             } catch (e) {
                 console.log(e)
@@ -254,7 +265,7 @@ export default {
         displaySubjects(subjects) {
             let html = ""
             for (var subject of subjects) {
-                if (subject.status != 3){
+                if (subject.status != 3) {
                     continue;
                 }
                 var style = `rounded-lg text-sm py-1 px-4 border border-blue-300 text-blue-300`
@@ -262,9 +273,11 @@ export default {
             }
             return html
         },
-        
-    }, 
-    mounted(){
+        removeSubject(id) {
+            this.selectedSubjects = this.selectedSubjects.filter(s => s.id != id)
+        },
+    },
+    mounted() {
         this.fetchData();
     }
 }

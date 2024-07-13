@@ -33,7 +33,6 @@ namespace OnDemandTutor.BusinessLogic.Services
         public async Task<PagedResult<GetSubjectDtos>> GetSubjectsAsync(PagingModel<QuerySubjectDTO> request)
         {
             var pagedSubjects = await _unitOfWork.SubjectRepository.GetSubjects(request);
-            pagedSubjects.Items.ForEach(s => s.Name = ConverterHelper.ConvertHtmlToPlainText(s.Name ?? ""));
             return pagedSubjects.Adapt<PagedResult<GetSubjectDtos>>();
         }
 
@@ -48,7 +47,7 @@ namespace OnDemandTutor.BusinessLogic.Services
 
             return subjectDto;
         }
-        public async Task<CreateSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectCreateDto)
+        public async Task<GetSubjectDtos> CreateSubjectAsync(CreateSubjectDtos subjectCreateDto)
         {
             var subjectEntity = subjectCreateDto.Adapt<Models.Models.Subject>();
             if (await _unitOfWork.SubjectRepository.AnyAsync(sb => sb.Name == subjectCreateDto.Name))
@@ -57,11 +56,11 @@ namespace OnDemandTutor.BusinessLogic.Services
             }
             var createdSubjectEntity = await _unitOfWork.SubjectRepository.AddAsync(subjectEntity);
             await _unitOfWork.SaveChangesAsync();
-            return createdSubjectEntity.Adapt<CreateSubjectDtos>();
+            return createdSubjectEntity.Adapt<GetSubjectDtos>();
         }
 
 
-        public async Task<GetSubjectDtos> UpdateSubjectAsync(GetSubjectDtos subjectGetDto)
+        public async Task<GetSubjectDtos> UpdateSubjectAsync(UpdateSubjectDtos subjectGetDto)
         {
             var existingSubject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == subjectGetDto.Id);
             if (existingSubject == null)
@@ -71,7 +70,6 @@ namespace OnDemandTutor.BusinessLogic.Services
 
             var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
             existingSubject = subjectGetDto.Adapt(existingSubject);
-            existingSubject.CreateById = user.Id; // Update this field if needed
             existingSubject.UpdatedDate = DateTime.Now; // Update this field if needed
 
             var updatedSubject = _unitOfWork.SubjectRepository.Update(existingSubject);

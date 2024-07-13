@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-blue-50 overflow-x-hidden">
     <main>
-      <section class="bg-blue-200 text-white py-24 relative flex flex-col lg:flex-row gap-4">
+      <section class="bg-blue-200 text-white py-32 relative flex flex-col lg:flex-row gap-4">
         <div class="absolute inset-0 flex ">
           <div class="relative">
             <div class="bg-[rgb(116,168,218)] w-[400px] h-full transform skew-x-12 -ml-24">

@@ -124,7 +124,15 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.GetOutstandingTutor(limit, page));
 
     }
-    
+    [Authorize]
+    [HttpGet("all-operators")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<List<GetSimpleUserDto>>), 200)]
+    public async Task<IApiResult<List<GetSimpleUserDto>>> GetAllOperators()
+    {
+        return OKAsync(await _userService.GetAllOperators());
+
+    }
     /// <summary>
     ///    update tutor status to Banned 
     /// </summary>

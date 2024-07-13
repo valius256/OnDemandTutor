@@ -4,7 +4,7 @@
             <span class="w-48 p-1 font-bold">Nhập số tiền muốn rút</span>
             <input v-model="amount" class="p-1 border rounded-lg" placeholder="Nhập từ khóa tìm kiếm" />
         </div>
-        <div class="italic text-red-400 text-sm font-bold">* Số tiền rút tối thiểu 5.000đ và tối đa 1 tỷ đồng</div>
+        <!-- <div class="italic text-red-400 text-sm font-bold">* Số tiền rút tối thiểu 5.000đ và tối đa 1 tỷ đồng</div> -->
         <div class="flex mt-4">
             <span class="w-48 p-1 font-bold">Số tài khoản</span>
             <input v-model="bankAccountNumber" class="p-1 border rounded-lg" placeholder="Nhập số tài khoản" />
@@ -42,7 +42,7 @@ export default {
     components: { GenericPopup, BankSelectorPopup },
     name: "RequestWithdrawPopup",
     inject: ['eventBus'],
-    props: ['close', 'action'],
+    props: ['close', 'action','balance'],
     data() {
         return {
             amount: 0,
@@ -70,6 +70,13 @@ export default {
                     params: false
                 })
             } else {
+                if (this.balance < this.amount){
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Số dư không đủ để thực hiện yêu cầu!",
+                        type: "Error"
+                    })
+                    return;
+                }
                 this.eventBus.emit("open-loading-popup", {
                     message: "Vui lòng chờ..."
                 })

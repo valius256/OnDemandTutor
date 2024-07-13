@@ -24,6 +24,10 @@ namespace OnDemandTutor.DataAccess.Repository
 
             if (pagingModel.Filter != null)
             {
+                if (pagingModel.Filter.Keyword != null)
+                {
+                    faqQuery = faqQuery.Where(f => f.Question.Contains(pagingModel.Filter.Keyword)  || (f.Answer != null && f.Answer.Contains(pagingModel.Filter.Keyword)));
+                }
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Question))
                 {
                     faqQuery = faqQuery.Where(f => f.Question.Contains(pagingModel.Filter.Question));
@@ -36,12 +40,12 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (pagingModel.Filter.CreateFrom.HasValue)
                 {
-                    faqQuery = faqQuery.Where(f => f.CreateAt >= pagingModel.Filter.CreateFrom.Value);
+                    faqQuery = faqQuery.Where(f => f.CreatedDate >= pagingModel.Filter.CreateFrom.Value);
                 }
 
                 if (pagingModel.Filter.CreateTo.HasValue)
                 {
-                    faqQuery = faqQuery.Where(f => f.CreateAt <= pagingModel.Filter.CreateTo.Value);
+                    faqQuery = faqQuery.Where(f => f.CreatedDate <= pagingModel.Filter.CreateTo.Value);
                 }
 
                 if (pagingModel.Filter.UpdateFrom.HasValue)

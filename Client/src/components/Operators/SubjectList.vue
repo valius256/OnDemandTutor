@@ -37,7 +37,7 @@
                     <td>
                         {{ subject.description }}
                     </td>
-                    <td>{{ this.beautifyDatetime(subject.createAt)  }}</td>
+                    <td>{{ this.beautifyDatetime(subject.createdDate)  }}</td>
                     <td>{{ this.beautifyDatetime(subject.updatedDate) }}</td>
                     <td>
                         <div :class="getStatusStyle(subject.isEnable)">
@@ -142,18 +142,20 @@ export default {
             let query = {
                 "Filter.Name" : this.filterDto.name,
                 "Filter.Description" : this.filterDto.description,
-                "Filter.SubjectType" : this.filterDto.subjectType,
-                "Filter.FromCreateAt" : this.filterDto.fromCreateAt,
-                "Filter.ToCreateAt" : this.filterDto.toCreateAt,
-                "Filter.fromUpdateAt" : this.filterDto.fromUpdateAt,
-                "Filter.toUpdateAt" : this.filterDto.toUpdateAt,
-                "Filter.CreateByName" : "",
+                "Filter.Type" : this.filterDto.subjectType,
+                "Filter.CreateFrom" : this.filterDto.fromCreateAt,
+                "Filter.CreateTo" : this.filterDto.toCreateAt,
+                "Filter.UpdateFrom" : this.filterDto.fromUpdateAt,
+                "Filter.UpdateTo" : this.filterDto.toUpdateAt,
                 Sorts: {
                     column: "Id",
                     isDesc: true
                 },
-                Page: this.currentPage - 1,
+                Page: this.currentPage,
                 Limit: this.pageSize
+            }
+            if (this.filterDto.status != "All"){
+                query["Filter.Status"] = this.filterDto.status == "Active" ? "Enabled" : "Disabled"
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?'+ 
@@ -191,6 +193,7 @@ export default {
         },
         async handleFilter(filterDto, selectedSubjects) {
             console.log(filterDto)
+            this.currentPage = 1;
             this.filterDto = JSON.parse(JSON.stringify(filterDto));
             await this.fetchSubject()
         },
