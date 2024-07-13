@@ -20,7 +20,7 @@ public abstract class BaseEntityEmpty : IBaseEntity
 
 public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
 {
-    public int UpdatedById { get; set; } = 0;
+    public int UpdatedById { get; set; }
 
     public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
@@ -28,7 +28,7 @@ public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
 
     public DateTime? DeletedDate { get; set; }
 
-    public RecordStatus RecordStatus { get; set; } = RecordStatus.Active;
+    public RecordStatus RecordStatus { get; set; }
 
     public void SoftDelete()
     {
