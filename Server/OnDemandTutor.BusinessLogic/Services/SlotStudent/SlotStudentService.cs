@@ -1,9 +1,11 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.BusinessLogic.Services.SlotStudent;
@@ -17,7 +19,12 @@ public class SlotStudentService : ISlotStudentServices
     {
         _unitOfWorkRepository = unitOfWorkRepository;
     }
-
+    public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user)
+    {
+        var slotStudent =
+            await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user.Id);
+        return slotStudent.Adapt<List<GetSlotStudentDetailDto>>();
+    }
     public async Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
     {
         var slotStudent =

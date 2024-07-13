@@ -1,11 +1,14 @@
-﻿using OnDemandTutor.Models.Dtos.Slot;
+﻿using OnDemandTutor.BusinessLogic.Services.Slot;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 public interface ISlotStudentServices
 {
+    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
     Task CreateSlotStudentIfNotExist(int slotId, int studentId);

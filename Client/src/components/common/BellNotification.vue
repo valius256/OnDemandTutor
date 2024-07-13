@@ -3,9 +3,9 @@
         <div class="flex items-center h-full">
             <button class="text-xl relative" @click="toggleNotificationPopup">
                 <i class="fa fa-bell"></i>
-                <div
+                <div v-if="unViewedNoti > 0"
                     class="absolute -top-2 -right-4 text-sm w-6 h-6 font-bold text-white rounded-full bg-blue-600 flex items-center justify-center">
-                    {{ this.notifications.filter(n => !n.isViewed).length }}
+                    {{ unViewedNoti }}
                 </div>
             </button>
 
@@ -13,6 +13,7 @@
 
         <div v-if="isOpenNoti"
             class="absolute right-0 rounded-xl bg-white animate-fade-down animate-duration-[400ms] animate-normal flex flex-col  w-96 overflow-y-auto h-96 shadow-md">
+            <div class="italic p-2 text-center" v-if="notifications.length == 0">Bạn hiện không có thông báo nào</div>
             <button v-for="noti in notifications" :key="noti.id" @click="handleViewNoti(noti.id)"
                 class="p-4 flex place-content-between hover:bg-slate-100"
                 :class="{ 'bg-slate-200 font-bold': !noti.isViewed }">
@@ -42,6 +43,7 @@ export default {
     data() {
         return {
             isOpenNoti: false,
+            unViewedNoti : 0,
             notifications: [
 
             ]
@@ -64,6 +66,7 @@ export default {
                     },
                 });
                 this.notifications = response.data.items
+                this.unViewedNoti = this.notifications.filter(n => !n.isViewed).length 
             }
 
             catch (e) {

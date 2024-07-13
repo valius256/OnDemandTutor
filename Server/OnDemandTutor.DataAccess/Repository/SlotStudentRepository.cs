@@ -1,6 +1,12 @@
-﻿using OnDemandTutor.DataAccess.IRepository;
+﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.BusinessLogic.Services.Slot;
+using OnDemandTutor.DataAccess.Helper;
+using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Models;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -8,5 +14,30 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
 {
     public SlotStudentRepository(ApplicationDbContext context) : base(context)
     {
+        
+    }
+
+    public async Task<List<SlotStudent>> GetStudentSlotsAsync(QuerySlotStudentDto request, int studentId)
+    {
+        var query = dbSet.AsQueryable()
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Subject)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.CreatedBy)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Class)
+            .Include(ss => ss.User)
+            .Where(s => s.Slot.EndTime <= request.To)
+            .Where(s => s.UserId == studentId)
+            .Where(s => s.Slot.StartTime >= request.From);
+
+        if (request.PaymentStatus.HasValue)
+        {
+            query = query.Where(s => s.PaymentStatus == request.PaymentStatus);
+        }
+        
+        // Apply filtering if necessary
+
+        return await query.ToListAsync();
     }
 }

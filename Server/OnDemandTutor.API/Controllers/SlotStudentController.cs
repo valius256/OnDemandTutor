@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Services.Slot;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
 
 namespace OnDemandTutor.API.Controllers
@@ -11,10 +14,23 @@ namespace OnDemandTutor.API.Controllers
     public class SlotStudentController : ControllerBase
     {
         private readonly ISlotStudentServices _slotStudentService;
+        private readonly IAuthServices _authServices;
 
-        public SlotStudentController(ISlotStudentServices slotStudentService)
+        public SlotStudentController(ISlotStudentServices slotStudentService, IAuthServices authServices)
         {
+            _authServices = authServices;
             _slotStudentService = slotStudentService;
+        }
+
+        [Authorize]
+        [HttpGet("get-slots-of-students")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
+        public async Task<IActionResult> QuerySlotStudent([FromQuery] QuerySlotStudentDto querySlotStudentDto)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var slotStudent = await _slotStudentService.QuerySlotStudent(querySlotStudentDto, user);
+            return Ok(slotStudent);
         }
 
         [Authorize]

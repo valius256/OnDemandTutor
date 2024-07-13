@@ -43,7 +43,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         }
 
 
-        public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request)
+        public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request)
         {
             return await _unitOfWork.SlotRepository.GetSlotsAsync(request);
         }
@@ -124,7 +124,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             foreach (var slot in slots)
             {
                 var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
-                if (slotStudent.PaymentStatus == PaymentStatus.Notpaid)
+                if (slotStudent != null && slotStudent.PaymentStatus == PaymentStatus.Notpaid)
                 {
                     var tutor = await _userServices.GetProfile(slot.CreateById, null, null);
                     var duration = (slot.EndTime - slot.StartTime).TotalHours;

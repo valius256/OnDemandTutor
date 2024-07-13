@@ -19,7 +19,7 @@ public class SlotController : ControllerBase
     //[Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
-    public async Task<IActionResult> GetSlots([FromQuery] PagingModel<GetSlotsDtos> pagingModel)
+    public async Task<IActionResult> GetSlots([FromQuery] PagingModel<QuerySlotDto> pagingModel)
     {
 
         var slots = await _slotService.GetSlotsAsync(pagingModel);
