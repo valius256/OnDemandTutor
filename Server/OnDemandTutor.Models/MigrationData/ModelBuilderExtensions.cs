@@ -121,7 +121,7 @@ namespace OnDemandTutor.Models.MigrationData
                 }
             );
             #endregion
-            
+
             #region  Blog
             var createAt = DateTime.Now;
             modelBuilder.Entity<Blog>().HasData(
@@ -132,7 +132,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new Blog { Id = 5, Title = "Bài Blog Thứ Năm", Content = "Nội dung của bài blog thứ năm.", CreateById = 2, CreateAt = createAt }
               );
             #endregion
-            
+
             #region ConsultationRequets 
             modelBuilder.Entity<ConsultationRequest>().HasData(
                 new ConsultationRequest
@@ -295,7 +295,7 @@ namespace OnDemandTutor.Models.MigrationData
                 }
             );
             #endregion
-            
+
             #region Slot
             modelBuilder.Entity<Slot>().HasData(
                 new Slot
@@ -364,8 +364,9 @@ namespace OnDemandTutor.Models.MigrationData
                     ActualEndTime = DateTime.Today
                 }
             );
+
             #endregion
-            
+
             #region Subject
 
             modelBuilder.Entity<Subject>().HasData(
@@ -509,7 +510,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-            
+
             #region TutorDegree
 
             modelBuilder.Entity<TutorDegree>().HasData(
@@ -571,7 +572,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-            
+
             #region TutorVideo
 
             modelBuilder.Entity<TutorVideo>().HasData(
@@ -613,7 +614,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-            
+
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
@@ -626,7 +627,7 @@ namespace OnDemandTutor.Models.MigrationData
             );
 
             #endregion
-            
+
             #region Class
 
             modelBuilder.Entity<Class>().HasData(
@@ -639,7 +640,7 @@ namespace OnDemandTutor.Models.MigrationData
                     Location = "meet.google.com",
                     Method = "Online",
                     Status = ClassStatus.OnGoing
-                
+
                 },
                 new Class
                 {
@@ -682,10 +683,10 @@ namespace OnDemandTutor.Models.MigrationData
                     Method = "Offline",
                     Status = ClassStatus.Finished
                 }
-            );;
+            ); ;
 
             #endregion
-            
+
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
@@ -701,12 +702,12 @@ namespace OnDemandTutor.Models.MigrationData
 
             #region TutorSubject
             modelBuilder.Entity<TutorSubject>().HasData(
-                new TutorSubject {Id = 1,UserId = 2, SubjectId = 1 },
-                new TutorSubject {Id = 2 ,UserId = 2, SubjectId = 2 },
-                new TutorSubject {Id = 3 ,UserId = 4, SubjectId = 3 },
-                new TutorSubject {Id = 4 ,UserId = 4, SubjectId = 1 },
-                new TutorSubject {Id = 5 ,UserId = 4, SubjectId = 4 }
-              
+                new TutorSubject { Id = 1, UserId = 2, SubjectId = 1 },
+                new TutorSubject { Id = 2, UserId = 2, SubjectId = 2 },
+                new TutorSubject { Id = 3, UserId = 4, SubjectId = 3 },
+                new TutorSubject { Id = 4, UserId = 4, SubjectId = 1 },
+                new TutorSubject { Id = 5, UserId = 4, SubjectId = 4 }
+
             );
 
 

@@ -1,7 +1,7 @@
 ﻿namespace OnDemandTutor.Models.Dtos.Class
 {
-	public class CreateClassDTO
-	{
+    public class CreateClassDTO
+    {
         public string? Name { get; set; }
         public int TutorId { get; set; }
         public int SubjectId { get; set; }

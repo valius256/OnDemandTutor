@@ -63,7 +63,7 @@ public class AuthController : BaseController<AuthController>
 
     }
 
-    
+
     [HttpGet("who-am-i")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
@@ -81,7 +81,7 @@ public class AuthController : BaseController<AuthController>
     {
         return OKAsync(await _authServices.DeleteUserAsync(userEmail));
     }
-    
+
     [HttpPost("grant-role")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<string>), 200)]

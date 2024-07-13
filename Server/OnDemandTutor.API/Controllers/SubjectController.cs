@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
-using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
-using System.Threading.Tasks;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -73,8 +70,8 @@ namespace OnDemandTutor.API.Controllers
                 return BadRequest(ModelState);
             }
 
-                var updatedSubject = await _subjectService.UpdateSubjectAsync(GetSubjectDtos);
-                return Ok(updatedSubject);
+            var updatedSubject = await _subjectService.UpdateSubjectAsync(GetSubjectDtos);
+            return Ok(updatedSubject);
         }
 
         //[Authorize]
@@ -83,8 +80,8 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteSubject(int id)
         {
-                await _subjectService.DeleteSubjectAsync(id);
-                return NoContent();
+            await _subjectService.DeleteSubjectAsync(id);
+            return NoContent();
         }
     }
 }

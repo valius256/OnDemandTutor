@@ -43,7 +43,7 @@ public static class IQueryableExtensions
 
         return result;
     }
-    
+
     public static async Task<PagedResult<T>> ToNewPagingAsync<T>(
         this IQueryable<T> query,
         int page, int limit
@@ -71,7 +71,7 @@ public static class IQueryableExtensions
             items = await query.ToListAsync();
         }
         result.Items = items;
-        
+
         return result;
     }
 

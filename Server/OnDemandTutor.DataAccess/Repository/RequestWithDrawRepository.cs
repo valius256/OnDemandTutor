@@ -25,7 +25,8 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
         if (userId != 0)
         {
             queryFilter = queryFilter.Where(ld => ld.UserId == userId);
-        } else
+        }
+        else
         {
             queryFilter = queryFilter.Where(ld => ld.Status == WithDrawStatus.Pending);
         }
@@ -54,7 +55,7 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
 
         var filteredUsers = await queryFilter
             .AsNoTracking()
-            .ToNewPagingAsync(page,limit);
+            .ToNewPagingAsync(page, limit);
 
         return filteredUsers;
 

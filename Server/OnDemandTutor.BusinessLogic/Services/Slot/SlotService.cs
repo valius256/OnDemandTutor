@@ -1,6 +1,8 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
@@ -23,9 +25,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IUserServices _userServices;
         private readonly ITransactionServices _transactionServices;
-        
-        public SlotService(IUnitOfWorkRepository unitOfWorkRepository, 
+        private readonly IClassService _classService;
+
+        public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
+            IClassService classService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -35,6 +39,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _slotStudentServices = slotStudentServices;
             _transactionServices = transactionServices;
             _userServices = userServices;
+            _classService = classService;
         }
 
 
@@ -113,9 +118,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public async Task CronJobForAutoDereasedMoneyAfterSlotStart()
         {
             var listSlotDb = await _unitOfWork.SlotRepository.ToListAsync();
-            
+
             var slots = listSlotDb
-                .Where(slot => slot.StartTime >= DateTime.Now.AddHours(-1)).ToList(); 
+                .Where(slot => slot.StartTime >= DateTime.Now.AddHours(-1)).ToList();
             foreach (var slot in slots)
             {
                 var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
@@ -123,13 +128,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 {
                     var tutor = await _userServices.GetProfile(slot.CreateById, null, null);
                     var duration = (slot.EndTime - slot.StartTime).TotalHours;
-                    
+
                     var studentBalance = await _userServices.GetBalanceAsync(slotStudent.UserId);
                     var amountToDecrease = tutor.TutorFeePerHour * (decimal)duration;
                     decimal slotCost = tutor.TutorFeePerHour * (decimal)duration;
                     if (studentBalance - slotCost >= 0)
                     {
-                        await _userServices.UpdateBalance(slotStudent.UserId,  0,  slotCost);
+                        await _userServices.UpdateBalance(slotStudent.UserId, 0, slotCost);
                         await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
                         await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
                     }
@@ -146,6 +151,41 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
         }
 
+        public async Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent()
+        {
+            var listOfNotPaidSlotStudent = await _slotStudentServices.GetListSLotStudentByStatus(PaymentStatus.Notpaid);
+            var listOfSlotIds = listOfNotPaidSlotStudent.Select(l => l.SlotId).Distinct().ToList();
+
+            foreach (var slotId in listOfSlotIds)
+            {
+                var listOfSlotTotal = await GetListOfSlotSameClassBySlotId(slotId);
+                var countListNotPaid = listOfSlotTotal
+                    .SelectMany(ls => ls.SlotStudents)
+                    .Count(ss => ss.PaymentStatus == PaymentStatus.Notpaid);
+
+                var totalSlot = listOfSlotTotal.Count;
+
+                if (totalSlot == 0) continue;
+
+                double percentageNotPaid = (double)countListNotPaid / totalSlot;
+
+                if (percentageNotPaid >= 0.20)
+                {
+                    Console.WriteLine("This user has more than 20% slots not paid out of the total.");
+                }
+                else if (percentageNotPaid >= 0.15)
+                {
+                    Console.WriteLine("This user has more than 15% slots not paid out of the total.");
+                }
+            }
+        }
+
+        public async Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId)
+        {
+            var classId = await _slotRepository.Where(sl => sl.Id == slotId).Select(l => l.ClassId).FirstOrDefaultAsync();
+            var listSlotWithSameClass = await _slotRepository.Where(sl => sl.ClassId == classId).ToListAsync();
+            return listSlotWithSameClass.Adapt<List<GetSlotWithSlotStudentDto>>();
+        }
     }
 }
 

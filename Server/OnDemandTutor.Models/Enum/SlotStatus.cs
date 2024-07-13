@@ -2,7 +2,7 @@
 
 public enum SlotStatus
 {
-    NotYet,  
+    NotYet,
     OnGoing, // trừ Customer lúc bắt đầu khóa 
     Cancelled,
     Finished, // chuyển cho Tutor sau 1 ngày

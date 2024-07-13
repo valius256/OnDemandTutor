@@ -1,10 +1,4 @@
-﻿using OnDemandTutor.Models.Dtos.Class;
-using OnDemandTutor.Models.Dtos.Slot;
-using OnDemandTutor.Models.Dtos.User;
-using OnDemandTutor.Models.Models;
-using static OnDemandTutor.Models.Dtos.Blog.GetBlogDtos;
-
-namespace OnDemandTutor.Models.Dtos.Subject
+﻿namespace OnDemandTutor.Models.Dtos.Subject
 {
     public class GetSubjectDtos
     {

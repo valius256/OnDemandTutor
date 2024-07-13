@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
-using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorSubject;
-using OnDemandTutor.Models.Dtos;
 using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Paging;
 

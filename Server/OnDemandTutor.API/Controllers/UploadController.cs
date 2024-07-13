@@ -39,7 +39,7 @@ public class UploadController : ControllerBase
         var imageUrl = await _firebaseUploadServices.DownloadImagesAsync(fireBaseId);
         return Ok(imageUrl);
     }
-    
+
     // accept 25 mb file
     [HttpPost("upload-video")]
     [Authorize]
@@ -47,13 +47,13 @@ public class UploadController : ControllerBase
     {
         if (file == null || file.Length == 0)
             return BadRequest("File is empty");
-        
+
         using (var stream = file.OpenReadStream())
         {
             var videoUrl = await _firebaseUploadServices.UploadVideoAsync(HttpContext.User, file.FileName, stream);
             return Ok(videoUrl);
         }
     }
-    
-    
+
+
 }

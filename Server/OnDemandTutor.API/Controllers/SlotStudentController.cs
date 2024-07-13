@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.Models.Dtos.SlotStudent;
-using OnDemandTutor.API.Middlesware;
-using System.Threading.Tasks;
 
 namespace OnDemandTutor.API.Controllers
 {

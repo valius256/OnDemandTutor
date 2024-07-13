@@ -11,6 +11,7 @@ namespace OnDemandTutor.DataAccess.IRepository
         Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slot);
         Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slot);
         Task<bool> DeleteSlotAsync(int id);
+        Task<GetSlotWithSlotStudentDto?> GetSlotWithStudentById(int id);
     }
 }
 

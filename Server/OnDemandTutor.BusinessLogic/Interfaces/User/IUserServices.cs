@@ -15,7 +15,7 @@ public interface IUserServices
     Task<GetProfileUserDtos> GetProfile(int? userId, string? email, GetProfileUserDtos? accessor);
     Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
     Task<GetProfileUserDtos> GetUserById(int? userId);
-    Task<GetProfileUserDtos> GetUserByEmail(string email);   
+    Task<GetProfileUserDtos> GetUserByEmail(string email);
     Task<GetProfileUserDtos> GetUserProfileById(int id);
     Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
 

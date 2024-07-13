@@ -89,6 +89,15 @@ namespace OnDemandTutor.DataAccess.Repository
         }
 
 
+        public async Task<GetSlotWithSlotStudentDto?> GetSlotWithStudentById(int id)
+        {
+            var slot = await dbSet
+                .Include(ld => ld.SlotStudents)
+                .FirstOrDefaultAsync(ld => ld.Id == id);
+
+            return slot?.Adapt<GetSlotWithSlotStudentDto>();
+        }
+
     }
 }
 

@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace OnDemandTutor.Models.Dtos.StudentClass
 {
-	public class UpdateStudentClassDto
-	{
+    public class UpdateStudentClassDto
+    {
         public int Id { get; set; }
         public int StudentId { get; set; }
         public int ClassId { get; set; }
