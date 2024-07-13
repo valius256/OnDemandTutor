@@ -7,9 +7,9 @@
         public string SubjectType { get; set; }
         public int? CreateById { get; set; }
         public string Description { get; set; }
-        public DateTime? CreateAt { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public bool IsEnable { get; set; }
-        public string CreateByName { get; set; }
     }
 }
 

@@ -46,7 +46,7 @@ public class FAQService : IFAQService
 
     public async Task<CreateFAQDto> CreateFAQAsync(CreateFAQDto faqDto)
     {
-        var user = _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+        var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
 
         var faqEntity = faqDto.Adapt<FAQ>();
         faqEntity.CreateById = user.Id;
@@ -68,7 +68,6 @@ public class FAQService : IFAQService
 
         var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
         existingFAQEntity = faqDto.Adapt(existingFAQEntity);
-        existingFAQEntity.CreateById = user.Id; // Update this field if needed
         existingFAQEntity.UpdatedDate = DateTime.Now; // Update this field if needed
 
         var updatedFAQEntity = _unitOfWorkRepository.FAQRepository.Update(existingFAQEntity);

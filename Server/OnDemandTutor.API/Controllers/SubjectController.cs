@@ -40,7 +40,7 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpPost]
-        [ProducesResponseType(typeof(CreateSubjectDtos), 201)]
+        [ProducesResponseType(typeof(GetSubjectDtos), 201)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos subjectCreateDto)
         {
@@ -50,7 +50,7 @@ namespace OnDemandTutor.API.Controllers
             }
 
             var createdSubject = await _subjectService.CreateSubjectAsync(subjectCreateDto);
-            return CreatedAtAction(nameof(GetSubjectById), createdSubject);
+            return CreatedAtAction(nameof(GetSubjectById),new { Id = createdSubject.Id }, createdSubject);
         }
 
         [Authorize]
@@ -58,7 +58,7 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(GetSubjectDtos), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateSubject(int id, [FromBody] GetSubjectDtos GetSubjectDtos)
+        public async Task<IActionResult> UpdateSubject(int id, [FromBody] UpdateSubjectDtos GetSubjectDtos)
         {
             if (id != GetSubjectDtos.Id)
             {

@@ -39,4 +39,6 @@ public interface IUserServices
 
     Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
 
+    Task<List<GetSimpleUserDto>> GetAllOperators();
+
 }

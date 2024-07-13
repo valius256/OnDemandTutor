@@ -5,7 +5,5 @@ namespace OnDemandTutor.Models.Dtos.FAQ
         public int Id { get; set; }
         public string Question { get; set; }
         public string? Answer { get; set; }
-        public string UpdateBy { get; set; }
-        public object MyProperty { get; set; }
     }
 }

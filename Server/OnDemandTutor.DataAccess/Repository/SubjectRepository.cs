@@ -20,10 +20,6 @@ namespace OnDemandTutor.DataAccess.Repository
 
             var subjectQuery = dbSet
                 .Include(s => s.CreateBy)
-                .Include(s => s.TutorDegree)
-                .Include(s => s.Class)
-                .Include(s => s.Slots)
-                .Include(s => s.TutorSubjects)
                 .AsQueryable();
 
             if (pagingModel.Filter != null)
@@ -35,7 +31,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (pagingModel.Filter.Type != null)
                 {
-                    subjectQuery = subjectQuery.Where(s => s.SubjectType == pagingModel.Filter.Type);
+                    subjectQuery = subjectQuery.Where(s => s.SubjectType.Contains(pagingModel.Filter.Type));
                 }
 
                 if (pagingModel.Filter.Description != null)
@@ -51,12 +47,12 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (pagingModel.Filter.CreateFrom.HasValue)
                 {
-                    subjectQuery = subjectQuery.Where(s => s.CreateAt >= pagingModel.Filter.CreateFrom.Value);
+                    subjectQuery = subjectQuery.Where(s => s.CreatedDate >= pagingModel.Filter.CreateFrom.Value);
                 }
 
                 if (pagingModel.Filter.CreateTo.HasValue)
                 {
-                    subjectQuery = subjectQuery.Where(s => s.CreateAt <= pagingModel.Filter.CreateTo.Value);
+                    subjectQuery = subjectQuery.Where(s => s.CreatedDate <= pagingModel.Filter.CreateTo.Value);
                 }
 
                 if (pagingModel.Filter.UpdateFrom.HasValue)

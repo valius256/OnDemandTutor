@@ -505,4 +505,10 @@ public class UserServices : IUserServices
     {
         return await _unitOfWorkRepository.UserRepository.GetOutStandingTutors(limit, page);
     }
+
+    public async Task<List<GetSimpleUserDto>> GetAllOperators()
+    {
+        var operators = await _unitOfWorkRepository.UserRepository.WhereAsync(u => u.Role == RoleStatus.Operator || u.Role == RoleStatus.Admin);
+        return operators.Adapt<List<GetSimpleUserDto>>();
+    }
 }
