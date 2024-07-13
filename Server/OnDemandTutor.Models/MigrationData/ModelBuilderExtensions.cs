@@ -716,16 +716,16 @@ namespace OnDemandTutor.Models.MigrationData
             #region EmailTemplate
             modelBuilder.Entity<EmailTemplate>().HasData(
 
-              new EmailTemplate
-              {
-                  Id = 1,
-                  Name = "Welcome_Email",
-                  Status = true,
-                  Body = "Chào mừng bạn đến với OnDemandTutor! Kính gửi [Name], cảm ơn bạn đã tham gia cùng chúng tôi.",
-                  Params = "[Name]",
-                  Subject = "Welcome to OnDemandTutor!",
-                  Description = "Email này được gửi để chào đón người dùng mới."
-              },
+            new EmailTemplate
+            {
+                Id = 1,
+                Name = "Welcome_Email",
+                Status = true,
+                Body = "Chào mừng bạn đến với OnDemandTutor! Kính gửi [Name], cảm ơn bạn đã tham gia cùng chúng tôi.",
+                Params = "[Name]",
+                Subject = "Welcome to OnDemandTutor!",
+                Description = "Email này được gửi để chào đón người dùng mới."
+            },
             new EmailTemplate
             {
                 Id = 2,
@@ -766,13 +766,13 @@ namespace OnDemandTutor.Models.MigrationData
                 Subject = "Account Activation",
                 Description = "Email này chứa hướng dẫn để kích hoạt tài khoản người dùng."
             },
-             new EmailTemplate
-             {
-                 Id = 6,
-                 Name = "TutorRegistrationApproval",
-                 Status = true,
-                 Subject = "Your Tutor Registration Approval Status",
-                 Body = @"
+            new EmailTemplate
+            {
+                Id = 6,
+                Name = "TutorRegistrationApproval",
+                Status = true,
+                Subject = "Your Tutor Registration Approval Status",
+                Body = @"
                             <!DOCTYPE html>
                     <html lang=""""vi"""">
                     <head>
@@ -824,17 +824,16 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
             ",
-                 Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
-                 Description = "Email template for notifying tutors about their registration approval status."
-             },
-
-                   new EmailTemplate
-                   {
-                       Id = 7,
-                       Name = "Request_Withdraw_Notification",
-                       Status = true,
-                       Subject = "Withdrawal Request Received",
-                       Body = @"
+                Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
+                Description = "Email template for notifying tutors about their registration approval status."
+            },
+            new EmailTemplate
+            {
+                Id = 7,
+                Name = "Request_Withdraw_Notification",
+                Status = true,
+                Subject = "Withdrawal Request Received",
+                Body = @"
                     <!DOCTYPE html>
                     <html lang=""en"">
                     <head>
@@ -887,16 +886,16 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
                 ",
-                       Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
-                       Description = "Email template for notifying users about their withdrawal request."
-                   },
-              new EmailTemplate
-              {
-                  Id = 8,
-                  Name = "WithDraw_Approval_Notification",
-                  Status = true,
-                  Subject = "Withdrawal Request Status Update",
-                  Body = @"
+                Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
+                Description = "Email template for notifying users about their withdrawal request."
+            },
+            new EmailTemplate
+            {
+                Id = 8,
+                Name = "WithDraw_Approval_Notification",
+                Status = true,
+                Subject = "Withdrawal Request Status Update",
+                Body = @"
         <!DOCTYPE html>
         <html lang=""en"">
         <head>
@@ -948,12 +947,33 @@ namespace OnDemandTutor.Models.MigrationData
         </body>
         </html>
     ",
-                  Params = "[UserName], [Status], [Amount],[Reply]",
-                  Description = "Email template for notifying users about the status of their withdrawal request."
-              }
+                Params = "[UserName], [Status], [Amount],[Reply]",
+                Description = "Email template for notifying users about the status of their withdrawal request."
+            },
+
+            new EmailTemplate
+            {
+                Id = 9,
+                Name = "Slot_Payment_Reminder",
+                Status = true,
+                Body = "Dear [Name],\n\nYou currently have more than 15% of your slots unpaid out of the total for class [ClassId].\n\nKindly settle the payments at your earliest convenience.\n\nBest regards,\nThe OnDemandTutor Team",
+                Subject = "Reminder: Pending Payment for Slots",
+                Description = "Reminder email for pending slot payments.",
+                Params = "[Name], [ClassId]",
+            },
+            new EmailTemplate
+            {
+                Id = 10,
+                Name = "Remove_Unpaid_Slots",
+                Status = true,
+                Body = "Dear [Name],\nThis is to inform you that you have more than 20% of your slots unpaid out of the total for class [ClassId] so we have removed you from class.\nPlease take necessary actions.\n\nRegards,\nThe OnDemandTutor Team",
+                Subject = "Warning: High Number of Unpaid Slots",
+                Description = "Warning email for high number of unpaid slots.",
+                Params = "[Name], [ClassId]",
+            }
 
 
-            );
+           );
             #endregion
 
             #region RequestWithDraw

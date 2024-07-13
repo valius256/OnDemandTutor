@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
@@ -26,10 +29,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly IUserServices _userServices;
         private readonly ITransactionServices _transactionServices;
         private readonly IClassService _classService;
+        private readonly IMailServices _mailServices;
+        private readonly IStudentClassService _studentClassService;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IClassService classService,
+            IClassService classService, IMailServices mailServices, IStudentClassService studentClassService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -40,6 +45,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _transactionServices = transactionServices;
             _userServices = userServices;
             _classService = classService;
+            _mailServices = mailServices;
+            _studentClassService = studentClassService;
         }
 
 
@@ -168,14 +175,40 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 if (totalSlot == 0) continue;
 
                 double percentageNotPaid = (double)countListNotPaid / totalSlot;
-
+                
                 if (percentageNotPaid >= 0.20)
                 {
-                    Console.WriteLine("This user has more than 20% slots not paid out of the total.");
+                    var slot = await _slotStudentServices.GetSlotStudentById(slotId);
+                    var user = await _userServices.GetProfile(slot.UserId, null, null);
+                    // Save this email as a template or send directly
+                    var emailParams = new Dictionary<string, string>()
+                    {
+                        { "Name", $"{user.FirstName}" },
+                        { "ClassId", $"{listOfSlotTotal.FirstOrDefault()?.ClassId}"},
+                    };
+
+                    List<string> toAddress = new List<string> { user.Email };
+                    await _mailServices.SendAsync(EmailType.Remove_Unpaid_Slots, toAddress, new List<string> { }, emailParams, false);
+                    var slotModel = listOfSlotTotal.Adapt<Models.Models.Slot>();
+                    var classId = slotModel.ClassId;
+
+                    await _studentClassService.DeleteStudentFromStudentClassById(user.Id, classId.Value);
                 }
                 else if (percentageNotPaid >= 0.15)
                 {
-                    Console.WriteLine("This user has more than 15% slots not paid out of the total.");
+                    var slot = await _slotStudentServices.GetSlotStudentById(slotId);
+                    var user = await _userServices.GetProfile(slot.UserId, null, null);
+                    // Save this email as a template or send directly
+                    var emailParams = new Dictionary<string, string>()
+                    {
+                        { "Name", $"{user.FirstName}" },
+                        { "ClassId", $"{listOfSlotTotal.FirstOrDefault().ClassId}"},
+                    };
+
+                    List<string> toAddress = new List<string> { user.Email };
+
+
+                    await _mailServices.SendAsync(EmailType.Slot_Payment_Reminder, toAddress, new List<string> { }, emailParams, false);
                 }
             }
         }
