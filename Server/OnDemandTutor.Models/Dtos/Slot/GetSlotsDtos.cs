@@ -17,10 +17,6 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public DateTime? ActualEndTime { get; set; }
         public string Subject { get; set; }
 
-
-        // Navigation properties
-        public virtual ICollection<Models.SlotStudent> SlotStudents { get; set; } = new List<Models.SlotStudent>();
-        public virtual ICollection<Models.Transaction> SlotTransaction { get; set; } = new List<Models.Transaction>();
     }
 }
 

@@ -1,15 +1,10 @@
-﻿using HtmlAgilityPack;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Blog;
-using OnDemandTutor.Models.Dtos.TutorSubject;
-using OnDemandTutor.Models.Dtos.User;
-using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
-using System.Text.RegularExpressions;
 
 namespace OnDemandTutor.DataAccess.Repository
 {
@@ -17,7 +12,7 @@ namespace OnDemandTutor.DataAccess.Repository
     {
         public BlogRepository(ApplicationDbContext context) : base(context)
         {
-            
+
         }
 
         public async Task<PagedResult<Blog>> GetBlogs(PagingModel<QueryBlogDto> pagingModel)

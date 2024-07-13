@@ -1,5 +1,4 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Notification
+﻿namespace OnDemandTutor.Models.Dtos.Notification
 {
     public class NotificationCreateDto
     {

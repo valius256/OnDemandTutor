@@ -1,12 +1,11 @@
-﻿using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+﻿using FirebaseAdmin.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Enum;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using FirebaseAdmin.Auth;
-using Microsoft.AspNetCore.Http;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -48,8 +47,8 @@ public class JwtProviderServices : IJwtProviderServices
                 {
                     // Parse the error content as JSON
                     var parsedJson = Newtonsoft.Json.Linq.JObject.Parse(errorContent);
-                    responseModel.code = parsedJson["error"]?["code"]?.ToString();
-                    responseModel.message = parsedJson["error"]?["message"]?.ToString();
+                    responseModel.code = parsedJson["error"]?["code"]?.ToString() ?? throw new InvalidOperationException();
+                    responseModel.message = parsedJson["error"]?["message"]?.ToString() ?? throw new InvalidOperationException();
                 }
                 catch (Exception)
                 {
@@ -84,7 +83,7 @@ public class JwtProviderServices : IJwtProviderServices
         {
             { "roles", userInDb.Role.ToString() },
             { "id", userInDb.Id.ToString() }
-        }; 
+        };
             await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
             var options = new SessionCookieOptions
             {
@@ -92,7 +91,7 @@ public class JwtProviderServices : IJwtProviderServices
             };
 
 
-         var cookieExtendSession =   await _fireBaseAuthServices.CreateSessionCookieAsync(authToken.IdToken, options);
+            var cookieExtendSession = await _fireBaseAuthServices.CreateSessionCookieAsync(authToken.IdToken, options);
             responseModel.code = response.StatusCode.ToString();
             responseModel.message = cookieExtendSession;
         }

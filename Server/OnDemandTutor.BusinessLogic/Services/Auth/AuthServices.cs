@@ -66,8 +66,8 @@ public class AuthServices : IAuthServices
 
         return await _fireBaseAuthServices.ForgotPassword(email);
     }
-    
-    
+
+
     public async Task<bool> DeleteUserAsync(string? email)
     {
         await _fireBaseAuthServices.DeleteUserAsync(email);

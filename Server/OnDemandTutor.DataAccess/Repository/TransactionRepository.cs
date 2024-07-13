@@ -46,7 +46,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
         var filteredUsers = await transactionQuery
             .AsNoTracking()
             .ToNewPagingAsync(page, limit);
-        
+
         return filteredUsers;
     }
 

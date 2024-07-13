@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using FirebaseAdmin;
+﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -52,8 +51,6 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.SchedulerJobs;
 using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
 using System.Security.Claims;
-using SharedKernel.Infrastructure.Security.Cryptography;
-using Sha256 = FirebaseAdmin.Auth.Hash.Sha256;
 
 
 namespace OnDemandTutor.API.Extensions;
@@ -82,7 +79,7 @@ public static class ServiceExtensions
         services.AddScoped<ITutorVideoRepository, TutorVideoRepository>();
         services.AddProblemDetails();
         services.AddLogging();
-        
+
         return services;
     }
 
@@ -136,41 +133,41 @@ public static class ServiceExtensions
         return services;
     }
 
-   public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services, IConfiguration configuration)
-{
-    var projectId = configuration["Authentication:project_id"];
+    public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var projectId = configuration["Authentication:project_id"];
 
-    services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.Authority = $"https://session.firebase.google.com/ondemandtutor-a049e";
-        options.TokenValidationParameters = new TokenValidationParameters
+        services.AddAuthentication(options =>
         {
-            ValidateIssuer = true,
-            ValidIssuer = $"https://session.firebase.google.com/ondemandtutor-a049e",
-            ValidateAudience = true,
-            ValidAudience = projectId,
-            ValidateLifetime = true,
-        };
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.Authority = $"https://session.firebase.google.com/ondemandtutor-a049e";
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = $"https://session.firebase.google.com/ondemandtutor-a049e",
+                ValidateAudience = true,
+                ValidAudience = projectId,
+                ValidateLifetime = true,
+            };
 
-       
-    });
 
-    services.AddAuthorization(options =>
-    {
-        options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
-        options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
-        options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
-        options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
-        
-    });
+        });
 
-    return services;
-}
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
+            options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
+            options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
+            options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
+
+        });
+
+        return services;
+    }
 
 
     public static IServiceCollection AddSwaggerWithConfigurations(this IServiceCollection services)
@@ -216,11 +213,12 @@ public static class ServiceExtensions
     {
         // Register Hangfire and configure it
         services.AddHangfire(config =>
+
             config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"),
                 new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(15),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
                     QueuePollInterval = TimeSpan.Zero,
                     UseRecommendedIsolationLevel = true,
                     DisableGlobalLocks = true
@@ -232,7 +230,16 @@ public static class ServiceExtensions
 
         // Register any other required services here
         services.AddTransient<IDefaultScheduleJob, DefaultScheduleJob>();
-        
+
+        services.AddHangfireServer(cf =>
+        {
+            RecurringJob.AddOrUpdate<SlotService>(x =>
+            x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
+            RecurringJob.AddOrUpdate<SlotService>(x =>
+            x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
+        });
+
+
         return services;
     }
 

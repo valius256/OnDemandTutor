@@ -1,5 +1,4 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.EmailTemplate
+﻿namespace OnDemandTutor.Models.Dtos.EmailTemplate
 {
     public class EmailTemplateDto
     {

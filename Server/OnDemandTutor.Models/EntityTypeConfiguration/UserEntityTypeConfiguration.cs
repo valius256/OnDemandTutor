@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.Models.EntityTypeConfiguration;

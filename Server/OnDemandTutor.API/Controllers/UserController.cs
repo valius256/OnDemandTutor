@@ -40,7 +40,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromQuery] int userId)
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
-        var result = await _userService.GetProfile(userId, null,user);
+        var result = await _userService.GetProfile(userId, null, user);
         return OKAsync(result);
     }
 
@@ -124,7 +124,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.GetOutstandingTutor(limit, page));
 
     }
-    
+
     /// <summary>
     ///    update tutor status to Banned 
     /// </summary>

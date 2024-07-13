@@ -1,6 +1,8 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Enum;
 
@@ -42,7 +44,7 @@ public class SlotStudentService : ISlotStudentServices
 
     public async Task CreateSlotStudentIfNotExist(int slotId, int studentId)
     {
-        var recordInDb =  await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
+        var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
             st.SlotId == slotId && st.UserId == studentId);
         if (recordInDb == null)
         {
@@ -51,16 +53,22 @@ public class SlotStudentService : ISlotStudentServices
                 SlotId = slotId,
                 UserId = studentId,
                 PaymentStatus = PaymentStatus.Notpaid,
-            }; 
+            };
             await _unitOfWorkRepository.SlotStudentRepository.AddAsync(recordInDb);
-            await  _unitOfWorkRepository.SaveChangesAsync();
+            await _unitOfWorkRepository.SaveChangesAsync();
         }
-        
+
     }
 
     public async Task<SlotStudentDto> GetSlotStudentById(int slotId)
     {
         var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(u => u.SlotId == slotId);
         return recordInDb.Adapt<SlotStudentDto>();
+    }
+
+    public async Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status)
+    {
+        var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ss => ss.PaymentStatus == status).ToListAsync();
+        return slotStudentModel.Adapt<List<GetStudentSlotDto>>();
     }
 }

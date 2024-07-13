@@ -22,7 +22,7 @@ namespace OnDemandTutor.DataAccess.Repository
             var consultListQuery = dbSet
                 .Include(cs => cs.HandleBy)
                 .AsQueryable();
-            
+
             // Apply filters based on request
             if (!string.IsNullOrEmpty(request.Name))
             {
@@ -54,10 +54,10 @@ namespace OnDemandTutor.DataAccess.Repository
                 consultListQuery = consultListQuery.Where(cs => cs.Status == request.ConsultationStatus.Value);
             }
 
-      
-            
+
+
             consultListQuery = consultListQuery.OrderBy(cr => cr.CreatedDate);
-           var   consultListQuery1 = await consultListQuery.OrderBy(cr => cr.CreatedDate).ToListAsync();
+            var consultListQuery1 = await consultListQuery.OrderBy(cr => cr.CreatedDate).ToListAsync();
             int limit = request.Limit > 0 ? request.Limit : 10;
             int page = request.Page > 0 ? request.Page : 1;
 

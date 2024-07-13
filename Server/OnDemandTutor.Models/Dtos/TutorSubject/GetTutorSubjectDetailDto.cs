@@ -15,6 +15,7 @@ namespace OnDemandTutor.Models.Dtos.TutorSubject
         public GetSubjectDtos Subject { get; set; } = default!;
         public string Description { get; set; } = string.Empty;
         public TutorSubjectStatus Status { get; set; }
+        public string? ReasonReject { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
 

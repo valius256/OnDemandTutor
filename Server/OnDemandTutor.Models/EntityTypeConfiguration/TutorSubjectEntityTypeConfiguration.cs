@@ -10,7 +10,7 @@ public class TutorSubjectEntityTypeConfiguration : IEntityTypeConfiguration<Tuto
     {
         builder.HasKey(ts => ts.Id);
         builder.Property(ts => ts.Id).ValueGeneratedOnAdd();
-            
+
         builder.HasOne(t => t.Subject).WithMany(t => t.TutorSubjects).HasForeignKey(ts => ts.SubjectId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(t => t.User).WithMany(t => t.TutorSubjects).HasForeignKey(ts => ts.UserId)

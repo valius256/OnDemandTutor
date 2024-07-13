@@ -20,16 +20,16 @@ public class ClassEntityTypeConfiguration : IEntityTypeConfiguration<Class>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(c => c.User)
-            .WithMany() 
+            .WithMany()
             .HasForeignKey(c => c.TutorId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.HasMany(c => c.StudentClasses)
             .WithOne(sc => sc.Class)
             .HasForeignKey(sc => sc.ClassId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        
+
         builder.HasMany(c => c.Slots)
             .WithOne(s => s.Class)
             .HasForeignKey(s => s.ClassId)

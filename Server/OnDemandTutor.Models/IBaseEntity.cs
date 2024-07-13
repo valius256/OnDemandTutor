@@ -1,5 +1,4 @@
-﻿using Google.Type;
-using DateTime = System.DateTime;
+﻿using DateTime = System.DateTime;
 
 namespace OnDemandTutor.Models;
 
@@ -30,7 +29,7 @@ public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
     public DateTime? DeletedDate { get; set; }
 
     public RecordStatus RecordStatus { get; set; }
-    
+
     public void SoftDelete()
     {
         RecordStatus = RecordStatus.Deleted;

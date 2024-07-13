@@ -43,7 +43,7 @@ public class UserServices : IUserServices
     public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail, GetProfileUserDtos? accessor)
     {
         var userModel = await GetUserById(userId);
-        if (accessor == null || ( accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
+        if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
         {
             userModel.Balance = 0;
         }
@@ -97,7 +97,7 @@ public class UserServices : IUserServices
         mappedUser.FireBaseid = fireBaseAuthId;
         mappedUser.CreatedDate = DateTime.Now;
         mappedUser.Balance = 0;
-        if(registerDtos.isTutor)
+        if (registerDtos.isTutor)
         {
             mappedUser.Role = RoleStatus.Tutor;
         }
@@ -401,7 +401,7 @@ public class UserServices : IUserServices
         {
             record.Balance += moneyIncrease;
         }
-        else if(moneyDecrease == 0)
+        else if (moneyDecrease == 0)
         {
             record.Balance -= moneyDecrease;
         }
@@ -412,7 +412,7 @@ public class UserServices : IUserServices
             throw new ModelException($"{record.Balance}", "The balance cannot be negative",
                 "The balance cannot be negative");
         }
-        
+
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }

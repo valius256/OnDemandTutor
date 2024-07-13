@@ -54,8 +54,8 @@ public class VnPayLibrary
             }
         }
 
-        var returnUrl  = orderInfoParts.Length > 4 ? orderInfoParts[4] : "";
-        
+        var returnUrl = orderInfoParts.Length > 4 ? orderInfoParts[4] : "";
+
         // Parse slotIds
         List<int> slotIds = new List<int>();
         if (orderInfoParts.Length > 5)
@@ -97,7 +97,7 @@ public class VnPayLibrary
         };
         return rs1;
     }
-    
+
     public string GetIpAddress(HttpContext context)
     {
         var ipAddress = string.Empty;

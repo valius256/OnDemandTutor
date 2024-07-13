@@ -27,7 +27,7 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(ts => ts.Subject)
                 .AsQueryable();
 
-            
+
             var queryTutorSubjectDto = request.Filter;
             if (queryTutorSubjectDto != null)
             {
@@ -52,11 +52,11 @@ namespace OnDemandTutor.DataAccess.Repository
                     query = query.Where(ts => queryTutorSubjectDto.SubjectIds.Contains(ts.SubjectId));
                 }
             }
-           
+
             int limit = request.Limit > 0 ? request.Limit : 10;
             int page = request.Page > 0 ? request.Page : 1;
 
-            var result = await query.ToNewPagingAsync(page,limit);
+            var result = await query.ToNewPagingAsync(page, limit);
             return result;
         }
     }

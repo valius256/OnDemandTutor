@@ -11,4 +11,6 @@ public interface ISlotServices
     Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto);
     Task<bool> DeleteSlotAsync(int id);
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
+    Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
+    Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
 }

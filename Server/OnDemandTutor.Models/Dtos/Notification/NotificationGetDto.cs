@@ -1,8 +1,7 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Notification
+﻿namespace OnDemandTutor.Models.Dtos.Notification
 {
-	public class NotificationGetDto
-	{
+    public class NotificationGetDto
+    {
         public int Id { get; set; }
         public string? Content { get; set; }
         public int? ReceiverId { get; set; }

@@ -40,7 +40,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
         public async Task<GetConsultationRequestDto> GetConsultationRequestByIdAsync(int id)
         {
             var consultationRequest = await _unitOfWorkRepository.ConsultationRequestRepository.FirstOrDefaultAsync(c => c.Id == id);
-            return consultationRequest?.Adapt<GetConsultationRequestDto>();
+            return consultationRequest?.Adapt<GetConsultationRequestDto>() ?? throw new InvalidOperationException();
         }
 
         public async Task<GetConsultationRequestDto> CreateConsultationRequestAsync(RegisterConsultationRequestDto consultationRequestDto)

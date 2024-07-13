@@ -64,7 +64,7 @@ namespace OnDemandTutor.API.Controllers
         [Authorize]//[Authorize(Roles = "Operator, Admin")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(bool), 200)]
-        public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery]int id)
+        public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery] int id)
         {
             return OKAsync(await _consultationRequestService.DeleteConsultationRequestAsync(id));
         }
