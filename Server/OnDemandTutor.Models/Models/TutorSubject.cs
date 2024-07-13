@@ -8,6 +8,7 @@ public class TutorSubject : BaseEntity
     public virtual User User { get; set; }
     public int SubjectId { get; set; }
     public string Description { get; set; } = string.Empty;
+    public string? ReasonReject { get; set; }
     public virtual Subject Subject { get; set; }
     public TutorSubjectStatus Status { get; set; }
 

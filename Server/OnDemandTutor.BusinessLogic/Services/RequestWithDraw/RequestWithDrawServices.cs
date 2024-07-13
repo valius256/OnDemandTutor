@@ -127,6 +127,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         withdraw.UpdatedDate = DateTime.Now;
         withdraw.UpdatedById = operatorId;
         _unitOfWorkRepository.RequestWithDrawRepository.Update(withdraw);
+        _unitOfWorkRepository.SaveChanges();
     }
 
     private async Task SendWithdrawApprovalEmail(Models.Models.RequestWithDraw withdraw, ApproveWithDrawDto request)
@@ -134,12 +135,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         var withDrawCreatedBy = await _userServices.GetUserById(withdraw.UserId);
         var toAddress = new List<string> { withDrawCreatedBy.Email };
         var emailParams = new Dictionary<string, string>
-    {
-        { "UserName", $"{withDrawCreatedBy.FirstName} {withDrawCreatedBy.LastName}" },
-        { "Status", request.Status.ToString() },
-        { "Reply", request.Reply },
-        { "Amount", withdraw.Amount.ToString() }
-    };
+            {
+                { "UserName", $"{withDrawCreatedBy.FirstName} {withDrawCreatedBy.LastName}" },
+                { "Status", request.Status.ToString() },
+                { "Reply", request.Reply },
+                { "Amount", withdraw.Amount.ToString() }
+            };
         await _mailServices.SendAsync(EmailType.WithDraw_Approval_Notification, toAddress, new List<string>(), emailParams, false);
     }
 
@@ -156,8 +157,8 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             CreatedById = withdraw.UserId,
         };
 
-
         await _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });
+        _unitOfWorkRepository.SaveChanges();
     }
 
 }

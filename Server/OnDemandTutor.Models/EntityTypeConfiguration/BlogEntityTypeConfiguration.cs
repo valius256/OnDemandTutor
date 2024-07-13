@@ -15,7 +15,7 @@ public class BlogEntityTypeConfiguration : IEntityTypeConfiguration<Blog>
         builder.Property(x => x.Content).HasMaxLength(Int32.MaxValue).IsRequired(false);
         builder.Property(x => x.Thumbnail).HasMaxLength(Int32.MaxValue).IsRequired(false);
         builder.Property(x => x.IsHidden).HasDefaultValue(false).IsRequired(false);
-        
+
         builder.HasOne(b => b.CreateBy)
             .WithMany(u => u.BlogCreateBy)
             .HasForeignKey(b => b.CreateById)

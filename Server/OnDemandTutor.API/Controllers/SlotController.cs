@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Paging;
@@ -19,7 +18,6 @@ public class SlotController : ControllerBase
     }
     //[Authorize]
     [HttpGet]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
     public async Task<IActionResult> GetSlots([FromQuery] PagingModel<GetSlotsDtos> pagingModel)
     {
@@ -31,7 +29,6 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> GetSlotById(int id)
     {
@@ -46,7 +43,6 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(CreateSlotsDtos), 200)]
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
     {
@@ -57,7 +53,6 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(UpdateSlotDtos), 200)]
     public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDtos slotDto)
     {
@@ -76,7 +71,6 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(204)]
     public async Task<IActionResult> DeleteSlot(int id)
     {

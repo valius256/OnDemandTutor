@@ -83,6 +83,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             var classWithSlot = await _unitOfWork.ClassRepository.GetFullDataClass(id);
             return classWithSlot.Adapt<GetClassFullDataSlotDto>();
         }
+
     }
 }
 

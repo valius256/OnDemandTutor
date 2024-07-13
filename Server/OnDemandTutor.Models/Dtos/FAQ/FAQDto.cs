@@ -1,5 +1,4 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.FAQ
+﻿namespace OnDemandTutor.Models.Dtos.FAQ
 {
     public class FAQDTO
 

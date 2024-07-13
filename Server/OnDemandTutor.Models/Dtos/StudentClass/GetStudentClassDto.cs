@@ -1,8 +1,7 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.StudentClass
+﻿namespace OnDemandTutor.Models.Dtos.StudentClass
 {
-	public class GetStudentClassDto
-	{
+    public class GetStudentClassDto
+    {
         public int Id { get; set; }
         public int StudentId { get; set; }
         public int ClassId { get; set; }
