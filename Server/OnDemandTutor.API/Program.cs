@@ -67,7 +67,7 @@ internal class Program
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             if (!dbContext.Database.CanConnect())
-                throw new DatabaseConnectionException("Cannot connect to the database");
+                throw new DatabaseConnectionException($"Cannot connect to the database, cns : {dbContext.Database.GetConnectionString()}");
         }
 
         // Configure Hangfire
@@ -79,12 +79,6 @@ internal class Program
             TimeZoneResolver = new DefaultTimeZoneResolver()
         });
 
-
-        //// Enable processing Hangfire jobs
-        //app.UseHangfireServer();
-
-        //RecurringJob.AddOrUpdate<SlotService>(x =>
-        //   x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
 
         // Swagger
         app.UseSwagger();

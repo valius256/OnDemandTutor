@@ -82,6 +82,18 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteStudentFromStudentClassById(int classId, int userId)
+        {
+            var studentClass = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(sc => sc.ClassId == classId && sc.StudentId == userId);
+            if (studentClass == null)
+            {
+                throw new Exception("StudentClass not found");
+            }
+            _unitOfWork.StudentClassRepository.Remove(studentClass);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
     }
 }
 
