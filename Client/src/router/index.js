@@ -87,6 +87,10 @@ const routes = [
         component: StudentProfile,
       },
       {
+        path: "myclass",
+        component: StudentProfile,
+      },
+      {
         path: "payment",
         component: StudentProfile,
       },

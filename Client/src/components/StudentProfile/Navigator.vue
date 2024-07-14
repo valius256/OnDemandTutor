@@ -9,12 +9,16 @@
                 <router-link to="/student/schedule" class="px-2 py-4 hover:bg-blue-800">
                     <i class="fa fa-calendar text-2xl mr-2"></i>Thời khóa biểu
                 </router-link>
+                <router-link to="/student/myclass" class="px-2 py-4 hover:bg-blue-800">
+                    <i class="fa fa-group text-2xl mr-2"></i>Lớp học của tôi
+                </router-link>
                 <router-link to="/student/payment" class="px-2 py-4 hover:bg-blue-800">
                     <i class="fa fa-money text-2xl mr-2"></i>Thanh toán
                 </router-link>
                 <router-link to="/student/withdraw" class="px-2 py-4 hover:bg-blue-800">
                     <i class="fa fa-reply text-2xl mr-2"></i>Yêu cầu rút tiền
                 </router-link>
+                
             </div>
         </div>
         <div class="flex flex-col ">

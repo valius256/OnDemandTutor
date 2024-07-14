@@ -9,6 +9,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 public interface ISlotStudentServices
 {
     Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user);
+    Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
     Task CreateSlotStudentIfNotExist(int slotId, int studentId);
