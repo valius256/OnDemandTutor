@@ -70,8 +70,13 @@ public class ExceptionHandlingMiddleware
             case FirebaseAuthException firebaseAuthException:
                 status = HttpStatusCode.InternalServerError;
                 title = "Firebase Auth Error";
-                errors.Add(new ValidationErrorModel(firebaseAuthException.Message, "FirebaseAuth", "FirebaseAuthError"));
+                errors.Add(new ValidationErrorModel(firebaseAuthException.Message));
                 break;
+            //case NullReferenceException nullReferenceException:
+            //    status = HttpStatusCode.NotFound;
+            //    title = "Null Reference Exception";
+            //    errors.Add(new ValidationErrorModel(nullReferenceException.Message));
+            //    break;
             default:
                 status = HttpStatusCode.InternalServerError;
                 title = "Internal Server Error";

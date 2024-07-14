@@ -4,6 +4,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.StudentClass;
 using OnDemandTutor.Models.Paging;
 
@@ -79,6 +80,20 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 throw new Exception("StudentClass not found");
             }
             _unitOfWork.StudentClassRepository.Remove(studentClass);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteStudentFromStudentClassById(int classId, int userId)
+        {
+            var studentClass = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(sc => sc.ClassId == classId && sc.StudentId == userId);
+            if (studentClass == null)
+            {
+                throw new Exception("StudentClass not found");
+            }
+            _unitOfWork.StudentClassRepository.Remove(studentClass);
+            // studentClass.RecordStatus = RecordStatus.Deleted;
+            // _unitOfWork.StudentClassRepository.Update(studentClass);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
