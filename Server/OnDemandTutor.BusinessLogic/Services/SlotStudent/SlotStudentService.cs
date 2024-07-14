@@ -25,6 +25,12 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user.Id);
         return slotStudent.Adapt<List<GetSlotStudentDetailDto>>();
     }
+    public async Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user)
+    {
+        var slotStudent =
+            await _unitOfWorkRepository.SlotStudentRepository.GetClosestFutureSlot(user.Id);
+        return slotStudent.Adapt<GetSlotStudentDetailDto>();
+    }
     public async Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
     {
         var slotStudent =

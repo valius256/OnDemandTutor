@@ -16,7 +16,20 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
     {
         
     }
-
+    public async Task<SlotStudent?> GetClosestFutureSlot(int studentId)
+    {
+        return await dbSet.AsQueryable()
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Subject)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.CreatedBy)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Class)
+            .Include(ss => ss.User)
+            .OrderBy(ss => ss.Slot.StartTime)
+            .Take(1)
+            .FirstOrDefaultAsync(s => s.UserId == studentId && s.Slot.StartTime > DateTime.Now);
+    }
     public async Task<List<SlotStudent>> GetStudentSlotsAsync(QuerySlotStudentDto request, int studentId)
     {
         var query = dbSet.AsQueryable()

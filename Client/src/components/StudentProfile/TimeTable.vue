@@ -46,7 +46,8 @@
                                 {{ formatTime(shift.hour) }} : {{ formatTime(shift.min) }}
                             </div>
                         </td>
-                        <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek">
+                        <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek"
+                        :class="{'bg-slate-100': compareDateToToday(day.specificDay)}">
                             <slot-detail :slots="getSlotsByDay(day.specificDay)" 
                                 :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
                         </td>
@@ -177,6 +178,13 @@ export default {
             //console.log(this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare))
             return this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare)
         },
+        compareDateToToday(date){
+            const dateToCompare = (this.slashDateFormatToSqlDateString(date))
+            const today = new Date()
+            const todayDateString = `${today.getFullYear()}-${String((today.getMonth() + 1)).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
+            console.log(dateToCompare, todayDateString)
+            return dateToCompare == todayDateString
+        }
     },
     mounted() {
         this.refresh()

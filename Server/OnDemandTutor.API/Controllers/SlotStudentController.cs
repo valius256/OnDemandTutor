@@ -34,6 +34,17 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("get-upcoming-slot")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
+        public async Task<IActionResult> GetUpcomingSlot([FromQuery] QuerySlotStudentDto querySlotStudentDto)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var slotStudent = await _slotStudentService.GetClosestFutureSlot(user);
+            return Ok(slotStudent);
+        }
+
+        [Authorize]
         [HttpGet("{slotId}/{studentId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(SlotStudentDto), 200)]

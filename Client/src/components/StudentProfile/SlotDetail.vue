@@ -2,13 +2,23 @@
 <template>
   <div>
     <button v-for="slot in slots" :key="slot.id" :class="slotClass(slot)" :style="slotStyle(slot)" @click="viewDetail(slot)">
+      <div class="absolute inset-0" v-if="slot.slot.isOnline">
+        <div class="relative">
+          <div class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"></div>
+        </div>
+      </div>
       <div v-if="slotHeight(slot) > 45">
         <div v-if="slotHeight(slot) > 90 && slot.slot.class" class="font-bold">
           {{ slot.slot.class.name  }}
         </div>
+        <div v-if="slotHeight(slot) > 90 && !slot.slot.class" class="font-bold italic">
+          {{ slot.slot.subject.name  }}
+        </div>
         {{ formatTime(slot.slot.startTime) }}<br />
         {{ formatTime(slot.slot.endTime) }}
-
+        <div v-if="slotHeight(slot) > 180 " class="italic">
+          Gia sư: {{ slot.slot.createdBy.lastName  }}
+        </div>
       </div>
 
     </button>
@@ -66,7 +76,7 @@ export default {
       } else {
         bg = "bg-gray-400";
       }
-      return bg + " flex justify-center items-center";
+      return bg + " flex justify-center items-center ";
     },
   },
 };

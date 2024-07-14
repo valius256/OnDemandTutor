@@ -22,35 +22,35 @@
                 <div class="p-4 bg-blue-100 rounded-lg">
                     <div>
                         <span class="font-bold">Trạng thái : </span>
-                        <span :class="getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime).style">
-                            {{ getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime).display }}
+                        <span :class="getSlotStatus(upcomingSlot.slot.startTime, upcomingSlot.slot.endTime).style">
+                            {{ getSlotStatus(upcomingSlot.slot.startTime, upcomingSlot.slot.endTime).display }}
                         </span>
                     </div>
                     <div class="flex place-content-between mt-4">
                         <div>
                             <span class="mr-4 font-bold">Bắt đầu :</span>
-                            <span class="mr-4">{{ upcomingSlot.startTime }}</span>
+                            <span class="mr-4">{{ this.beautifyDatetime(upcomingSlot.slot.startTime) }}</span>
                         </div>
                         <div>
                             <span class="mr-4 font-bold">Kết thúc :</span>
-                            <span class="mr-4">{{ upcomingSlot.endTime }}</span>
+                            <span class="mr-4">{{ this.beautifyDatetime(upcomingSlot.slot.endTime) }}</span>
                         </div>
                         <div>
                             <span class="mr-4 font-bold">Tổng thời lượng :</span>
-                            <span class="mr-4">{{ (upcomingSlot.durationInHour?.toFixed(2)) }} tiếng</span>
+                            <span class="mr-4">{{ (calcDuration(upcomingSlot).toFixed(2)) }} tiếng</span>
                         </div>
                     </div>
                 </div>
                 <div class="font-bold italic mt-4 text-gray-500">
-                    <div v-if="upcomingSlot.paidStatus == 'NotCharged'">
+                    <div v-if="upcomingSlot.paymentStatus == 0">
                         *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý khách. Để trách những rắc rối
                         về sau, bạn vui lòng nạp tiền vào ví đầy đủ trước khi bắt đầu vào học nhé!<br>
                         *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
                         <span class="text-red-500">
-                            {{ (upcomingSlot.user?.salary * upcomingSlot.durationInHour).toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                    }) }}
+                            {{ (upcomingSlot.slot.createdBy?.tutorFeePerHour * calcDuration(upcomingSlot)).toLocaleString('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }) }}
                         </span>
                     </div>
                 </div>
@@ -89,12 +89,7 @@ export default {
             slots: [
 
             ],
-            upcomingSlot: {
-                startTime: null,
-                endTime: null,
-                user: null,
-                paidStatus: ""
-            }
+            upcomingSlot: null
         }
 
     },
@@ -124,29 +119,15 @@ export default {
                     }
             }
         },
-        getClosestSlot(slots) {
-            const now = new Date();
-
-            // Filter out slots that have already ended
-            const futureSlotsOnly = slots.filter((slot) => {
-                const endTime = new Date(slot.slot.endTime);
-                return endTime > now;
-            });
-
-            // Sort the future slots by their distance from the current time
-            const sortedSlots = futureSlotsOnly.map((slot) => {
-                const startTime = new Date(slot.slot.startTime);
-                const endTime = new Date(slot.slot.endTime);
-                const user = slot.user
-                const paidStatus = slot.paymentStatus
-                const startDistance = startTime - now;
-                const endDistance = endTime - now;
-                const durationInHour = (endDistance - startDistance) / 3600000;
-                return { ...slot, startDistance, endDistance, durationInHour, user, paidStatus };
-            }).sort((a, b) => a.startDistance - b.startDistance);
-
-            // Return the slot with the closest start time in the future
-            return sortedSlots.length > 0 ? sortedSlots[0] : null;
+        async getClosestSlot() {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-upcoming-slot', {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.upcomingSlot = response.data
+            }
         },
         getSlotStatus(startTime, endTime) {
             let generalCss = "p-2 text-white font-bold rounded-lg"
@@ -195,13 +176,13 @@ export default {
             })
             if (response.data) {
                 this.slots = response.data
-                this.upcomingSlot = this.getClosestSlot(this.slots)
             }
         },
         async refresh() {
             try {
                 await this.getUserSlots(this.from, this.to);
                 await this.fetchBalance();
+                await this.getClosestSlot();
             } catch (e){
                 console.log(e)
             }
@@ -212,6 +193,11 @@ export default {
         },
         closeSlotDetailPopup(){
             this.isOpenSlotDetailPopup = false
+        },
+        calcDuration(slot){
+            const startTime = new Date(slot.slot.startTime);
+            const endTime = new Date(slot.slot.endTime);
+            return (endTime - startTime) / 3600000;
         }
     },
     mounted() {
