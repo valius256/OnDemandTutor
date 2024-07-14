@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
@@ -26,10 +29,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly IUserServices _userServices;
         private readonly ITransactionServices _transactionServices;
         private readonly IClassService _classService;
+        private readonly IMailServices _mailServices;
+        private readonly IStudentClassService _studentClassService;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IClassService classService,
+            IClassService classService, IMailServices mailServices, IStudentClassService studentClassService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -40,6 +45,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _transactionServices = transactionServices;
             _userServices = userServices;
             _classService = classService;
+            _mailServices = mailServices;
+            _studentClassService = studentClassService;
         }
 
 
@@ -148,8 +155,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 }
             }
         }
-        
-        
+
+
         // improved listOfSlotIds later, cause it foreach all the slotId in same class if have
         public async Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent()
         {
@@ -181,7 +188,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
                     List<string> toAddress = new List<string> { userDto.Email };
                     await _mailServices.SendAsync(EmailType.Remove_Unpaid_Slots, toAddress, new List<string> { }, emailParams, false);
-                    
+
                     try
                     {
                         await _studentClassService.DeleteStudentFromStudentClassById(slotDto.ClassId.Value, userDto.Id);
@@ -212,7 +219,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 }
             }
         }
-        
+
         public async Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId)
         {
             var classId = await _slotRepository.Where(sl => sl.Id == slotId).Select(l => l.ClassId).FirstOrDefaultAsync();
