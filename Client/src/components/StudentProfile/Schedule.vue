@@ -7,14 +7,15 @@
             <div class="flex gap-4 mb-2">
                 <div class="text-xl font-bold py-1">
                     <span class="mr-4 ">Số dư hiện tại : </span>
-                    <span class="text-green-200 p-1 bg-green-600 rounded-lg">{{ user.balance.toLocaleString('vi-VN', {
+                    <span class="text-green-200 p-1 bg-green-600 rounded-lg">{{ balance.toLocaleString('vi-VN', {
                         style: 'currency',
                         currency: 'VND',
                     }) }} </span>
                 </div>
-                <router-link to="/student/payment" class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
+                <router-link to="/student/payment"
+                    class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
                     Nạp tiền
-                </router-link >
+                </router-link>
 
             </div>
             <div v-if="upcomingSlot">
@@ -40,15 +41,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="font-bold italic mt-4 text-gray-500">                 
+                <div class="font-bold italic mt-4 text-gray-500">
                     <div v-if="upcomingSlot.paidStatus == 'NotCharged'">
-                        *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý khách. Để trách những rắc rối về sau, bạn vui lòng nạp tiền vào ví đầy đủ trước khi bắt đầu vào học nhé!<br>
+                        *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý khách. Để trách những rắc rối
+                        về sau, bạn vui lòng nạp tiền vào ví đầy đủ trước khi bắt đầu vào học nhé!<br>
                         *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
                         <span class="text-red-500">
                             {{ (upcomingSlot.user?.salary * upcomingSlot.durationInHour).toLocaleString('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }) }}
+                        style: 'currency',
+                        currency: 'VND',
+                    }) }}
                         </span>
                     </div>
                 </div>
@@ -61,54 +63,31 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Thời khóa biểu
         </div>
-        <time-table :slots="slots"/>
+        <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup"/>
+        <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup">
+            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup"/>
+        </generic-popup>
     </div>
 
 </template>
 
 <script>
+import axios from 'axios'
 import TimeTable from './TimeTable.vue'
+import GenericPopup from '../common/GenericPopup.vue'
+import SlotDetailPopup from './SlotDetailPopup.vue'
 export default {
-    components: { TimeTable },
+    components: { TimeTable, GenericPopup, SlotDetailPopup },
     name: "StudentProfileSchedule",
     data() {
         return {
-            user: {
-                balance: 100000
-            },
+            balance: 0,
+            user: null,
+            from : null,
+            to : null,
+            isOpenSlotDetailPopup : false,
             slots: [
-                {
-                    startTime: "2024-06-22 16:50:00",
-                    endTime: "2024-06-22 17:30:00",
-                    paidStatus: "NotCharged",
-                    user: {
-                        salary: 80000
-                    }
-                },
-                {
-                    startTime: "2024-06-18 10:00:00",
-                    endTime: "2024-06-18 11:30:00",
-                    paidStatus: "Charged",
-                    user: {
-                        salary: 120000
-                    }
-                },
-                {
-                    startTime: "2024-06-17 7:00:00",
-                    endTime: "2024-06-17 9:30:00",
-                    paidStatus: "InDebt",
-                    user: {
-                        salary: 120000
-                    }
-                },
-                {
-                    startTime: "2024-06-19 18:30:00",
-                    endTime: "2024-06-19 20:00:00",
-                    paidStatus: "NotCharged",
-                    user: {
-                        salary: 120000
-                    }
-                }
+
             ],
             upcomingSlot: {
                 startTime: null,
@@ -150,16 +129,16 @@ export default {
 
             // Filter out slots that have already ended
             const futureSlotsOnly = slots.filter((slot) => {
-                const endTime = new Date(slot.endTime);
+                const endTime = new Date(slot.slot.endTime);
                 return endTime > now;
             });
 
             // Sort the future slots by their distance from the current time
             const sortedSlots = futureSlotsOnly.map((slot) => {
-                const startTime = new Date(slot.startTime);
-                const endTime = new Date(slot.endTime);
+                const startTime = new Date(slot.slot.startTime);
+                const endTime = new Date(slot.slot.endTime);
                 const user = slot.user
-                const paidStatus = slot.paidStatus
+                const paidStatus = slot.paymentStatus
                 const startDistance = startTime - now;
                 const endDistance = endTime - now;
                 const durationInHour = (endDistance - startDistance) / 3600000;
@@ -190,10 +169,53 @@ export default {
                     display: "Đã qua"
                 }
             }
+        },
+        async fetchBalance() {
+            const balanceResponse = await axios.get(import.meta.env.VITE_API_URL + '/api/User/balance', {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (balanceResponse.data) {
+                this.balance = balanceResponse.data.data.balance
+            }
+        },
+        async getUserSlots(from, to) {
+            let queryString = "?"
+            if (from != null){
+                queryString += "From=" + from
+            }
+            if (to != null){
+                queryString += "&To=" + to
+            }
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students' + queryString, {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.slots = response.data
+                this.upcomingSlot = this.getClosestSlot(this.slots)
+            }
+        },
+        async refresh() {
+            try {
+                await this.getUserSlots(this.from, this.to);
+                await this.fetchBalance();
+            } catch (e){
+                console.log(e)
+            }
+        },
+        openSlotDetailPopup(slot){
+            this.selectingSlot = slot
+            this.isOpenSlotDetailPopup = true
+        },
+        closeSlotDetailPopup(){
+            this.isOpenSlotDetailPopup = false
         }
     },
     mounted() {
-        this.upcomingSlot = this.getClosestSlot(this.slots)
+        this.refresh()
     }
 }
 </script>

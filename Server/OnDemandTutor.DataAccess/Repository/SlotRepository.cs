@@ -15,22 +15,34 @@ namespace OnDemandTutor.DataAccess.Repository
         {
         }
 
-        public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request)
+        public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request)
         {
             var query = dbSet.AsQueryable();
-            // Apply filtering if necessary
             if (request.Filter != null)
             {
-                if (request.Filter.SubjectId.HasValue)
-                {
-                    query = dbSet.Where(slot => slot.SubjectId == request.Filter.SubjectId);
-                }
                 if (request.Filter.ClassId.HasValue)
                 {
-                    query = query.Where(slot => slot.ClassId == request.Filter.ClassId);
+                    query = query.Where(s => s.ClassId ==  request.Filter.ClassId);
                 }
-                // Add other filters based on the properties of GetSlotsDtos
+                if (request.Filter.UserId.HasValue)
+                {
+                    query = query.Where(s => s.CreateById == request.Filter.UserId);
+                }
+                if (request.Filter.SubjectId.HasValue)
+                {
+                    query = query.Where(s => s.SubjectId == request.Filter.SubjectId);
+                }
+                if (request.Filter.Start.HasValue)
+                {
+                    query = query.Where(s => s.StartTime >= request.Filter.Start);
+                }
+                if (request.Filter.End.HasValue)
+                {
+                    query = query.Where(s => s.EndTime <= request.Filter.End);
+                }
             }
+            // Apply filtering if necessary
+
             var results = await dbSet.ToPagingAsync<GetSlotsDtos, Slot>(request.Page, request.Limit);
             return results;
         }

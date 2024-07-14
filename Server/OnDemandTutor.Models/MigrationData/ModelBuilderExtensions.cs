@@ -301,9 +301,9 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 1,
-                    StartTime = DateTime.Now.AddHours(1),
-                    EndTime = DateTime.Now.AddHours(2),
-                    CreateById = 1,
+                    StartTime = new DateTime(2024,7,15,7,0,0),
+                    EndTime = new DateTime(2024, 7, 15, 8, 30, 0),
+                    CreateById = 2,
                     TeachAddress = "123 Đường Chính",
                     ClassId = 1,
                     SubjectId = 1,
@@ -314,8 +314,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 2,
-                    StartTime = DateTime.Now.AddHours(3),
-                    EndTime = DateTime.Now.AddHours(4),
+                    StartTime = new DateTime(2024, 7, 17, 7, 0, 0),
+                    EndTime = new DateTime(2024, 7, 17, 8, 30, 0),
                     CreateById = 2,
                     TeachAddress = "456 Đường Elm",
                     ClassId = 2,
@@ -327,9 +327,9 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 3,
-                    StartTime = DateTime.Now.AddHours(5),
-                    EndTime = DateTime.Now.AddHours(6),
-                    CreateById = 1,
+                    StartTime = new DateTime(2024, 7, 15, 9, 0, 0),
+                    EndTime = new DateTime(2024, 7, 15, 10, 30, 0),
+                    CreateById = 2,
                     TeachAddress = "789 Đường Oak",
                     ClassId = 1,
                     SubjectId = 3,
@@ -340,8 +340,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 4,
-                    StartTime = DateTime.Now.AddHours(7),
-                    EndTime = DateTime.Now.AddHours(8),
+                    StartTime = new DateTime(2024, 7, 17, 9, 0, 0),
+                    EndTime = new DateTime(2024, 7, 17, 10, 30, 0),
                     CreateById = 2,
                     TeachAddress = "101 Đường Pine",
                     ClassId = null,
@@ -353,9 +353,9 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 5,
-                    StartTime = DateTime.Now.AddHours(9),
-                    EndTime = DateTime.Now.AddHours(10),
-                    CreateById = 1,
+                    StartTime = new DateTime(2024, 7, 19, 8, 0, 0),
+                    EndTime = new DateTime(2024, 7, 19, 10, 0, 0),
+                    CreateById = 2,
                     TeachAddress = "111 Đường Cedar",
                     ClassId = null,
                     SubjectId = 5,
@@ -618,11 +618,12 @@ namespace OnDemandTutor.Models.MigrationData
             #region SlotStudent
 
             modelBuilder.Entity<SlotStudent>().HasData(
-                new SlotStudent { Id = 1, SlotId = 1, UserId = 1, Feedback = "Phản hồi về buổi học của anh John." },
-                new SlotStudent { Id = 2, SlotId = 1, UserId = 2, Feedback = "Phản hồi về buổi học của Jane." },
-                new SlotStudent { Id = 3, SlotId = 2, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
-                new SlotStudent { Id = 4, SlotId = 2, UserId = 4, Feedback = "Phản hồi về buổi học của Bob." },
-                new SlotStudent { Id = 5, SlotId = 3, UserId = 1, Feedback = "Phản hồi về buổi học của anh John 2." }
+                new SlotStudent { Id = 1, SlotId = 4, UserId = 3, Feedback = "Phản hồi về buổi học của anh John." },
+                new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
+                new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
+                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." },
+                new SlotStudent { Id = 5, SlotId = 4, UserId = 25},
+                new SlotStudent { Id = 6, SlotId = 5, UserId = 25}
             // Thêm nếu cần
             );
 

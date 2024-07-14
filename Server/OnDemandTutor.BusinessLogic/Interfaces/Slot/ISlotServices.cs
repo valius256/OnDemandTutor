@@ -5,7 +5,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Slot;
 
 public interface ISlotServices
 {
-    Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<GetSlotsDtos> request);
+    Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
     Task<GetSlotsDtos> GetSlotByIdAsync(int id);
     Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto);
     Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto);

@@ -48,7 +48,7 @@
                         </td>
                         <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek">
                             <slot-detail :slots="getSlotsByDay(day.specificDay)" 
-                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin"/>
+                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
                         </td>
                     </tr>
                 </tbody>
@@ -62,7 +62,7 @@ import SlotDetail from './SlotDetail.vue';
 export default {
   components: { SlotDetail },
     name: "StudentTimeTable",
-    props: ['slots'],
+    props: ['slots','fetching','viewDetail'],
     data() {
         return {
             daysInWeek: [
@@ -105,6 +105,7 @@ export default {
             let endDate = new Date(this.selectedWeek)
             endDate.setDate(this.selectedWeek.getDate() + 7)
             console.log(this.daysInWeek)
+            await this.fetching(this.toSqlDateString(this.selectedWeek), this.toSqlDateString(endDate))
             //await this.fetchLessons(this.selectedWeek, endDate)
         },
         async handleSelectedYearChange() {
@@ -172,7 +173,9 @@ export default {
         },
         getSlotsByDay(date) {
             const dateToCompare = (new Date(this.slashDateFormatToSqlDateString(date)).getDate())
-            return this.slots.filter(s => new Date(s.startTime).getDate() == dateToCompare)
+            //console.log(new Date(this.slots[0].slot.startTime).getDate(), dateToCompare)
+            //console.log(this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare))
+            return this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare)
         },
     },
     mounted() {
