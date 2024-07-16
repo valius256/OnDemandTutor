@@ -35,12 +35,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
             IClassService classService, IMailServices mailServices, IStudentClassService studentClassService,
-            ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+            ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
             _slotRepository = slotRepository;
             _authService = authService;
-            _httpContextAccessor = HttpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
             _slotStudentServices = slotStudentServices;
             _transactionServices = transactionServices;
             _userServices = userServices;
@@ -180,18 +180,26 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                     var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
                     var userDto = await _userServices.GetProfile(slotStudentDto.UserId, null, null);
                     var slotDto = await GetSlotByIdAsync(slotId);
-                    var emailParams = new Dictionary<string, string>()
+                    var classId = listOfSlotTotal.FirstOrDefault()?.ClassId;
+                    if (classId != null)
+                    {
+                        var classModel = await _classService.GetClassByIdAsync(classId.Value);
+                        
+                        var emailParams = new Dictionary<string, string>()
                         {
                             { "Name", $"{userDto.FirstName}" },
-                            { "ClassId", $"{listOfSlotTotal.FirstOrDefault()?.ClassId}" },
+                            { "ClassId", $"{classModel.Name}" },
                         };
 
-                    List<string> toAddress = new List<string> { userDto.Email };
-                    await _mailServices.SendAsync(EmailType.Remove_Unpaid_Slots, toAddress, new List<string> { }, emailParams, false);
+                        List<string> toAddress = new List<string> { userDto.Email };
+                        await _mailServices.SendAsync(EmailType.High_Unpaid_Slots_Warning, toAddress, new List<string>(), emailParams);
+                    }
 
                     try
-                    {
-                        await _studentClassService.DeleteStudentFromStudentClassById(slotDto.ClassId.Value, userDto.Id);
+                    { 
+                        await _slotStudentServices.SoftDeleteSlotStudent(slotId, userDto.Id);
+                        await _studentClassService.DeleteStudentFromStudentClassById(slotDto.ClassId.Value,
+                                userDto.Id);
                     }
                     catch (Exception ex)
                     {
@@ -209,13 +217,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 {
                     var slot = await _slotStudentServices.GetSlotStudentById(slotId);
                     var user = await _userServices.GetProfile(slot.UserId, null, null);
-                    var emailParams = new Dictionary<string, string>()
+                    
+                    var classId = listOfSlotTotal.FirstOrDefault()?.ClassId;
+                    if (classId != null)
                     {
-                        { "Name", $"{user.FirstName}" },
-                        { "ClassId", $"{listOfSlotTotal.FirstOrDefault()?.ClassId}" },
-                    };
-                    List<string> toAddress = new List<string> { user.Email };
-                    await _mailServices.SendAsync(EmailType.Slot_Payment_Reminder, toAddress, new List<string> { }, emailParams, false);
+                        var classModel = await _classService.GetClassByIdAsync(classId.Value);
+                        var emailParams = new Dictionary<string, string>()
+                        {
+                            { "Name", $"{user.FirstName}" },
+                            { "ClassId", $"{classModel.Name}" },
+                        };
+                        List<string> toAddress = new List<string> { user.Email };
+                        await _mailServices.SendAsync(EmailType.Slot_Payment_Reminder, toAddress, new List<string>(), emailParams);
+                    }
                 }
             }
         }

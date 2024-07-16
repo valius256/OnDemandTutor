@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Dtos.User;
@@ -83,5 +84,19 @@ public class SlotStudentService : ISlotStudentServices
     {
         var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ss => ss.PaymentStatus == status).ToListAsync();
         return slotStudentModel.Adapt<List<GetStudentSlotDto>>();
+    }
+
+    public async Task<bool> SoftDeleteSlotStudent(int slotId, int studentId)
+    {
+        var studentClass = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
+        if (studentClass == null)
+        {
+            throw new Exception("Slot Student not found");
+        }
+        // _unitOfWork.StudentClassRepository.Remove(studentClass);
+        studentClass.RecordStatus = RecordStatus.Deleted;
+        _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
     }
 }
