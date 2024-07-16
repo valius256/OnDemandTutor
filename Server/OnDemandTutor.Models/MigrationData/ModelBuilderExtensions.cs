@@ -621,9 +621,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new SlotStudent { Id = 1, SlotId = 4, UserId = 3, Feedback = "Phản hồi về buổi học của anh John." },
                 new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
                 new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
-                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." },
-                new SlotStudent { Id = 5, SlotId = 4, UserId = 25},
-                new SlotStudent { Id = 6, SlotId = 5, UserId = 25}
+                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
+                
             // Thêm nếu cần
             );
 
