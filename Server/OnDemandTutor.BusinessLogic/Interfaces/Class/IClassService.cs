@@ -5,7 +5,8 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Class
 {
     public interface IClassService
     {
-        Task<PagedResult<GetClassDtos>> GetClassesAsync(PagingModel<GetClassDtos> pagingModel);
+       
+        Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> pagingModel);
         Task<GetClassDtos> GetClassByIdAsync(int id);
         Task<CreateClassDTO> CreateClassAsync(CreateClassDTO classDto);
         Task<GetClassDtos> UpdateClassAsync(GetClassDtos classDto);

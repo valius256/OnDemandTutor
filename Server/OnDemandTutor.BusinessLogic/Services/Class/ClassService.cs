@@ -27,6 +27,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             };
             return dtoPagedResult;
         }
+        public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
+        {
+            var classPagedResult = await _unitOfWork.ClassRepository.GetClasses(request);
+            //var classDtos = _mapper.Map<PagedResult<GetClassDtos>>(classPagedResult);
+            var classDtos = classPagedResult.Adapt<PagedResult<GetClassDtos>>();
+            return classDtos;
+        }
+
 
         public async Task<GetClassDtos> GetClassByIdAsync(int id)
         {

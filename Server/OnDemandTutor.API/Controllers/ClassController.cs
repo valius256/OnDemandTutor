@@ -22,9 +22,9 @@ namespace OnDemandTutor.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(PagedResult<GetClassDtos>), 200)]
-        public async Task<IActionResult> GetClasses([FromQuery] PagingModel<GetClassDtos> pagingModel)
+        public async Task<IActionResult> GetClasses([FromQuery] PagingModel<QueryClassDTO> pagingModel)
         {
-            var classes = await _classService.GetClassesAsync(pagingModel);
+            var classes = await _classService.GetClasses(pagingModel);
             return Ok(classes);
         }
 
