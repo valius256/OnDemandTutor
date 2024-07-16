@@ -13,7 +13,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
         public NotificationRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+            _context = context; 
         }
         public async Task<PagedResult<Notification>> GetNotificationByReceiverId(int id, int page, int limit)
         {

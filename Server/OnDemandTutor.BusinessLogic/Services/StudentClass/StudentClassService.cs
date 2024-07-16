@@ -91,9 +91,9 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             {
                 throw new Exception("StudentClass not found");
             }
-            _unitOfWork.StudentClassRepository.Remove(studentClass);
-            // studentClass.RecordStatus = RecordStatus.Deleted;
-            // _unitOfWork.StudentClassRepository.Update(studentClass);
+            // _unitOfWork.StudentClassRepository.Remove(studentClass);
+            studentClass.RecordStatus = RecordStatus.Deleted;
+            _unitOfWork.StudentClassRepository.Update(studentClass);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

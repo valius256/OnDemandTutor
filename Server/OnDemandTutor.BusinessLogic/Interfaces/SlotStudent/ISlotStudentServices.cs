@@ -15,4 +15,5 @@ public interface ISlotStudentServices
     Task CreateSlotStudentIfNotExist(int slotId, int studentId);
     Task<SlotStudentDto> GetSlotStudentById(int slotId);
     Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status);
+    Task<bool> SoftDeleteSlotStudent(int slotId, int studentId);
 }
