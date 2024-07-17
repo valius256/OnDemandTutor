@@ -92,5 +92,11 @@ namespace OnDemandTutor.DataAccess.Repository
             return pagedResult;
         }
 
+        public async Task<Class?> GetClassWithSlotsByIdAsync(int id)
+        {
+            return await dbSet
+                .Include(c => c.Slots)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }
