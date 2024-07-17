@@ -42,7 +42,7 @@ public class AuthServices : IAuthServices
         if (userId.IsNullOrEmpty()) throw new BadRequestException("User not found");
 
 
-        var user = await _userServices.GetUserProfileByFireBaseId(userId);
+        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId);
         if (user == null) throw new BadRequestException("User not found");
 
         return user;
@@ -55,13 +55,13 @@ public class AuthServices : IAuthServices
         var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
         if (userId.IsNullOrEmpty()) return null;
 
-        var user = await _userServices.GetUserProfileByFireBaseId(userId);
+        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId);
         return user;
     }
 
     public async Task<string> ForgotPassword(string email)
     {
-        var userExist = await _userServices.GetUserByEmail(email);
+        var userExist = await _userServices.GetUserByEmailAsync(email);
         if (userExist == null) throw new BadRequestException("User not found");
 
         return await _fireBaseAuthServices.ForgotPassword(email);

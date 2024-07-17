@@ -29,7 +29,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<PagedResult<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
-        var result = await _userService.GetAllUsers(request, user);
+        var result = await _userService.GetAllUsersAsync(request, user);
         return OKAsync(result);
     }
 
@@ -40,7 +40,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromQuery] int userId)
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
-        var result = await _userService.GetProfile(userId, null, user);
+        var result = await _userService.GetProfileAsync(userId, null, user);
         return OKAsync(result);
     }
 
@@ -51,7 +51,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<GetUserBalanceDto>> GetUserBalance()
     {
         var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
-        var result = await _userService.GetUserBalance(user.Id);
+        var result = await _userService.GetUserBalanceAsync(user.Id);
         return OKAsync(result);
     }
 
@@ -61,7 +61,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
     public async Task<IApiResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
     {
-        var result = await _userService.RegisterTutor(body, HttpContext.User);
+        var result = await _userService.RegisterTutorAsync(body, HttpContext.User);
         return OKAsync(result);
     }
 
@@ -71,7 +71,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
     public async Task<IApiResult<bool>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
     {
-        return OKAsync(await _userService.ApprovedTutorRegistration(body, HttpContext.User));
+        return OKAsync(await _userService.ApprovedTutorRegistrationAsync(body, HttpContext.User));
         ;
     }
 
@@ -89,7 +89,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<IApiResult<bool>> UpdateProfile([FromBody] UpdateUserDto requestDto)
     {
-        var result = await _userService.UpdateProfile(requestDto, HttpContext.User);
+        var result = await _userService.UpdateProfileAsync(requestDto, HttpContext.User);
         return OKAsync(result);
     }
 
@@ -110,7 +110,7 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
         TutorFilterDto request)
     {
-        return OKAsync(await _userService.ViewTutorList(request));
+        return OKAsync(await _userService.ViewTutorListAsync(request));
 
     }
 
@@ -145,7 +145,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
     public async Task<IApiResult<bool>> DeleteTutor([FromBody] DeleteTutorDto requestDto)
     {
-        return OKAsync(await _userService.DeleteTutor(requestDto));
+        return OKAsync(await _userService.DeleteTutorAsync(requestDto));
     }
 
     [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
@@ -154,7 +154,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
     public async Task<IApiResult<bool>> DeactiveAccount([FromBody] DeaActiveAccountDto requestDto)
     {
-        return OKAsync(await _userService.DeaActiveAccount(requestDto));
+        return OKAsync(await _userService.DeaActiveAccountAsync(requestDto));
     }
 
     [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 

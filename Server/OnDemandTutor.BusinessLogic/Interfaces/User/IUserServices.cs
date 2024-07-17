@@ -11,29 +11,29 @@ public interface IUserServices
 {
     Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos);
     Task<GetProfileUserDtos> VerifyLogin(string? email, string? password);
-    Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request, GetProfileUserDtos? accessor);
-    Task<GetProfileUserDtos> GetProfile(int? userId, string? email, GetProfileUserDtos? accessor);
-    Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
-    Task<GetProfileUserDtos> GetUserById(int? userId);
-    Task<GetProfileUserDtos> GetUserByEmail(string email);
-    Task<GetProfileUserDtos> GetUserProfileById(int id);
-    Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId);
+    Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor);
+    Task<GetProfileUserDtos> GetProfileAsync(int? userId, string? email, GetProfileUserDtos? accessor);
+    Task<GetProfileTutorDtos> RegisterTutorAsync(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal UserPrincipal);
+    Task<GetProfileUserDtos> GetUserByIdAsync(int? userId);
+    Task<GetProfileUserDtos> GetUserByEmailAsync(string email);
+    Task<GetProfileUserDtos> GetUserProfileByIdAsync(int id);
+    Task<GetProfileUserDtos> GetUserProfileByFireBaseIdAsync(string uId);
 
-    Task<GetUserBalanceDto> GetUserBalance(int? userId);
-    Task<bool> RechargeAccount(int uId, decimal money);
+    Task<GetUserBalanceDto> GetUserBalanceAsync(int? userId);
+    Task<bool> RechargeAccountAsync(int uId, decimal money);
     Task<bool> DeleteUserAsync(string? email);
 
     //Task<GetProfileUserDtos> UpdateProfile(UpdateProfileUserDtos updateProfileUserDtos);
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
-    Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request);
-    Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
-    Task<bool> DeleteTutor(DeleteTutorDto requestDto);
-    Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal claims);
+    Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request);
+    Task<bool> ApprovedTutorRegistrationAsync(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal claims);
+    Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto);
+    Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, ClaimsPrincipal claims);
     Task<bool> UpdateAvatarImage(string imageUrl, ClaimsPrincipal claims);
     Task<decimal?> GetBalanceAsync(int userId);
-    Task<bool> UpdateBalance(int userId, decimal moneyIncrease, decimal moneyDecrease);
-    Task<bool> DeaActiveAccount(DeaActiveAccountDto request);
+    Task<bool> UpdateBalanceAsync(int userId, decimal moneyIncrease, decimal moneyDecrease);
+    Task<bool> DeaActiveAccountAsync(DeaActiveAccountDto request);
     Task<bool> ActiveAccount(int id);
     Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus status);
 
