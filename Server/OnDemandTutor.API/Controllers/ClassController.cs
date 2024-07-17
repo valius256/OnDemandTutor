@@ -28,10 +28,10 @@ namespace OnDemandTutor.API.Controllers
             return Ok(classes);
         }
 
-        [Authorize]
+        
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(GetClassDtos), 200)]
+        [ProducesResponseType(typeof(GetClassFullDataSlotDto), 200)]
         public async Task<IActionResult> GetClassById(int id)
         {
             var classDto = await _classService.GetClassByIdAsync(id);

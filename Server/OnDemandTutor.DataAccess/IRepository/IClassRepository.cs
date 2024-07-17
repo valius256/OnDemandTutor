@@ -8,6 +8,7 @@ namespace OnDemandTutor.DataAccess.IRepository
     {
         Task<Class?> GetFullDataClass(int id);
         Task<PagedResult<Class>> GetClasses(PagingModel<QueryClassDTO> pagingModel);
+        Task<Class?> GetClassWithSlotsByIdAsync(int id);
     }
 }
 

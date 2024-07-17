@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿
+using FirebaseAdmin.Auth;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -76,43 +77,43 @@ public class UserServices : IUserServices
     public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
     {
         // var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
-     
+
         // if (userInFirebase != null)
         // {
         //     throw new ModelException("Email", $"{registerDtos.Email} already exists in Firebase, try logging in",
         //         "This Email is already registered in Firebase");
         // }
-            var userExist =
-                await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
-            if (userExist != null)
-                throw new ModelException("Email", $"{userExist.Email} already exists, try logging in",
-                    "This Email is already registered");
+        var userExist =
+            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
+        if (userExist != null)
+            throw new ModelException("Email", $"{userExist.Email} already exists, try logging in",
+                "This Email is already registered");
 
-            var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
+        var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
 
 
-            // Hash the password
-            // using var hmac = new HMACSHA512();
-            // var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDtos.Password)));
-            var mappedUser = registerDtos.Adapt<Models.Models.User>();
-            mappedUser.Role = RoleStatus.Customer;
-            mappedUser.FireBaseid = fireBaseAuthId;
-            mappedUser.CreatedDate = DateTime.Now;
-            mappedUser.Balance = 0;
-            if (registerDtos.isTutor)
-            {
-                mappedUser.Role = RoleStatus.Tutor;
-            }
+        // Hash the password
+        // using var hmac = new HMACSHA512();
+        // var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDtos.Password)));
+        var mappedUser = registerDtos.Adapt<Models.Models.User>();
+        mappedUser.Role = RoleStatus.Customer;
+        mappedUser.FireBaseid = fireBaseAuthId;
+        mappedUser.CreatedDate = DateTime.Now;
+        mappedUser.Balance = 0;
+        if (registerDtos.isTutor)
+        {
+            mappedUser.Role = RoleStatus.Tutor;
+        }
 
-            // mappedUser.Password = passwordHash; // open when present 
-            await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
+        // mappedUser.Password = passwordHash; // open when present 
+        await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
-            await _unitOfWorkRepository.SaveChangesAsync();
+        await _unitOfWorkRepository.SaveChangesAsync();
 
-            var rs = mappedUser.Adapt<GetProfileUserDtos>();
-            
-            return rs;
-        
+        var rs = mappedUser.Adapt<GetProfileUserDtos>();
+
+        return rs;
+
     }
 
 
