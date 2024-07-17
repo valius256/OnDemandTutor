@@ -2,6 +2,7 @@
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Register;
+using FirebaseAuthException = OnDemandTutor.DataAccess.ExceptionModels.FirebaseAuthException;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -22,33 +23,35 @@ public class FirebaseAuthServices : IFireBaseAuthServices
 
     public async Task<UserRecord?> GetUserAsync(string? uid, string? email, string? phone)
     {
-        if (!string.IsNullOrEmpty(uid))
+        try
         {
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-            if (userRecord == null) return null;
+            if (!string.IsNullOrEmpty(uid))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+                return userRecord;
+            }
 
-            return userRecord;
+            if (!string.IsNullOrEmpty(email))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
+                return userRecord;
+            }
+
+            if (!string.IsNullOrEmpty(phone))
+            {
+                var userRecord = await FirebaseAuth.DefaultInstance.GetUserByPhoneNumberAsync(phone);
+                return userRecord;
+            }
+
+            throw new ArgumentException("At least one parameter (uid, Email, or Phone) must be provided.");
         }
-
-        if (!string.IsNullOrEmpty(email))
+        catch (FirebaseAuthException ex)
         {
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
-            if (userRecord == null) return null;
-
-            return userRecord;
+           
+            return null;
         }
-
-        if (!string.IsNullOrEmpty(phone))
-        {
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserByPhoneNumberAsync(phone);
-            if (userRecord == null) return null;
-
-            return userRecord;
-        }
-
-
-        throw new ArgumentException("At least one parameter (uid, Email, or Phone) must be provided.");
     }
+
 
     public async Task<bool> DeleteUserAsync(string? email)
     {
@@ -70,6 +73,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(userId, claims);
     }
 
+    
     public async Task<List<ExportedUserRecord>> GetAllUserRecord()
     {
         var users = new List<ExportedUserRecord>();
