@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using LinqKit;
+using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Class;
@@ -18,14 +19,15 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         public async Task<PagedResult<GetClassDtos>> GetClassesAsync(PagingModel<GetClassDtos> pagingModel)
         {
             var pagedResult = await _unitOfWork.ClassRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.Class>>());
-            var dtoPagedResult = new PagedResult<GetClassDtos>
+            var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
+            foreach (var result in mappedResult.Items)
             {
-                Items = pagedResult.Items.Adapt<List<GetClassDtos>>(),
-                Limit = pagedResult.Limit,
-                Page = pagedResult.Page,
-                Total = pagedResult.Total,
-            };
-            return dtoPagedResult;
+                var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
+                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                result.StartTime = classSlots[0].StartTime;
+                result.EndTime = classSlots[0].EndTime;
+            }
+            return mappedResult;
         }
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
         {

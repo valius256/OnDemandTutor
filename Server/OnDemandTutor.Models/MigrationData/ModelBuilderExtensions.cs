@@ -975,7 +975,7 @@ The OnDemandTutor Team",
                 },
             new EmailTemplate
                 {
-                    Id = 9,
+                    Id = 10,
                     Name = "High_Unpaid_Slots_Warning",
                     Status = true,
                     Body = @"Dear [Name],

@@ -1,119 +1,130 @@
 <template>
-    <div class="p-4 flex gap-4">
-        <div class="w-1/4 border-r-2">
-            <div class="font-bold text-xl">Bộ lọc</div>
-            <div class="border rounded-lg p-2 mt-4 mr-2 shadow-lg">
-                <div class="mt-4">
-                    <div>Tên gia sư</div>
-                    <input class="border rounded-lg p-1 w-full" placeholder="Nhập gia sư" v-model="filterDto.tutorName">
-                </div>
-                <div class="mt-4">
-                    <div>Nhập địa chỉ</div>
-                    <input class="border rounded-lg p-1 w-full" placeholder="Nhập địa chỉ, vd Thủ Đức, TPHCM,..."
-                        v-model="filterDto.address">
-                </div>
-                <div class="mt-4">
-                    <div>Từ độ tuổi</div>
-                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập độ tuổi thấp nhất"
-                        v-model="filterDto.fromAge">
-                </div>
-                <div class="mt-4">
-                    <div>Đến độ tuổi</div>
-                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập độ tuổi cao nhất"
-                        v-model="filterDto.toAge">
-                </div>
-                <div class="mt-4">
-                    <div>Mức giá từ (VND/h)</div>
-                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giả rẻ nhất"
-                        v-model="filterDto.fromPrice">
-                </div>
-                <div class="mt-4">
-                    <div>Đến mức giá (VND/h)</div>
-                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giá mắc nhất"
-                        v-model="filterDto.toPrice">
-                </div>
-                <div class="mt-4">
-                    <div>Giới tính</div>
-                    <select class="border rounded-lg p-1 w-full" v-model="filterDto.gender">
-                        <option :value="-1">Tất cả</option>
-                        <option :value="1">Nam</option>
-                        <option :value="0">Nữ</option>
-                        <option :value="2">Khác</option>
-                    </select>
-                </div>
-                <div class="mt-4">
-                    <div>Môn dậy</div>
-                    <div class="flex ">
-                        <div class="flex flex-wrap gap-2 w-96">
-                            <div v-for="subject in selectedSubjects" :key="subject.id" class="p-1 border rounded-xl"
-                                :style="{ 'border-color': subject.color }">
-                                {{ subject.name }}
-                                <button @click="removeSubject(subject.id)">
-                                    <i class="fa fa-remove ml-2"></i>
+    <div>
+        <div class="py-8 bg-blue-200" >
+            <div class="text-center text-3xl font-bold">Danh sách gia sư</div>
+            <div class="flex justify-center mt-4">
+                <input class="p-2 w-96 rounded-l-2xl bg-slate-100" placeholder="Nhập tên để tìm kiếm..." v-model="filterDto.tutorName">
+                <button @click="fetchData" class="py-2 px-4 rounded-r-2xl bg-slate-400"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div class="p-4 flex gap-4">
+            <div class="w-1/4 border-r-2">
+                <div class="font-bold text-xl">Bộ lọc</div>
+                <div class="border rounded-lg p-2 mt-4 mr-2 shadow-lg">
+                    <div class="mt-4">
+                        <div>Tên gia sư</div>
+                        <input class="border rounded-lg p-1 w-full" placeholder="Nhập gia sư"
+                            v-model="filterDto.tutorName">
+                    </div>
+                    <div class="mt-4">
+                        <div>Nhập địa chỉ</div>
+                        <input class="border rounded-lg p-1 w-full" placeholder="Nhập địa chỉ, vd Thủ Đức, TPHCM,..."
+                            v-model="filterDto.address">
+                    </div>
+                    <div class="mt-4">
+                        <div>Từ độ tuổi</div>
+                        <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập độ tuổi thấp nhất"
+                            v-model="filterDto.fromAge">
+                    </div>
+                    <div class="mt-4">
+                        <div>Đến độ tuổi</div>
+                        <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập độ tuổi cao nhất"
+                            v-model="filterDto.toAge">
+                    </div>
+                    <div class="mt-4">
+                        <div>Mức giá từ (VND/h)</div>
+                        <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giả rẻ nhất"
+                            v-model="filterDto.fromPrice">
+                    </div>
+                    <div class="mt-4">
+                        <div>Đến mức giá (VND/h)</div>
+                        <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giá mắc nhất"
+                            v-model="filterDto.toPrice">
+                    </div>
+                    <div class="mt-4">
+                        <div>Giới tính</div>
+                        <select class="border rounded-lg p-1 w-full" v-model="filterDto.gender">
+                            <option :value="-1">Tất cả</option>
+                            <option :value="1">Nam</option>
+                            <option :value="0">Nữ</option>
+                            <option :value="2">Khác</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <div>Môn dậy</div>
+                        <div class="flex ">
+                            <div class="flex flex-wrap gap-2 w-96">
+                                <div v-for="subject in selectedSubjects" :key="subject.id" class="p-1 border rounded-xl"
+                                    :style="{ 'border-color': subject.color }">
+                                    {{ subject.name }}
+                                    <button @click="removeSubject(subject.id)">
+                                        <i class="fa fa-remove ml-2"></i>
+                                    </button>
+                                </div>
+                                <button class="p-1 border rounded-xl" @click.stop="toggleSubjectPopup">
+                                    <span>Thêm môn dậy</span>
+                                    <i class="fa fa-plus ml-2"></i>
                                 </button>
                             </div>
-                            <button class="p-1 border rounded-xl" @click.stop="toggleSubjectPopup">
-                                <span>Thêm môn dậy</span>
-                                <i class="fa fa-plus ml-2"></i>
-                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <button class="bg-blue-500 text-white font-bold p-2 rounded-lg" @click="fetchData">Áp
+                            dụng</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="w-3/4 px-4 py-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="tutor in tutors" :key="tutor.id" class="shadow-md rounded-lg">
+                        <div class="flex justify-center">
+                            <img :src="tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" class="w-48 h-48">
+                        </div>
+                        <div class="text-xl font-bold text-center">
+                            {{ tutor.fullName }}
+                        </div>
+                        <div class="flex justify-center gap-2">
+                            <i class="flex items-center fa fa-map-marker"></i>
+                            <span>{{ tutor.address }}</span>
+                        </div>
+                        <div class="text-center italic">
+                            {{ tutor.dob ? (new Date().getFullYear() - new Date(tutor.dob).getFullYear()) : "" }} tuổi
+                        </div>
+                        <div class="flex justify-center gap-2" v-html="displaySubjects(tutor.tutorSubjects)">
+
+                        </div>
+                        <div class="text-xl font-bold text-blue-300 text-center">
+                            {{ tutor.tutorFeePerHour?.toLocaleString('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }) }} / giờ
+                        </div>
+                        <star-rating class="flex justify-center" :star-size="20" :rating="tutor.rating"
+                            :round-start-rating="false" :read-only="true" />
+                        <div class="flex justify-center my-2">
+                            <button class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
                         </div>
                     </div>
                 </div>
-                <div class="flex justify-center mt-4">
-                    <button class="bg-blue-500 text-white font-bold p-2 rounded-lg" @click="fetchData">Áp dụng</button>
+                <div class="flex gap-4 justify-center mt-4" v-if="tutors.length > 0">
+                    <button @click="movePage(false)">
+                        <i class="fa fa-arrow-left text-2xl"></i>
+                    </button>
+                    <div class="flex gap-2 ">
+                        <input class="border p-1 rounded-md w-16" type="number" v-model="currentPage" min="1"
+                            @change="handlePageChange">
+                        <div class="p-1"> / {{ this.totalPage }}</div>
+                    </div>
+                    <button @click="movePage(true)">
+                        <i class="fa fa-arrow-right text-2xl"></i>
+                    </button>
                 </div>
             </div>
-
+            <generic-popup v-if="isOpenSubjectPopup" title="Chọn môn học" :closeFunction="toggleSubjectPopup">
+                <subject-list-for-filter-popup :close="toggleSubjectPopup" :selectFunction="selectSubject" />
+            </generic-popup>
         </div>
-        <div class="w-3/4 px-4 py-2">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div v-for="tutor in tutors" :key="tutor.id" class="shadow-md rounded-lg">
-                    <div class="flex justify-center">
-                        <img :src="tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" class="w-48 h-48">
-                    </div>
-                    <div class="text-xl font-bold text-center">
-                        {{ tutor.fullName }}
-                    </div>
-                    <div class="flex justify-center gap-2">
-                        <i class="flex items-center fa fa-map-marker"></i>
-                        <span>{{ tutor.address }}</span>
-                    </div>
-                    <div class="text-center italic">
-                        {{ tutor.dob ? (new Date().getFullYear() - new Date(tutor.dob).getFullYear()) : "" }} tuổi
-                    </div>
-                    <div class="flex justify-center gap-2" v-html="displaySubjects(tutor.tutorSubjects)">
-
-                    </div>
-                    <div class="text-xl font-bold text-blue-300 text-center">
-                        {{ tutor.tutorFeePerHour?.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                    }) }} / giờ
-                    </div>
-                    <star-rating class="flex justify-center" :star-size="20" :rating="tutor.rating"
-                        :round-start-rating="false" :read-only="true" />
-                    <div class="flex justify-center my-2">
-                        <button class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-4 justify-center mt-4" v-if="tutors.length > 0">
-                <button @click="movePage(false)">
-                    <i class="fa fa-arrow-left text-2xl"></i>
-                </button>
-                <div class="flex gap-2 ">
-                    <input class="border p-1 rounded-md w-16" type="number" v-model="currentPage" min="1"
-                        @change="handlePageChange">
-                    <div class="p-1"> / {{ this.totalPage }}</div>
-                </div>
-                <button @click="movePage(true)">
-                    <i class="fa fa-arrow-right text-2xl"></i>
-                </button>
-            </div>
-        </div>
-        <generic-popup v-if="isOpenSubjectPopup" title="Chọn môn học" :closeFunction="toggleSubjectPopup">
-            <subject-list-for-filter-popup :close="toggleSubjectPopup" :selectFunction="selectSubject" />
-        </generic-popup>
     </div>
 </template>
 
@@ -247,7 +258,7 @@ export default {
                 if (this.filterDto.gender != -1) {
                     query.Sex = this.filterDto.gender
                 }
-                let queryStr = this.jsonToQueryString(query) 
+                let queryStr = this.jsonToQueryString(query)
                 if (this.selectedSubjects.length > 0) {
                     for (var s of this.selectedSubjects) {
                         queryStr += "&Subject=" + s.id
