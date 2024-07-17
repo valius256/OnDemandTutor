@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿
+using FirebaseAdmin.Auth;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -75,16 +76,13 @@ public class UserServices : IUserServices
 
     public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
     {
-        var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
-        if (userInFirebase != null)
-        {
-           await _fireBaseAuthServices.DeleteUserAsync(userInFirebase.Email);
-        }
-        //if (userInFirebase != null)
-        //{
-        //    throw new ModelException("Email", $"{userInFirebase.Email} has already registered", "This Email is already registered");
-        //}
+        // var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
 
+        // if (userInFirebase != null)
+        // {
+        //     throw new ModelException("Email", $"{registerDtos.Email} already exists in Firebase, try logging in",
+        //         "This Email is already registered in Firebase");
+        // }
         var userExist =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
         if (userExist != null)
@@ -92,6 +90,7 @@ public class UserServices : IUserServices
                 "This Email is already registered");
 
         var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
+
 
         // Hash the password
         // using var hmac = new HMACSHA512();
@@ -105,13 +104,16 @@ public class UserServices : IUserServices
         {
             mappedUser.Role = RoleStatus.Tutor;
         }
+
         // mappedUser.Password = passwordHash; // open when present 
         await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
         await _unitOfWorkRepository.SaveChangesAsync();
 
         var rs = mappedUser.Adapt<GetProfileUserDtos>();
+
         return rs;
+
     }
 
 

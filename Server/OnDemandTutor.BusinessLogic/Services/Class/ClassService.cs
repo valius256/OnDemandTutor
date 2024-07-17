@@ -23,9 +23,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
-                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
-                result.StartTime = classSlots[0].StartTime;
-                result.EndTime = classSlots.Last().EndTime;
+                if (class_ != null && class_.Slots.Any())
+                {
+                    var classSlots = class_.Slots.OrderBy(s => s.StartTime).ToList();
+                    result.StartTime = classSlots.First().StartTime;
+                    result.EndTime = classSlots.Last().EndTime;
+                }
+
             }
             return mappedResult;
         }
