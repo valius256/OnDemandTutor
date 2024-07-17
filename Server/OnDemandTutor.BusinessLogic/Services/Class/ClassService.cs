@@ -16,24 +16,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             _unitOfWork = unitOfWork;
         }
 
-        //public async Task<PagedResult<GetClassDtos>> GetClassesAsync(PagingModel<GetClassDtos> pagingModel)
-        //{
-        //    var pagedResult = await _unitOfWork.ClassRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.Class>>());
-        //    var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
-            
-        //    return mappedResult;
-        //}
-        public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
+        public async Task<PagedResult<GetClassFullDataSlotDto>> GetClasses(PagingModel<QueryClassDTO> request)
         {
             var pagedResult = await _unitOfWork.ClassRepository.GetClasses(request);
-          
-            var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
+            var mappedResult = pagedResult.Adapt<PagedResult<GetClassFullDataSlotDto>>();
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
                 var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
-                result.StartTime = classSlots[0].StartTime;
-                result.EndTime = classSlots.Last().EndTime;
+                if( classSlots.Any())
+                {
+                    result.StartTime = classSlots[0].StartTime;
+                    result.EndTime = classSlots[classSlots.Count-1].EndTime;
+                }
             }
             return mappedResult;
         }
