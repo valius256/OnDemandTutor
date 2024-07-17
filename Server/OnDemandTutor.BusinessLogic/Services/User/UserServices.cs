@@ -75,12 +75,16 @@ public class UserServices : IUserServices
 
     public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
     {
-        // var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
-        // if (userInFirebase != null)
-        // {
-        //     throw new ModelException("Email", $"{userInFirebase.Email} has already registered", "This Email is already registered");
-        // }
-        
+        var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
+        if (userInFirebase != null)
+        {
+           await _fireBaseAuthServices.DeleteUserAsync(userInFirebase.Email);
+        }
+        //if (userInFirebase != null)
+        //{
+        //    throw new ModelException("Email", $"{userInFirebase.Email} has already registered", "This Email is already registered");
+        //}
+
         var userExist =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
         if (userExist != null)

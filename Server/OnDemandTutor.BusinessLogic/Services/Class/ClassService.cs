@@ -25,7 +25,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
                 var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
                 result.StartTime = classSlots[0].StartTime;
-                result.EndTime = classSlots[0].EndTime;
+                result.EndTime = classSlots.Last().EndTime;
             }
             return mappedResult;
         }
@@ -38,14 +38,21 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         }
 
 
-        public async Task<GetClassDtos> GetClassByIdAsync(int id)
+        public async Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id)
         {
             var classEntity = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(c => c.Id == id);
             if (classEntity == null)
             {
                 throw new Exception("Class not found");
             }
-            return classEntity.Adapt<GetClassDtos>();
+            var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
+            if(rs is not null)
+            {
+            rs.StartTime = classEntity.Slots.First().StartTime;
+            rs.EndTime = classEntity.Slots.Last().EndTime;
+            }
+           
+            return rs;
         }
 
         public async Task<CreateClassDTO> CreateClassAsync(CreateClassDTO classDto)
