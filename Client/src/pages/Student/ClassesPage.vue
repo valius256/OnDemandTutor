@@ -41,18 +41,17 @@
                 </div>
                 <div class="mt-4">
                     <div>Đến mức giá (VND/h)</div>
-                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giá mắc nhất"
-                        v-model="filterDto.toPrice">
+                    <input class="border rounded-lg p-1 w-full" type="number" placeholder="Nhập mức giá mắc nhất" v-model="filterDto.toPrice">
                 </div>
                 <div class="mt-4">
                     <div>Hình thức</div>
                     <select class="border rounded-lg p-1 w-full" v-model="filterDto.method">
                         <option :value="0">Tất cả</option>
-                        <option :value="1">Online</option>
-                        <option :value="2">Offline</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
                     </select>
                 </div>
-                <div class="flex justify-center mt-4">
+                <div class="flex justify-center mt-4" @click="fetchData">
                     <button class="bg-blue-500 text-white font-bold p-2 rounded-lg">Áp dụng</button>
                 </div>
             </div>
@@ -69,14 +68,14 @@
                             <li>
                                 <span class="font-bold">Gia sư :</span>
                                 <button class="ml-3 font-bold text-blue-400 underline">
-                                    {{ class_.tutor.name }}
+                                    {{ (class_.user.firstName ?? "") ?? (class_.user.lastName ?? "") }}
                                 </button>
                             </li>
                             <li>
                                 <span class="font-bold">Thời gian :</span>
                                 <span class="ml-3">
-                                    {{ sqlDateStringToSlashFormat(class_.startDate) }} đến
-                                    {{ sqlDateStringToSlashFormat(class_.endDate) }}
+                                    {{ (class_.startTime?.substring(0,10)) ?? "" }} đến
+                                    {{ (class_.endTime?.substring(0,10)) ?? ""}}
                                 </span>
                             </li>
                             <li>
@@ -100,7 +99,7 @@
                             <li>
                                 <span class="font-bold">Giá cả :</span>
                                 <span class="ml-3 text-red-500 font-bold">
-                                    {{ class_.tutor.price.toLocaleString('vi-VN', {
+                                    {{ class_.user.tutorFeePerHour.toLocaleString('vi-VN', {
                             style: 'currency',
                             currency: 'VND',
                         }) }} / h
@@ -131,6 +130,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     name: "ClassesPage",
     data() {
@@ -139,147 +139,10 @@ export default {
             pageSize: 10,
             currentPage: 1,
             classes: [
-                {
-                    id: 1,
-                    name: "Luyện thi IELTS nâng cao",
-                    startDate: "2024-01-01",
-                    endDate: "2024-12-01",
-                    method: "Online",
-                    location: "Q9, TPHCM",
-                    subject: {
-                        name: "Tiếng Anh"
-                    },
-                    studentNumber: 10,
-                    maxStudentNumber: 20,
-                    tutor: {
-                        name: "Thomas",
-                        price: 50000
-                    },
-                    status: "NotYet"
-                },
-                {
-                    id: 2,
-                    name: "Luyện thi TOEFL cơ bản",
-                    startDate: "2024-02-01",
-                    endDate: "2024-10-01",
-                    method: "Offline",
-                    location: "Q3, TPHCM",
-                    subject: {
-                        name: "Tiếng Anh"
-                    },
-                    studentNumber: 15,
-                    maxStudentNumber: 25,
-                    tutor: {
-                        name: "Thomas",
-                        price: 50000
-                    },
-                    status: "NotYet"
-                },
-                {
-                    id: 3,
-                    name: "Luyện thi đại học môn Toán",
-                    startDate: "2024-03-01",
-                    endDate: "2024-09-01",
-                    method: "Online",
-                    location: "Q7, TPHCM",
-                    subject: {
-                        name: "Toán"
-                    },
-                    studentNumber: 12,
-                    maxStudentNumber: 30,
-                    tutor: {
-                        name: "Thomas",
-                        price: 50000
-                    },
-                    status: "OnGoing"
-                },
-                {
-                    id: 4,
-                    name: "Luyện thi đại học môn Lý",
-                    startDate: "2024-04-01",
-                    endDate: "2024-11-01",
-                    method: "Offline",
-                    location: "Q5, TPHCM",
-                    subject: {
-                        name: "Vật Lý",
-                        price: 50000
-                    },
-                    studentNumber: 8,
-                    maxStudentNumber: 20,
-                    tutor: {
-                        name: "Arthur",
-                        price: 50000
-                    },
-                    status: "NotYet"
-                },
-                {
-                    id: 5,
-                    name: "Khóa học lập trình Python cơ bản",
-                    startDate: "2024-05-01",
-                    endDate: "2024-08-01",
-                    method: "Online",
-                    location: "Q10, TPHCM",
-                    subject: {
-                        name: "Khoa học máy tính"
-                    },
-                    studentNumber: 20,
-                    maxStudentNumber: 30,
-                    tutor: {
-                        name: "Arthur",
-                        price: 50000
-                    },
-                    status: "Finished"
-                },
-                {
-                    id: 6,
-                    name: "Khóa học lập trình Java nâng cao",
-                    startDate: "2024-06-01",
-                    endDate: "2024-12-01",
-                    method: "Offline",
-                    location: "Q1, TPHCM",
-                    subject: {
-                        name: "Khoa học máy tính"
-                    },
-                    studentNumber: 18,
-                    maxStudentNumber: 25,
-                    tutor: {
-                        name: "Arthur",
-                        price: 50000
-                    },
-                    status: "NotYet"
-                },
-                {
-                    id: 7,
-                    name: "Khóa học quản lý dự án PMP",
-                    startDate: "2024-07-01",
-                    endDate: "2024-12-01",
-                    method: "Online",
-                    location: "Q2, TPHCM",
-                    subject: {
-                        name: "Quản lý dự án"
-                    },
-                    studentNumber: 25,
-                    maxStudentNumber: 30,
-                    tutor: {
-                        name: "John",
-                        price: 50000
-                    },
-                    status: "NotYet"
-                }
+                
             ],
             subjects: [
-                {
-                    id: 1,
-                    name: "Toán"
-                },
-                {
-                    id: 2,
-                    name: "Tiếng Anh"
-                },
-                {
-                    id: 3,
-                    name: "Lý"
-                }
+                
             ],
             filterDto: {
                 className: "",
@@ -295,6 +158,52 @@ export default {
         }
     },
     methods: {
+        async refresh(){
+            await this.fetchSubject()
+            await this.fetchData()
+        },
+        async fetchData() {
+            let query = {
+                "Filter.Name" : this.filterDto.className ?? "",
+                "Filter.UserName" : this.filterDto.tutorName,
+                "Filter.Address" : this.filterDto.address,
+                Sorts : {                 
+                },
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            let queryStr = this.jsonToQueryString(query)
+            if (this.filterDto.fromDate){
+                queryStr += "&Filter.StartTime=" + this.filterDto.fromDate
+            }
+            if (this.filterDto.toDate){
+                queryStr += "&Filter.EndTime=" + this.filterDto.toDate
+            }
+            if (this.filterDto.fromPrice){
+                queryStr += "&Filter.MinFeePerHour=" + this.filterDto.fromPrice
+            }
+            if (this.filterDto.toPrice){
+                queryStr += "&Filter.MaxFeePerHour=" + this.filterDto.toPrice
+            }
+            if (this.filterDto.method != 0){
+                queryStr += "&Filter.Method=" + this.filterDto.method
+            }
+            if (this.filterDto.subject != 0){
+                queryStr += "&Filter.SubjectId=" + this.filterDto.subject
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class?'+ 
+            queryStr,{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.classes = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+
+        },
         getMethodStyle(method) {
             let general = "ml-4 rounded-lg px-3 py-1 text-white font-bold"
             switch (method) {
@@ -307,9 +216,9 @@ export default {
         getStatusStyleHeader(status) {
             let general = "font-bold text-center py-4 rounded-t-lg text-white"
             switch (status) {
-                case "NotYet":
+                case 0:
                     return general + " bg-cyan-500"
-                case "OnGoing":
+                case 1:
                     return general + " bg-green-400"
                 default:
                     return general + " bg-gray-400"
@@ -318,9 +227,9 @@ export default {
         getStatusStyle(status) {
             let general = "ml-3 rounded-lg px-3 py-1 font-bold"
             switch (status) {
-                case "NotYet":
+                case 0:
                     return general + " text-blue-400"
-                case "OnGoing":
+                case 1:
                     return general + " text-green-400"
                 default:
                     return general + " text-gray-400"
@@ -328,11 +237,11 @@ export default {
         },
         getStatusDisplay(status) {
             switch (status) {
-                case "NotYet":
+                case 0:
                     return "Sắp bắt đầu"
-                case "OnGoing":
+                case 1:
                     return "Đang diễn ra"
-                case "Finished":
+                case 2:
                     return "Đã kết thúc"
                 default:
                     return "Không rõ"
@@ -345,7 +254,7 @@ export default {
             if (this.currentPage < 1) {
                 this.currentPage = 1
             }
-            //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+            await this.fetchData()
         },
         async movePage(forward) {
             if (forward && this.currentPage < this.totalPage) {
@@ -356,6 +265,23 @@ export default {
                 await this.handlePageChange()
             }
         },
+        async fetchSubject(){
+            let query = {
+                Sorts: {
+                    column: "Id",
+                    isDesc: true
+                },
+            }
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/subject?'+ 
+            this.jsonToQueryString(query))
+            if (response.data) {
+                this.subjects = response.data.items
+            }
+        },
+    },
+    mounted(){
+        this.refresh()
     }
 }
 </script>

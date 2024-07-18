@@ -7,10 +7,6 @@
                         <span class="font-bold">Tên lớp :</span>
                         <span class="ml-4">{{ slot.slot.class.name }}</span>
                     </div>
-                    <div>
-                        <span class="font-bold">Buổi thứ :</span>
-                        <span class="ml-4">1/10</span>
-                    </div>
                     <hr>
                 </div>
                 <div>

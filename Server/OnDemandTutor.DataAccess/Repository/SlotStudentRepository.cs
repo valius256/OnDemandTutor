@@ -48,7 +48,11 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         {
             query = query.Where(s => s.PaymentStatus == request.PaymentStatus);
         }
-        
+        if (request.ClassId.HasValue)
+        {
+            query = query.Where(s => s.Slot.ClassId == request.ClassId);
+        }
+
         // Apply filtering if necessary
 
         return await query.ToListAsync();

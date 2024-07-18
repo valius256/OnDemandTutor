@@ -16,10 +16,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<GetClassFullDataSlotDto>> GetClasses(PagingModel<QueryClassDTO> request)
+        public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
         {
             var pagedResult = await _unitOfWork.ClassRepository.GetClasses(request);
-            var mappedResult = pagedResult.Adapt<PagedResult<GetClassFullDataSlotDto>>();
+            var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
@@ -32,8 +32,38 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             }
             return mappedResult;
         }
-
-
+        public async Task<PagedResult<GetClassDtos>> GetClassesOfStudent(int studentId, int page, int limit)
+        {
+            var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfStudent(studentId,page,limit);
+            var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
+            foreach (var result in mappedResult.Items)
+            {
+                var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
+                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                if (classSlots.Any())
+                {
+                    result.StartTime = classSlots[0].StartTime;
+                    result.EndTime = classSlots[classSlots.Count - 1].EndTime;
+                }
+            }
+            return mappedResult;
+        }
+        public async Task<PagedResult<GetClassDtos>> GetClassesOfTutor(int studentId, int page, int limit)
+        {
+            var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfTutor(studentId, page, limit);
+            var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
+            foreach (var result in mappedResult.Items)
+            {
+                var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
+                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                if (classSlots.Any())
+                {
+                    result.StartTime = classSlots[0].StartTime;
+                    result.EndTime = classSlots[classSlots.Count - 1].EndTime;
+                }
+            }
+            return mappedResult;
+        }
         public async Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id)
         {
             var classEntity = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(id);
@@ -92,13 +122,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
-
-        public async Task<GetClassFullDataSlotDto> GetClassWithFullDataSlotId(int id)
-        {
-            var classWithSlot = await _unitOfWork.ClassRepository.GetFullDataClass(id);
-            return classWithSlot.Adapt<GetClassFullDataSlotDto>();
-        }
-
     }
 }
 

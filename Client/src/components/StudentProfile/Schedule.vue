@@ -198,7 +198,7 @@ export default {
             const startTime = new Date(slot.slot.startTime);
             const endTime = new Date(slot.slot.endTime);
             return (endTime - startTime) / 3600000;
-        }
+        },
     },
     mounted() {
         this.refresh()
