@@ -1,6 +1,4 @@
-﻿using LinqKit;
-using Mapster;
-using HtmlAgilityPack;
+﻿using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Subject;
@@ -8,7 +6,6 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Paging;
-using OnDemandTutor.Helper;
 
 namespace OnDemandTutor.BusinessLogic.Services
 {

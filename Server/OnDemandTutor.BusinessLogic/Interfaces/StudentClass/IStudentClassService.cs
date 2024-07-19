@@ -11,6 +11,8 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.StudentClass
         Task<UpdateStudentClassDto> UpdateStudentClassAsync(UpdateStudentClassDto studentClassDto);
         Task<bool> DeleteStudentFromStudentClassById(int classId, int userId);
         Task<bool> DeleteStudentClassAsync(int id);
+        Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string Feedback);
+        
     }
 }
 

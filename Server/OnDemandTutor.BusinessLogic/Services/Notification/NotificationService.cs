@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -20,7 +19,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
 
         public async Task<PagedResult<NotificationGetDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user)
         {
-            var pagedNotifications = await _unitOfWork.NotificationRepository.GetNotificationByReceiverId(user.Id,page,limit);
+            var pagedNotifications = await _unitOfWork.NotificationRepository.GetNotificationByReceiverId(user.Id, page, limit);
             return pagedNotifications.Adapt<PagedResult<NotificationGetDto>>();
         }
 

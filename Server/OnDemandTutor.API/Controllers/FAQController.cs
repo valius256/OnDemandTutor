@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.FAQ;
 using OnDemandTutor.Models.Paging;
-using OnDemandTutor.DataAccess.ExceptionModels;
 using ValidationErrorModel = OnDemandTutor.API.Middlesware.ValidationErrorModel;
 
 namespace OnDemandTutor.API.Controllers

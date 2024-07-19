@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
@@ -26,7 +25,7 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 if (pagingModel.Filter.Keyword != null)
                 {
-                    faqQuery = faqQuery.Where(f => f.Question.Contains(pagingModel.Filter.Keyword)  || (f.Answer != null && f.Answer.Contains(pagingModel.Filter.Keyword)));
+                    faqQuery = faqQuery.Where(f => f.Question.Contains(pagingModel.Filter.Keyword) || (f.Answer != null && f.Answer.Contains(pagingModel.Filter.Keyword)));
                 }
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Question))
                 {
@@ -73,7 +72,7 @@ namespace OnDemandTutor.DataAccess.Repository
             int page = pagingModel.Page > 0 ? pagingModel.Page : 1;
             int skip = (page - 1) * limit;
 
-           
+
 
             var pagedResult = await faqQuery.ToNewPagingAsync(page, limit);
 

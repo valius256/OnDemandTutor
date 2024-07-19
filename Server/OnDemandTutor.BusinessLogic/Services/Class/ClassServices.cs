@@ -1,19 +1,27 @@
-﻿using LinqKit;
-using Mapster;
+﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
 {
-    public class ClassService : IClassService
+    public class ClassServices : IClassServices
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
+    
+        // private readonly ISlotServices _slotServices;
 
-        public ClassService(IUnitOfWorkRepository unitOfWork)
+        public ClassServices(IUnitOfWorkRepository unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            // _slotServices = slotServices;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -121,6 +129,62 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             _unitOfWork.ClassRepository.Remove(classEntity);
             await _unitOfWork.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<GetClassFullDataSlotDto> GetClassWithFullDataSlotId(int id)
+        {
+            var classWithSlot = await _unitOfWork.ClassRepository.GetFullDataClass(id);
+            return classWithSlot.Adapt<GetClassFullDataSlotDto>();
+        }
+
+        public async Task CronForAutoChangeStatusClassAndSlot()
+        {
+            var classesToUpdate = await _unitOfWork.ClassRepository
+                .WhereAsync(cl => cl.Status == ClassStatus.NotStart ||
+                                  cl.Status == ClassStatus.OnGoing);
+
+            foreach (var classModel in classesToUpdate)
+            {
+                // change for slot first 
+                bool allSlotsFinished = true;
+                foreach (var slot in classModel.Slots.ToList())
+                {
+                    if (slot.StartTime <= DateTime.Now && slot.SlotStatus == SlotStatus.NotYet)
+                    {
+                        slot.SlotStatus = SlotStatus.OnGoing;
+                    }
+
+                    if (slot.EndTime <= DateTime.Now && slot.SlotStatus == SlotStatus.OnGoing)
+                    {
+                        slot.SlotStatus = SlotStatus.Finished;
+                    }
+
+                    if (slot.SlotStatus != SlotStatus.Finished)
+                    {
+                        allSlotsFinished = false;
+                    }
+
+                    var slotStatusUpdateModel = slot.Adapt<Models.Models.Slot>(); 
+                    _unitOfWork.SlotRepository.Update(slotStatusUpdateModel);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+    
+                
+                // when all slot reach to finished , change class status to finished
+                if (classModel.Status == ClassStatus.NotStart && classModel.Slots.Any(sl => sl.SlotStatus == SlotStatus.OnGoing))
+                {
+                    classModel.Status = ClassStatus.OnGoing;
+                }
+
+                if (allSlotsFinished && classModel.Status == ClassStatus.OnGoing)
+                {
+                    classModel.Status = ClassStatus.Finished;
+                }
+
+                _unitOfWork.ClassRepository.Update(classModel);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

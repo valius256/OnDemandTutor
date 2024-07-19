@@ -1,7 +1,9 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models;
@@ -15,11 +17,15 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly IAuthServices _authService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public StudentClassService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        private readonly IClassServices _classServices;
+        private readonly IUserServices _userServices;
+        public StudentClassService(IUnitOfWorkRepository unitOfWork, IAuthServices authService,
+            IUserServices userServices, IClassServices classServices, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _authService = authService;
+            _classServices = classServices;
+            _userServices = userServices;
             _httpContextAccessor = HttpContextAccessor;
         }
         public async Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel)
@@ -80,6 +86,31 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 throw new Exception("StudentClass not found");
             }
             _unitOfWork.StudentClassRepository.Remove(studentClass);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string Feedback)
+        {
+            var recordInDB = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st => st.StudentId == StudentClassId);
+            if (recordInDB == null)
+            {
+                throw new ModelException($"{recordInDB.Id}", "has not found");
+            }
+
+            
+            // handle for rating in student class
+            recordInDB.Rating = Rating;
+            recordInDB.Feedback = Feedback;
+            _unitOfWork.StudentClassRepository.Update(recordInDB);
+            
+            // handle for update tutor rating 
+            var classModel   = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
+            var tutorId = classModel.TutorId;
+            var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
+
+            tutorModel.Rating = (tutorModel.Rating + Rating) / 2;
+            await _userServices.UpdateTutorRating(tutorModel);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

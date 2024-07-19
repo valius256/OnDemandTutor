@@ -17,6 +17,7 @@ public class GetProfileUserDtos
     public string? BankAccount { get; set; }
     public string? ScheduleDesciption { get; set; }
     public string? DeaActiveReason { get; set; }
+    public double? Rating { get; set; }
     public decimal? Balance { get; set; }
     public bool IsActive { get; set; } = true;
     public decimal TutorFeePerHour { get; set; }

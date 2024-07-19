@@ -1,5 +1,4 @@
-﻿using Hangfire.Storage.Monitoring;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
@@ -7,7 +6,6 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Payment;
-using SharedKernel.Domain.RailwayOrientedProgramming;
 
 namespace OnDemandTutor.API.Controllers;
 
@@ -18,14 +16,14 @@ public class PaymentController : BaseController<PaymentController>
 {
     private readonly IVnPayServices _vnPayServices;
     private readonly ISlotServices _slotServices;
-    private readonly IClassService _classService;
+    private readonly IClassServices _classServices;
     public PaymentController(ILogger<PaymentController> logger, IVnPayServices vnPayServices, ISlotServices slotServices,
-    IClassService classService
+    IClassServices classServices
     ) : base(logger)
     {
         _vnPayServices = vnPayServices;
         _slotServices = slotServices;
-        _classService = classService;
+        _classServices = classServices;
     }
 
 
@@ -44,7 +42,7 @@ public class PaymentController : BaseController<PaymentController>
         }
         return Ok(paymentUrl);
     }
-    
+
     [HttpPost("create-payment-slot-user-balance")]
     [Authorize]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -56,7 +54,7 @@ public class PaymentController : BaseController<PaymentController>
         {
             var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
 
-            result =  await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot);
+            result = await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot);
             return Ok(result);
         }
 
@@ -68,7 +66,7 @@ public class PaymentController : BaseController<PaymentController>
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
     public async Task<IActionResult> PurchaseClass(PayClassDto request)
     {
-        var classDto = await _classService.GetClassByIdAsync(request.ClassId);
+        var classDto = await _classServices.GetClassWithFullDataSlotId(request.ClassId);
         if (classDto == null)
             return BadRequest("Class not found");
 
@@ -97,5 +95,6 @@ public class PaymentController : BaseController<PaymentController>
         var paymentUrl = await _vnPayServices.RechargePaymentAsync(request, HttpContext);
         return Ok(paymentUrl);
     }
+
 
 }

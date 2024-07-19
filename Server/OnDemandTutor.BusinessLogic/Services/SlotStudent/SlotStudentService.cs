@@ -99,4 +99,24 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
+
+    public async Task<List<SlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
+    {
+        var slotStudentModel =  await _unitOfWorkRepository.SlotStudentRepository.Where(ld => ld.UserId == studentId).ToListAsync();
+        return slotStudentModel.Adapt<List<SlotStudentDto>>();
+    }
+
+    public async Task<bool> CreateSlotStudent(int slotId, int studentId)
+    {
+        var newSlotStudentModel = new Models.Models.SlotStudent()
+        {
+            UserId = studentId,
+            SlotId = slotId,
+            CreatedDate = DateTime.Now,
+            PaymentStatus = PaymentStatus.Notpaid,
+        };
+        await _unitOfWorkRepository.SlotStudentRepository.AddAsync(newSlotStudentModel);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
 }
