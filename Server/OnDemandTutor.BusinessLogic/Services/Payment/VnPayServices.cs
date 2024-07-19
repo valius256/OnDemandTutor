@@ -73,7 +73,6 @@ public class VnPayServices : IVnPayServices
     public async Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections)
     {
         var response = _paymentProcessor.ProcessPaymentResponse(collections);
-        var transactionId = 0;
 
         if (response.Success)
         {
@@ -103,6 +102,7 @@ public class VnPayServices : IVnPayServices
         return CreatePaymentResponseModel(response, true, PaymentStatus.Paid);
     }
 
+
     private async Task HandleSingleSlotPayment(IPaymentResponse response)
     {
         var slotStudent = await _slotStudentServices.GetSlotStudentAsync(response.SlotId.First(), response.UserId);
@@ -116,14 +116,18 @@ public class VnPayServices : IVnPayServices
     private async Task HandleClassPayment(IPaymentResponse response)
     {
         var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
+        
+        await _transactionServices.CreateTransactionForClassPayment(response.OrderId, response.UserId, response.ClassId.Value, response.Money);
+
         await _classServices.EnrollCLass(response.ClassId.Value, response.UserId);
+    
         foreach (var slot in slotInClass.Slots)
         {
             await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, response.UserId);
+            await _slotStudentServices.SlotStudentPaidAsync(slot.Id, response.UserId);
         }
-
-    
     }
+
 
     private PaymentSlotResponseModel CreatePaymentResponseModel(IPaymentResponse response, bool success, PaymentStatus paymentStatus, string additionalDescription = "")
     {

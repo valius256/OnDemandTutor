@@ -203,22 +203,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
         public async Task<bool> EnrollCLass(int classId, int studentId)
         {
-            // Retrieve the class to enroll with its slots
             var classToEnroll = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
             if (classToEnroll == null)
             {
                 throw new ModelException($"{classId}", "Class not found");
             }
-
-            // Retrieve all classes with slots for the student
+            
             var allClassRecordWithSlots = await _unitOfWork.ClassRepository.GetClassWithSlotsByStudentIdAsync(studentId);
-
-            // Check for time conflicts between the new class slots and existing class slots
+            
             foreach (var slot in classToEnroll.Slots)
             {
                 if (allClassRecordWithSlots.SelectMany(c => c.Slots).Any(s => s.StartTime < slot.EndTime && s.EndTime > slot.StartTime))
                 {
-                    throw new ModelException($"{classId}", "The class has a time conflict with the student's existing slots");
+                    throw new ModelException($"{classToEnroll}", $"The class has a time conflict with the student's existing slots the classId conflict is: {classId}");
                 }
             }
 
