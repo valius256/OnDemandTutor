@@ -126,6 +126,14 @@ const routes = [
         component: TutorProfile,
       },
       {
+        path: "myclass",
+        component: TutorProfile,
+      },
+      {
+        path: "withdraw",
+        component: TutorProfile,
+      },
+      {
         path: "payment",
         component: TutorProfile,
       },

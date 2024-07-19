@@ -1,4 +1,6 @@
-﻿using OnDemandTutor.Models.Dtos.Subject;
+﻿using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Subject;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Dtos.Slot
@@ -17,8 +19,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public PaymentStatus PaymentStatus { get; set; }
         public DateTime? ActualEndTime { get; set; }
         public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();
-
-
+        public GetClassDtos Class { get; set; } = new GetClassDtos();
+        public GetTutorDto CreatedBy { get; set; } = new GetTutorDto();
     }
 }
-

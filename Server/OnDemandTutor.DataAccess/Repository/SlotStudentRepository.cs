@@ -54,4 +54,31 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
 
         return await query.ToListAsync();
     }
+
+    public async Task<List<SlotStudent>> GetStudentSlotsAsync(QuerySlotStudentDto request)
+    {
+        var query = dbSet.AsQueryable()
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Subject)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.CreatedBy)
+            .Include(ss => ss.Slot)
+                .ThenInclude(s => s.Class)
+            .Include(ss => ss.User)
+            .Where(s => s.Slot.EndTime <= request.To)
+            .Where(s => s.Slot.StartTime >= request.From);
+
+        if (request.PaymentStatus.HasValue)
+        {
+            query = query.Where(s => s.PaymentStatus == request.PaymentStatus);
+        }
+        if (request.ClassId.HasValue)
+        {
+            query = query.Where(s => s.Slot.ClassId == request.ClassId);
+        }
+
+        // Apply filtering if necessary
+
+        return await query.ToListAsync();
+    }
 }

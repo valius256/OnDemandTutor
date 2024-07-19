@@ -34,6 +34,16 @@ namespace OnDemandTutor.API.Controllers
             return Ok(slotStudent);
         }
 
+        [HttpGet("get-students-of-slots")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
+        public async Task<IActionResult> QueryStudent([FromQuery] QuerySlotStudentDto querySlotStudentDto)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var slotStudent = await _slotStudentService.QuerySlotStudent(querySlotStudentDto, user);
+            return Ok(slotStudent);
+        }
+
         [Authorize]
         [HttpGet("get-upcoming-slot")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -57,6 +67,20 @@ namespace OnDemandTutor.API.Controllers
                 return NotFound();
             }
             return Ok(slotStudent);
+        }
+
+        //[Authorize]
+        [HttpGet("{slotId}")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(IEnumerable<SlotStudentDto>), 200)]
+        public async Task<IActionResult> GetStudentSlotsOfSlot(int slotId)
+        {
+            var slotStudents = await _slotStudentService.GetSlotStudentsOfSlotAsync(slotId);
+            if (slotStudents == null || !slotStudents.Any())
+            {
+                return Ok(new { message = "No students enrolled yet." });
+            }
+            return Ok(slotStudents);
         }
 
         [Authorize]

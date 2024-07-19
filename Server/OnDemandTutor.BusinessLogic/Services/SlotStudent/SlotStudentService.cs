@@ -40,6 +40,13 @@ public class SlotStudentService : ISlotStudentServices
         return slotStudent.Adapt<SlotStudentDto>();
     }
 
+    public async Task<IEnumerable<SlotStudentDto>> GetSlotStudentsOfSlotAsync(int slotId)
+    {
+        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository
+            .Where(st => st.SlotId == slotId)
+            .ToListAsync();
+        return slotStudents.Adapt<IEnumerable<SlotStudentDto>>();
+    }
     public async Task<bool> SlotStudentPaidAsync(int slotId, int studentId)
     {
         var slotStudent =
