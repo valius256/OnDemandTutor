@@ -129,7 +129,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             foreach (var slot in listSlotDb)
             {
                 var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
-                if (slotStudent.PaymentStatus == PaymentStatus.Notpaid && slotStudent != null)
+                if (slotStudent != null && slotStudent.PaymentStatus == PaymentStatus.Notpaid)
                 {
                     var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
                     var duration = (slot.EndTime - slot.StartTime).TotalHours;

@@ -3,6 +3,7 @@ using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
@@ -73,11 +74,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 throw new Exception("Class not found");
             }
             var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
-
-            if( rs is not null)
+            var classSlots = classEntity?.Slots.ToList() ?? new List<Models.Models.Slot>();
+            if (classSlots.Any())
             {
-                rs.StartTime = classEntity.Slots.First().StartTime;
-                rs.EndTime = classEntity.Slots.Last().EndTime;
+                rs.StartTime = classSlots[0].StartTime;
+                rs.EndTime = classSlots[classSlots.Count - 1].EndTime;
             }
            
             return rs;

@@ -1,5 +1,5 @@
 <template>
-    <div class="py-4 px-8" v-if="this.class">
+    <div class="py-4 px-8 relative" v-if="this.class">
         <div class="font-bold text-3xl">{{ this.class.name }}</div>
         <div class="mt-4 flex flex-col md:flex-row md:place-content-between gap-4">
             <div>
@@ -41,14 +41,15 @@
         </div>
         <hr class="mt-4">
         <div class="font-bold my-4">Thời khóa biểu :</div>
-        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" />
+        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup"
+             />
         <hr class="mt-4">
         <div class="font-bold my-4">Các buổi học :</div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div v-for="(slot, index) in this.slots" :key="index" class="p-2  border-4 shadow-md mb-2 rounded-lg"
                 :class="{
-                    'border-blue-300': this.compareDate(new Date(slot.slot.endTime), new Date()) < 0,
-                }">
+        'border-blue-300': this.compareDate(new Date(slot.slot.endTime), new Date()) < 0,
+    }">
                 <div class="font-bold text-center text-xl">Buổi {{ index + 1 }}</div>
                 <hr>
                 <div class="flex flex-col gap-2">
@@ -68,7 +69,7 @@
                         <div class="text-sm mt-1">
                             <span class="font-bold">Hình thức :</span>
                             <span :class="getMethodStyle(slot.slot.isOnline ? 'Online' : 'Offline')">
-                                {{ (slot.isOnline ? "Online" : "Offline") }}
+                                {{ (slot.slot.isOnline ? "Online" : "Offline") }}
                             </span>
                         </div>
 
@@ -76,29 +77,47 @@
                             <span class="font-bold">Thời lượng :</span>
                             <span class="ml-4">{{ (calcDuration(slot)) }} tiếng</span>
                         </div>
-                        <div class="flex items-center">
-                            <span
-                                v-if="slot.paymentStatus == 0 && new Date(slot.slot.startTime) < new Date()"
+                        <div class="flex items-center" v-if="slot.slot.paymentStatus != null">
+                            <span v-if="slot.slot.paymentStatus == 0 && new Date(slot.slot.startTime) < new Date()"
                                 class="p-1 text-sm italic text-red-500">Bạn đang nợ slot này</span>
-                            <button v-if="slot.paymentStatus == 0"
+                            <button v-if="slot.slot.paymentStatus == 0"
                                 class="p-1 text-sm underline italic text-blue-400">Thanh toán ngay</button>
                         </div>
                     </div>
-                    <button class=" p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
+                    <button @click="openSlotDetailPopup(slot)" class=" p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
                 </div>
             </div>
         </div>
         <div class="flex justify-center mt-8">
-            <button v-if="this.class.status == 2"
+            <button v-if="this.class.status == 2 && !isGuest"
                 class="p-2 bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
                 Đánh giá gia sư
             </button>
-            <button v-else class=" p-2 bg-red-500 hover:bg-red-300 font-bold rounded-lg text-white">
+            <button v-if="this.class.status != 2 && !isGuest"
+                class=" p-2 bg-red-500 hover:bg-red-300 font-bold rounded-lg text-white">
                 Rời lớp học
             </button>
         </div>
-        <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup">
-            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup"/>
+        <div class="w-full px-4" v-if="isGuest">
+            <button v-if="!isStudiedThisClass && this.class.status == 0" @click="toggleClassEnrollPopup"
+                class="py-4 w-full bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
+                Tham gia lớp học
+            </button>
+            <div v-if="isStudiedThisClass" class="py-4 w-full bg-gray-500 text-center font-bold rounded-lg text-white">
+                Bạn đã tham gia lớp này
+            </div>
+        </div>
+
+        <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
+            :notOverflow="true">
+            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
+        </generic-popup>
+        <generic-popup v-if="isOpenRatingPopup" title="Đánh giá lớp học" :closeFunction="toggleIsOpenRatingPopup">
+            <rating-popup :classId="this.class.id"></rating-popup>
+        </generic-popup>
+
+        <generic-popup v-if="isOpenEnrollClassPopup" title="Tham gia lớp học" :closeFunction="toggleClassEnrollPopup">
+            <class-enroll-popup :classId="this.classId"></class-enroll-popup>
         </generic-popup>
     </div>
 </template>
@@ -108,16 +127,21 @@ import axios from 'axios'
 import TimeTable from './TimeTable.vue'
 import GenericPopup from '../common/GenericPopup.vue'
 import SlotDetailPopup from './SlotDetailPopup.vue'
+import RatingPopup from './RatingPopup.vue'
+import ClassEnrollPopup from './ClassEnrollPopup.vue'
 export default {
-    components: { TimeTable, GenericPopup, SlotDetailPopup },
+    components: { TimeTable, GenericPopup, SlotDetailPopup, RatingPopup, ClassEnrollPopup },
     name: "ClassDetailPopup",
-    props: ['classId', 'close'],
+    props: ['classId', 'close', 'isGuest'],
     data() {
         return {
             class: null,
             slots: [],
-            selectingSlot : null,
-            isOpenSlotDetailPopup : false
+            selectingSlot: null,
+            isOpenSlotDetailPopup: false,
+            isOpenRatingPopup: false,
+            isStudiedThisClass: false,
+            isOpenEnrollClassPopup : false,
         }
     },
     methods: {
@@ -191,14 +215,45 @@ export default {
         },
         openSlotDetailPopup(slot) {
             this.selectingSlot = slot
+
             this.isOpenSlotDetailPopup = true
         },
         closeSlotDetailPopup() {
             this.isOpenSlotDetailPopup = false
         },
         async refresh() {
-            await this.getUserSlots(null, null)
             await this.getClassDetail()
+            await this.getUserSlots(null, null)
+            if (this.slots.length > 0) {
+                this.isStudiedThisClass = true;
+            }
+            if (this.isGuest) {
+                this.slots = []
+                for (var slot of this.class.slots) {
+                    console.log(slot)
+                    this.slots.push({
+                        slot: {
+                            startTime: slot.startTime,
+                            endTime: slot.endTime,
+                            teachAddress: slot.teachAddress,
+                            isOnline: slot.isOnline,
+                            user: slot.user,
+                            createdBy: this.class.user,
+                            subject: this.class.subject,
+                            class : this.class
+                        },
+                        paymentStatus : -1
+                    })
+                }
+                console.log(this.slots)
+            } else {
+            }
+        },
+        toggleIsOpenRatingPopup() {
+            this.isOpenRatingPopup = !this.isOpenRatingPopup
+        },
+        toggleClassEnrollPopup() {
+            this.isOpenEnrollClassPopup = !this.isOpenEnrollClassPopup
         }
     },
     mounted() {

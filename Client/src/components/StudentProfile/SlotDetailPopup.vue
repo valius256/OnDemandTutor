@@ -64,28 +64,41 @@
             <span class="p-2 text-red-400 font-bold ">Bạn chưa thanh toán Slot này</span>
             <button class="p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Thanh toán ngay</button>
         </div>
-        <div v-else class="mt-4">
+        <div v-if="slot.paymentStatus == 1" class="mt-4">
             <span class="p-2 text-blue-400 font-bold ">Bạn đã thanh toán Slot này</span>
         </div>
-        <div class="flex flex-col justify-center mt-2" v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class">
+        <div class="flex flex-col justify-center mt-2" v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class && !slot.rating && slot.paymentStatus != -1">
             <div class="text-sm italic text-center">Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!</div>
-            <button class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg">
+            <button class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg" @click="toggleIsOpenRatingPopup">
                 Đánh giá gia sư
             </button>
         </div>
-
+        <generic-popup v-if="isOpenRatingPopup" title="Đánh giá slot học" :closeFunction="toggleIsOpenRatingPopup">
+            <rating-popup :slotId="slot.id"></rating-popup>
+        </generic-popup>
     </div>
 </template>
 
 <script>
+import GenericPopup from '../common/GenericPopup.vue';
+import RatingPopup from './RatingPopup.vue';
 export default {
     name: "SlotDetailPopup",
+    components : {GenericPopup, RatingPopup},
     props: ['slot', 'close'],
+    data(){
+        return {
+            isOpenRatingPopup : false
+        }
+    },
     methods: {
         calcDuration() {
             const startTime = new Date(this.slot.slot.startTime);
             const endTime = new Date(this.slot.slot.endTime);
             return (endTime - startTime) / 3600000;
+        },
+        toggleIsOpenRatingPopup(){
+            this.isOpenRatingPopup = !this.isOpenRatingPopup
         }
     }
 }
