@@ -10,68 +10,43 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37e24376-6cb6-45ff-804f-a712fdb0ea1b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Controllers/EmailController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/EmailTemplate/EmailRequestDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/EmailTemplate/SentEmailDto.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/EnrollSlotDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Enum/TransactionType.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.OnDemandTutor/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/ClassController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/ClassController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/FAQController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/FAQController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/NotificationController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/NotificationController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/PaymentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/PaymentController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/AuthController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/SlotController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SlotController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/SlotStudentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SlotStudentController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controllers/SubjectController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/SubjectController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Extensions/ServicesExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Extensions/ServicesExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Middlesware/ExceptionHandlingMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Middlesware/ExceptionHandlingMiddleware.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OnDemandTutor.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/OnDemandTutor.API.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Class/IClassService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Mail/IMailServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Mail/IEmailServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Class/IClassServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Class/IClassServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Slot/ISlotServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/Slot/ISlotServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/SlotStudent/ISlotStudentServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/SlotStudent/ISlotStudentServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/StudentClass/IStudentClassService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/StudentClass/IStudentClassService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/User/IUserServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Interfaces/User/IUserServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/FirebaseAuthServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/FirebaseAuthServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Blog/BlogService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Blog/BlogService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Class/ClassService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Mail/MailServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Mail/EmailServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Notification/NotificationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Notification/NotificationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/OnDemandTutor.BusinessLogic.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/OnDemandTutor.BusinessLogic.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Class/ClassServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Class/ClassServices.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Payment/VnPayProcessor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Payment/VnPayProcessor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Payment/VnPayServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Payment/VnPayServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/RequestWithDraw/RequestWithDrawServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/RequestWithDraw/RequestWithDrawServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Slot/SlotService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Slot/SlotService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/SlotStudent/SlotStudentService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/SlotStudent/SlotStudentService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/StudentClass/StudentClassService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/StudentClass/StudentClassService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Subject/SubjectService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Subject/SubjectService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Transaction/TransactionServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Transaction/TransactionServices.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/User/UserServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/User/UserServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IFAQRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IFAQRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IGenericRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IGenericRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISlotRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISlotRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISlotStudentRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISlotStudentRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISubjectRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/ISubjectRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/ClassRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/ClassRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/FAQRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/FAQRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/NotificationRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/NotificationRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/IRepository/IUserRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SlotRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SlotRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SlotStudentRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SlotStudentRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SubjectRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/SubjectRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/TransactionRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/TransactionRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/Repository/UserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Helper/ConverterHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Helper/ConverterHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/VnPayLibrary.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.DataAccess/VnPayLibrary.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/ApplicationDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Class/GetClassDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Class/GetClassDtos.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Class/QueryClassDTO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Class/QueryClassDTO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/FAQ/FAQDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/FAQ/FAQDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/FAQ/QueryFAQDTO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/FAQ/QueryFAQDTO.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/CreateSlotsDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/CreateSlotsDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/GetStudentSlotDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/GetStudentSlotDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/QuerySlotDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/QuerySlotDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/QuerySlotStudentDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/QuerySlotStudentDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/QuerySubjectDTO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Subject/QuerySubjectDTO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/TutorSubject/GetTutorSubjectWithSubjectDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/TutorSubject/GetTutorSubjectWithSubjectDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileUserDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/User/GetProfileUserDtos.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/ClassEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/ClassEntityTypeConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/StudentClassEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/StudentClassEntityTypeConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/MigrationData/ModelBuilderExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/MigrationData/ModelBuilderExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Class.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Class.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/StudentClass.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/StudentClass.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/OnDemandTutor.Models.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/OnDemandTutor.Models.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/SlotStudentDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/SlotStudentDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/UpdateSlotDtos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Slot/UpdateSlotDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Transaction/TransactionDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Transaction/TransactionDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Transaction/TransactionFilterDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Dtos/Transaction/TransactionFilterDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SlotStudentEntityTypeConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/EntityTypeConfiguration/SlotStudentEntityTypeConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/SlotStudent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/SlotStudent.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Transaction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../OnDemandTutor.Models/Models/Transaction.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,15 +143,23 @@
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b8139c5ee58f1708b0e3368a1b241400edd6cbc4/src/Middleware/Diagnostics/src/ExceptionHandler/ExceptionHandlerMiddlewareImpl.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b8139c5ee58f1708b0e3368a1b241400edd6cbc4/src/Mvc/Mvc.Core/src/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/b8139c5ee58f1708b0e3368a1b241400edd6cbc4/src/Mvc/Mvc.Core/src/Infrastructure/ActionMethodExecutor.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/efcore/6a2be34d045329d9eff9536ec824226696d53e00/src/EFCore/ChangeTracking/Internal/EntityGraphAttacher.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/efcore/6a2be34d045329d9eff9536ec824226696d53e00/src/EFCore/DbContextOptions%60.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/efcore/6a2be34d045329d9eff9536ec824226696d53e00/src/EFCore/DbContextOptionsBuilder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/efcore/6a2be34d045329d9eff9536ec824226696d53e00/src/EFCore/Infrastructure/ModelValidator.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/coreclr/System.Private.CoreLib/src/System/Reflection/RuntimeModule.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/coreclr/System.Private.CoreLib/src/System/Threading/Monitor.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/PhoneAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Linq/src/System/Linq/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Net.Mail/src/System/Net/Mail/MailAddressParser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Net.Mail/src/System/Net/Mail/SmtpClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/ApplicationException.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Array.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/List.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/DateTime.Windows.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Exception.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Nullable.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Reflection/MethodBaseInvoker.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Runtime/CompilerServices/AsyncTaskMethodBuilderT.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilderT.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/3b8b000a0e115700b18265d8ec8c6307056dc94d/src/libraries/System.Private.CoreLib/src/System/Runtime/ExceptionServices/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
@@ -191,6 +174,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c0b37c0e54164b0e89dbb614ddf6d1b748800/f6/f2951cb0/FirebaseAuth.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/43a0109838b02848cce5bb7a6f1912c20f4ce33ee2757a041bd6bc7e922b47d/FailedJobDto.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4d6d6283215de958b1baadc74d6f99ce76f43090cfc86e26e51d845b779450/IFormFile.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/798eb0edde517164b98282af6c60ef2d983f1ad85543a2ee138fd14cc5430/BackgroundJobPerformer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a974b48fc014f33d4c5ce4747fcb4d6afc6e11db3245abe2ed6b5df8c021/CoreBackgroundJobPerformer.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -212,36 +197,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.OnDemandTutor.API: http.executor&quot;: &quot;Debug&quot;,
-    &quot;.NET Launch Settings Profile.OnDemandTutor.API: https.executor&quot;: &quot;Debug&quot;,
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.5007874&quot;,
-    &quot;full.screen.before.presentation.mode&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Phat__Fix__Register&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.OnDemandTutor.API: http.executor": "Debug",
+    ".NET Launch Settings Profile.OnDemandTutor.API: https.executor": "Debug",
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "XThreadsFramesViewSplitterKey": "0.5007874",
+    "full.screen.before.presentation.mode": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ChangesTree.GroupingKeys&quot;: [
-      &quot;directory&quot;
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": [
+      "directory"
     ],
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\Quang Phat\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\Quang Phat\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\Quang Phat\\AppData\\Local\\Symbols\\src&quot;
+    "rider.external.source.directories": [
+      "C:\\Users\\Quang Phat\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\Quang Phat\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\Quang Phat\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.OnDemandTutor.API: https">
     <configuration name="OnDemandTutor.API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/OnDemandTutor.API.csproj" />
@@ -400,38 +385,44 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Auth/FirebaseAuthServices.cs</url>
-          <line>35</line>
-          <properties documentPath="D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.BusinessLogic\Services\Auth\FirebaseAuthServices.cs" containingFunctionPresentation="Method 'GetUserAsync'">
-            <startOffsets>
-              <option value="1235" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1314" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Slot/SlotService.cs</url>
-          <line>258</line>
-          <properties documentPath="D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.BusinessLogic\Services\Slot\SlotService.cs" containingFunctionPresentation="Method 'EnrollForSlot'">
-            <startOffsets>
-              <option value="11708" />
-            </startOffsets>
-            <endOffsets>
-              <option value="11794" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
         <breakpoint enabled="true" type="DotNet Exception Breakpoints">
           <properties exception="System.AggregateException" isInternal="false" displayValue="AggregateException" namespaceName="System">
             <option name="internal" value="false" />
           </properties>
           <option name="timeStamp" value="25" />
         </breakpoint>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="Microsoft.EntityFrameworkCore.DbUpdateException" isInternal="false" displayValue="DbUpdateException" namespaceName="Microsoft.EntityFrameworkCore">
+            <option name="internal" value="false" />
+          </properties>
+          <option name="timeStamp" value="43" />
+        </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Transaction/TransactionServices.cs</url>
+          <line>34</line>
+          <properties documentPath="D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.BusinessLogic\Services\Transaction\TransactionServices.cs" containingFunctionPresentation="Method 'TransactionPaid'">
+            <startOffsets>
+              <option value="1344" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1663" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="57" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/../OnDemandTutor.BusinessLogic/Services/Slot/SlotService.cs</url>
+          <line>258</line>
+          <properties documentPath="D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.BusinessLogic\Services\Slot\SlotService.cs" containingFunctionPresentation="Method 'EnrollForSlot'">
+            <startOffsets>
+              <option value="11697" />
+            </startOffsets>
+            <endOffsets>
+              <option value="11783" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint enabled="true" type="DotNet Exception Breakpoints" />

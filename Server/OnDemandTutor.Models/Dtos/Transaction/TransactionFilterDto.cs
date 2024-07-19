@@ -1,11 +1,14 @@
-﻿namespace OnDemandTutor.Models.Dtos.Transaction;
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Dtos.Transaction;
 
 public class TransactionFilterDto
 {
-    public DateTime FromDate { get; set; }
-    public DateTime ToDate { get; set; }
-    public decimal MinAmount { get; set; }
-    public decimal MaxAmount { get; set; }
-    public int Limit { get; set; }
-    public int Page { get; set; }
+    public List<TransactionType>? TransactionType { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public decimal? MinAmount { get; set; }
+    public decimal? MaxAmount { get; set; }
+    public int? Limit { get; set; }
+    public int? Page { get; set; }
 }

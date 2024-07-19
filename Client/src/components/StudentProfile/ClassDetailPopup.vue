@@ -41,8 +41,7 @@
         </div>
         <hr class="mt-4">
         <div class="font-bold my-4">Thời khóa biểu :</div>
-        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup"
-             />
+        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" />
         <hr class="mt-4">
         <div class="font-bold my-4">Các buổi học :</div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -84,7 +83,8 @@
                                 class="p-1 text-sm underline italic text-blue-400">Thanh toán ngay</button>
                         </div>
                     </div>
-                    <button @click="openSlotDetailPopup(slot)" class=" p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
+                    <button @click="openSlotDetailPopup(slot)"
+                        class=" p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
                 </div>
             </div>
         </div>
@@ -141,7 +141,7 @@ export default {
             isOpenSlotDetailPopup: false,
             isOpenRatingPopup: false,
             isStudiedThisClass: false,
-            isOpenEnrollClassPopup : false,
+            isOpenEnrollClassPopup: false,
         }
     },
     methods: {
@@ -196,22 +196,24 @@ export default {
             }
         },
         async getUserSlots(from, to) {
-            console.log("Getting slot")
-            let queryString = ""
-            if (from != null) {
-                queryString += "&From=" + from
-            }
-            if (to != null) {
-                queryString += "&To=" + to
-            }
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students?ClassId=' + this.classId + queryString, {
-                headers: {
-                    'Authorization': "Bearer " + localStorage.token
+            if (!this.isGuest) {
+                let queryString = ""
+                if (from != null) {
+                    queryString += "&From=" + from
                 }
-            })
-            if (response.data) {
-                this.slots = response.data
+                if (to != null) {
+                    queryString += "&To=" + to
+                }
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students?ClassId=' + this.classId + queryString, {
+                    headers: {
+                        'Authorization': "Bearer " + localStorage.token
+                    }
+                })
+                if (response.data) {
+                    this.slots = response.data
+                }
             }
+
         },
         openSlotDetailPopup(slot) {
             this.selectingSlot = slot
@@ -240,9 +242,9 @@ export default {
                             user: slot.user,
                             createdBy: this.class.tutor,
                             subject: this.class.subject,
-                            class : this.class
+                            class: this.class
                         },
-                        paymentStatus : -1
+                        paymentStatus: -1
                     })
                 }
                 console.log(this.slots)

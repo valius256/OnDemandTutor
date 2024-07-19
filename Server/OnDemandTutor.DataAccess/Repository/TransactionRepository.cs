@@ -36,10 +36,14 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
             transactionQuery = transactionQuery.Where(t => t.Amount <= transactionFilter.MaxAmount);
         }
 
+        if (transactionFilter.TransactionType != null &&  transactionFilter.TransactionType.Any())
+        {
+            transactionQuery = transactionQuery.Where(t => transactionFilter.TransactionType.Contains(t.TransactionType));
+        }
 
 
-        int limit = transactionFilter.Limit > 0 ? transactionFilter.Limit : 10;
-        int page = transactionFilter.Page > 0 ? transactionFilter.Page : 1;
+        int limit = transactionFilter.Limit.Value > 0 ? transactionFilter.Limit.Value : 10;
+        int page = transactionFilter.Page.Value > 0 ? transactionFilter.Page.Value : 1;
         int skip = (page - 1) * limit;
 
         var filteredUsers = await transactionQuery

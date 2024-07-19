@@ -66,7 +66,7 @@ export default {
         calcMoney() {
             var money = 0;
             for (var slot of this.class.slots) {
-                money += this.calcDuration(slot) * this.class.user.tutorFeePerHour * 20 / 100
+                money += this.calcDuration(slot) * this.class.tutor.tutorFeePerHour * 20 / 100
             }
             return money;
         },

@@ -782,7 +782,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 3,
                     Name = "Luyện thi Vật lý 9+ THPTQG",
-                    TutorId = 2, // Thay bằng TutorId đã có
+                    TutorId = 6, // Thay bằng TutorId đã có
                     SubjectId = 3, // Thay bằng SubjectId đã có
                     Location = "meet.google.com",
                     Method = "Online",

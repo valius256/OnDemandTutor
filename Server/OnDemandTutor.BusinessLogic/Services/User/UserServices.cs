@@ -404,11 +404,11 @@ public class UserServices : IUserServices
             .FirstOrDefaultAsync(ld => ld.Id == userId);
         if (moneyDecrease > 0)
         {
-            record.Balance += moneyIncrease;
+            record.Balance -= moneyIncrease;
         }
-        else if (moneyDecrease == 0)
+        else if (moneyIncrease >= 0)
         {
-            record.Balance -= moneyDecrease;
+            record.Balance += moneyDecrease;
         }
 
         _unitOfWorkRepository.UserRepository.Update(record);
@@ -504,6 +504,11 @@ public class UserServices : IUserServices
             OldStatus = oldRecord.TutorStatus,
             NewStatus = newRecord.TutorStatus
         };
+    }
+
+    public Task<bool> RecalculateTutorRating(int tutorId)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page)

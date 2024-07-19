@@ -54,7 +54,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return slot.Adapt<GetSlotsDtos>();
         }
-        public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
+        public async Task<CreateSlotsDto> CreateSlotAsync(CreateSlotsDto slotDto)
         {
             var slot = slotDto.Adapt<Slot>();
 
@@ -63,7 +63,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return slotDto;
         }
-        public async Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto)
+        public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
         {
             var existingSlot = await dbSet.FindAsync(slotDto.Id);
             if (existingSlot == null)

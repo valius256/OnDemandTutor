@@ -11,5 +11,5 @@ public interface IUserRepository : IGenericRepository<User>
     Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId);
     Task<PagedResult<User>> ViewTutorListAsync(TutorFilterDto request);
     Task<PagedResult<GetOutstandingTutorDto>> GetOutStandingTutors(int limit, int page);
-
+    Task<bool> RecalculateTutorRating(int tutorId);
 }

@@ -7,8 +7,8 @@ public interface ISlotServices
 {
     Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
     Task<GetSlotsDtos> GetSlotByIdAsync(int id);
-    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto);
-    Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto);
+    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto);
+    Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto);
     Task<bool> DeleteSlotAsync(int id);
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
     Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();

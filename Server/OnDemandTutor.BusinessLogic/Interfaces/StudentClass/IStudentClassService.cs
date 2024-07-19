@@ -12,7 +12,11 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.StudentClass
         Task<bool> DeleteStudentFromStudentClassById(int classId, int userId);
         Task<bool> DeleteStudentClassAsync(int id);
         Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string? Feedback);
+        Task<Models.Models.StudentClass> CreateStudentClassIfNotExist(int classId, int studentId);
 
     }
 }
+
+
+
 

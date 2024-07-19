@@ -51,7 +51,7 @@ namespace OnDemandTutor.API.Controllers
             }
 
             var createdBlog = await _blogService.CreateBlogAsync(blogDto);
-            return CreatedAtAction(nameof(GetBlogById), new { id = createdBlog.Id }, createdBlog);
+            return CreatedAtAction(nameof(GetBlogById), createdBlog);
         }
 
         [Authorize]

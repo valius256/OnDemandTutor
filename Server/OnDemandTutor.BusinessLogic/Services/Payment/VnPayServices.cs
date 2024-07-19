@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
@@ -27,11 +29,14 @@ public class VnPayServices : IVnPayServices
     private readonly IPaymentProcessor _paymentProcessor;
     private readonly IUserServices _userServices;
     private readonly IClassServices _classServices;
+    private readonly ISlotServices _slotServices;
+    private readonly IStudentClassService _studentClassService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public VnPayServices(IOptions<VnPay> vnPay, IConfiguration configuration,
         IUnitOfWorkRepository unitOfWorkRepository, ITransactionServices transactionServices,
         ISlotStudentServices slotStudentServices, IPaymentProcessor paymentProcessor,
+        IStudentClassService studentClassService, ISlotServices slotServices,
         IClassServices classServices, IHttpContextAccessor httpContextAccessor,
         IUserServices userServices)
     {
@@ -43,6 +48,8 @@ public class VnPayServices : IVnPayServices
         _paymentProcessor = paymentProcessor;
         _userServices = userServices;
         _classServices = classServices;
+        _slotServices = slotServices;
+        _studentClassService = studentClassService;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -56,7 +63,7 @@ public class VnPayServices : IVnPayServices
 
         var paymentUrl = CreateVnPayRequest(model, context, new List<int> { slot.Id }, null, slotCost, model.OrderDescription, false, tick, model.ReturnUrl);
 
-        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", slotCost, model.OrderDescription, listSlotId, null, context);
+        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
 
 
@@ -65,25 +72,31 @@ public class VnPayServices : IVnPayServices
 
     public async Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections)
     {
+       
+        
         var response = _paymentProcessor.ProcessPaymentResponse(collections);
+        
+       
         int transactionId = 0;
         if (response.Success)
         {
-            transactionId = await _transactionServices.TransactionPaid(response.OrderId, DateTime.UtcNow);
+            await _transactionServices.TransactionPaid(response.OrderId, DateTime.UtcNow);
 
             if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1) // handle for paid 1 slot 
             {
                 if (await _slotStudentServices.GetSlotStudentAsync(response.SlotId.FirstOrDefault(), response.UserId) != null)
                 {
                     await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.FirstOrDefault(), response.UserId);
+                    await _slotServices.EnrollForSlot(response.UserId, response.SlotId.FirstOrDefault());
                 }
             }
             else if (response.ClassId != null) // handle for paid  multi slot in 1 class 
             {
-                foreach (var slot in response.SlotId)
+                var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
+                await _studentClassService.CreateStudentClassIfNotExist(response.ClassId.Value, response.UserId);
+                foreach (var slot in slotInClass.Slots)
                 {
-                    await _slotStudentServices.CreateSlotStudentIfNotExist(slot, response.UserId);
-                    await _slotStudentServices.SlotStudentPaidAsync(slot, response.UserId);
+                    await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, response.UserId);
                 }
             }
             else
@@ -91,6 +104,8 @@ public class VnPayServices : IVnPayServices
                 await _userServices.RechargeAccountAsync(response.UserId, response.Money);
             }
 
+            await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
+            
             if (response.VnPayResponseCode == "24")
             {
                 return new PaymentSlotResponseModel
@@ -99,7 +114,6 @@ public class VnPayServices : IVnPayServices
                     SlotId = response.SlotId,
                     TransactionCode = response.OrderId,
                     UserId = response.UserId,
-                    TransactionId = transactionId,
                     Money = response.Money,
                     Success = false,
                     PaymentMethod = response.PaymentMethod,
@@ -136,15 +150,14 @@ public class VnPayServices : IVnPayServices
         var tick = DateTime.Now.Ticks.ToString();
         var paymentUrl = CreateVnPayRequest(model, context, null, null, model.Amount, model.Notes, true, tick, model.returnUrl);
 
-        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, null, null, context);
+        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, null, null, context, TransactionType.Recharge);
         await _transactionServices.CreateTransactionDb(transactionDto);
-
-
         return paymentUrl;
     }
 
     public async Task<string> CreatePaymentForClassUrl(PayClassDto model, HttpContext context, GetClassFullDataSlotDto classDto)
     {
+        var userId = context.User.FindFirst(cl => cl.Type == "id")?.Value;
         var tutorPriceInCurr = await _userServices.GetUserProfileByIdAsync(classDto.TutorId);
         var tutorFee = tutorPriceInCurr.TutorFeePerHour;
 
@@ -172,7 +185,7 @@ public class VnPayServices : IVnPayServices
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", totalAmount, model.OrderDescription, slotIds, classDto.Id, context);
 
         await _transactionServices.CreateTransactionDb(transactionDto);
-
+        
         return paymentUrl;
     }
 
@@ -186,7 +199,7 @@ public class VnPayServices : IVnPayServices
         var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
         decimal slotCost = (tutor.TutorFeePerHour * (decimal)(slot.EndTime - slot.StartTime).TotalHours);
 
-        var transactionDto = CreateTransactionDto(tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context);
+        var transactionDto = CreateTransactionDto(tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
         var studentModel = await _userServices.GetProfileAsync(int.Parse(userId), null, null);
         var slotStudentDto = await _slotStudentServices.GetSlotStudentAsync(slot.Id, studentModel.Id);
@@ -258,7 +271,8 @@ public class VnPayServices : IVnPayServices
 
         return transactionDtos;
     }
-    private List<TransactionDto> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes, List<int> slotIds, int? classId, HttpContext context)
+    private List<TransactionDto> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes,
+        List<int> slotIds, int? classId, HttpContext context, TransactionType transactionType)
     {
         var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
         var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
@@ -279,6 +293,7 @@ public class VnPayServices : IVnPayServices
                 Status = PaymentStatus.Notpaid,
                 CreatedDate = timeNow,
                 CreatedById = int.Parse(currUid),
+                TransactionType = transactionType
             };
 
             transactionDtos.Add(transactionDto);
