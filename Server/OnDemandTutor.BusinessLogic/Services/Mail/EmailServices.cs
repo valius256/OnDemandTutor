@@ -37,7 +37,7 @@ public class EmailServices : IEmailServices
             _defaultScheduleJob.Enqueue<IEmailServices>(m => m.SendAsync(name, toAddress, ccAddresses, param, true));
             return;
         }
-        
+
         var template = await _emailTemplateRepository.FirstOrDefaultAsync(e => e.Name == name && e.Status == true);
         await SendAsync(template, toAddress, ccAddresses, param);
     }
@@ -45,13 +45,13 @@ public class EmailServices : IEmailServices
 
     private async Task SendAsync(EmailTemplate template, List<string> toAddress, List<string> ccAddresses, Dictionary<string, string> param)
     {
-        var smtpAppSetting = new SmtpAppSetting 
+        var smtpAppSetting = new SmtpAppSetting
         {
             SmtpHost = _smtpAppSetting.SmtpHost,
             SmtpPort = _smtpAppSetting.SmtpPort,
-            SmtpUserName = _smtpAppSetting.SmtpUserName, 
-            SmtpPassword = _smtpAppSetting.SmtpPassword, 
-            AppVerify = _smtpAppSetting.AppVerify 
+            SmtpUserName = _smtpAppSetting.SmtpUserName,
+            SmtpPassword = _smtpAppSetting.SmtpPassword,
+            AppVerify = _smtpAppSetting.AppVerify
         };
 
         using (var client = new SmtpClient(smtpAppSetting.SmtpHost, smtpAppSetting.SmtpPort))
@@ -85,7 +85,7 @@ public class EmailServices : IEmailServices
             }
         }
     }
-    
+
     public async Task SendEmailAsync(List<string> toAddresses, List<string> ccAddresses, string subject, string body, bool isHtml, bool isInQueue = false)
     {
         if (!isInQueue)

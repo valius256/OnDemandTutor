@@ -130,5 +130,16 @@ namespace OnDemandTutor.DataAccess.Repository
                     .ThenInclude(sc => sc.Student)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task<List<Class>> GetClassWithSlotsByStudentIdAsync(int studentId)
+        {
+            return await dbSet
+                .Include(c => c.Slots)
+                .ThenInclude(c => c.SlotStudents)
+                .Include(c => c.StudentClasses)
+                .ThenInclude(sc => sc.Student)
+                .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId))
+                .ToListAsync();
+        }
     }
 }

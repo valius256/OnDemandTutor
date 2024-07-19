@@ -10,13 +10,13 @@ public class EmailController : ControllerBase
 {
     private readonly IEmailServices _emailServices;
     private readonly ILogger<EmailController> _logger;
-    
+
     public EmailController(ILogger<EmailController> logger, IEmailServices emailServices)
     {
         _logger = logger;
         _emailServices = emailServices;
     }
-    
+
     [HttpPost("send")]
     public async Task<IActionResult> SendEmail([FromBody] EmailRequestDto request)
     {
@@ -28,7 +28,7 @@ public class EmailController : ControllerBase
             request.CcAddresses,
             request.Subject,
             request.Body,
-            request.IsHtml, 
+            request.IsHtml,
             false);
 
         return Ok("Email sent successfully.");
