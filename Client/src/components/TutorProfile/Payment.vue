@@ -5,148 +5,104 @@
     </div>
     <div class="flex justify-center mb-8">
       <div class="text-3xl font-bold py-1">
-        <div class="mb-4">Số dư hiện tại</div>
-        <div class="text-green-200 p-1 bg-green-600 rounded-lg text-center">
+        Số dư hiện tại :
+        <span class="text-green-200 p-1 bg-green-600 rounded-lg">
           {{
-            user.balance.toLocaleString("vi-VN", {
+            currentUser.balance.toLocaleString("vi-VN", {
               style: "currency",
               currency: "VND",
             })
           }}
-        </div>
+        </span>
       </div>
     </div>
-    <div class="flex gap-4 justify-center mt-4 text-2xl mb-6">
-      <button
-        @click="null"
-        class="mr-6 px-6 py-4 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-      >
-        Nạp tiền
-      </button>
-      <button
-        @click="null"
-        class="px-6 py-4 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg"
-      >
-        Rút tiền
-      </button>
-    </div>
-    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-      Lịch sử giao dịch
-    </div>
-    <div class="px-4 mb-4">
-      <table
-        class="bg-slate-50 p-6 rounded-xl text-center w-full"
-        v-if="transactions.length > 0"
-      >
-        <thead>
-          <th>Id</th>
-          <th>Code</th>
-          <th>Date</th>
-          <th>Amount</th>
-          <th>Description</th>
-        </thead>
-        <tbody>
-          <tr v-for="transaction in transactions" :key="transaction.id">
-            <td>{{ transaction.id }}</td>
-            <td>{{ transaction.code }}</td>
-            <td>{{ transaction.date }}</td>
-            <td :class="getAmountStyle(transaction.amount)">
-              {{ transaction.amount }}
-            </td>
-            <td>{{ transaction.description }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="m-8">
+      <div class="flex justify-center gap-4">
+        <button
+          class="p-2 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
+          @click="openModal"
+        >
+          Nạp tiền
+        </button>
+      </div>
       <div
-        class="flex gap-4 justify-center mt-4"
-        v-if="transactions.length > 0"
+        v-if="showModal"
+        class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50"
       >
-        <button @click="movePage(false)">
-          <i class="fa fa-arrow-left text-2xl"></i>
-        </button>
-        <div class="flex gap-2">
-          <input
-            class="border p-1 rounded-md w-16"
-            type="number"
-            v-model="currentPage"
-            min="1"
-            @change="handlePageChange"
-          />
-          <div class="p-1">/ {{ this.totalPage }}</div>
+        <div class="bg-white p-8 rounded-lg">
+          <h2 class="text-xl font-bold mb-4">Nạp tiền vào ví</h2>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Số tiền muốn nạp
+            </label>
+            <input
+              v-model="amount"
+              type="number"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div class="flex justify-end">
+            <button
+              class="mr-4 p-2 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
+              @click="deposit"
+            >
+              Nạp tiền
+            </button>
+            <button
+              class="p-2 text-xl font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg"
+              @click="closeModal"
+            >
+              Hủy
+            </button>
+          </div>
         </div>
-        <button @click="movePage(true)">
-          <i class="fa fa-arrow-right text-2xl"></i>
-        </button>
       </div>
-      <div v-else class="text-center italic">Hiện chưa có giao dịch nào</div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "TutorProfilePayment",
+  props: ["currentUser"],
   data() {
     return {
-      totalPage: 100,
-      pageSize: 10,
-      currentPage: 1,
-      user: {
-        balance: 100000,
-      },
-      transactions: [
-        {
-          id: 1,
-          code: 129389102,
-          date: "2024-01-01 12:00:01",
-          amount: 80000,
-          description: "Nap cho slot 1",
-        },
-        {
-          id: 2,
-          code: 2189479,
-          date: "2024-01-03 12:00:01",
-          amount: -80000,
-          description: "Tru tien slot 1",
-        },
-      ],
+      showModal: false,
+      amount: 0,
     };
   },
   methods: {
-    getAmountStyle(amount) {
-      let css = "font-bold";
-      if (amount < 0) {
-        return css + " text-red-400";
-      } else {
-        return css + " text-green-400";
-      }
+    openModal() {
+      this.showModal = true;
     },
-    async handlePageChange() {
-      if (this.currentPage > this.totalPage) {
-        this.currentPage = this.totalPage;
-      }
-      if (this.currentPage < 1) {
-        this.currentPage = 1;
-      }
-      //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
+    closeModal() {
+      this.showModal = false;
     },
-    async movePage(forward) {
-      if (forward && this.currentPage < this.totalPage) {
-        this.currentPage++;
-        await this.handlePageChange();
-      } else if (!forward && this.currentPage > 1) {
-        this.currentPage--;
-        await this.handlePageChange();
+    async deposit() {
+      try {
+        const response = await axios.post(
+          import.meta.env.VITE_API_URL + "/api/User/deposit",
+          { amount: this.amount },
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        );
+        if (response.data) {
+          this.currentUser.balance = response.data.newBalance;
+          this.closeModal();
+        }
+      } catch (error) {
+        console.error("Failed to deposit money:", error);
       }
     },
   },
 };
 </script>
 
-<style scoped>
-tr td,
-th {
-  padding: 0.5rem 2rem 0.5rem 2rem;
-  border: solid 1px #ffffff;
-}
+<style>
+/* Add any additional styles if necessary */
 </style>

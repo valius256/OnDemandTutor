@@ -1,17 +1,37 @@
 <!-- SlotDetail.vue -->
 <template>
   <div>
-    <div
+    <button
       v-for="slot in slots"
       :key="slot.id"
       :class="slotClass(slot)"
       :style="slotStyle(slot)"
+      @click="viewDetail(slot)"
     >
-      <span v-if="slotHeight(slot) > 45">
-        {{ formatTime(slot.startTime) }}<br />
-        {{ formatTime(slot.endTime) }}
-      </span>
-    </div>
+      <div class="absolute inset-0" v-if="slot.slot.isOnline">
+        <div class="relative">
+          <div
+            class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"
+          ></div>
+        </div>
+      </div>
+      <div v-if="slotHeight(slot) > 45">
+        <div v-if="slotHeight(slot) > 90 && slot.slot.class" class="font-bold">
+          {{ slot.slot.class.name }}
+        </div>
+        <div
+          v-if="slotHeight(slot) > 90 && !slot.slot.class"
+          class="font-bold italic"
+        >
+          {{ slot.slot.subject.name }}
+        </div>
+        {{ formatTime(slot.slot.startTime) }}<br />
+        {{ formatTime(slot.slot.endTime) }}
+        <div v-if="slotHeight(slot) > 180" class="italic">
+          Gia sư: {{ slot.slot.createdBy.lastName }}
+        </div>
+      </div>
+    </button>
   </div>
 </template>
 
@@ -21,6 +41,7 @@ export default {
     slots: Array,
     shiftZoomSize: Number,
     getDistanceInMin: Function,
+    viewDetail: Function,
   },
   methods: {
     formatTime(dateStr) {
@@ -35,8 +56,8 @@ export default {
       )}`;
     },
     slotStyle(slot) {
-      const startTime = new Date(slot.startTime);
-      const endTime = new Date(slot.endTime);
+      const startTime = new Date(slot.slot.startTime);
+      const endTime = new Date(slot.slot.endTime);
       const durationInHour = (endTime - startTime) / 3600000;
       const distanceInMin = this.getDistanceInMin(this.shiftZoomSize);
       const top =
@@ -47,8 +68,8 @@ export default {
       return { top: `${top}px`, height: `${height}px` };
     },
     slotHeight(slot) {
-      const startTime = new Date(slot.startTime);
-      const endTime = new Date(slot.endTime);
+      const startTime = new Date(slot.slot.startTime);
+      const endTime = new Date(slot.slot.endTime);
       return (
         (((endTime - startTime) / 3600000) * 40 * 60) /
         this.getDistanceInMin(this.shiftZoomSize)
@@ -56,14 +77,22 @@ export default {
     },
     getSlotStyle(slot) {
       let bg = "";
-      if (slot.paidStatus == "InDebt") {
+      if (
+        slot.paymentStatus == 0 &&
+        this.compareDate(new Date(slot.slot.startTime), new Date()) < 0
+      ) {
         bg = "bg-red-400";
-      } else if (slot.paidStatus == "Charged") {
+      } else if (
+        slot.paymentStatus == 1 &&
+        this.compareDate(new Date(slot.slot.endTime), new Date()) < 0
+      ) {
         bg = "bg-green-400";
+      } else if (slot.paymentStatus == 1) {
+        bg = "bg-blue-400";
       } else {
         bg = "bg-gray-400";
       }
-      return bg + " flex justify-center items-center";
+      return bg + " flex justify-center items-center ";
     },
   },
 };
