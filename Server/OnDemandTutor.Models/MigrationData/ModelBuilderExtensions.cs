@@ -16,10 +16,10 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 1,
                     FireBaseid = "firebaseid1",
-                    FirstName = "Nguyễn",
-                    LastName = "Văn A",
+                    FirstName = "Admin",
+                    LastName = "",
                     Phone = "0123456789",
-                    Email = "nguyenvana@example.com",
+                    Email = "thisisadmin@gmail.com",
                     Address = "123 Đường Chính",
                     AvatarImageUrl = "http://example.com/avatar1.png",
                     Dob = new DateTime(1990, 1, 1),
@@ -117,8 +117,52 @@ namespace OnDemandTutor.Models.MigrationData
                     ScheduleDesciption = "Có mặt cả ngày",
                     Password = "matkhau123",
                     Sex = Sex.Male,
-                    IsActive = false
-                }
+                    IsActive = false,
+                },
+                 new User
+                 {
+                     Id = 6,
+                     FireBaseid = "firebaseid6",
+                     FirstName = "Trần",
+                     LastName = "Văn F",
+                     Phone = "0344556877",
+                     Email = "tranvanf@example.com",
+                     Address = "Q9, TPHCM",
+                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/5d5bdfb9faad57c6410f29766fec60bfca7597de07347d3ffe132a28cd36f12c?w=1024&h=1024&pmaid=116002972",
+                     Dob = new DateTime(1975, 5, 5),
+                     Role = RoleStatus.Tutor,
+                     Balance = 50000,
+                     TutorFeePerHour = 60000,
+                     Rating = 4.5,
+                     IdCardImageUrl = "http://example.com/id5.png",
+                     ScheduleDesciption = "T3,T4,T5",
+                     Password = "123456",
+                     Sex = Sex.Male,
+                     IsActive = true,
+                     TutorStatus = TutorStatus.Verified,
+                 },
+                 new User
+                 {
+                     Id = 7,
+                     FireBaseid = "firebaseid7",
+                     FirstName = "Nguyễn",
+                     LastName = "Ngọc G",
+                     Phone = "0344556897",
+                     Email = "nguyenngocg@example.com",
+                     Address = "Q9, TPHCM",
+                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/d42d563313961baf10ebaf79a634d520a08528c709281d5420424ff5e5c09cb8?w=1024&h=1024&pmaid=112257600",
+                     Dob = new DateTime(1999, 5, 5),
+                     Role = RoleStatus.Tutor,
+                     Balance = 50000,
+                     TutorFeePerHour = 45000,
+                     Rating = 4.9,
+                     IdCardImageUrl = "http://example.com/id5.png",
+                     ScheduleDesciption = "T4,T5,T6,T7",
+                     Password = "123456",
+                     Sex = Sex.Female,
+                     IsActive = true,
+                     TutorStatus = TutorStatus.Un_Verified,
+                 }
             );
             #endregion
 
@@ -301,8 +345,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 1,
-                    StartTime = new DateTime(2024,7,15,7,0,0),
-                    EndTime = new DateTime(2024, 7, 15, 8, 30, 0),
+                    StartTime = new DateTime(2024, 7, 20, 18, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 19, 30, 0),
                     CreateById = 2,
                     TeachAddress = "123 Đường Chính",
                     ClassId = 1,
@@ -327,8 +371,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 3,
-                    StartTime = new DateTime(2024, 7, 15, 9, 0, 0),
-                    EndTime = new DateTime(2024, 7, 15, 10, 30, 0),
+                    StartTime = new DateTime(2024, 7, 16, 9, 0, 0),
+                    EndTime = new DateTime(2024, 7, 16, 10, 30, 0),
                     CreateById = 2,
                     TeachAddress = "789 Đường Oak",
                     ClassId = 1,
@@ -355,13 +399,94 @@ namespace OnDemandTutor.Models.MigrationData
                     Id = 5,
                     StartTime = new DateTime(2024, 7, 19, 8, 0, 0),
                     EndTime = new DateTime(2024, 7, 19, 10, 0, 0),
-                    CreateById = 2,
-                    TeachAddress = "111 Đường Cedar",
+                    CreateById = 6,
+                    TeachAddress = "Q9,TPHCM",
                     ClassId = null,
                     SubjectId = 5,
                     IsOnline = true,
                     NumberOfStudents = 4,
                     ActualEndTime = DateTime.Today
+                },
+                new Slot
+                {
+                    Id = 6,
+                    StartTime = new DateTime(2024, 7, 20, 8, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 10, 0, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                new Slot
+                {
+                    Id = 7,
+                    StartTime = new DateTime(2024, 7, 21, 13, 0, 0),
+                    EndTime = new DateTime(2024, 7, 21, 14, 30, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                 new Slot
+                 {
+                     Id = 8,
+                     StartTime = new DateTime(2024, 7, 23, 8, 0, 0),
+                     EndTime = new DateTime(2024, 7, 23, 10, 0, 0),
+                     CreateById = 6,
+                     TeachAddress = "Biên Hòa, Đồng Nai",
+                     ClassId = 3,
+                     SubjectId = 3,
+                     IsOnline = false,
+                     NumberOfStudents = 5,
+                 },
+                new Slot
+                {
+                    Id = 9,
+                    StartTime = new DateTime(2024, 7, 25, 13, 0, 0),
+                    EndTime = new DateTime(2024, 7, 25, 14, 30, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                new Slot
+                {
+                    Id = 10,
+                    StartTime = new DateTime(2024, 7, 15, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 15, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
+                },
+                new Slot
+                {
+                    Id = 11,
+                    StartTime = new DateTime(2024, 7, 17, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 17, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
+                },
+                new Slot
+                {
+                    Id = 12,
+                    StartTime = new DateTime(2024, 7, 20, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
                 }
             );
 
@@ -622,7 +747,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
                 new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
                 new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
-                
+
             // Thêm nếu cần
             );
 
@@ -690,12 +815,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5, TutorId = 1 },
-                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2, TutorId = 2 },
-                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, TutorId = 1 },
-                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4, TutorId = 2 },
-                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4, TutorId = 1 }
-                // Add more as needed
+                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5 },
+                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
+                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
+                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4},
+                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 }
             );
 
             #endregion
@@ -829,12 +953,12 @@ namespace OnDemandTutor.Models.MigrationData
              },
 
               new EmailTemplate
-                   {
-                       Id = 7,
-                       Name = "Request_Withdraw_Notification",
-                       Status = true,
-                       Subject = "Withdrawal Request Received",
-                       Body = @"
+              {
+                  Id = 7,
+                  Name = "Request_Withdraw_Notification",
+                  Status = true,
+                  Subject = "Withdrawal Request Received",
+                  Body = @"
                     <!DOCTYPE html>
                     <html lang=""en"">
                     <head>
@@ -887,9 +1011,9 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
                 ",
-                       Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
-                       Description = "Email template for notifying users about their withdrawal request."
-                   },
+                  Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
+                  Description = "Email template for notifying users about their withdrawal request."
+              },
               new EmailTemplate
               {
                   Id = 8,
@@ -952,11 +1076,11 @@ namespace OnDemandTutor.Models.MigrationData
                   Description = "Email template for notifying users about the status of their withdrawal request."
               },
             new EmailTemplate
-                {
-                    Id = 9,
-                    Name = "Slot_Payment_Reminder",
-                    Status = true,
-                    Body = @"Dear [Name],
+            {
+                Id = 9,
+                Name = "Slot_Payment_Reminder",
+                Status = true,
+                Body = @"Dear [Name],
 
 You currently have more than 15% of your slots unpaid out of the total for class [ClassId].
 
@@ -964,37 +1088,37 @@ Kindly settle the payments at your earliest convenience.
 
 Best regards,
 The OnDemandTutor Team",
-                    Params = "[Name], [ClassId]",
-                    Subject = "Reminder: Pending Payment for Slots",
-                    Description = "Reminder email for pending slot payments.",
-                    UpdatedById = 0,
-                    CreatedDate = null, // Set to appropriate value
-                    UpdatedDate = null, // Set to appropriate value
-                    DeletedDate = null, // Set to appropriate value
-                    RecordStatus = 0
-                },
+                Params = "[Name], [ClassId]",
+                Subject = "Reminder: Pending Payment for Slots",
+                Description = "Reminder email for pending slot payments.",
+                UpdatedById = 0,
+                CreatedDate = null, // Set to appropriate value
+                UpdatedDate = null, // Set to appropriate value
+                DeletedDate = null, // Set to appropriate value
+                RecordStatus = 0
+            },
             new EmailTemplate
-                {
-                    Id = 10,
-                    Name = "High_Unpaid_Slots_Warning",
-                    Status = true,
-                    Body = @"Dear [Name],
+            {
+                Id = 10,
+                Name = "High_Unpaid_Slots_Warning",
+                Status = true,
+                Body = @"Dear [Name],
 
                         This is to inform you that you have more than 20% of your slots unpaid out of the total for class [ClassId].
                         So we have to removed you from class
                         Regards,
                         The OnDemandTutor Team",
-                    Params = "[Name], [ClassId]",
-                    Subject = "Warning: High Number of Unpaid Slots",
-                    Description = "Warning email for high number of unpaid slots.",
-                    UpdatedById = 0,
-                    CreatedDate = DateTime.Now, 
-                    UpdatedDate = DateTime.Now, 
-                    DeletedDate = DateTime.Now, 
-                    RecordStatus = 0
-                }
+                Params = "[Name], [ClassId]",
+                Subject = "Warning: High Number of Unpaid Slots",
+                Description = "Warning email for high number of unpaid slots.",
+                UpdatedById = 0,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                DeletedDate = DateTime.Now,
+                RecordStatus = 0
+            }
             );
-            
+
             #endregion
 
             #region RequestWithDraw

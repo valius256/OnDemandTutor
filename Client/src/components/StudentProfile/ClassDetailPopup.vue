@@ -238,7 +238,7 @@ export default {
                             teachAddress: slot.teachAddress,
                             isOnline: slot.isOnline,
                             user: slot.user,
-                            createdBy: this.class.user,
+                            createdBy: this.class.tutor,
                             subject: this.class.subject,
                             class : this.class
                         },

@@ -1,8 +1,7 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.Class
+﻿namespace OnDemandTutor.Models.Dtos.Class
 {
-	public class QueryClassDTO
-	{
+    public class QueryClassDTO
+    {
         public string? Name { get; set; }
         public int? SubjectId { get; set; }
         public string? UserName { get; set; }

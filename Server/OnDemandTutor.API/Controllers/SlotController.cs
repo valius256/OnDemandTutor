@@ -82,4 +82,14 @@ public class SlotController : ControllerBase
         return NoContent();
 
     }
+    
+    [Authorize]
+    [HttpPost("enroll-slot")]
+    [ProducesResponseType( 200)]
+    public async Task<IActionResult> EnrollSlot([FromBody] EnrollSlotDto request)
+    {
+        var result = await _slotService.EnrollForSlot(request.studentId, request.slotId );
+        return Ok(result);
+    }
+    
 }

@@ -10,7 +10,6 @@ public class StudentClassEntityTypeConfiguration : IEntityTypeConfiguration<Stud
     {
         builder.HasKey(sc => sc.Id);
         builder.Property(sc => sc.Id).ValueGeneratedOnAdd();
-        builder.Property(sc => sc.TutorId).IsRequired(false);
 
         builder.Property(sc => sc.Rating).HasDefaultValue(5);
 

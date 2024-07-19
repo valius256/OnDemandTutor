@@ -2,7 +2,6 @@
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
-using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;

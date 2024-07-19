@@ -1,9 +1,8 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.FAQ
+﻿namespace OnDemandTutor.Models.Dtos.FAQ
 {
-	public class QueryFAQDTO
-	{
-        public string? Keyword { get;set; }
+    public class QueryFAQDTO
+    {
+        public string? Keyword { get; set; }
         public string? Question { get; set; }
         public string? Answer { get; set; }
         public DateTime? CreateFrom { get; set; }

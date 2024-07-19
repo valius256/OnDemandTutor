@@ -165,7 +165,12 @@ export default {
           } else {
             localStorage.setItem("token", response.data.data.message);
             this.updateApp();
-            this.$router.push("/")
+            var user = await this.getUserFromToken()
+            if (user.role < 2) {
+              this.$router.push("/")
+            }  else {
+              this.$router.push("/admin/transactions/statistic")
+            }
           }
         }
       } catch (e) {

@@ -13,4 +13,8 @@ public interface ISlotServices
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
     Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
     Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
+    Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
+    Task<bool> EnrollForSlot(int studentId, int slotId);
+    Task<SlotConflictDto> IsSlotConflict(int slotId, int studentId);    
+    Task<List<GetSlotWithSlotStudentDto>?> GetListSlotOfStudentByStudentId(int studentId);
 }

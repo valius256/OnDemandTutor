@@ -71,7 +71,7 @@
                                 <li>
                                     <span class="font-bold">Gia sư :</span>
                                     <button class="ml-3 font-bold text-blue-400 underline">
-                                        {{ (class_.user.firstName ?? "") ?? (class_.user.lastName ?? "") }}
+                                        {{ (class_.tutor.firstName ?? "") ?? (class_.tutor.lastName ?? "") }}
                                     </button>
                                 </li>
                                 <li>
@@ -102,7 +102,7 @@
                                 <li>
                                     <span class="font-bold">Giá cả :</span>
                                     <span class="ml-3 text-red-500 font-bold">
-                                        {{ class_.user.tutorFeePerHour.toLocaleString('vi-VN', {
+                                        {{ class_.tutor.tutorFeePerHour.toLocaleString('vi-VN', {
                                 style: 'currency',
                                 currency: 'VND',
                             }) }} / h

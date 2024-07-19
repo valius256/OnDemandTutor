@@ -18,7 +18,7 @@ namespace OnDemandTutor.DataAccess.Repository
         {
             var classQuery = dbSet
                 .Include(c => c.Subject)
-                .Include(c => c.User)
+                .Include(c => c.Tutor)
                 .Include(c => c.Slots)
                 .AsQueryable();
 
@@ -51,12 +51,12 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (pagingModel.Filter.MinFeePerHour.HasValue)
                 {
-                    classQuery = classQuery.Where(c => c.User.TutorFeePerHour >= pagingModel.Filter.MinFeePerHour.Value);
+                    classQuery = classQuery.Where(c => c.Tutor.TutorFeePerHour >= pagingModel.Filter.MinFeePerHour.Value);
                 }
 
                 if (pagingModel.Filter.MaxFeePerHour.HasValue)
                 {
-                    classQuery = classQuery.Where(c => c.User.TutorFeePerHour <= pagingModel.Filter.MaxFeePerHour.Value);
+                    classQuery = classQuery.Where(c => c.Tutor.TutorFeePerHour <= pagingModel.Filter.MaxFeePerHour.Value);
                 }
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Method))
@@ -66,7 +66,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.UserName))
                 {
-                    classQuery = classQuery.Where(c => (c.User.FirstName + " " + c.User.LastName).Contains(pagingModel.Filter.UserName));
+                    classQuery = classQuery.Where(c => (c.Tutor.FirstName + " " + c.Tutor.LastName).Contains(pagingModel.Filter.UserName));
                 }
             }
 
@@ -88,12 +88,12 @@ namespace OnDemandTutor.DataAccess.Repository
         {
             var classQuery = dbSet
                 .Include(c => c.Subject)
-                .Include(c => c.User)
+                .Include(c => c.Tutor)
                 .Include(c => c.Slots)
                 .Include(c => c.StudentClasses)
                 .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId));
 
-           
+
 
             limit = limit > 0 ? limit : 10;
             page = page > 0 ? page : 1;
@@ -107,9 +107,9 @@ namespace OnDemandTutor.DataAccess.Repository
         {
             var classQuery = dbSet
                 .Include(c => c.Subject)
-                .Include(c => c.User)
+                .Include(c => c.Tutor)
                 .Include(c => c.Slots)
-                .Where(c => c.User.Id == tutorId);
+                .Where(c => c.Tutor.Id == tutorId);
 
             limit = limit > 0 ? limit : 10;
             page = page > 0 ? page : 1;
@@ -119,11 +119,12 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return pagedResult;
         }
+
         public async Task<Class?> GetClassWithSlotsByIdAsync(int id)
         {
             return await dbSet
                 .Include(c => c.Subject)
-                .Include(c => c.User)
+                .Include(c => c.Tutor)
                 .Include(c => c.Slots)
                 .Include(c => c.StudentClasses)
                     .ThenInclude(sc => sc.Student)

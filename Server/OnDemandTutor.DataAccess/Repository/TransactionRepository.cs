@@ -41,7 +41,6 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
         int limit = transactionFilter.Limit > 0 ? transactionFilter.Limit : 10;
         int page = transactionFilter.Page > 0 ? transactionFilter.Page : 1;
         int skip = (page - 1) * limit;
-        transactionQuery = transactionQuery.Skip(skip).Take(limit);
 
         var filteredUsers = await transactionQuery
             .AsNoTracking()

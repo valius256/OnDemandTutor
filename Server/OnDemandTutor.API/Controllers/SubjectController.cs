@@ -50,7 +50,7 @@ namespace OnDemandTutor.API.Controllers
             }
 
             var createdSubject = await _subjectService.CreateSubjectAsync(subjectCreateDto);
-            return CreatedAtAction(nameof(GetSubjectById),new { Id = createdSubject.Id }, createdSubject);
+            return CreatedAtAction(nameof(GetSubjectById), new { Id = createdSubject.Id }, createdSubject);
         }
 
         [Authorize]

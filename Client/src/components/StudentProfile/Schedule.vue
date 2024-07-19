@@ -65,7 +65,7 @@
         </div>
         <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup"/>
         <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup" :notOverflow="true">
-            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup"/>
+            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh"/>
         </generic-popup>
     </div>
 

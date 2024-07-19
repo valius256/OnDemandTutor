@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using OnDemandTutor.Models;
 using OnDemandTutor.Models.Paging;
 using System.Linq.Expressions;
-using OnDemandTutor.Models;
 
 namespace OnDemandTutor.DataAccess.IRepository;
 

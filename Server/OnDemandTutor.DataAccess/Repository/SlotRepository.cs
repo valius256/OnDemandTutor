@@ -22,7 +22,7 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 if (request.Filter.ClassId.HasValue)
                 {
-                    query = query.Where(s => s.ClassId ==  request.Filter.ClassId);
+                    query = query.Where(s => s.ClassId == request.Filter.ClassId);
                 }
                 if (request.Filter.UserId.HasValue)
                 {
@@ -101,7 +101,7 @@ namespace OnDemandTutor.DataAccess.Repository
         }
 
 
-        public async Task<GetSlotWithSlotStudentDto?> GetSlotWithStudentById(int id)
+        public async Task<GetSlotWithSlotStudentDto?> GetSlotWithSlotStudentStudentById(int id)
         {
             var slot = await dbSet
                 .Include(ld => ld.SlotStudents)
@@ -110,6 +110,16 @@ namespace OnDemandTutor.DataAccess.Repository
             return slot?.Adapt<GetSlotWithSlotStudentDto>();
         }
 
+        public async Task<List<GetSlotWithSlotStudentDto>?> GetSlotWithSlotStudentByStudentId(int studentId)
+        {
+            var listSlot = await dbSet
+                .Include(ld => ld.SlotStudents)
+                .Where(ld => ld.SlotStudents.Any(ss => ss.UserId == studentId))
+                .ToListAsync();
+
+
+            return listSlot?.Adapt<List<GetSlotWithSlotStudentDto>>();
+        }
     }
 }
 

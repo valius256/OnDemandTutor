@@ -21,6 +21,7 @@ import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue";
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import WithdrawRequestPage from "../pages/Operators/WithdrawRequestsPage.vue";
+import MainDashboard from "../pages/Operators/MainDashboard.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
@@ -195,7 +196,7 @@ const routes = [
     children: [
       {
         path: "statistic",
-        component: SubjectManagementPage,
+        component: MainDashboard,
       },
       {
         path: "withdraw",
