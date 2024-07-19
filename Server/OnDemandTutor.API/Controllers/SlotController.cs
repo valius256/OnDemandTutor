@@ -43,11 +43,11 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [ProducesResponseType(typeof(CreateSlotsDtos), 200)]
+    [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
     {
         var createdSlot = await _slotService.CreateSlotAsync(slotDto);
-        return CreatedAtAction(nameof(GetSlotById), createdSlot);
+        return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
 
     }
 

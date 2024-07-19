@@ -65,7 +65,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return slot;
         }
 
-        public async Task<CreateSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
+        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
         {
 
             var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
@@ -75,7 +75,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _unitOfWork.SaveChangesAsync();
 
             // Map the created entity back to CreateSlotsDtos and return it
-            var createdSlotDto = createdSlotEntity.Adapt<CreateSlotsDtos>(); // Mapster mapping
+            var createdSlotDto = createdSlotEntity.Adapt<GetSlotsDtos>(); // Mapster mapping
 
             return createdSlotDto;
         }

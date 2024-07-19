@@ -7,20 +7,19 @@
       <div class="flex gap-4 mb-2">
         <div class="text-xl font-bold py-1">
           <span class="mr-4">Số dư hiện tại : </span>
-          <span class="text-green-200 p-1 bg-green-600 rounded-lg"
-            >{{
-              user.balance.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })
-            }}
-          </span>
+          <span class="text-green-200 p-1 bg-green-600 rounded-lg">{{
+            balance.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })
+          }}</span>
         </div>
-        <button
+        <router-link
+          to="/tutor/payment"
           class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
         >
           Nạp tiền
-        </button>
+        </router-link>
       </div>
       <div v-if="upcomingSlot">
         <div class="p-4 bg-blue-100 rounded-lg">
@@ -28,43 +27,52 @@
             <span class="font-bold">Trạng thái : </span>
             <span
               :class="
-                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
-                  .style
+                getSlotStatus(
+                  upcomingSlot.slot.startTime,
+                  upcomingSlot.slot.endTime
+                ).style
               "
             >
               {{
-                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
-                  .display
+                getSlotStatus(
+                  upcomingSlot.slot.startTime,
+                  upcomingSlot.slot.endTime
+                ).display
               }}
             </span>
           </div>
           <div class="flex place-content-between mt-4">
             <div>
               <span class="mr-4 font-bold">Bắt đầu :</span>
-              <span class="mr-4">{{ upcomingSlot.startTime }}</span>
+              <span class="mr-4">{{
+                beautifyDatetime(upcomingSlot.slot.startTime)
+              }}</span>
             </div>
             <div>
               <span class="mr-4 font-bold">Kết thúc :</span>
-              <span class="mr-4">{{ upcomingSlot.endTime }}</span>
+              <span class="mr-4">{{
+                beautifyDatetime(upcomingSlot.slot.endTime)
+              }}</span>
             </div>
             <div>
               <span class="mr-4 font-bold">Tổng thời lượng :</span>
               <span class="mr-4"
-                >{{ upcomingSlot.durationInHour?.toFixed(2) }} tiếng</span
+                >{{ calcDuration(upcomingSlot).toFixed(2) }} tiếng</span
               >
             </div>
           </div>
         </div>
         <div class="font-bold italic mt-4 text-gray-500">
-          <div v-if="upcomingSlot.paidStatus == 'NotCharged'">
+          <div v-if="upcomingSlot.paymentStatus == 0">
             *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý
-            khách. Để trách những rắc rối về sau, bạn vui lòng nạp tiền vào ví
+            khách. Để tránh những rắc rối về sau, bạn vui lòng nạp tiền vào ví
             đầy đủ trước khi bắt đầu vào học nhé!<br />
             *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
             <span class="text-red-500">
               {{
                 (
-                  upcomingSlot.user?.salary * upcomingSlot.durationInHour
+                  upcomingSlot.slot.createdBy?.tutorFeePerHour *
+                  calcDuration(upcomingSlot)
                 ).toLocaleString("vi-VN", {
                   style: "currency",
                   currency: "VND",
@@ -78,79 +86,60 @@
     </div>
     <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
       Thời khóa biểu
-      <Button class="ml-4" @click="showModal = true">Thêm slot</Button>
     </div>
-    <time-table :slots="slots" />
+    <div class="flex justify-end mr-8 mb-4">
+      <button
+        class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-400 rounded-lg"
+        @click="openAddSlotModal"
+      >
+        Thêm slot
+      </button>
+    </div>
+    <time-table
+      :slots="slots"
+      :fetching="getUserSlots"
+      :viewDetail="openSlotDetailPopup"
+    />
     <add-slot-modal
       :showModal="showModal"
       @close="showModal = false"
       @add="addNewSlot"
+      :currentUser="currentUser"
     />
+    <generic-popup
+      v-if="isOpenSlotDetailPopup"
+      title="Chi tiết buổi học"
+      :closeFunction="closeSlotDetailPopup"
+    >
+      <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
+    </generic-popup>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import TimeTable from "./TimeTable.vue";
 import AddSlotModal from "./AddSlotModal.vue";
+import GenericPopup from "../common/GenericPopup.vue";
+import SlotDetailPopup from "./SlotDetailPopup.vue";
 
 export default {
-  components: { TimeTable, AddSlotModal },
+  components: { TimeTable, GenericPopup, SlotDetailPopup, AddSlotModal },
   name: "TutorProfileSchedule",
+  props: ["currentUser"],
   data() {
     return {
+      balance: 0,
+      from: null,
+      to: null,
+      isOpenSlotDetailPopup: false,
+      slots: [],
+      upcomingSlot: null,
       showModal: false,
-      user: {
-        balance: 100000,
-      },
-      slots: [
-        {
-          startTime: "2024-06-22 16:50:00",
-          endTime: "2024-06-22 17:30:00",
-          paidStatus: "NotCharged",
-          user: {
-            salary: 80000,
-          },
-        },
-        {
-          startTime: "2024-06-18 10:00:00",
-          endTime: "2024-06-18 11:30:00",
-          paidStatus: "Charged",
-          user: {
-            salary: 120000,
-          },
-        },
-        {
-          startTime: "2024-06-17 7:00:00",
-          endTime: "2024-06-17 9:30:00",
-          paidStatus: "InDebt",
-          user: {
-            salary: 120000,
-          },
-        },
-        {
-          startTime: "2024-06-19 18:30:00",
-          endTime: "2024-06-19 20:00:00",
-          paidStatus: "NotCharged",
-          user: {
-            salary: 120000,
-          },
-        },
-      ],
-      upcomingSlot: {
-        startTime: null,
-        endTime: null,
-        user: null,
-        paidStatus: "",
-      },
+      selectingSlot: null,
     };
   },
   methods: {
-    addNewSlot(newSlot) {
-      // Handle adding the new slot to your data array
-      this.slots.push(newSlot);
-      // Optionally, you can update upcomingSlot if needed
-      this.upcomingSlot = this.getClosestSlot(this.slots);
-    },
     getStatusDisplay(status) {
       let css = "px-4 py-1 text-white font-bold rounded-lg text-center";
       switch (status) {
@@ -176,38 +165,18 @@ export default {
           };
       }
     },
-    getClosestSlot(slots) {
-      const now = new Date();
-
-      // Filter out slots that have already ended
-      const futureSlotsOnly = slots.filter((slot) => {
-        const endTime = new Date(slot.endTime);
-        return endTime > now;
-      });
-
-      // Sort the future slots by their distance from the current time
-      const sortedSlots = futureSlotsOnly
-        .map((slot) => {
-          const startTime = new Date(slot.startTime);
-          const endTime = new Date(slot.endTime);
-          const user = slot.user;
-          const paidStatus = slot.paidStatus;
-          const startDistance = startTime - now;
-          const endDistance = endTime - now;
-          const durationInHour = (endDistance - startDistance) / 3600000;
-          return {
-            ...slot,
-            startDistance,
-            endDistance,
-            durationInHour,
-            user,
-            paidStatus,
-          };
-        })
-        .sort((a, b) => a.startDistance - b.startDistance);
-
-      // Return the slot with the closest start time in the future
-      return sortedSlots.length > 0 ? sortedSlots[0] : null;
+    async getClosestSlot() {
+      const response = await axios.get(
+        import.meta.env.VITE_API_URL + "/api/SlotTutor/get-upcoming-slot",
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.token,
+          },
+        }
+      );
+      if (response.data) {
+        this.upcomingSlot = response.data;
+      }
     },
     getSlotStatus(startTime, endTime) {
       let generalCss = "p-2 text-white font-bold rounded-lg";
@@ -231,11 +200,76 @@ export default {
         };
       }
     },
+    async fetchBalance() {
+      const balanceResponse = await axios.get(
+        import.meta.env.VITE_API_URL + "/api/User/balance",
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.token,
+          },
+        }
+      );
+      if (balanceResponse.data) {
+        this.balance = balanceResponse.data.data.balance;
+      }
+    },
+    async getUserSlots(from, to) {
+      let queryString = "?";
+      if (from != null) {
+        queryString += "From=" + from;
+      }
+      if (to != null) {
+        queryString += "&To=" + to;
+      }
+      const response = await axios.get(
+        import.meta.env.VITE_API_URL +
+          "/api/SlotTutor/get-slots-of-tutors" +
+          queryString,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.token,
+          },
+        }
+      );
+      if (response.data) {
+        this.slots = response.data;
+      }
+    },
+    addNewSlot(newSlot) {
+      this.slots.push(newSlot);
+      this.upcomingSlot = this.getClosestSlot(this.slots);
+    },
+    async refresh() {
+      try {
+        await this.getUserSlots(this.from, this.to);
+        await this.fetchBalance();
+        await this.getClosestSlot();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    openSlotDetailPopup(slot) {
+      this.selectingSlot = slot;
+      this.isOpenSlotDetailPopup = true;
+    },
+    closeSlotDetailPopup() {
+      this.isOpenSlotDetailPopup = false;
+    },
+    calcDuration(slot) {
+      const startTime = new Date(slot.slot.startTime);
+      const endTime = new Date(slot.slot.endTime);
+      return (endTime - startTime) / 3600000;
+    },
+    openAddSlotModal() {
+      this.showModal = true;
+    },
   },
   mounted() {
-    this.upcomingSlot = this.getClosestSlot(this.slots);
+    this.refresh();
   },
 };
 </script>
 
-<style></style>
+<style>
+/* Add any additional styles if necessary */
+</style>
