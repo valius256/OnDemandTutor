@@ -44,7 +44,7 @@ public class SlotController : ControllerBase
     [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
-    public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDtos slotDto)
+    public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDto slotDto)
     {
         var createdSlot = await _slotService.CreateSlotAsync(slotDto);
         return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
@@ -53,8 +53,8 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(UpdateSlotDtos), 200)]
-    public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDtos slotDto)
+    [ProducesResponseType(typeof(UpdateSlotDto), 200)]
+    public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDto slotDto)
     {
         if (id != slotDto.Id)
         {
@@ -91,5 +91,6 @@ public class SlotController : ControllerBase
         var result = await _slotService.EnrollForSlot(request.studentId, request.slotId );
         return Ok(result);
     }
+    
     
 }

@@ -33,8 +33,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     result.EndTime = classSlots[classSlots.Count - 1].EndTime;
                 }
             }
+
             return mappedResult;
         }
+
         public async Task<PagedResult<GetClassDtos>> GetClassesOfStudent(int studentId, int page, int limit)
         {
             var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfStudent(studentId, page, limit);
@@ -49,8 +51,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     result.EndTime = classSlots[classSlots.Count - 1].EndTime;
                 }
             }
+
             return mappedResult;
         }
+
         public async Task<PagedResult<GetClassDtos>> GetClassesOfTutor(int studentId, int page, int limit)
         {
             var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfTutor(studentId, page, limit);
@@ -65,8 +69,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     result.EndTime = classSlots[classSlots.Count - 1].EndTime;
                 }
             }
+
             return mappedResult;
         }
+
         public async Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id)
         {
             var classEntity = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(id);
@@ -75,13 +81,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             {
                 throw new Exception("Class not found");
             }
+
             var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
 
-            if (rs is not null)
-            {
-                rs.StartTime = classEntity.Slots.First().StartTime;
-                rs.EndTime = classEntity.Slots.Last().EndTime;
-            }
+            // if (rs is not null)
+            // {
+            //     rs.StartTime = classEntity.Slots.First().StartTime;
+            //     rs.EndTime = classEntity.Slots.Last().EndTime;
+            // }
 
             return rs;
         }
@@ -102,6 +109,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     _unitOfWork.SlotRepository.Update(mapper);
                 }
             }
+
             await _unitOfWork.SaveChangesAsync();
             return rs;
         }
@@ -121,6 +129,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             {
                 throw new Exception("Class not found");
             }
+
             _unitOfWork.ClassRepository.Remove(classEntity);
             await _unitOfWork.SaveChangesAsync();
             return true;
@@ -129,13 +138,30 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         public async Task CronForAutoChangeStatusClassAndSlot()
         {
             var classesToUpdate = await _unitOfWork.ClassRepository
-                .WhereAsync(cl => cl.Status == ClassStatus.NotStart ||
-                                  cl.Status == ClassStatus.OnGoing);
+                .WhereAsync(cl => cl.Status == ClassStatus.NotStart || cl.Status == ClassStatus.OnGoing);
+            var slotsToUpdate = await _unitOfWork.SlotRepository
+                .WhereAsync(sl => sl.SlotStatus == SlotStatus.NotYet || sl.SlotStatus == SlotStatus.OnGoing);
+
+            foreach (var slot in slotsToUpdate)
+            {
+                if (slot.StartTime <= DateTime.Now && slot.SlotStatus == SlotStatus.NotYet)
+                {
+                    slot.SlotStatus = SlotStatus.OnGoing;
+                }
+
+                if (slot.EndTime <= DateTime.Now && slot.SlotStatus == SlotStatus.OnGoing)
+                {
+                    slot.SlotStatus = SlotStatus.Finished;
+                }
+            }
+
+            // Update slots in bulk
+            _unitOfWork.SlotRepository.UpdateRange(slotsToUpdate);
 
             foreach (var classModel in classesToUpdate)
             {
-                // change for slot first 
                 bool allSlotsFinished = true;
+
                 foreach (var slot in classModel.Slots.ToList())
                 {
                     if (slot.StartTime <= DateTime.Now && slot.SlotStatus == SlotStatus.NotYet)
@@ -152,15 +178,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     {
                         allSlotsFinished = false;
                     }
-
-                    var slotStatusUpdateModel = slot.Adapt<Models.Models.Slot>();
-                    _unitOfWork.SlotRepository.Update(slotStatusUpdateModel);
-                    await _unitOfWork.SaveChangesAsync();
                 }
 
-
-                // when all slot reach to finished , change class status to finished
-                if (classModel.Status == ClassStatus.NotStart && classModel.Slots.Any(sl => sl.SlotStatus == SlotStatus.OnGoing))
+                // Update class status
+                if (classModel.Status == ClassStatus.NotStart &&
+                    classModel.Slots.Any(sl => sl.SlotStatus == SlotStatus.OnGoing))
                 {
                     classModel.Status = ClassStatus.OnGoing;
                 }
@@ -169,12 +191,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 {
                     classModel.Status = ClassStatus.Finished;
                 }
-
-                _unitOfWork.ClassRepository.Update(classModel);
             }
 
+            // Update classes in bulk
+            _unitOfWork.ClassRepository.UpdateRange(classesToUpdate);
+
+            // Save all changes in one go
             await _unitOfWork.SaveChangesAsync();
         }
-    }
-}
 
+        public Task<bool> EnrollCLass(int classId, int slotId)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+}

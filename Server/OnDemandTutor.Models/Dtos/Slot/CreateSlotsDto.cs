@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.Slot
 {
-    public class CreateSlotsDtos
+    public class CreateSlotsDto
     {
         public DateTime StartTime { get; set; }
         public int CreateById { get; set; }

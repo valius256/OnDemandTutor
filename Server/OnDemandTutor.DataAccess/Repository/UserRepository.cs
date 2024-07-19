@@ -250,4 +250,25 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return pagedResult;
     }
 
+    public async Task<bool> RecalculateTutorRating(int tutorId)
+    {
+        var tutor = await dbSet.Include(u => u.Classes)
+            .ThenInclude(u => u.StudentClasses)
+            .Include(u => u.Slots)
+            .ThenInclude(u => u.SlotStudents)
+            .Where(u => u.Id == tutorId)
+            .FirstOrDefaultAsync()
+            ;
+        if (tutor == null)
+        {
+            return false; // Tutor not found
+        }
+
+        var ratings = new List<decimal>();
+        foreach (var tutorClassRating in tutor.Classes)
+        {
+            // tutorClassRating.
+        }
+        return true;
+    }
 }

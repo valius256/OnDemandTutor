@@ -12,7 +12,7 @@ public interface ISlotStudentServices
     Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
-    Task CreateSlotStudentIfNotExist(int slotId, int studentId);
+    Task<Models.Models.SlotStudent> CreateSlotStudentIfNotExist(int slotId, int studentId);
     Task<SlotStudentDto> GetSlotStudentById(int slotId);
     Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status);
     Task<bool> SoftDeleteSlotStudent(int slotId, int studentId);

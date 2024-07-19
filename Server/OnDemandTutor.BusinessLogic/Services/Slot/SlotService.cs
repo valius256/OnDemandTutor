@@ -63,9 +63,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return slot;
         }
 
-        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
+        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
         {
-            var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
+            var slotEntity = slotDto.Adapt<CreateSlotsDto>(); // Assuming Mapster is used for mapping
             
             // Add the new Slot entity to repository
             var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
@@ -76,7 +76,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             return createdSlotDto;
         }
-        public async Task<UpdateSlotDtos> UpdateSlotAsync(UpdateSlotDtos slotDto)
+        public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
         {
             // Retrieve the existing slot entity from the database
             var existingSlotEntity = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == slotDto.Id);
@@ -104,7 +104,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _unitOfWork.SaveChangesAsync();
 
             // Return the updated DTO
-            return updatedSlotEntity.Entity.Adapt<UpdateSlotDtos>();
+            return updatedSlotEntity.Entity.Adapt<UpdateSlotDto>();
         }
 
 

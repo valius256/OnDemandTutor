@@ -7,6 +7,7 @@ public class Transaction : BaseEntity
     public int Id { get; set; }
     public string TransactionCode { get; set; }
     public string PaymentMethod { get; set; }
+    public TransactionType TransactionType { get; set; }
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }

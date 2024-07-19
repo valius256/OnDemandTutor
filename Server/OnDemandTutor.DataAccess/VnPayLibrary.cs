@@ -60,7 +60,7 @@ public class VnPayLibrary
         List<int> slotIds = new List<int>();
         if (orderInfoParts.Length > 5)
         {
-            var slotIdParts = orderInfoParts[4].Split(' ');
+            var slotIdParts = orderInfoParts[5].Split(' '); // Corrected to index 5
 
             foreach (var slotIdPart in slotIdParts)
             {
@@ -91,7 +91,8 @@ public class VnPayLibrary
             VnPayResponseCode = vnpResponseCode,
             SlotId = slotIds,
             UserId = userId,
-            Money = decimal.Parse(money),
+            ClassId = classId,
+            Money = (decimal.Parse(money) / 100),
             IsRechargePayment = isRecharge,
             RedirectResult = returnUrl
         };

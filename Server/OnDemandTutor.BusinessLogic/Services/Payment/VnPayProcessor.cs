@@ -26,6 +26,7 @@ public class VnPayProcessor : IPaymentProcessor
             Success = response.Success,
             OrderId = response.TransactionCode,
             UserId = response.UserId,
+            ClassId = response.ClassId,
             SlotId = response.SlotId,
             IsRechargePayment = response.IsRechargePayment,
             Money = response.Money,
