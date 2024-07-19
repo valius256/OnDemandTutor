@@ -13,7 +13,6 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Class
         Task<CreateClassDTO> CreateClassAsync(CreateClassDTO classDto);
         Task<GetClassDtos> UpdateClassAsync(GetClassDtos classDto);
         Task<bool> DeleteClassAsync(int id);
-        Task<GetClassFullDataSlotDto> GetClassWithFullDataSlotId(int id);
         Task CronForAutoChangeStatusClassAndSlot();
     }
 }

@@ -13,13 +13,13 @@ namespace OnDemandTutor.API.Controllers
     [ApiController]
     public class ClassController : ControllerBase
     {
-        private readonly IClassService _classService;
+        private readonly IClassServices _classServices;
         private readonly IAuthServices _authServices;
         private readonly IStudentClassService _studentClassService;
 
-        public ClassController(IClassService classService, IAuthServices authServices, IStudentClassService studentClassService)
+        public ClassController(IClassServices classServices, IAuthServices authServices, IStudentClassService studentClassService)
         {
-            _classService = classService;
+            _classServices = classServices;
             _authServices = authServices;
             _studentClassService = studentClassService;
         }
@@ -41,7 +41,7 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetClassesOfStudent([FromQuery] int page = 1, [FromQuery] int limit = 10)
         {
             var student = await _authServices.GetUserProfileByClaim(HttpContext.User);
-            var classes = await _classService.GetClassesOfStudent(student.Id, page, limit);
+            var classes = await _classServices.GetClassesOfStudent(student.Id, page, limit);
             return Ok(classes);
         }
         [Authorize]
@@ -51,7 +51,7 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetClassesOfTutor([FromQuery] int page = 1, [FromQuery] int limit = 10)
         {
             var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
-            var classes = await _classService.GetClassesOfStudent(tutor.Id, page, limit);
+            var classes = await _classServices.GetClassesOfStudent(tutor.Id, page, limit);
             return Ok(classes);
         }
         [HttpGet("{id}")]
