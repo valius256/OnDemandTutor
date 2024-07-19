@@ -1,5 +1,4 @@
-﻿using System;
-namespace OnDemandTutor.Models.Dtos.StudentSlot
+﻿namespace OnDemandTutor.Models.Dtos.StudentSlot
 {
 	public class UpdateSlotStudentDto
 	{

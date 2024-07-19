@@ -107,7 +107,7 @@ public class AuthServices : IAuthServices
         {
             throw new Exception("Old password is incorrect.");
         }
-        if(changePasswordDto.NewPassword == changePasswordDto.NewPassword)
+        if(changePasswordDto.OldPassword == changePasswordDto.NewPassword)
         {
             throw new Exception("New password similar to the old password, please choose another one.");
         }
@@ -120,6 +120,8 @@ public class AuthServices : IAuthServices
         if (userEntity is not null)
         {
             userEntity.Password = changePasswordDto.NewPassword;
+            _unitOfWorkRepository.UserRepository.Update(userEntity);
+            _unitOfWorkRepository.SaveChanges();
             return true;
         }
      

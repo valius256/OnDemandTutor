@@ -252,23 +252,40 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
     public async Task<bool> RecalculateTutorRating(int tutorId)
     {
-        var tutor = await dbSet.Include(u => u.Classes)
-            .ThenInclude(u => u.StudentClasses)
+        var tutor = await dbSet
+            .Include(u => u.Classes)
+            .ThenInclude(c => c.StudentClasses)
             .Include(u => u.Slots)
-            .ThenInclude(u => u.SlotStudents)
-            .Where(u => u.Id == tutorId)
-            .FirstOrDefaultAsync()
-            ;
+            .ThenInclude(s => s.SlotStudents)
+            .FirstOrDefaultAsync(u => u.Id == tutorId);
+
         if (tutor == null)
         {
-            return false; // Tutor not found
+            return false; 
+        }
+        
+        var ratings = new List<double>();
+
+        foreach (var classEntity in tutor.Classes)
+        {
+            ratings.AddRange(classEntity.StudentClasses
+                .Where(sc => sc.Rating.HasValue)
+                .Select(sc => Convert.ToDouble(sc.Rating.Value)));
         }
 
-        var ratings = new List<decimal>();
-        foreach (var tutorClassRating in tutor.Classes)
+        foreach (var slot in tutor.Slots)
         {
-            // tutorClassRating.
+            ratings.AddRange(slot.SlotStudents
+                .Where(ss => ss.Rating.HasValue)
+                .Select(ss => Convert.ToDouble(ss.Rating.Value)));
         }
+
+        tutor.Rating = ratings.Count == 0 ? 0 : ratings.Average();
+
+        dbSet.Update(tutor);
+
         return true;
     }
+
+
 }

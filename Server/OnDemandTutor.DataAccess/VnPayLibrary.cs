@@ -92,7 +92,7 @@ public class VnPayLibrary
             SlotId = slotIds,
             UserId = userId,
             ClassId = classId,
-            Money = (decimal.Parse(money) / 100),
+            Money = (decimal.Parse(money)),
             IsRechargePayment = isRecharge,
             RedirectResult = returnUrl
         };

@@ -72,32 +72,19 @@ public class VnPayServices : IVnPayServices
 
     public async Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections)
     {
-       
-        
         var response = _paymentProcessor.ProcessPaymentResponse(collections);
-        
-       
-        int transactionId = 0;
+
         if (response.Success)
         {
             await _transactionServices.TransactionPaid(response.OrderId, DateTime.UtcNow);
 
-            if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1) // handle for paid 1 slot 
+            if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1)
             {
-                if (await _slotStudentServices.GetSlotStudentAsync(response.SlotId.FirstOrDefault(), response.UserId) != null)
-                {
-                    await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.FirstOrDefault(), response.UserId);
-                    await _slotServices.EnrollForSlot(response.UserId, response.SlotId.FirstOrDefault());
-                }
+                await HandleSingleSlotPayment(response);
             }
-            else if (response.ClassId != null) // handle for paid  multi slot in 1 class 
+            else if (response.ClassId != null)
             {
-                var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
-                await _studentClassService.CreateStudentClassIfNotExist(response.ClassId.Value, response.UserId);
-                foreach (var slot in slotInClass.Slots)
-                {
-                    await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, response.UserId);
-                }
+                await HandleClassPayment(response);
             }
             else
             {
@@ -105,45 +92,62 @@ public class VnPayServices : IVnPayServices
             }
 
             await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
-            
+
             if (response.VnPayResponseCode == "24")
             {
-                return new PaymentSlotResponseModel
-                {
-                    PaymentStatus = PaymentStatus.Notpaid,
-                    SlotId = response.SlotId,
-                    TransactionCode = response.OrderId,
-                    UserId = response.UserId,
-                    Money = response.Money,
-                    Success = false,
-                    PaymentMethod = response.PaymentMethod,
-                    VnPayResponseCode = response.VnPayResponseCode,
-                    IsRechargePayment = response.IsRechargePayment,
-                    RedirectResult = response.returnUrl,
-                    OrderDescription = response.OrderDescription + "khong thanh cong"
-                };
+                return CreatePaymentResponseModel(response, false, PaymentStatus.Notpaid, "khong thanh cong");
             }
-
         }
 
+        return CreatePaymentResponseModel(response, true, PaymentStatus.Paid);
+    }
 
+
+    private async Task HandleSingleSlotPayment(IPaymentResponse response)
+    {
+        var slotStudent = await _slotStudentServices.GetSlotStudentAsync(response.SlotId.First(), response.UserId);
+        if (slotStudent == null)
+        {
+            await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());
+        }
+        await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId);
+    }
+
+    private async Task HandleClassPayment(IPaymentResponse response)
+    {
+        var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
+        
+        await _transactionServices.CreateTransactionForClassPayment(response.OrderId, response.UserId, response.ClassId.Value, response.Money);
+
+        await _classServices.EnrollCLass(response.ClassId.Value, response.UserId);
+    
+        foreach (var slot in slotInClass.Slots)
+        {
+            await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, response.UserId);
+            await _slotStudentServices.SlotStudentPaidAsync(slot.Id, response.UserId);
+        }
+    }
+
+
+    private PaymentSlotResponseModel CreatePaymentResponseModel(IPaymentResponse response, bool success, PaymentStatus paymentStatus, string additionalDescription = "")
+    {
         return new PaymentSlotResponseModel
         {
-            PaymentStatus = PaymentStatus.Paid,
+            PaymentStatus = paymentStatus,
             SlotId = response.SlotId,
             TransactionCode = response.OrderId,
             UserId = response.UserId,
-            TransactionId = transactionId,
+            TransactionId = 0,
             Money = response.Money,
-            Success = response.Success,
+            Success = success,
             PaymentMethod = response.PaymentMethod,
             VnPayResponseCode = response.VnPayResponseCode,
             IsRechargePayment = response.IsRechargePayment,
             RedirectResult = response.returnUrl,
-            OrderDescription = response.OrderDescription
+            OrderDescription = response.OrderDescription + additionalDescription
         };
-
     }
+
 
     public async Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context)
     {
@@ -177,7 +181,7 @@ public class VnPayServices : IVnPayServices
         {
             totalAmount *= 0.2m; // 20% of the total amount
         }
-        
+
         var tick = DateTime.Now.Ticks.ToString();
 
         var paymentUrl = CreateVnPayRequest(model, context, slotIds, classDto.Id, totalAmount, model.OrderDescription, false, tick, model.returnPage);
@@ -185,7 +189,7 @@ public class VnPayServices : IVnPayServices
         var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", totalAmount, model.OrderDescription, slotIds, classDto.Id, context);
 
         await _transactionServices.CreateTransactionDb(transactionDto);
-        
+
         return paymentUrl;
     }
 
@@ -257,7 +261,7 @@ public class VnPayServices : IVnPayServices
             {
                 TransactionCode = tick,
                 PaymentMethod = paymentMethod,
-                Amount = amount * 100,
+                Amount = amount,
                 Notes = notes,
                 SlotId = slotId,
                 ClassId = classId,
@@ -286,7 +290,7 @@ public class VnPayServices : IVnPayServices
             {
                 TransactionCode = tick,
                 PaymentMethod = paymentMethod,
-                Amount = amount * 100,
+                Amount = amount,
                 Notes = notes,
                 SlotId = slotId,
                 ClassId = classId,

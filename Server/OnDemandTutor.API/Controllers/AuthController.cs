@@ -89,6 +89,7 @@ public class AuthController : BaseController<AuthController>
     {
         return OKAsync(await _authServices.GrantRole(request));
     }
+    [Authorize]
     [HttpPost("change-password")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]

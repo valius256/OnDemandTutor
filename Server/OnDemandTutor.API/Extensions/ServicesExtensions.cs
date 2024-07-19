@@ -105,7 +105,7 @@ public static class ServiceExtensions
         services.AddScoped<IStudentClassService, StudentClassService>();
         services.AddScoped<ITutorSubjectService, TutorSubjectService>();
         services.AddScoped<ITutorVideoService, TutorVideoService>();
-        
+
         services.AddTransient<IEmailServices, EmailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();
@@ -234,12 +234,12 @@ public static class ServiceExtensions
 
         services.AddHangfireServer(cf =>
         {
-            RecurringJob.AddOrUpdate<SlotService>(x =>
-            x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
-            RecurringJob.AddOrUpdate<SlotService>(x =>
-            x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
-            RecurringJob.AddOrUpdate<ClassServices>(x =>
-                x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));
+            // RecurringJob.AddOrUpdate<SlotService>(x =>
+            // x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
+            // RecurringJob.AddOrUpdate<SlotService>(x =>
+            // x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
+            // RecurringJob.AddOrUpdate<ClassServices>(x =>
+            //     x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));
         });
 
 
