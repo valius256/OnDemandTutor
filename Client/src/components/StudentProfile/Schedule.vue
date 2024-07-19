@@ -7,8 +7,8 @@
       <div class="flex gap-4 mb-2">
         <div class="text-xl font-bold py-1">
           <span class="mr-4">Số dư hiện tại : </span>
-          <span class="text-green-200 p-1 bg-green-600 rounded-lg"
-            >{{
+          <span class="text-green-200 p-1 bg-green-600 rounded-lg">
+            {{
               balance.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -47,13 +47,13 @@
             <div>
               <span class="mr-4 font-bold">Bắt đầu :</span>
               <span class="mr-4">{{
-                this.beautifyDatetime(upcomingSlot.slot.startTime)
+                beautifyDatetime(upcomingSlot.slot.startTime)
               }}</span>
             </div>
             <div>
               <span class="mr-4 font-bold">Kết thúc :</span>
               <span class="mr-4">{{
-                this.beautifyDatetime(upcomingSlot.slot.endTime)
+                beautifyDatetime(upcomingSlot.slot.endTime)
               }}</span>
             </div>
             <div>
@@ -67,7 +67,7 @@
         <div class="font-bold italic mt-4 text-gray-500">
           <div v-if="upcomingSlot.paymentStatus == 0">
             *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý
-            khách. Để trách những rắc rối về sau, bạn vui lòng nạp tiền vào ví
+            khách. Để tránh những rắc rối về sau, bạn vui lòng nạp tiền vào ví
             đầy đủ trước khi bắt đầu vào học nhé!<br />
             *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
             <span class="text-red-500">
@@ -109,6 +109,7 @@ import axios from "axios";
 import TimeTable from "./TimeTable.vue";
 import GenericPopup from "../common/GenericPopup.vue";
 import SlotDetailPopup from "./SlotDetailPopup.vue";
+
 export default {
   components: { TimeTable, GenericPopup, SlotDetailPopup },
   name: "StudentProfileSchedule",
@@ -121,6 +122,7 @@ export default {
       isOpenSlotDetailPopup: false,
       slots: [],
       upcomingSlot: null,
+      selectingSlot: null,
     };
   },
   methods: {
@@ -239,6 +241,10 @@ export default {
       const startTime = new Date(slot.slot.startTime);
       const endTime = new Date(slot.slot.endTime);
       return (endTime - startTime) / 3600000;
+    },
+    beautifyDatetime(datetime) {
+      const date = new Date(datetime);
+      return date.toLocaleString("vi-VN");
     },
   },
   mounted() {

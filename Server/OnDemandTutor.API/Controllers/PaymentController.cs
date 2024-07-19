@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Hangfire.Storage.Monitoring;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
@@ -6,6 +7,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Payment;
+using SharedKernel.Domain.RailwayOrientedProgramming;
 
 namespace OnDemandTutor.API.Controllers;
 
@@ -42,14 +44,31 @@ public class PaymentController : BaseController<PaymentController>
         }
         return Ok(paymentUrl);
     }
+    
+    [HttpPost("create-payment-slot-user-balance")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    public async Task<IActionResult> CreatePaymentForSlotByBalance([FromBody] PaySlotDto paymentInfo)
+    {
+        bool result;
+        if (paymentInfo.SlotId != null)
+        {
+            var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
 
+            result =  await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot);
+            return Ok(result);
+        }
+
+        return BadRequest("cannot inittialize payment cause slot is null");
+    }
     [Authorize]
     [HttpPost("create-payment-class")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
     public async Task<IActionResult> PurchaseClass(PayClassDto request)
     {
-        var classDto = await _classService.GetClassWithFullDataSlotId(request.ClassId);
+        var classDto = await _classService.GetClassByIdAsync(request.ClassId);
         if (classDto == null)
             return BadRequest("Class not found");
 

@@ -16,8 +16,6 @@ public class ApplicationDbContext : DbContext
         : base(options)
     {
     }
-
- 
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ConsultationRequest> ConsultationRequests { get; set; }

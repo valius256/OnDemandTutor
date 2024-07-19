@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿
+using FirebaseAdmin.Auth;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,7 +31,7 @@ public class UserServices : IUserServices
         _mailServices = mailServices;
     }
 
-    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsers(UserFilterDto request, GetProfileUserDtos? accessor)
+    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor)
     {
         var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
@@ -40,23 +41,23 @@ public class UserServices : IUserServices
         return userList.Adapt<PagedResult<GetProfileUserDtos>>();
     }
 
-    public async Task<GetProfileUserDtos> GetProfile(int? userId, string? userEmail, GetProfileUserDtos? accessor)
+    public async Task<GetProfileUserDtos> GetProfileAsync(int? userId, string? userEmail, GetProfileUserDtos? accessor)
     {
-        var userModel = await GetUserById(userId);
+        var userModel = await GetUserByIdAsync(userId);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
         {
             userModel.Balance = 0;
         }
         return userModel.Adapt<GetProfileUserDtos>();
     }
-    public async Task<GetProfileUserDtos> GetUserById(int? userId)
+    public async Task<GetProfileUserDtos> GetUserByIdAsync(int? userId)
     {
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
         if (userModel == null) throw new BadRequestException("User not found");
         return userModel.Adapt<GetProfileUserDtos>();
     }
-    public async Task<GetProfileUserDtos> GetUserByEmail(string email)
+    public async Task<GetProfileUserDtos> GetUserByEmailAsync(string email)
     {
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Email == email);
@@ -64,7 +65,7 @@ public class UserServices : IUserServices
         return userModel.Adapt<GetProfileUserDtos>();
     }
 
-    public async Task<GetUserBalanceDto> GetUserBalance(int? userId)
+    public async Task<GetUserBalanceDto> GetUserBalanceAsync(int? userId)
     {
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
@@ -76,11 +77,12 @@ public class UserServices : IUserServices
     public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
     {
         // var userInFirebase = await _fireBaseAuthServices.GetUserAsync(null, registerDtos.Email, null);
+
         // if (userInFirebase != null)
         // {
-        //     throw new ModelException("Email", $"{userInFirebase.Email} has already registered", "This Email is already registered");
+        //     throw new ModelException("Email", $"{registerDtos.Email} already exists in Firebase, try logging in",
+        //         "This Email is already registered in Firebase");
         // }
-
         var userExist =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
         if (userExist != null)
@@ -88,6 +90,7 @@ public class UserServices : IUserServices
                 "This Email is already registered");
 
         var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
+
 
         // Hash the password
         // using var hmac = new HMACSHA512();
@@ -101,13 +104,16 @@ public class UserServices : IUserServices
         {
             mappedUser.Role = RoleStatus.Tutor;
         }
+
         // mappedUser.Password = passwordHash; // open when present 
         await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
         await _unitOfWorkRepository.SaveChangesAsync();
 
         var rs = mappedUser.Adapt<GetProfileUserDtos>();
+
         return rs;
+
     }
 
 
@@ -126,7 +132,7 @@ public class UserServices : IUserServices
     }
 
 
-    public async Task<GetProfileTutorDtos> RegisterTutor(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal userPrincipal)
+    public async Task<GetProfileTutorDtos> RegisterTutorAsync(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal userPrincipal)
     {
         var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.FireBaseid == userUid);
@@ -176,19 +182,19 @@ public class UserServices : IUserServices
         return result;
     }
 
-    public async Task<GetProfileUserDtos> GetUserProfileById(int id)
+    public async Task<GetProfileUserDtos> GetUserProfileByIdAsync(int id)
     {
         return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id))
             .Adapt<GetProfileUserDtos>();
     }
 
-    public async Task<GetProfileUserDtos> GetUserProfileByFireBaseId(string uId)
+    public async Task<GetProfileUserDtos> GetUserProfileByFireBaseIdAsync(string uId)
     {
         return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.FireBaseid == uId))
             .Adapt<GetProfileUserDtos>();
     }
 
-    public async Task<bool> RechargeAccount(int uId, decimal money)
+    public async Task<bool> RechargeAccountAsync(int uId, decimal money)
     {
         var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
 
@@ -231,12 +237,12 @@ public class UserServices : IUserServices
         return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
     }
 
-    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorList(TutorFilterDto request)
+    public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
     {
         return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request)).Adapt<PagedResult<TutorSimpleProfileDto>>();
     }
 
-    public async Task<bool> ApprovedTutorRegistration(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
+    public async Task<bool> ApprovedTutorRegistrationAsync(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
     {
         if (!requestDtos.tutorRegistrationDtos.Any())
         {
@@ -281,7 +287,7 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<bool> DeleteTutor(DeleteTutorDto requestDto)
+    public async Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto)
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
         if (userInDb.IsActive == false)
@@ -301,7 +307,7 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<bool> UpdateProfile(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
+    public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
     {
         var userIdClaim = userClaims.FindFirst(c => c.Type == "id")?.Value;
         if (string.IsNullOrEmpty(userIdClaim))
@@ -393,7 +399,7 @@ public class UserServices : IUserServices
         return record.Balance;
     }
 
-    public async Task<bool> UpdateBalance(int userId, decimal moneyIncrease, decimal moneyDecrease)
+    public async Task<bool> UpdateBalanceAsync(int userId, decimal moneyIncrease, decimal moneyDecrease)
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
@@ -417,7 +423,7 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<bool> DeaActiveAccount(DeaActiveAccountDto request)
+    public async Task<bool> DeaActiveAccountAsync(DeaActiveAccountDto request)
     {
         var modelInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == request.Id);
         if (modelInDb == null) throw new ArgumentNullException(nameof(modelInDb));

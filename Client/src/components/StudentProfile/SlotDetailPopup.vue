@@ -7,10 +7,6 @@
                         <span class="font-bold">Tên lớp :</span>
                         <span class="ml-4">{{ slot.slot.class.name }}</span>
                     </div>
-                    <div>
-                        <span class="font-bold">Buổi thứ :</span>
-                        <span class="ml-4">1/10</span>
-                    </div>
                     <hr>
                 </div>
                 <div>
@@ -71,7 +67,7 @@
         <div v-else class="mt-4">
             <span class="p-2 text-blue-400 font-bold ">Bạn đã thanh toán Slot này</span>
         </div>
-        <div class="flex flex-col justify-center mt-2" v-if="new Date(slot.slot.endTime) > new Date() && !slot.slot.class">
+        <div class="flex flex-col justify-center mt-2" v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class">
             <div class="text-sm italic text-center">Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!</div>
             <button class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg">
                 Đánh giá gia sư

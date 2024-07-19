@@ -621,9 +621,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new SlotStudent { Id = 1, SlotId = 4, UserId = 3, Feedback = "Phản hồi về buổi học của anh John." },
                 new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
                 new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
-                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." },
-                new SlotStudent { Id = 5, SlotId = 4, UserId = 25},
-                new SlotStudent { Id = 6, SlotId = 5, UserId = 25}
+                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
+                
             // Thêm nếu cần
             );
 
@@ -829,7 +828,7 @@ namespace OnDemandTutor.Models.MigrationData
                  Description = "Email template for notifying tutors about their registration approval status."
              },
 
-                   new EmailTemplate
+              new EmailTemplate
                    {
                        Id = 7,
                        Name = "Request_Withdraw_Notification",
@@ -951,10 +950,51 @@ namespace OnDemandTutor.Models.MigrationData
     ",
                   Params = "[UserName], [Status], [Amount],[Reply]",
                   Description = "Email template for notifying users about the status of their withdrawal request."
-              }
+              },
+            new EmailTemplate
+                {
+                    Id = 9,
+                    Name = "Slot_Payment_Reminder",
+                    Status = true,
+                    Body = @"Dear [Name],
 
+You currently have more than 15% of your slots unpaid out of the total for class [ClassId].
 
+Kindly settle the payments at your earliest convenience.
+
+Best regards,
+The OnDemandTutor Team",
+                    Params = "[Name], [ClassId]",
+                    Subject = "Reminder: Pending Payment for Slots",
+                    Description = "Reminder email for pending slot payments.",
+                    UpdatedById = 0,
+                    CreatedDate = null, // Set to appropriate value
+                    UpdatedDate = null, // Set to appropriate value
+                    DeletedDate = null, // Set to appropriate value
+                    RecordStatus = 0
+                },
+            new EmailTemplate
+                {
+                    Id = 10,
+                    Name = "High_Unpaid_Slots_Warning",
+                    Status = true,
+                    Body = @"Dear [Name],
+
+                        This is to inform you that you have more than 20% of your slots unpaid out of the total for class [ClassId].
+                        So we have to removed you from class
+                        Regards,
+                        The OnDemandTutor Team",
+                    Params = "[Name], [ClassId]",
+                    Subject = "Warning: High Number of Unpaid Slots",
+                    Description = "Warning email for high number of unpaid slots.",
+                    UpdatedById = 0,
+                    CreatedDate = DateTime.Now, 
+                    UpdatedDate = DateTime.Now, 
+                    DeletedDate = DateTime.Now, 
+                    RecordStatus = 0
+                }
             );
+            
             #endregion
 
             #region RequestWithDraw

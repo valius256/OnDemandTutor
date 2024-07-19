@@ -8,5 +8,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public DateTime From { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         public DateTime To { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month + 1,1);
         public PaymentStatus? PaymentStatus { get; set; }
+
+        public int? ClassId { get; set; }
     }
 }

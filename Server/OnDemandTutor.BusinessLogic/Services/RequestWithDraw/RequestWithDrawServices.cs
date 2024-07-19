@@ -39,14 +39,14 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDrawAsAdmin(RequestWithDrawFilterDto request)
     {
         var requestWithDrawModelList = await
-            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, 0);
+            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request);
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 
     public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, ClaimsPrincipal userClaims)
     {
         var uid = userClaims.FindFirst(cl => cl.Type == "id")?.Value;
-        var userInfo = await _userServices.GetUserById(int.Parse(uid));
+        var userInfo = await _userServices.GetUserByIdAsync(int.Parse(uid));
         // check money 
         var balanceFromSoureAcc = await _userServices.GetBalanceAsync(userInfo.Id);
         if (balanceFromSoureAcc - request.Amount < 0)
@@ -60,7 +60,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
         await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
-        await _userServices.UpdateBalance(int.Parse(uid), 0, request.Amount);
+        await _userServices.UpdateBalanceAsync(int.Parse(uid), 0, request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
         // send Email 
@@ -132,7 +132,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
     private async Task SendWithdrawApprovalEmail(Models.Models.RequestWithDraw withdraw, ApproveWithDrawDto request)
     {
-        var withDrawCreatedBy = await _userServices.GetUserById(withdraw.UserId);
+        var withDrawCreatedBy = await _userServices.GetUserByIdAsync(withdraw.UserId);
         var toAddress = new List<string> { withDrawCreatedBy.Email };
         var emailParams = new Dictionary<string, string>
             {
