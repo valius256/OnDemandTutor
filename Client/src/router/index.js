@@ -5,6 +5,7 @@ import LoginPage from "../pages/Auth/LoginPage.vue";
 import RegisterPage from "../pages/Auth/RegisterPage.vue";
 // import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage.vue";
 import BlogsPage from "../pages/Student/BlogsPage.vue";
+import BlogDetailPage from "../pages/Student/BlogDetailPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
 import StudentProfile from "../pages/Student/ProfilePage.vue";
 import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
@@ -57,6 +58,11 @@ const routes = [
     path: "/blogs",
     name: "BlogsPage",
     component: BlogsPage,
+  },
+  {
+    path: "/blog-detail/:id",
+    name: "BlogDetailPage",
+    component: BlogDetailPage,
   },
   {
     path: "/faqs",
