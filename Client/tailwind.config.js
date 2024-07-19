@@ -1,17 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  content: [],
+  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       backgroundImage: {
-        'home-banner': "url('https://www.greatschools.org/gk/wp-content/uploads/2010/01/Looking-for-a-tutor.jpg')",
-        'contact-banner' : "url('https://publicassets.teachme2.com/www/images/become-a-tutor/female-blonde-tutor-tutoring-young-girl.jpg')"
-      }
+        "home-banner":
+          "url('https://www.greatschools.org/gk/wp-content/uploads/2010/01/Looking-for-a-tutor.jpg')",
+        "contact-banner":
+          "url('https://publicassets.teachme2.com/www/images/become-a-tutor/female-blonde-tutor-tutoring-young-girl.jpg')",
+      },
     },
   },
-  plugins: [
-    require('tailwindcss-animated')
-  ],
-}
-
+  plugins: [require("tailwindcss-animated")],
+};

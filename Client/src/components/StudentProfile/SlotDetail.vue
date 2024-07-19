@@ -2,16 +2,16 @@
 <template>
   <div>
     <button v-for="slot in slots" :key="slot.id" :class="slotClass(slot)" :style="slotStyle(slot)" @click="viewDetail(slot)">
-      <div class="absolute inset-0" v-if="slot.slot.isOnline">
+      <div class="absolute inset-0" v-if="slot.slot?.isOnline">
         <div class="relative">
           <div class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"></div>
         </div>
       </div>
       <div v-if="slotHeight(slot) > 45">
-        <div v-if="slotHeight(slot) > 90 && slot.slot.class" class="font-bold">
+        <div v-if="slotHeight(slot) > 90 && slot.slot.class" class="font-extrabold">
           {{ slot.slot.class.name  }}
         </div>
-        <div v-if="slotHeight(slot) > 90 && !slot.slot.class" class="font-bold italic">
+        <div v-if="slotHeight(slot) > 90 && !slot.slot.class" class="italic">
           {{ slot.slot.subject.name  }}
         </div>
         {{ formatTime(slot.slot.startTime) }}<br />
@@ -70,7 +70,7 @@ export default {
       if (slot.paymentStatus == 0 && this.compareDate(new Date(slot.slot.startTime), new Date()) < 0) {
         bg = "bg-red-400";
       } else if (slot.paymentStatus == 1 && this.compareDate(new Date(slot.slot.endTime), new Date()) < 0) {
-        bg = "bg-green-400";
+        bg = "bg-green-300";
       } else if (slot.paymentStatus == 1) {
         bg = "bg-blue-400";
       } else {

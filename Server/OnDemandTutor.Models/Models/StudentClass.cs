@@ -10,8 +10,7 @@ public class StudentClass : BaseEntity
 
     public int ClassId { get; set; }
     public virtual Class Class { get; set; }
-    public int? TutorId { get; set; }
-    public virtual User Tutor { get; set; }
     [Range(1, 5)]
     public int? Rating { get; set; }
+    public string? Feedback { get; set; }
 }

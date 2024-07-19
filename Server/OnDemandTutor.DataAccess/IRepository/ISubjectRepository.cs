@@ -1,5 +1,4 @@
-﻿using OnDemandTutor.Models.Dtos.Blog;
-using OnDemandTutor.Models.Dtos.Subject;
+﻿using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 

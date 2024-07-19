@@ -16,7 +16,7 @@ import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
 import SubjectManagementPage from "../pages/Operators/SubjectManagementPage.vue";
 import SubjectRegistrationDetailPage from "../pages/Operators/SubjectRegistrationDetailPage.vue";
 import BlogManagementPage from "../pages/Operators/BlogManagementPage.vue";
-import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue"
+import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue";
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import WithdrawRequestPage from "../pages/Operators/WithdrawRequestsPage.vue";
@@ -95,7 +95,7 @@ const routes = [
         component: StudentProfile,
       },
       {
-        path : "withdraw",
+        path: "withdraw",
         component: StudentProfile,
       },
     ],
@@ -115,7 +115,15 @@ const routes = [
         component: TutorProfile,
       },
       {
+        path: "subject",
+        component: TutorProfile,
+      },
+      {
         path: "payment",
+        component: TutorProfile,
+      },
+      {
+        path: "preview",
         component: TutorProfile,
       },
     ],
@@ -158,53 +166,51 @@ const routes = [
   {
     path: "/admin/subjects",
     name: "SubjectManagementPage",
-    redirect : "/admin/subjects/list",
-    children : [
+    redirect: "/admin/subjects/list",
+    children: [
       {
-        path : "list",
+        path: "list",
         component: SubjectManagementPage,
       },
       {
-        path : "registration",
+        path: "registration",
         component: SubjectManagementPage,
       },
       {
-        path : "detail/:id",
+        path: "detail/:id",
         component: SubjectRegistrationDetailPage,
       },
-      
-    ]
+    ],
   },
   {
     path: "/admin/transactions",
     name: "Transactions",
-    redirect : "/admin/transactions/statistic",
-    children : [
+    redirect: "/admin/transactions/statistic",
+    children: [
       {
-        path : "statistic",
+        path: "statistic",
         component: SubjectManagementPage,
       },
       {
-        path : "withdraw",
+        path: "withdraw",
         component: WithdrawRequestPage,
       },
-      
-    ]
+    ],
   },
   {
     path: "/admin/blogs",
     name: "BlogManagementPage",
-    redirect : "/admin/blogs/manage",
-    children : [
+    redirect: "/admin/blogs/manage",
+    children: [
       {
-        path : "manage",
+        path: "manage",
         component: BlogManagementPage,
       },
       {
-        path : "editor/:id",
+        path: "editor/:id",
         component: BlogEditorPage,
       },
-    ]
+    ],
   },
   {
     path: "/admin/faqs",

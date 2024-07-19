@@ -20,6 +20,9 @@
                 tiền</button>
         </div>
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
+            Các Slot chưa thanh toán
+        </div>
+        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Lịch sử giao dịch
         </div>
         <div class="px-4 mb-4">

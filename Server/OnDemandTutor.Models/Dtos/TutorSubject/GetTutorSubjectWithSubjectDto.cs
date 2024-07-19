@@ -1,7 +1,6 @@
 ﻿
 
 using OnDemandTutor.Models.Dtos.Subject;
-using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Dtos.TutorSubject

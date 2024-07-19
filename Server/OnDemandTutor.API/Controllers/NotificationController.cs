@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -27,7 +26,7 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(PagedResult<NotificationGetDto>), 200)]
         public async Task<IActionResult> GetNotifications([FromQuery] int page = 0, [FromQuery] int limit = 20)
         {
-            var user = await _authServices.GetUserProfileByClaim(HttpContext.User); 
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var notifications = await _notificationService.GetNotificationsAsync(page, limit, user);
             return Ok(notifications);
         }

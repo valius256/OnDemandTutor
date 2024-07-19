@@ -1,5 +1,4 @@
 ﻿using OnDemandTutor.Models.Dtos.User;
-using System;
 namespace OnDemandTutor.Models.Dtos.FAQ
 {
     public class FAQDTO
@@ -11,7 +10,7 @@ namespace OnDemandTutor.Models.Dtos.FAQ
         //public int CreateById { get; set; } 
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public GetSimpleUserDto CreateBy { get; set;} = new GetSimpleUserDto();
+        public GetSimpleUserDto CreateBy { get; set; } = new GetSimpleUserDto();
         //public string? CreateByName { get; set; } // Assuming you want to include the name of the creator
     }
 }

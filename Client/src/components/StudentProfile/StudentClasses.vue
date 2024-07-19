@@ -3,7 +3,7 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Lớp học bạn đã tham gia
         </div>
-        <div class="px-8 py-2">
+        <div class="px-8 py-2" v-if="!isOpenClassDetailPopup">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div v-for="class_ in classes" :key="class_.id" class="shadow-md rounded-lg">
                     <div :class="getStatusStyleHeader(class_.status)">
@@ -14,14 +14,14 @@
                             <li>
                                 <span class="font-bold">Gia sư :</span>
                                 <button class="ml-3 font-bold text-blue-400 underline">
-                                    {{ class_.tutor.name }}
+                                    {{ (class_.user.firstName ?? "") ?? (class_.user.lastName ?? "") }}
                                 </button>
                             </li>
                             <li>
                                 <span class="font-bold">Thời gian :</span>
                                 <span class="ml-3">
-                                    {{ sqlDateStringToSlashFormat(class_.startDate) }} đến
-                                    {{ sqlDateStringToSlashFormat(class_.endDate) }}
+                                    {{ (class_.startTime?.substring(0,10)) ?? "" }} đến
+                                    {{ (class_.endTime?.substring(0,10)) ?? ""}}
                                 </span>
                             </li>
                             <li>
@@ -55,7 +55,7 @@
                     </div>
                     <div class="flex justify-center gap-2 my-2" >
                         <button v-if="class_.status == 2" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Đánh giá gia sư</button>
-                        <button @click="toggleClassDetailPopup" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
+                        <button @click="toggleClassDetailPopup(class_.id)" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
                     </div>
                 </div>
             </div>
@@ -73,13 +73,15 @@
                 </button>
             </div>
         </div>
-        <generic-popup v-if="isOpenClassDetailPopup" title="Chi tiết lớp học" :closeFunction="toggleClassDetailPopup">
-            <class-detail-popup :class-id="selectedClass"></class-detail-popup>
-        </generic-popup>
+        <div v-else>
+            <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">Trở về</button>
+            <class-detail-popup :classId="selectedClass"></class-detail-popup>
+        </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import ClassDetailPopup from './ClassDetailPopup.vue'
 export default {
@@ -92,27 +94,31 @@ export default {
             currentPage: 1,
             selectedClass : 0,
             isOpenClassDetailPopup : false,
-            classes: [{
-                id: 1,
-                name: "Luyện thi IELTS nâng cao",
-                startDate: "2024-01-01",
-                endDate: "2024-12-01",
-                method: "Online",
-                location: "Q9, TPHCM",
-                subject: {
-                    name: "Tiếng Anh"
-                },
-                studentNumber: 10,
-                maxStudentNumber: 20,
-                tutor: {
-                    name: "Thomas",
-                    price: 50000
-                },
-                status: 2
-            },]
+            classes: []
         }
     },
     methods: {
+        async fetchData() {
+            let query = {
+                Sorts : {                 
+                },
+                Page: this.currentPage,
+                Limit: this.pageSize
+            }
+            let queryStr = this.jsonToQueryString(query)
+            //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/student?'+ 
+            queryStr,{
+                headers : {
+                    "Authorization" : "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.classes = response.data.items
+                this.totalPage = Math.ceil(response.data.total / this.pageSize)
+            }
+
+        },
         getMethodStyle(method) {
             let general = "ml-4 rounded-lg px-3 py-1 text-white font-bold"
             switch (method) {
@@ -175,9 +181,13 @@ export default {
             }
         },
         toggleClassDetailPopup(id){
+            scrollTo(0,0)
             this.selectedClass = id
             this.isOpenClassDetailPopup = !this.isOpenClassDetailPopup
         }
+    },
+    mounted(){
+        this.fetchData()
     }
 }
 </script>

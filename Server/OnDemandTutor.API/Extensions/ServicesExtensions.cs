@@ -88,7 +88,7 @@ public static class ServiceExtensions
         services.AddScoped<IUserServices, UserServices>();
         services.AddScoped<ISubjectService, SubjectService>();
         services.AddScoped<IBlogService, BlogService>();
-        services.AddScoped<IClassService, ClassService>();
+        services.AddScoped<IClassServices, ClassServices>();
         services.AddScoped<IConsultationRequestService, ConsultationRequestService>();
         services.AddScoped<IAuthServices, AuthServices>();
         services.AddScoped<IFirebaseUploadServices, FirebaseUploadServices>();
@@ -105,7 +105,8 @@ public static class ServiceExtensions
         services.AddScoped<IStudentClassService, StudentClassService>();
         services.AddScoped<ITutorSubjectService, TutorSubjectService>();
         services.AddScoped<ITutorVideoService, TutorVideoService>();
-        services.AddTransient<IMailServices, MailServices>();
+        
+        services.AddTransient<IEmailServices, EmailServices>();
         services.AddTransient<IJwtProviderServices, JwtProviderServices>();
         services.AddProblemDetails();
         services.AddLogging();
@@ -237,6 +238,8 @@ public static class ServiceExtensions
             x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
             RecurringJob.AddOrUpdate<SlotService>(x =>
             x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
+            RecurringJob.AddOrUpdate<ClassServices>(x =>
+                x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));
         });
 
 

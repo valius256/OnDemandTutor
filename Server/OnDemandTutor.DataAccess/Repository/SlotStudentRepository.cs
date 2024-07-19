@@ -1,12 +1,9 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
-using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Models;
-using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository;
 
@@ -14,7 +11,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
 {
     public SlotStudentRepository(ApplicationDbContext context) : base(context)
     {
-        
+
     }
     public async Task<SlotStudent?> GetClosestFutureSlot(int studentId)
     {
@@ -48,7 +45,11 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         {
             query = query.Where(s => s.PaymentStatus == request.PaymentStatus);
         }
-        
+        if (request.ClassId.HasValue)
+        {
+            query = query.Where(s => s.Slot.ClassId == request.ClassId);
+        }
+
         // Apply filtering if necessary
 
         return await query.ToListAsync();

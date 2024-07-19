@@ -11,9 +11,8 @@ public class Class : BaseEntity
     public string? Location { get; set; }
     public string? Method { get; set; }
     public ClassStatus Status { get; set; }
-
     public virtual Subject Subject { get; set; }
-    public virtual User User { get; set; }
+    public virtual User Tutor { get; set; }
     public virtual ICollection<StudentClass> StudentClasses { get; set; } = new List<StudentClass>();
     public virtual ICollection<Slot> Slots { get; set; } = new List<Slot>();
 }

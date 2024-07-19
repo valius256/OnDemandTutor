@@ -47,7 +47,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         }
         catch (FirebaseAuthException ex)
         {
-           
+
             return null;
         }
     }
@@ -73,7 +73,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(userId, claims);
     }
 
-    
+
     public async Task<List<ExportedUserRecord>> GetAllUserRecord()
     {
         var users = new List<ExportedUserRecord>();

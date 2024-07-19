@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.DataAccess.Helper;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
-using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
@@ -66,7 +65,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         }
         if (request.DobToDate != null)
         {
-            userListQuery = userListQuery.Where(ld =>ld.Dob <= request.DobToDate);
+            userListQuery = userListQuery.Where(ld => ld.Dob <= request.DobToDate);
         }
 
         if (!string.IsNullOrEmpty(request.Subject))

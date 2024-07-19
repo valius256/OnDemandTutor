@@ -17,14 +17,14 @@ namespace OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
 public class RequestWithDrawServices : IRequestWithDrawServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-    private readonly IMailServices _mailServices;
+    private readonly IEmailServices _emailServices;
     private readonly IUserServices _userServices;
     private readonly ITransactionServices _transactionServices;
 
-    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IMailServices mailServices, IUserServices userServices, ITransactionServices transactionServices)
+    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IEmailServices emailServices, IUserServices userServices, ITransactionServices transactionServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
-        _mailServices = mailServices;
+        _emailServices = emailServices;
         _userServices = userServices;
         _transactionServices = transactionServices;
     }
@@ -39,7 +39,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDrawAsAdmin(RequestWithDrawFilterDto request)
     {
         var requestWithDrawModelList = await
-            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, 0);
+            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request);
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 
@@ -75,7 +75,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             { "Reason", $"{request.Description}" }
         };
 
-        await _mailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
+        await _emailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
            false);
 
         return true;
@@ -141,7 +141,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
                 { "Reply", request.Reply },
                 { "Amount", withdraw.Amount.ToString() }
             };
-        await _mailServices.SendAsync(EmailType.WithDraw_Approval_Notification, toAddress, new List<string>(), emailParams, false);
+        await _emailServices.SendAsync(EmailType.WithDraw_Approval_Notification, toAddress, new List<string>(), emailParams, false);
     }
 
     private async Task CreateTransaction(Models.Models.RequestWithDraw withdraw, int operatorId)

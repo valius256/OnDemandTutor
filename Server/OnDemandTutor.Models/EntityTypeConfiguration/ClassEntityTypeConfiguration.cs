@@ -19,7 +19,7 @@ public class ClassEntityTypeConfiguration : IEntityTypeConfiguration<Class>
             .HasForeignKey(c => c.SubjectId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(c => c.User)
+        builder.HasOne(c => c.Tutor)
             .WithMany()
             .HasForeignKey(c => c.TutorId)
             .OnDelete(DeleteBehavior.Restrict);

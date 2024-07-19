@@ -93,6 +93,5 @@ namespace OnDemandTutor.API.Controllers
             // This line will never be reached if the method handles all cases correctly.
             return BadRequest("Update failed.");
         }
-
     }
 }
