@@ -23,27 +23,69 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Các Slot chưa thanh toán
         </div>
-        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
+        <div class="mt-2 flex flex-col gap-2 p-4" v-if="this.unpaidSlots.length > 0">
+            <button @click="toggleOpenSlotDetailPopup(slot)" v-for="slot in unpaidSlots" :key="slot.id" class="bg-slate-100 rounded-lg shadow-md p-4">
+                <div class="flex place-content-between">
+                    <div>
+                        <span class="font-bold mr-2">Bắt đầu :</span>
+                        <span>{{ this.beautifyDatetime(slot.slot.startTime) }}</span>
+                    </div>
+                    <div>
+                        <span class="font-bold mr-2">Kết thúc :</span>
+                        <span>{{ this.beautifyDatetime(slot.slot.endTime) }}</span>
+                    </div>
+                </div>
+                <div class="flex place-content-between">
+                    <div>
+                        <span class="font-bold mr-2">Gia sư :</span>
+                        <span>{{ (slot.slot.createdBy.firstName ?? "") + " " + (slot.slot.createdBy.lastName ?? "")
+                            }}</span>
+                    </div>
+                    <div>
+                        <span class="font-bold mr-2">Giá cả :</span>
+                        <span class="p-2 text-red-500 font-bold text-xl">{{ (calcDuration(slot) *
+                        slot.slot.createdBy.tutorFeePerHour).toLocaleString('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                        }) }}</span>
+                    </div>
+                </div>
+                <div v-if="slot.slot.class" class="flex justify-start">
+                    <span class="font-bold mr-2">Lớp học :</span>
+                    <span>{{ slot.slot.class.name }}</span>
+                </div>
+            </button>
+        </div>
+        <div v-else class="text-center italic">
+            Hiện chưa có Slot nào
+        </div>
+        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 mt-4">
             Lịch sử giao dịch
         </div>
         <div class="px-4 mb-4">
             <table class="bg-slate-50 p-6 rounded-xl text-center w-full" v-if="transactions.length > 0">
                 <thead>
-                    <th>Code</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Description</th>
+                    <th>Mã giao dịch</th>
+                    <th>Ngày</th>
+                    <th>Số lượng</th>
+                    <th>Loại</th>
+                    <th>Mô tả</th>
                 </thead>
                 <tbody>
                     <tr v-for="transaction in transactions" :key="transaction.id">
                         <td>{{ transaction.transactionCode }}</td>
                         <td>{{ this.beautifyDatetime(transaction.createdDate) }}</td>
-                        <td :class="getAmountStyle(transaction.amount)">
-                            {{ transaction.amount.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                    }) }}
+                        <td :class="getAmountStyle(transaction)">
+                            {{  Math.abs(transaction.amount).toLocaleString('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }) }}
                         </td>
+                        <td v-if="transaction.transactionType == 0">Rút tiền</td>
+                        <td v-if="transaction.transactionType == 1">Nạp tiền</td>
+                        <td v-if="transaction.transactionType == 2">Trừ tiền</td>
+                        <td v-if="transaction.transactionType == 3">Nhận tiền</td>
+                        <td v-if="transaction.transactionType == 4">Thanh toán</td>
                         <td>{{ transaction.notes }}</td>
                     </tr>
                 </tbody>
@@ -70,6 +112,11 @@
             <request-withdraw-popup :close="toggleWithdrawPopup" :action="navigateToPayment"
                 :balance="balance"></request-withdraw-popup>
         </generic-popup>
+        <generic-popup v-if="isOpenSlotDetailPopup" :title="'Chi tiết slot học'" :closeFunction="toggleOpenSlotDetailPopup"
+            :notOverflow="true">
+            <slot-detail-popup :close="toggleOpenSlotDetailPopup" :action="getUserSlots"
+                :slot="selectedSlot"></slot-detail-popup>
+        </generic-popup>
     </div>
 
 </template>
@@ -78,8 +125,9 @@
 import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import RequestWithdrawPopup from './RequestWithdrawPopup.vue'
+import SlotDetailPopup from './SlotDetailPopup.vue'
 export default {
-    components: { GenericPopup, RequestWithdrawPopup },
+    components: { GenericPopup, RequestWithdrawPopup, SlotDetailPopup },
     props: ['id'],
     name: "StudentProfilePayment",
     data() {
@@ -92,16 +140,28 @@ export default {
             transactions: [
 
             ],
-            isOpenWithdrawPopup: false
+            unpaidSlots: [
+
+            ],
+            selectedSlot : null,
+            isOpenWithdrawPopup: false,
+            isOpenSlotDetailPopup : false,
         }
     },
     methods: {
-        getAmountStyle(amount) {
+        calcDuration(slot) {
+            const startTime = new Date(slot.slot.startTime);
+            const endTime = new Date(slot.slot.endTime);
+            return (endTime - startTime) / 3600000;
+        },
+        getAmountStyle(transaction) {
             let css = "font-bold"
-            if (amount < 0) {
+            if (transaction.transactionType == 0 || transaction.transactionType == 2) {
                 return css + " text-red-400"
-            } else {
+            } else if (transaction.transactionType == 1 || transaction.transactionType == 3) {
                 return css + " text-green-400"
+            } else {
+                return css + " text-blue-400"
             }
         },
         async handlePageChange() {
@@ -140,6 +200,22 @@ export default {
                 this.totalPage = Math.ceil(response.data.total / this.pageSize)
             }
         },
+        async getUserSlots() {
+            var today = new Date()
+            let queryString = "?"
+            queryString += "From=1900-01-01"
+            queryString += "&To=3000-01-01"
+            queryString += "&PaymentStatus=" + 0
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students' + queryString, {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.unpaidSlots = response.data
+            }
+            console.log(this.unpaidSlots)
+        },
         toggleWithdrawPopup() {
             this.isOpenWithdrawPopup = !this.isOpenWithdrawPopup
         },
@@ -162,12 +238,17 @@ export default {
                     this.balance = balanceResponse.data.data.balance
                 }
             }
+        },
+        toggleOpenSlotDetailPopup(slot){
+            this.selectedSlot = slot
+            this.isOpenSlotDetailPopup = !this.isOpenSlotDetailPopup
         }
 
     },
     mounted() {
         this.fetchTranscations()
         this.fetchUser()
+        this.getUserSlots()
     }
 }
 </script>

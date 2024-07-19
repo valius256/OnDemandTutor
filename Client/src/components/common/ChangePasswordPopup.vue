@@ -15,22 +15,71 @@
                 <input v-model="cfmPass" class="p-1 border rounded-lg" placeholder="Xác nhận mật khẩu"
                     type="password" />
             </div>
-            <button class="mt-4  hover:bg-blue-200 rounded-lg py-2 bg-blue-400 font-bold text-white">Xác nhận</button>
+            <button @click="handleChangePassword(true)" class="mt-4  hover:bg-blue-200 rounded-lg py-2 bg-blue-400 font-bold text-white">Xác nhận</button>
         </div>
 
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name: "ChangePasswordPopup",
-    props: ['userId'],
+    injects: ['eventBus'],
+    props: ['userId','close'],
     data() {
         return {
             oldPass: "",
             newPass: "",
             cfmPass: ""
         }
+    },
+    methods: {
+        async handleChangePassword(confirmation) {
+            if (this.newPass != this.cfmPass) {
+                this.eventBus.emit("open-result-dialog", {
+                    message: "Mật khẩu không trùng khớp",
+                    type: "Error"
+                })
+                return;
+            }
+            if (confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc muốn đổi mật khẩu không ?",
+                    method: this.handleChangePassword,
+                    params: false
+                })
+            } else {
+
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.post(import.meta.env.VITE_API_URL + '/api/Auth/change-password', {
+                        oldPassword: this.oldPass,
+                        newPassword: this.newPass
+                    }, {
+                        headers: {
+                            'Authorization': "Bearer " + localStorage.token
+                        }
+                    })
+                    this.close()
+                    //var paymentUrl = url.data
+                    //window.location.href = paymentUrl
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Cập nhật thành công",
+                        type: "Success"
+                    })
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Có vấn đề xảy ra khi cập nhật",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        },
     }
 }
 </script>

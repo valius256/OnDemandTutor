@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
@@ -122,6 +123,23 @@ public class SlotStudentService : ISlotStudentServices
             PaymentStatus = PaymentStatus.Notpaid,
         };
         await _unitOfWorkRepository.SlotStudentRepository.AddAsync(newSlotStudentModel);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, decimal rate, string feedback)
+    {
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
+            st.SlotId == slotId && st.UserId == studentId);
+
+        if (slotStudent == null)
+        {
+            throw new NotFoundException("Slot Student not found");
+        }
+
+        slotStudent.Rating = rate;
+        slotStudent.Feedback = feedback;
+
+        _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }

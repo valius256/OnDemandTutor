@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="flex justify-center mt-8">
-            <button v-if="this.class.status == 2 && !isGuest"
+            <button v-if="this.class.status == 2 && !isGuest" @click="toggleIsOpenRatingPopup"
                 class="p-2 bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
                 Đánh giá gia sư
             </button>
@@ -113,7 +113,7 @@
             <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
         </generic-popup>
         <generic-popup v-if="isOpenRatingPopup" title="Đánh giá lớp học" :closeFunction="toggleIsOpenRatingPopup">
-            <rating-popup :classId="this.class.id"></rating-popup>
+            <rating-popup :classId="this.class.id" :action="refresh" :close="toggleIsOpenRatingPopup"></rating-popup>
         </generic-popup>
 
         <generic-popup v-if="isOpenEnrollClassPopup" title="Tham gia lớp học" :closeFunction="toggleClassEnrollPopup">
@@ -137,6 +137,7 @@ export default {
         return {
             class: null,
             slots: [],
+            user : null,
             selectingSlot: null,
             isOpenSlotDetailPopup: false,
             isOpenRatingPopup: false,
@@ -193,10 +194,15 @@ export default {
             })
             if (response.data) {
                 this.class = response.data
+                if ( this.class.studentClasses.filter(sc => sc.studentId == this.user.id).length > 0){
+                    this.isStudiedThisClass = true;
+                }
             }
+            
         },
         async getUserSlots(from, to) {
             if (!this.isGuest) {
+
                 let queryString = ""
                 if (from != null) {
                     queryString += "&From=" + from
@@ -224,6 +230,7 @@ export default {
             this.isOpenSlotDetailPopup = false
         },
         async refresh() {
+            this.user = await this.getUserFromToken()
             await this.getClassDetail()
             await this.getUserSlots(null, null)
             if (this.slots.length > 0) {

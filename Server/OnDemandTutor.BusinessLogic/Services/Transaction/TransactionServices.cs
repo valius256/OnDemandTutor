@@ -61,7 +61,11 @@ public class TransactionServices : ITransactionServices
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }
-
+    public async Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction)
+    {
+        var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, 0);
+        return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
+    }
     public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
     {
         var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);

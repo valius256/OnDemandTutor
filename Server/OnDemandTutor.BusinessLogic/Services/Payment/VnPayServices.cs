@@ -106,11 +106,11 @@ public class VnPayServices : IVnPayServices
     private async Task HandleSingleSlotPayment(IPaymentResponse response)
     {
         var slotStudent = await _slotStudentServices.GetSlotStudentAsync(response.SlotId.First(), response.UserId);
-        if (slotStudent != null)
+        if (slotStudent == null)
         {
-            await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId);
             await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());
         }
+        await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId);
     }
 
     private async Task HandleClassPayment(IPaymentResponse response)

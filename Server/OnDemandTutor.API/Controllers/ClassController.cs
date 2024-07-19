@@ -115,7 +115,8 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> RatingClass([FromBody] AddRatingDto request)
         {
-            var result = await _studentClassService.StudentRatingClassAsync(request.ClassStudentId, request.Rating, request.Feedback);
+            var student = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var result = await _studentClassService.StudentRatingClassAsync(request.ClassId, student.Id, request.Rating, request.Feedback);
             return Ok(result);
         }
 
