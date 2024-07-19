@@ -99,4 +99,25 @@ public class TransactionServices : ITransactionServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
+
+    public async Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount)
+    {
+        var transaction = new Models.Models.Transaction
+        {
+            TransactionCode = $"Paid for class{classId}",
+            CreatedById = userId,
+            Amount = amount,
+            CreatedDate = DateTime.UtcNow,
+            Status = PaymentStatus.Paid,
+            TransactionType = TransactionType.Payment,
+            UpdatedById = 0,
+            PaymentMethod = "VnPay"
+        };
+
+        _unitOfWorkRepository.TransactionRepository.Add(transaction);
+        await _unitOfWorkRepository.SaveChangesAsync();
+
+        return transaction.Id;
+    }
+
 }

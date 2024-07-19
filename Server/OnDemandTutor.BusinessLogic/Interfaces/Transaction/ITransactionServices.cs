@@ -12,4 +12,5 @@ public interface ITransactionServices
     Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim);
     Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount);
     Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount);
+    Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount);
 }
