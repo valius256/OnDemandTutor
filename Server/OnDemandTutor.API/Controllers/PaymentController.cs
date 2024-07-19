@@ -66,7 +66,7 @@ public class PaymentController : BaseController<PaymentController>
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
     public async Task<IActionResult> PurchaseClass(PayClassDto request)
     {
-        var classDto = await _classServices.GetClassWithFullDataSlotId(request.ClassId);
+        var classDto = await _classServices.GetClassByIdAsync(request.ClassId);
         if (classDto == null)
             return BadRequest("Class not found");
 

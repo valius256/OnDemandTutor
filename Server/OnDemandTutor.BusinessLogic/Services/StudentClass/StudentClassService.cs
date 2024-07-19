@@ -90,7 +90,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             return true;
         }
 
-        public async Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string Feedback)
+        public async Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string? Feedback)
         {
             var recordInDB = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st => st.StudentId == StudentClassId);
             if (recordInDB == null)
@@ -98,14 +98,14 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 throw new ModelException($"{recordInDB.Id}", "has not found");
             }
 
-            
+
             // handle for rating in student class
             recordInDB.Rating = Rating;
             recordInDB.Feedback = Feedback;
             _unitOfWork.StudentClassRepository.Update(recordInDB);
-            
+
             // handle for update tutor rating 
-            var classModel   = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
+            var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
             var tutorId = classModel.TutorId;
             var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
 

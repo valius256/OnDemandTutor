@@ -1,12 +1,7 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
-using OnDemandTutor.BusinessLogic.Interfaces.Slot;
-using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
-using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
-using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
@@ -15,7 +10,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
     public class ClassServices : IClassServices
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
-    
+
         // private readonly ISlotServices _slotServices;
 
         public ClassServices(IUnitOfWorkRepository unitOfWork)
@@ -32,17 +27,17 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
                 var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
-                if( classSlots.Any())
+                if (classSlots.Any())
                 {
-                result.StartTime = classSlots[0].StartTime;
-                    result.EndTime = classSlots[classSlots.Count-1].EndTime;
-            }
+                    result.StartTime = classSlots[0].StartTime;
+                    result.EndTime = classSlots[classSlots.Count - 1].EndTime;
+                }
             }
             return mappedResult;
         }
         public async Task<PagedResult<GetClassDtos>> GetClassesOfStudent(int studentId, int page, int limit)
         {
-            var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfStudent(studentId,page,limit);
+            var pagedResult = await _unitOfWork.ClassRepository.GetClassesOfStudent(studentId, page, limit);
             var mappedResult = pagedResult.Adapt<PagedResult<GetClassDtos>>();
             foreach (var result in mappedResult.Items)
             {
@@ -65,7 +60,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
                 var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
                 if (classSlots.Any())
-        {
+                {
                     result.StartTime = classSlots[0].StartTime;
                     result.EndTime = classSlots[classSlots.Count - 1].EndTime;
                 }
@@ -82,12 +77,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             }
             var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
 
-            if( rs is not null)
+            if (rs is not null)
             {
                 rs.StartTime = classEntity.Slots.First().StartTime;
                 rs.EndTime = classEntity.Slots.Last().EndTime;
             }
-           
+
             return rs;
         }
 
@@ -131,12 +126,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return true;
         }
 
-        public async Task<GetClassFullDataSlotDto> GetClassWithFullDataSlotId(int id)
-        {
-            var classWithSlot = await _unitOfWork.ClassRepository.GetFullDataClass(id);
-            return classWithSlot.Adapt<GetClassFullDataSlotDto>();
-        }
-
         public async Task CronForAutoChangeStatusClassAndSlot()
         {
             var classesToUpdate = await _unitOfWork.ClassRepository
@@ -164,12 +153,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                         allSlotsFinished = false;
                     }
 
-                    var slotStatusUpdateModel = slot.Adapt<Models.Models.Slot>(); 
+                    var slotStatusUpdateModel = slot.Adapt<Models.Models.Slot>();
                     _unitOfWork.SlotRepository.Update(slotStatusUpdateModel);
                     await _unitOfWork.SaveChangesAsync();
                 }
-    
-                
+
+
                 // when all slot reach to finished , change class status to finished
                 if (classModel.Status == ClassStatus.NotStart && classModel.Slots.Any(sl => sl.SlotStatus == SlotStatus.OnGoing))
                 {
