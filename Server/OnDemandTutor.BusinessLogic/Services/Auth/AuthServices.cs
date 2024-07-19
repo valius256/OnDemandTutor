@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
@@ -17,14 +18,17 @@ public class AuthServices : IAuthServices
     private readonly IJwtProviderServices _jwtProviderServices;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IUserServices _userServices;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
 
     public AuthServices(IUserServices userServices, IUnitOfWorkRepository unitOfWorkRepository,
-        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices)
+        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices, IHttpContextAccessor HttpContextAccessor)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _userServices = userServices;
         _jwtProviderServices = jwtProviderServices;
         _fireBaseAuthServices = fireBaseAuthServices;
+        _httpContextAccessor = HttpContextAccessor;
     }
 
     public async Task<AuthenResponseDto> LoginWithFireBase(LoginDtos loginDto)
@@ -38,11 +42,11 @@ public class AuthServices : IAuthServices
     {
         if (claimsPrincipal.Identities == null) throw new BadRequestException("User not Authenticate");
 
-        var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+        var userId = claimsPrincipal.FindFirst(c => c.Type == "id")?.Value;
         if (userId.IsNullOrEmpty()) throw new BadRequestException("User not found");
 
 
-        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId);
+        var user = await _userServices.GetUserByIdAsync(int.Parse(userId));
         if (user == null) throw new BadRequestException("User not found");
 
         return user;
@@ -85,5 +89,40 @@ public class AuthServices : IAuthServices
         _unitOfWorkRepository.UserRepository.Update(record);
         await _unitOfWorkRepository.SaveChangesAsync();
         return record.Role.ToString();
+    }
+
+    public async Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+    {
+        // Retrieve the user's email or ID from claims
+        var user = await GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+      // var email = user.FindFirst(ClaimTypes.Email)?.Value;
+        if (user is null)
+        {
+            throw new Exception("User email not found in claims.");
+        }
+
+        // Check if the old password is correct
+        var isOldPasswordCorrect = await _jwtProviderServices.GetForCredentialsAsync(user.Email, changePasswordDto.OldPassword);
+        if (isOldPasswordCorrect is null)
+        {
+            throw new Exception("Old password is incorrect.");
+        }
+        if(changePasswordDto.NewPassword == changePasswordDto.NewPassword)
+        {
+            throw new Exception("New password similar to the old password, please choose another one.");
+        }
+        var userEntity = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Email == user.Email);
+        if (userEntity is null)
+        {
+            throw new Exception("User not found.");
+        }
+        // Change the password
+        if (userEntity is not null)
+        {
+            userEntity.Password = changePasswordDto.NewPassword;
+            return true;
+        }
+     
+        return false;
     }
 }
