@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using OnDemandTutor.Models.EntityTypeConfiguration;
 using OnDemandTutor.Models.MigrationData;
 using OnDemandTutor.Models.Models;

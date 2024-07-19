@@ -18,7 +18,7 @@ namespace OnDemandTutor.Models.Dtos.Class
         public GetProfileUserDtos User { get; set; } = new GetProfileUserDtos();
 
         public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set;}
+        public DateTime? EndTime { get; set; }
 
     }
 }

@@ -28,13 +28,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IUserServices _userServices;
         private readonly ITransactionServices _transactionServices;
-        private readonly IClassService _classService;
-        private readonly IMailServices _mailServices;
+        private readonly IEmailServices _emailServices;
         private readonly IStudentClassService _studentClassService;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IClassService classService, IMailServices mailServices, IStudentClassService studentClassService,
+            IClassServices classServices, IEmailServices emailServices, IStudentClassService studentClassService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -44,8 +43,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _slotStudentServices = slotStudentServices;
             _transactionServices = transactionServices;
             _userServices = userServices;
-            _classService = classService;
-            _mailServices = mailServices;
+            _emailServices = emailServices;
             _studentClassService = studentClassService;
         }
 
@@ -67,9 +65,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDtos slotDto)
         {
-
             var slotEntity = slotDto.Adapt<CreateSlotsDtos>(); // Assuming Mapster is used for mapping
-
+            
             // Add the new Slot entity to repository
             var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -149,10 +146,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                             -amountToDecrease);
                     }
                 }
-                else
-                {
-                    return;
-                }
             }
         }
 
@@ -160,85 +153,182 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         // improved listOfSlotIds later, cause it foreach all the slotId in same class if have
         public async Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent()
         {
-            var listOfNotPaidSlotStudent = await _slotStudentServices.GetListSLotStudentByStatus(PaymentStatus.Notpaid);
-            var listOfSlotIds = listOfNotPaidSlotStudent.Select(l => l.SlotId).Distinct().ToList();
-
-            foreach (var slotId in listOfSlotIds)
+            var notPaidSlotStudents = await _slotStudentServices.GetListSLotStudentByStatus(PaymentStatus.Notpaid);
+            var slotIds = notPaidSlotStudents.Select(l => l.SlotId).Distinct().ToList();
+            foreach (var slotId in slotIds)
             {
-                var listOfSlotTotal = await GetListOfSlotSameClassBySlotId(slotId);
-                var totalSlots = listOfSlotTotal.Count;
+                var slotTotalList = await GetListOfSlotSameClassBySlotId(slotId);
+                var totalSlots = slotTotalList.Count;
 
                 if (totalSlots == 0) continue;
 
-                var countSlotsWithNotPaidStudents = listOfSlotTotal
-                    .Count(ls => ls.SlotStudents.Any(ss => ss.PaymentStatus == PaymentStatus.Notpaid));
+                var notPaidSlotsCount = slotTotalList.Count(ls =>
+                    ls.SlotStudents.Any(ss => ss.PaymentStatus == PaymentStatus.Notpaid));
+                double notPaidSlotsPercentage = (double)notPaidSlotsCount / totalSlots;
 
-                double percentageNotPaidSlots = (double)countSlotsWithNotPaidStudents / totalSlots;
-
-                if (percentageNotPaidSlots >= 0.20)
+                if (notPaidSlotsPercentage >= 0.20)
                 {
-                    var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
-                    var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-                    var slotDto = await GetSlotByIdAsync(slotId);
-                    var classId = listOfSlotTotal.FirstOrDefault()?.ClassId;
-                    if (classId != null)
-                    {
-                        var classModel = await _classService.GetClassByIdAsync(classId.Value);
-                        
-                        var emailParams = new Dictionary<string, string>()
-                        {
-                            { "Name", $"{userDto.FirstName}" },
-                            { "ClassId", $"{classModel.Name}" },
-                        };
-
-                        List<string> toAddress = new List<string> { userDto.Email };
-                        await _mailServices.SendAsync(EmailType.High_Unpaid_Slots_Warning, toAddress, new List<string>(), emailParams);
-                    }
-
-                    try
-                    { 
-                        await _slotStudentServices.SoftDeleteSlotStudent(slotId, userDto.Id);
-                        await _studentClassService.DeleteStudentFromStudentClassById(slotDto.ClassId.Value,
-                                userDto.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.Message.Contains("StudentClass not found"))
-                        {
-                            Console.WriteLine($"StudentClass not found for user {userDto.Id} in slot {slotId}. Skipping to next.");
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    await HandleHighUnpaidSlots(slotId, slotTotalList);
                 }
-                else if (percentageNotPaidSlots >= 0.15)
+                else if (notPaidSlotsPercentage >= 0.15)
                 {
-                    var slot = await _slotStudentServices.GetSlotStudentById(slotId);
-                    var user = await _userServices.GetProfileAsync(slot.UserId, null, null);
-                    
-                    var classId = listOfSlotTotal.FirstOrDefault()?.ClassId;
-                    if (classId != null)
+                    await SendPaymentReminder(slotId, slotTotalList);
+                }
+            }
+        }
+
+        private async Task HandleHighUnpaidSlots(int slotId, List<GetSlotWithSlotStudentDto> slotTotalList)
+        {
+            var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
+            var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
+            var classId = slotTotalList.FirstOrDefault()?.ClassId;
+
+            if (classId.HasValue)
+            {
+                var classModel = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(cl => cl.Id == classId);
+                var emailParams = new Dictionary<string, string>
+                {
+                    { "Name", userDto.Email },
+                    { "ClassId", classModel.Name ?? classModel.Id.ToString() }
+                };
+
+                await SendEmail(EmailType.High_Unpaid_Slots_Warning, userDto.Email, emailParams);
+
+                try
+                {
+                    await _slotStudentServices.SoftDeleteSlotStudent(slotId, userDto.Id);
+                    await _studentClassService.DeleteStudentFromStudentClassById(classModel.Id, userDto.Id);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("StudentClass not found"))
                     {
-                        var classModel = await _classService.GetClassByIdAsync(classId.Value);
-                        var emailParams = new Dictionary<string, string>()
-                        {
-                            { "Name", $"{user.FirstName}" },
-                            { "ClassId", $"{classModel.Name}" },
-                        };
-                        List<string> toAddress = new List<string> { user.Email };
-                        await _mailServices.SendAsync(EmailType.Slot_Payment_Reminder, toAddress, new List<string>(), emailParams);
+                        Console.WriteLine($"StudentClass not found for user {userDto.Id} in slot {slotId}. Skipping to next.");
+                    }
+                    else
+                    {
+                        throw;
                     }
                 }
             }
         }
+
+        private async Task SendPaymentReminder(int slotId, List<GetSlotWithSlotStudentDto> slotTotalList)
+        {
+            var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
+            var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
+            var classId = slotTotalList.FirstOrDefault()?.ClassId;
+
+            if (classId.HasValue)
+            {
+                var classModel = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(cl => cl.Id == classId);
+                var emailParams = new Dictionary<string, string>
+                {
+                    { "Name", userDto.Email },
+                    { "ClassId", classModel.Name ?? classModel.Id.ToString() }
+                };
+
+                await SendEmail(EmailType.Slot_Payment_Reminder, userDto.Email, emailParams);
+            }
+        }
+
+        private async Task SendEmail(string emailType, string toAddress, Dictionary<string, string> emailParams)
+        {
+            var toAddressList = new List<string> { toAddress };
+            await _emailServices.SendAsync(emailType, toAddressList, new List<string>(), emailParams);
+        }
+
 
         public async Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId)
         {
             var classId = await _slotRepository.Where(sl => sl.Id == slotId).Select(l => l.ClassId).FirstOrDefaultAsync();
             var listSlotWithSameClass = await _slotRepository.Where(sl => sl.ClassId == classId).ToListAsync();
             return listSlotWithSameClass.Adapt<List<GetSlotWithSlotStudentDto>>();
+        }
+
+        public async Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto)
+        {
+            var slotInDb = _unitOfWork.SlotRepository.FirstOrDefault(sl => sl.Id == updateSlotStatusDto.Id);
+            slotInDb.SlotStatus = updateSlotStatusDto.Status;
+            _unitOfWork.SlotRepository.Update(slotInDb);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<bool> EnrollForSlot(int studentId, int slotId)
+        {
+            var currEnrollSlot = await _slotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
+            if (currEnrollSlot == null)
+            {
+                throw new ModelException($"{slotId}", "Slot not found");
+            }
+            
+            // check if student already enroll this slot
+            var existEnrollSlot = await _slotRepository.Where(sl =>
+                sl.Id == slotId && sl.SlotStudents.Any(ss => ss.UserId == studentId)).FirstOrDefaultAsync();
+            if (existEnrollSlot != null)
+            {
+                throw new ModelException($"{slotId}", $"This user: {studentId} has enroll for this slot {slotId}");   
+            }
+
+            // Check if the student is already enrolled in this slot
+            var existingEnrollment = await _slotStudentServices.GetSlotStudentById(slotId);
+            if (existingEnrollment != null && existingEnrollment.UserId == studentId)
+            {
+                throw new ModelException($"{slotId}", "Student is already enrolled in this slot");
+            }
+            var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);
+            
+            TimeSpan buffer = TimeSpan.FromMinutes(5);
+            DateTime adjustedStartTime = currEnrollSlot.StartTime - buffer;
+            DateTime adjustedEndTime = currEnrollSlot.EndTime + buffer;
+
+            foreach (var studentSlot in listOfStudentSlots)
+            {
+                // Exclude the current slot being checked
+                if (studentSlot.Id == slotId) continue;
+
+                // Check if the slot times overlap
+                if (studentSlot.StartTime < adjustedEndTime && studentSlot.EndTime > adjustedStartTime)
+                {
+                    throw new ModelException($"{slotId}", $"Conflicts with another slot id: {studentSlot.Id}");
+                }
+            }
+            
+            await _slotStudentServices.CreateSlotStudent(slotId, studentId);
+            return true;
+        }
+
+        public async Task<SlotConflictDto> IsSlotConflict(int slotId, int studentId)
+        {
+            var currEnrollSlot = await _slotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
+            if (currEnrollSlot == null)
+            {
+                throw new ModelException($"{slotId}", "Slot not found");
+            }
+
+            var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);
+            var conflictDto = new SlotConflictDto();
+
+            if (listOfStudentSlots != null)
+            {
+                foreach (var slot in listOfStudentSlots)
+                {
+                    if (slot.Id != slotId && slot.StartTime == currEnrollSlot.StartTime && slot.EndTime == currEnrollSlot.EndTime)
+                    {
+                        conflictDto.IsConflict = true;
+                        conflictDto.conflictSlotId = slot.Id;
+                        break; 
+                    }
+                }
+            }
+
+            return conflictDto;
+        }
+
+
+        public async Task<List<GetSlotWithSlotStudentDto>?> GetListSlotOfStudentByStudentId(int studentId)
+        {
+            return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
         }
     }
 }

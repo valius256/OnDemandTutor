@@ -16,10 +16,10 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 1,
                     FireBaseid = "firebaseid1",
-                    FirstName = "Nguyễn",
-                    LastName = "Văn A",
+                    FirstName = "Admin",
+                    LastName = "",
                     Phone = "0123456789",
-                    Email = "nguyenvana@example.com",
+                    Email = "thisisadmin@gmail.com",
                     Address = "123 Đường Chính",
                     AvatarImageUrl = "http://example.com/avatar1.png",
                     Dob = new DateTime(1990, 1, 1),
@@ -301,7 +301,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 1,
-                    StartTime = new DateTime(2024,7,15,7,0,0),
+                    StartTime = new DateTime(2024, 7, 15, 7, 0, 0),
                     EndTime = new DateTime(2024, 7, 15, 8, 30, 0),
                     CreateById = 2,
                     TeachAddress = "123 Đường Chính",
@@ -622,7 +622,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
                 new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
                 new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
-                
+
             // Thêm nếu cần
             );
 
@@ -690,12 +690,11 @@ namespace OnDemandTutor.Models.MigrationData
             #region StudentClass
 
             modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5, TutorId = 1 },
-                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2, TutorId = 2 },
-                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3, TutorId = 1 },
-                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4, TutorId = 2 },
-                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4, TutorId = 1 }
-                // Add more as needed
+                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5 },
+                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
+                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
+                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4},
+                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 }
             );
 
             #endregion
@@ -829,12 +828,12 @@ namespace OnDemandTutor.Models.MigrationData
              },
 
               new EmailTemplate
-                   {
-                       Id = 7,
-                       Name = "Request_Withdraw_Notification",
-                       Status = true,
-                       Subject = "Withdrawal Request Received",
-                       Body = @"
+              {
+                  Id = 7,
+                  Name = "Request_Withdraw_Notification",
+                  Status = true,
+                  Subject = "Withdrawal Request Received",
+                  Body = @"
                     <!DOCTYPE html>
                     <html lang=""en"">
                     <head>
@@ -887,9 +886,9 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
                 ",
-                       Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
-                       Description = "Email template for notifying users about their withdrawal request."
-                   },
+                  Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
+                  Description = "Email template for notifying users about their withdrawal request."
+              },
               new EmailTemplate
               {
                   Id = 8,
@@ -952,11 +951,11 @@ namespace OnDemandTutor.Models.MigrationData
                   Description = "Email template for notifying users about the status of their withdrawal request."
               },
             new EmailTemplate
-                {
-                    Id = 9,
-                    Name = "Slot_Payment_Reminder",
-                    Status = true,
-                    Body = @"Dear [Name],
+            {
+                Id = 9,
+                Name = "Slot_Payment_Reminder",
+                Status = true,
+                Body = @"Dear [Name],
 
 You currently have more than 15% of your slots unpaid out of the total for class [ClassId].
 
@@ -964,37 +963,37 @@ Kindly settle the payments at your earliest convenience.
 
 Best regards,
 The OnDemandTutor Team",
-                    Params = "[Name], [ClassId]",
-                    Subject = "Reminder: Pending Payment for Slots",
-                    Description = "Reminder email for pending slot payments.",
-                    UpdatedById = 0,
-                    CreatedDate = null, // Set to appropriate value
-                    UpdatedDate = null, // Set to appropriate value
-                    DeletedDate = null, // Set to appropriate value
-                    RecordStatus = 0
-                },
+                Params = "[Name], [ClassId]",
+                Subject = "Reminder: Pending Payment for Slots",
+                Description = "Reminder email for pending slot payments.",
+                UpdatedById = 0,
+                CreatedDate = null, // Set to appropriate value
+                UpdatedDate = null, // Set to appropriate value
+                DeletedDate = null, // Set to appropriate value
+                RecordStatus = 0
+            },
             new EmailTemplate
-                {
-                    Id = 10,
-                    Name = "High_Unpaid_Slots_Warning",
-                    Status = true,
-                    Body = @"Dear [Name],
+            {
+                Id = 10,
+                Name = "High_Unpaid_Slots_Warning",
+                Status = true,
+                Body = @"Dear [Name],
 
                         This is to inform you that you have more than 20% of your slots unpaid out of the total for class [ClassId].
                         So we have to removed you from class
                         Regards,
                         The OnDemandTutor Team",
-                    Params = "[Name], [ClassId]",
-                    Subject = "Warning: High Number of Unpaid Slots",
-                    Description = "Warning email for high number of unpaid slots.",
-                    UpdatedById = 0,
-                    CreatedDate = DateTime.Now, 
-                    UpdatedDate = DateTime.Now, 
-                    DeletedDate = DateTime.Now, 
-                    RecordStatus = 0
-                }
+                Params = "[Name], [ClassId]",
+                Subject = "Warning: High Number of Unpaid Slots",
+                Description = "Warning email for high number of unpaid slots.",
+                UpdatedById = 0,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                DeletedDate = DateTime.Now,
+                RecordStatus = 0
+            }
             );
-            
+
             #endregion
 
             #region RequestWithDraw

@@ -1,14 +1,13 @@
-﻿using HtmlAgilityPack;
-using LinqKit;
+﻿using LinqKit;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Helper;
 using OnDemandTutor.Models.Dtos.Blog;
 using OnDemandTutor.Models.Paging;
-using OnDemandTutor.Helper;
 
 namespace OnDemandTutor.BusinessLogic.Services.Blog
 {
@@ -86,7 +85,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             return true;
         }
 
-       
+
 
     }
 }

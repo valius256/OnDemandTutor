@@ -58,29 +58,5 @@ namespace OnDemandTutor.API.Controllers
             return Ok(slotStudent);
         }
 
-        [Authorize]
-        [HttpPost("{slotId}/{studentId}/pay")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(204)]
-        public async Task<IActionResult> SlotStudentPaid(int slotId, int studentId)
-        {
-            try
-            {
-                var result = await _slotStudentService.SlotStudentPaidAsync(slotId, studentId);
-                if (result)
-                {
-                    return NoContent();
-                }
-                return BadRequest("Payment failed.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiErrorActionResult
-                {
-                    Status = 400,
-                    Title = ex.Message
-                });
-            }
-        }
     }
 }
