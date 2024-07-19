@@ -98,6 +98,9 @@ export default {
           this.newSlot.actualEndTime = this.newSlot.endTime;
         }
         console.log(this.newSlot);
+        console.log(
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
         const response = await axios.post(
           import.meta.env.VITE_API_URL + "/api/Slot",
           this.newSlot,
@@ -107,9 +110,13 @@ export default {
             },
           }
         );
-
+        console.log(
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        );
         this.$emit("add", response.data);
-
+        console.log(
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        );
         // Reset the form after successful submission
         this.newSlot = {
           startTime: "",

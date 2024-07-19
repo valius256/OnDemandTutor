@@ -136,18 +136,15 @@ export default {
         const nextDay = new Date(this.selectedWeek);
         nextDay.setDate(this.selectedWeek.getDate() + i);
         const dateStr = this.toSqlDateString(nextDay);
-        console.log(dateStr);
         this.daysInWeek[i].specificDay =
           this.sqlDateStringToSlashFormat(dateStr);
       }
       let endDate = new Date(this.selectedWeek);
       endDate.setDate(this.selectedWeek.getDate() + 7);
-      console.log(this.daysInWeek);
       await this.fetching(
         this.toSqlDateString(this.selectedWeek),
         this.toSqlDateString(endDate)
       );
-      //await this.fetchLessons(this.selectedWeek, endDate)
     },
     async handleSelectedYearChange() {
       this.weeksInYear = this.getWeeksOfYear(this.selectedYear);
@@ -190,7 +187,7 @@ export default {
         case 5:
           return 240;
         default:
-          return 60; // Default value if shiftZoomSize is not set correctly
+          return 60;
       }
     },
     getShifts() {
@@ -213,23 +210,64 @@ export default {
       this.getShifts();
     },
     getSlotsByDay(date) {
-      const dateToCompare = new Date(
-        this.slashDateFormatToSqlDateString(date)
-      ).getDate();
-      //console.log(new Date(this.slots[0].slot.startTime).getDate(), dateToCompare)
-      //console.log(this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare))
-      return this.slots.filter(
-        (s) => new Date(s.slot.startTime).getDate() == dateToCompare
-      );
+      const normalizedDate = this.normalizeDate(date);
+      return this.slots.filter((slot) => {
+        const slotDate = new Date(slot.startTime);
+        return (
+          slotDate.getFullYear() === normalizedDate.getFullYear() &&
+          slotDate.getMonth() === normalizedDate.getMonth() &&
+          slotDate.getDate() === normalizedDate.getDate()
+        );
+      });
     },
     compareDateToToday(date) {
-      const dateToCompare = this.slashDateFormatToSqlDateString(date);
+      const dateToCompare = this.normalizeDate(date);
       const today = new Date();
-      const todayDateString = `${today.getFullYear()}-${String(
-        today.getMonth() + 1
-      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-      console.log(dateToCompare, todayDateString);
-      return dateToCompare == todayDateString;
+      return (
+        dateToCompare.getFullYear() === today.getFullYear() &&
+        dateToCompare.getMonth() === today.getMonth() &&
+        dateToCompare.getDate() === today.getDate()
+      );
+    },
+    normalizeDate(date) {
+      if (typeof date === "string") {
+        const parts = date.split("/");
+        if (parts.length === 3) {
+          if (parts[2].length === 4) {
+            // dd/mm/yyyy or mm/dd/yyyy
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            if (day > 12) {
+              // dd/mm/yyyy
+              return new Date(year, month - 1, day);
+            } else {
+              // mm/dd/yyyy
+              return new Date(year, day - 1, month);
+            }
+          } else {
+            // yyyy/mm/dd or yyyy/dd/mm
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+            if (month > 12) {
+              // yyyy/dd/mm
+              return new Date(year, day - 1, month);
+            } else {
+              // yyyy/mm/dd
+              return new Date(year, month - 1, day);
+            }
+          }
+        }
+      }
+      return new Date(date); // fallback to default Date parsing
+    },
+    slashDateFormatToSqlDateString(date) {
+      const normalizedDate = this.normalizeDate(date);
+      const year = normalizedDate.getFullYear();
+      const month = String(normalizedDate.getMonth() + 1).padStart(2, "0");
+      const day = String(normalizedDate.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     },
   },
   mounted() {
