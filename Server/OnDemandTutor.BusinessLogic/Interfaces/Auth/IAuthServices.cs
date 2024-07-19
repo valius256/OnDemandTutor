@@ -12,4 +12,5 @@ public interface IAuthServices
     Task<string> ForgotPassword(string email);
     Task<bool> DeleteUserAsync(string? email);
     Task<string> GrantRole(GrantRoleDto request);
+    Task<bool> ChangePasswordAsync( ChangePasswordDto changePasswordDto);
 }

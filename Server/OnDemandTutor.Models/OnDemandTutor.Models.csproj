@@ -32,6 +32,7 @@
         <Folder Include="Dtos\FAQ\" />
         <Folder Include="Dtos\Notification\" />
         <Folder Include="Dtos\StudentClass\" />
+        <Folder Include="Dtos\StudentSlot\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -44,6 +45,7 @@
       <None Remove="Dtos\FAQ\" />
       <None Remove="Dtos\Notification\" />
       <None Remove="Dtos\StudentClass\" />
+      <None Remove="Dtos\StudentSlot\" />
     </ItemGroup>
 
     <ItemGroup>

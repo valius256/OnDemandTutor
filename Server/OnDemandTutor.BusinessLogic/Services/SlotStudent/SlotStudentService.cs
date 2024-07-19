@@ -99,4 +99,21 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
+    public async Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, double rate, string feedback)
+    {
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
+            st.SlotId == slotId && st.UserId == studentId);
+
+        if (slotStudent == null)
+        {
+            throw new Exception("Slot Student not found");
+        }
+
+        slotStudent.User.Rating = rate;
+        slotStudent.Feedback = feedback;
+
+        _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
+        await _unitOfWorkRepository.SaveChangesAsync();
+        return true;
+    }
 }

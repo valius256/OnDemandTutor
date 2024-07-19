@@ -63,7 +63,7 @@ public class AuthController : BaseController<AuthController>
 
     }
 
-
+    [Authorize]
     [HttpGet("who-am-i")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
@@ -88,5 +88,12 @@ public class AuthController : BaseController<AuthController>
     public async Task<IApiResult<string>> GrantRole([FromBody] GrantRoleDto request)
     {
         return OKAsync(await _authServices.GrantRole(request));
+    }
+    [HttpPost("change-password")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<bool>), 200)]
+    public async Task<IApiResult<bool>> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+    {
+        return OKAsync(await _authServices.ChangePasswordAsync( changePasswordDto));
     }
 }

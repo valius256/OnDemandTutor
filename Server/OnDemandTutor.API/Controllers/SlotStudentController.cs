@@ -6,6 +6,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
+using OnDemandTutor.Models.Dtos.StudentSlot;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -22,7 +23,7 @@ namespace OnDemandTutor.API.Controllers
             _slotStudentService = slotStudentService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("get-slots-of-students")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
@@ -44,7 +45,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(slotStudent);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{slotId}/{studentId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(SlotStudentDto), 200)]
@@ -64,23 +65,34 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(204)]
         public async Task<IActionResult> SlotStudentPaid(int slotId, int studentId)
         {
-            try
+            var result = await _slotStudentService.SlotStudentPaidAsync(slotId, studentId);
+
+            if (result)
             {
-                var result = await _slotStudentService.SlotStudentPaidAsync(slotId, studentId);
-                if (result)
-                {
-                    return NoContent();
-                }
-                return BadRequest("Payment failed.");
+                return NoContent();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiErrorActionResult
-                {
-                    Status = 400,
-                    Title = ex.Message
-                });
-            }
+
+            // If SlotStudentPaidAsync fails in a way other than throwing an exception
+            // handle it by returning a BadRequest with a generic message.
+            return BadRequest("Payment failed.");
         }
+
+        //[Authorize]
+        [HttpPut("feedback-rating")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> UpdateSlotStudent(int slotId, int studentId, [FromBody] UpdateSlotStudentDto updateDto)
+        {
+            var result = await _slotStudentService.UpdateSlotStudentAsync(slotId, studentId, updateDto.Rate, updateDto.Feedback);
+
+            if (result)
+            {
+                return NoContent();
+            }
+
+            // This line will never be reached if the method handles all cases correctly.
+            return BadRequest("Update failed.");
+        }
+
     }
 }
