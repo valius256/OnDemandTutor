@@ -14,7 +14,7 @@
                             <li>
                                 <span class="font-bold">Gia sư :</span>
                                 <button class="ml-3 font-bold text-blue-400 underline">
-                                    {{ (class_.user.firstName ?? "") ?? (class_.user.lastName ?? "") }}
+                                    {{ (class_.tutor.firstName ?? "") ?? (class_.tutor.lastName ?? "") }}
                                 </button>
                             </li>
                             <li>

@@ -40,7 +40,7 @@
       </div> -->
     </div>
     <div class="flex items-center lg:hidden h-full mr-2 gap-4">
-      <bell-notification />
+      <bell-notification v-if="user"/>
       <button class="shadow-md rounded-md py-2 px-4 bg-white text-2xl font-bold" @click="toggleResponsive">
         <i class="fa fa-reorder	"></i>
       </button>

@@ -23,14 +23,18 @@
 //import { RouterLink } from 'vue-router';
 
 export default {
-  name: "ConfirmationForm",
+  name: "ResultForm",
   inject: ["eventBus"],
-  props: ['message', 'type'],
+  props: ['message', 'type','callback'],
   mounted() {
 
   },
   methods: {
     handleClose() {
+      //console.log(this.callback)
+      if (typeof this.callback === 'function') {
+        this.callback();
+      } 
       this.eventBus.emit("close-result-dialog")
     },
   }

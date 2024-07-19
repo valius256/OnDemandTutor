@@ -63,7 +63,7 @@ import SlotDetail from './SlotDetail.vue';
 export default {
   components: { SlotDetail },
     name: "StudentTimeTable",
-    props: ['slots','fetching','viewDetail'],
+    props: ['slots','fetching','viewDetail','isGuest'],
     data() {
         return {
             daysInWeek: [

@@ -83,12 +83,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             }
 
             var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
-
-            // if (rs is not null)
-            // {
-            //     rs.StartTime = classEntity.Slots.First().StartTime;
-            //     rs.EndTime = classEntity.Slots.Last().EndTime;
-            // }
+            var classSlots = classEntity?.Slots.OrderBy(s => s.StartTime).ToList() ?? new List<Models.Models.Slot>();
+            if (classSlots.Any())
+            {
+                rs.StartTime = classSlots[0].StartTime;
+                rs.EndTime = classSlots[classSlots.Count - 1].EndTime;
+            }
 
             return rs;
         }

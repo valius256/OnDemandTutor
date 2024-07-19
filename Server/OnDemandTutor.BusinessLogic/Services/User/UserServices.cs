@@ -318,7 +318,11 @@ public class UserServices : IUserServices
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
         if (userInDb == null)
         {
-            throw new InvalidOperationException("User not found.");
+            throw new NotFoundException("User not found.");
+        }
+        if (userInDb.Id !=  requestDto.Id && userInDb.Role < RoleStatus.Operator)
+        {
+            throw new BadRequestException("You do not have permission to do this!");
         }
 
         UpdateUserFields(userInDb, requestDto);

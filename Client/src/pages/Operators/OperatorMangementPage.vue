@@ -36,7 +36,9 @@
             <tbody>
                 <tr v-for="operator in operators" :key="operator.id">
                     <td>{{ operator.id }}</td>
-                    <td><div class="w-32 break-words font-bold">{{ operator.firstName + " " + operator.lastName }}</div></td>
+                    <td>
+                        <div class="w-32 break-words font-bold">{{ operator.firstName + " " + operator.lastName }}</div>
+                    </td>
                     <td class="break-all">{{ operator.email }}</td>
                     <td>{{ operator.phone }}</td>
                     <td>{{ this.beautifyDatetime(operator.createdDate) }}</td>
@@ -69,7 +71,8 @@
                                 class="hover:bg-slate-200 p-2 rounded-b-lg text-left text-red-500">
                                 <i class="fa fa-remove mr-4"></i>Đình chỉ
                             </button>
-                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500" @click="handleActivate({confirmation : true, id : operator.id})">
+                            <button v-else class="hover:bg-slate-200 p-2 rounded-b-lg text-left  text-green-500"
+                                @click="handleActivate({ confirmation: true, id: operator.id })">
                                 <i class="fa fa fa-check mr-4"></i>Kích hoạt
                             </button>
                         </div>
@@ -91,10 +94,10 @@
             </button>
         </div>
         <generic-popup v-if="isOpenAddPopup" title="Thêm tài khoản vận hành" :closeFunction="toggleOpenAddPopup">
-            <operator-edit-add-popup :close="toggleOpenAddPopup" />
+            <operator-edit-add-popup :close="toggleOpenAddPopup" :action="fetchData" />
         </generic-popup>
         <generic-popup v-if="isOpenEditPopup" title="Chỉnh sửa tài khoản vận hành" :closeFunction="toggleOpenEditPopup">
-            <operator-edit-add-popup :close="toggleOpenEditPopup" :editDto="editDto" />
+            <operator-edit-add-popup :close="toggleOpenEditPopup" :editDto="editDto" :action="fetchData" />
         </generic-popup>
         <generic-popup v-if="isOpenFilterPopup" title="Bộ lọc tài khoản vận hành" :closeFunction="toggleFilterPopup">
             <operator-filter-popup :close="toggleFilterPopup" :action="handleFilter" :filterDto="filterDto" />
@@ -113,7 +116,7 @@ import OperatorFilterPopup from '../../components/Operators/OperatorFilterPopup.
 import AccountDeactivateReasonPopup from '../../components/Operators/AccountDeactivateReasonPopup.vue'
 export default {
     components: { OperatorEditAddPopup, GenericPopup, OperatorFilterPopup, AccountDeactivateReasonPopup },
-    inject : ['eventBus'],
+    inject: ['eventBus'],
     name: "OperatorManagementPage",
     data() {
         return {
@@ -139,7 +142,9 @@ export default {
                 isChanged: false
             },
             editDto: {
-                name: "",
+                id: 0,
+                firstName: "",
+                lastName: "",
                 phone: "",
                 email: "",
                 role: ""
@@ -149,11 +154,11 @@ export default {
     methods: {
         async fetchData() {
             let query = {
-                Name : this.filterDto.name,
-                Email : this.filterDto.email,
-                Phone : this.filterDto.phone,
-                JoinFromDate : this.filterDto.fromJoinDate ?? "",
-                JoinToDate : this.filterDto.toJoinDate ?? "",
+                Name: this.filterDto.name,
+                Email: this.filterDto.email,
+                Phone: this.filterDto.phone,
+                JoinFromDate: this.filterDto.fromJoinDate ?? "",
+                JoinToDate: this.filterDto.toJoinDate ?? "",
                 Page: this.currentPage,
                 Limit: this.pageSize
             }
@@ -168,10 +173,10 @@ export default {
             }
             queryStr += this.jsonToQueryString(query)
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?'+ 
-            queryStr,{
-                headers : {
-                    "Authorization" : "Bearer " + localStorage.token
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/all?' +
+                queryStr, {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.token
                 }
             })
             if (response.data) {
@@ -202,10 +207,12 @@ export default {
         handleEdit(id) {
             const operator = this.operators.find(o => o.id == id)
             if (operator != null) {
-                this.editDto.name = operator.name,
-                    this.editDto.phone = operator.phone,
-                    this.editDto.email = operator.email,
-                    this.editDto.role = operator.role
+                this.editDto.id = operator.id
+                this.editDto.phone = operator.phone,
+                this.editDto.email = operator.email,
+                this.editDto.role = operator.role
+                this.editDto.firstName = operator.firstName
+                this.editDto.lastName = operator.lastName
 
                 this.toggleOpenEditPopup()
             }

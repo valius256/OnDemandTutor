@@ -3,6 +3,7 @@
 <script>
 import axios from 'axios';
 export default {
+  inject: ['eventBus'],
   methods: {
     async getUserFromToken() {
       if (localStorage.token) {
@@ -15,16 +16,33 @@ export default {
               },
             }
           );
-          if (response.data) {
-            return response.data.data;
+          var user = response.data.data;
+          if (!user.isActive) {
+            this.eventBus.emit("open-result-dialog", {
+              message: "Tài khoản của bạn đã bị ngưng hoạt động. Lý do : " + user.deaActiveReason,
+              type: "Error",
+              callback : this.clearToken
+            })
           }
-        } catch (e){
-          console.log("Token can't be used")
-        }        
+          return user
+        } catch (e) {
+          console.log(e)
+          //console.log("Token can't be used")
+          this.eventBus.emit("open-result-dialog", {
+              message: "Phiên đã hết hạn. Vui lòng đăng nhập lại",
+              type: "Error",
+              callback : this.clearToken
+            })
+        }
       }
       //this.eventBus.emit("close-loading-popup")
 
       return null
+    },
+    clearToken(){
+      this.$router.push("/login"); 
+      localStorage.removeItem("token")
+      this.eventBus.emit("update-everything")
     },
     getWeeksOfYear(year) {
       const weeks = [];
@@ -107,7 +125,7 @@ export default {
     //For example 2024-07-03T21:58:53.1949788
     beautifyDatetime(datetimeStr) {
       if (datetimeStr) {
-        return  datetimeStr.substring(8, 10)  + "/" + datetimeStr.substring(5, 7) + "/" + datetimeStr.substring(0, 4) + " lúc " + datetimeStr.substring(11, 19)
+        return datetimeStr.substring(8, 10) + "/" + datetimeStr.substring(5, 7) + "/" + datetimeStr.substring(0, 4) + " lúc " + datetimeStr.substring(11, 19)
       }
       return ""
     }
