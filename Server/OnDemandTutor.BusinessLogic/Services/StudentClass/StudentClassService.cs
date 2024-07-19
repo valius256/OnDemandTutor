@@ -91,9 +91,9 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             return true;
         }
 
-        public async Task<bool> StudentRatingClassAsync(int StudentClassId, int Rating, string? Feedback)
+        public async Task<bool> StudentRatingClassAsync(int classId, int studentId, int Rating, string? Feedback)
         {
-            var recordInDB = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st => st.StudentId == StudentClassId);
+            var recordInDB = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st => st.StudentId == studentId && st.ClassId == classId);
             if (recordInDB == null)
             {
                 throw new ModelException($"{recordInDB.Id}", "has not found");
@@ -103,18 +103,19 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             recordInDB.Rating = Rating;
             recordInDB.Feedback = Feedback;
             _unitOfWork.StudentClassRepository.Update(recordInDB);
+            await _unitOfWork.SaveChangesAsync();
 
             // handle for update tutor rating 
-            var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
-            var tutorId = classModel.TutorId;
-            var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
+            //var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
+            //var tutorId = classModel.TutorId;
+            //var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
 
-            var listClassStudentRating = await _unitOfWork.StudentClassRepository
-                    .Where(ss => ss.ClassId == classModel.Id && ss.Rating.HasValue)
-                    .AverageAsync(l => l.Rating);
+            //var listClassStudentRating = await _unitOfWork.StudentClassRepository
+            //        .Where(ss => ss.ClassId == classModel.Id && ss.Rating.HasValue)
+            //        .AverageAsync(l => l.Rating);
             
-            tutorModel.Rating = (listClassStudentRating + Rating) / 2;
-            await _userServices.UpdateTutorRating(tutorModel);
+            //tutorModel.Rating = (listClassStudentRating + Rating) / 2;
+            //await _userServices.UpdateTutorRating(tutorModel);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

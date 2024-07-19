@@ -6,7 +6,8 @@
         public int StudentId { get; set; }
         public int ClassId { get; set; }
         public int RatingForTutorId { get; set; }
-        public int Rating { get; set; }
+        public int? Rating { get; set; }
+        public string? Feedback { get; set; }
     }
 }
 

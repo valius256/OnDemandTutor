@@ -54,7 +54,7 @@
                         </ul>
                     </div>
                     <div class="flex justify-center gap-2 my-2" >
-                        <button v-if="class_.status == 2" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Đánh giá gia sư</button>
+                        <button v-if="class_.status == 2 && !class_.feedback" class="bg-blue-500 text-white font-bold p-2 rounded-lg" @click="toggleClassRatingPopup(class_.id)">Đánh giá gia sư</button>
                         <button @click="toggleClassDetailPopup(class_.id)" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
                     </div>
                 </div>
@@ -77,6 +77,9 @@
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">Trở về</button>
             <class-detail-popup :classId="selectedClass"></class-detail-popup>
         </div>
+        <generic-popup title="Đánh giá lớp học" v-if="isOpenRatingPopup" :closeFunction="toggleClassRatingPopup">
+            <rating-popup :classId="selectedClass" :close="toggleClassRatingPopup" :action="fetchData"></rating-popup>
+        </generic-popup>
     </div>
 </template>
 
@@ -84,8 +87,10 @@
 import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import ClassDetailPopup from './ClassDetailPopup.vue'
+import RatingPopup from './RatingPopup.vue'
 export default {
-  components: { GenericPopup, ClassDetailPopup },
+  components: { GenericPopup, ClassDetailPopup, RatingPopup },
+  inject : ['eventBus'],
     name: "StudentClasses",
     data() {
         return {
@@ -94,6 +99,7 @@ export default {
             currentPage: 1,
             selectedClass : 0,
             isOpenClassDetailPopup : false,
+            isOpenRatingPopup : false,
             classes: []
         }
     },
@@ -184,6 +190,10 @@ export default {
             scrollTo(0,0)
             this.selectedClass = id
             this.isOpenClassDetailPopup = !this.isOpenClassDetailPopup
+        },
+        toggleClassRatingPopup(id){
+            this.selectedClass = id
+            this.isOpenRatingPopup = !this.isOpenRatingPopup
         }
     },
     mounted(){

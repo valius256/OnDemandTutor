@@ -267,6 +267,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 sl.Id == slotId && sl.SlotStudents.Any(ss => ss.UserId == studentId)).FirstOrDefaultAsync();
             if (existEnrollSlot != null)
             {
+                //return false;
                 throw new ModelException($"{slotId}", $"This user: {studentId} has enroll for this slot {slotId}");   
             }
 
@@ -274,6 +275,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var existingEnrollment = await _slotStudentServices.GetSlotStudentById(slotId);
             if (existingEnrollment != null && existingEnrollment.UserId == studentId)
             {
+                //return false;
                 throw new ModelException($"{slotId}", "Student is already enrolled in this slot");
             }
             var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);

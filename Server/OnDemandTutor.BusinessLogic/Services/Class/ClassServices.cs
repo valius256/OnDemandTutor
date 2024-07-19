@@ -26,7 +26,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
-                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                var classSlots = class_?.Slots.OrderBy(s => s.StartTime).ToList() ?? new List<Models.Models.Slot>();
                 if (classSlots.Any())
                 {
                     result.StartTime = classSlots[0].StartTime;
@@ -44,7 +44,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
-                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                var classSlots = class_?.Slots.OrderBy(s => s.StartTime).ToList() ?? new List<Models.Models.Slot>();
                 if (classSlots.Any())
                 {
                     result.StartTime = classSlots[0].StartTime;
@@ -62,7 +62,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             foreach (var result in mappedResult.Items)
             {
                 var class_ = pagedResult.Items.FirstOrDefault(x => x.Id == result.Id);
-                var classSlots = class_?.Slots.ToList() ?? new List<Models.Models.Slot>();
+                var classSlots = class_?.Slots.OrderBy(s => s.StartTime).ToList() ?? new List<Models.Models.Slot>();
                 if (classSlots.Any())
                 {
                     result.StartTime = classSlots[0].StartTime;

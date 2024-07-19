@@ -12,6 +12,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
 
         public GetSimpleUserDto User { get; set; } = new GetSimpleUserDto();
         public PaymentStatus PaymentStatus { get; set; }
+        public decimal? Rating { get; set; }
         public string? Feedback { get; set; }
     }
 }

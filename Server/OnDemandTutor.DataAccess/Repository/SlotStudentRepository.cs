@@ -24,8 +24,9 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
                 .ThenInclude(s => s.Class)
             .Include(ss => ss.User)
             .OrderBy(ss => ss.Slot.StartTime)
+            .Where(s => s.Slot.StartTime > DateTime.Now)
             .Take(1)
-            .FirstOrDefaultAsync(s => s.UserId == studentId && s.Slot.StartTime > DateTime.Now);
+            .FirstOrDefaultAsync(s => s.User.Id == studentId);
     }
     public async Task<List<SlotStudent>> GetStudentSlotsAsync(QuerySlotStudentDto request, int studentId)
     {
