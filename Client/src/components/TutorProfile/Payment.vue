@@ -5,104 +5,210 @@
     </div>
     <div class="flex justify-center mb-8">
       <div class="text-3xl font-bold py-1">
-        Số dư hiện tại :
-        <span class="text-green-200 p-1 bg-green-600 rounded-lg">
+        <div class="mb-4">Số dư hiện tại</div>
+        <div class="text-green-200 p-1 bg-green-600 rounded-lg text-center">
           {{
-            currentUser.balance.toLocaleString("vi-VN", {
+            balance.toLocaleString("vi-VN", {
               style: "currency",
               currency: "VND",
             })
           }}
-        </span>
-      </div>
-    </div>
-    <div class="m-8">
-      <div class="flex justify-center gap-4">
-        <button
-          class="p-2 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-          @click="openModal"
-        >
-          Nạp tiền
-        </button>
-      </div>
-      <div
-        v-if="showModal"
-        class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50"
-      >
-        <div class="bg-white p-8 rounded-lg">
-          <h2 class="text-xl font-bold mb-4">Nạp tiền vào ví</h2>
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Số tiền muốn nạp
-            </label>
-            <input
-              v-model="amount"
-              type="number"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-          </div>
-          <div class="flex justify-end">
-            <button
-              class="mr-4 p-2 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-              @click="deposit"
-            >
-              Nạp tiền
-            </button>
-            <button
-              class="p-2 text-xl font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg"
-              @click="closeModal"
-            >
-              Hủy
-            </button>
-          </div>
         </div>
       </div>
     </div>
+    <div class="flex gap-4 justify-center mt-4 text-2xl mb-6">
+      <button
+        @click="null"
+        class="mr-6 px-6 py-4 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
+      >
+        Nạp tiền
+      </button>
+      <button
+        @click="toggleWithdrawPopup"
+        class="px-6 py-4 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg"
+      >
+        Rút tiền
+      </button>
+    </div>
+    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
+      Các Slot chưa thanh toán
+    </div>
+    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
+      Lịch sử giao dịch
+    </div>
+    <div class="px-4 mb-4">
+      <table
+        class="bg-slate-50 p-6 rounded-xl text-center w-full"
+        v-if="transactions.length > 0"
+      >
+        <thead>
+          <th>Code</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Description</th>
+        </thead>
+        <tbody>
+          <tr v-for="transaction in transactions" :key="transaction.id">
+            <td>{{ transaction.transactionCode }}</td>
+            <td>{{ this.beautifyDatetime(transaction.createdDate) }}</td>
+            <td :class="getAmountStyle(transaction.amount)">
+              {{
+                transaction.amount.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })
+              }}
+            </td>
+            <td>{{ transaction.notes }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="flex gap-4 justify-center mt-4"
+        v-if="transactions.length > 0"
+      >
+        <button @click="movePage(false)">
+          <i class="fa fa-arrow-left text-2xl"></i>
+        </button>
+        <div class="flex gap-2">
+          <input
+            class="border p-1 rounded-md w-16"
+            type="number"
+            v-model="currentPage"
+            min="1"
+            @change="handlePageChange"
+          />
+          <div class="p-1">/ {{ this.totalPage }}</div>
+        </div>
+        <button @click="movePage(true)">
+          <i class="fa fa-arrow-right text-2xl"></i>
+        </button>
+      </div>
+      <div v-else class="text-center italic">Hiện chưa có giao dịch nào</div>
+    </div>
+    <generic-popup
+      v-if="isOpenWithdrawPopup"
+      :title="'Tạo yêu cầu rút tiền'"
+      :closeFunction="toggleWithdrawPopup"
+      :notOverflow="true"
+    >
+      <request-withdraw-popup
+        :close="toggleWithdrawPopup"
+        :action="navigateToPayment"
+        :balance="balance"
+      ></request-withdraw-popup>
+    </generic-popup>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-
+import GenericPopup from "../common/GenericPopup.vue";
+import RequestWithdrawPopup from "./RequestWithdrawPopup.vue";
 export default {
+  components: { GenericPopup, RequestWithdrawPopup },
+  props: ["id"],
   name: "TutorProfilePayment",
-  props: ["currentUser"],
   data() {
     return {
-      showModal: false,
-      amount: 0,
+      totalPage: 100,
+      pageSize: 10,
+      currentPage: 1,
+      balance: 0,
+      user: null,
+      transactions: [],
+      isOpenWithdrawPopup: false,
     };
   },
   methods: {
-    openModal() {
-      this.showModal = true;
+    getAmountStyle(amount) {
+      let css = "font-bold";
+      if (amount < 0) {
+        return css + " text-red-400";
+      } else {
+        return css + " text-green-400";
+      }
     },
-    closeModal() {
-      this.showModal = false;
+    async handlePageChange() {
+      if (this.currentPage > this.totalPage) {
+        this.currentPage = this.totalPage;
+      }
+      if (this.currentPage < 1) {
+        this.currentPage = 1;
+      }
+      await this.fetchTranscations();
+      //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
     },
-    async deposit() {
-      try {
-        const response = await axios.post(
-          import.meta.env.VITE_API_URL + "/api/User/deposit",
-          { amount: this.amount },
+    async movePage(forward) {
+      if (forward && this.currentPage < this.totalPage) {
+        this.currentPage++;
+        await this.handlePageChange();
+      } else if (!forward && this.currentPage > 1) {
+        this.currentPage--;
+        await this.handlePageChange();
+      }
+    },
+    async fetchTranscations() {
+      let query = {
+        Page: this.currentPage,
+        Limit: this.pageSize,
+      };
+      //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
+      const response = await axios.get(
+        import.meta.env.VITE_API_URL +
+          "/api/Transaction/all?" +
+          this.jsonToQueryString(query),
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.token,
+          },
+        }
+      );
+      if (response.data) {
+        this.transactions = response.data.items;
+        this.totalPage = Math.ceil(response.data.total / this.pageSize);
+      }
+    },
+    toggleWithdrawPopup() {
+      this.isOpenWithdrawPopup = !this.isOpenWithdrawPopup;
+    },
+    navigateToPayment() {
+      this.$router.push("/tutor/withdraw");
+    },
+    async fetchUser() {
+      console.log(this.id);
+      if (this.id) {
+        const response = await axios.get(
+          import.meta.env.VITE_API_URL + "/api/User/profile?userId=" + this.id
+        );
+        if (response.data) {
+          this.user = response.data.data;
+        }
+        const balanceResponse = await axios.get(
+          import.meta.env.VITE_API_URL + "/api/User/balance",
           {
             headers: {
               Authorization: "Bearer " + localStorage.token,
             },
           }
         );
-        if (response.data) {
-          this.currentUser.balance = response.data.newBalance;
-          this.closeModal();
+        if (balanceResponse.data) {
+          this.balance = balanceResponse.data.data.balance;
         }
-      } catch (error) {
-        console.error("Failed to deposit money:", error);
       }
     },
+  },
+  mounted() {
+    this.fetchTranscations();
+    this.fetchUser();
   },
 };
 </script>
 
-<style>
-/* Add any additional styles if necessary */
+<style scoped>
+tr td,
+th {
+  padding: 0.5rem 2rem 0.5rem 2rem;
+  border: solid 1px #ffffff;
+}
 </style>

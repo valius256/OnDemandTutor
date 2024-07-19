@@ -51,7 +51,7 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetClassesOfTutor([FromQuery] int page = 1, [FromQuery] int limit = 10)
         {
             var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
-            var classes = await _classServices.GetClassesOfStudent(tutor.Id, page, limit);
+            var classes = await _classServices.GetClassesOfTutor(tutor.Id, page, limit);
             return Ok(classes);
         }
         [HttpGet("{id}")]

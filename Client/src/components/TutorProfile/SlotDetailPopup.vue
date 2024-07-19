@@ -2,10 +2,10 @@
   <div class="p-4 bg-white rounded-b-lg w-full">
     <div class="flex gap-4">
       <div>
-        <div class="mb-8" v-if="slot.slot.class">
+        <div class="mb-8" v-if="classDetails">
           <div>
             <span class="font-bold">Tên lớp :</span>
-            <span class="ml-4">{{ slot.slot.class.name }}</span>
+            <span class="ml-4">{{ classDetails.name }}</span>
           </div>
           <div>
             <span class="font-bold">Buổi thứ :</span>
@@ -16,21 +16,17 @@
         <div>
           <span class="font-bold">Môn học :</span>
           <span class="font-bold text-blue-400 ml-4">{{
-            this.slot.slot.subject.name
+            classDetails?.subject?.name
           }}</span>
         </div>
         <hr />
         <div class="mt-8">
           <span class="font-bold">Bắt đầu :</span>
-          <span class="ml-4">{{
-            this.beautifyDatetime(this.slot.slot.startTime)
-          }}</span>
+          <span class="ml-4">{{ beautifyDatetime(slot.startTime) }}</span>
         </div>
         <div>
           <span class="font-bold">Kết thúc :</span>
-          <span class="ml-4">{{
-            this.beautifyDatetime(this.slot.slot.endTime)
-          }}</span>
+          <span class="ml-4">{{ beautifyDatetime(slot.endTime) }}</span>
         </div>
         <div>
           <span class="font-bold">Tổng thời lượng :</span>
@@ -39,13 +35,11 @@
         <hr />
         <div class="mt-4">
           <span class="font-bold">Địa điểm :</span>
-          <span class="ml-4">{{ this.slot.slot.teachAddress }}</span>
+          <span class="ml-4">{{ slot.teachAddress }}</span>
         </div>
         <div class="">
           <span class="font-bold">Phương thức :</span>
-          <span
-            v-if="this.slot.slot.isOnline"
-            class="ml-4 font-bold text-green-500"
+          <span v-if="slot.isOnline" class="ml-4 font-bold text-green-500"
             >Online</span
           >
           <span v-else class="ml-4 font-bold text-gray-500">Offline</span>
@@ -55,75 +49,117 @@
         <img
           class="w-48 h-48"
           :src="
-            this.slot.slot.createdBy.avatarImageUrl ??
-            '/src/assets/noavatar.jpg'
+            classDetails?.tutor?.avatarImageUrl ?? '/src/assets/noavatar.jpg'
           "
         />
         <div class="mt-2 text-center">
           <div>Gia sư</div>
           <div class="font-bold text-2xl">
             {{
-              (this.slot.slot.createdBy.firstName ?? "") +
+              classDetails?.tutor?.firstName +
               " " +
-              (this.slot.slot.createdBy.lastName ?? "")
+              classDetails?.tutor?.lastName
             }}
           </div>
         </div>
-
         <div class="">
           <div>
             <span class="font-bold">Email : </span>
-            <span class="italic">{{ this.slot.slot.createdBy.email }}</span>
+            <span class="italic">{{ classDetails?.tutor?.email }}</span>
           </div>
           <div>
             <span class="font-bold">Phone : </span>
-            <span class="italoc">{{ this.slot.slot.createdBy.phone }}</span>
+            <span class="italic">{{ classDetails?.tutor?.phone }}</span>
           </div>
         </div>
       </div>
     </div>
-
-    <div v-if="slot.paymentStatus == 0" class="mt-4 flex place-content-between">
-      <span class="p-2 text-red-400 font-bold"
-        >Bạn chưa thanh toán Slot này</span
-      >
-      <button
-        class="p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white"
-      >
-        Thanh toán ngay
-      </button>
-    </div>
-    <div v-else class="mt-4">
-      <span class="p-2 text-blue-400 font-bold"
-        >Bạn đã thanh toán Slot này</span
-      >
-    </div>
-    <div
-      class="flex flex-col justify-center mt-2"
-      v-if="new Date(slot.slot.endTime) > new Date() && !slot.slot.class"
-    >
-      <div class="text-sm italic text-center">
-        Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!
-      </div>
-      <button
-        class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg"
-      >
-        Đánh giá gia sư
-      </button>
+    <hr />
+    <div class="mt-4">
+      <span class="font-bold">Học sinh đăng ký:</span>
+      <ul class="mt-2">
+        <li v-for="student in slotStudents" :key="student.userId">
+          User ID: {{ student.userId }}, Feedback: {{ student.feedback }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "SlotDetailPopup",
   props: ["slot", "close"],
+  data() {
+    return {
+      classDetails: null,
+      slotStudents: [],
+    };
+  },
   methods: {
     calcDuration() {
-      const startTime = new Date(this.slot.slot.startTime);
-      const endTime = new Date(this.slot.slot.endTime);
+      const startTime = new Date(this.slot.startTime);
+      const endTime = new Date(this.slot.endTime);
       return (endTime - startTime) / 3600000;
     },
+    beautifyDatetime(datetime) {
+      const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      return new Date(datetime).toLocaleDateString("vi-VN", options);
+    },
+    async fetchClassDetails() {
+      console.log("Fetching class details for classId:", this.slot.classId);
+      if (this.slot.classId) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/Class/${this.slot.classId}`,
+            {
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.token}`,
+              },
+            }
+          );
+          console.log("API response:", response.data);
+          this.classDetails = response.data;
+          console.log("classDetails updated:", this.classDetails);
+        } catch (error) {
+          console.error("Error fetching class details:", error);
+        }
+      }
+    },
+    async fetchSlotStudents() {
+      console.log("Fetching slot students for slotId:", this.slot.id);
+      if (this.slot.id) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/SlotStudent/${this.slot.id}`,
+            {
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.token}`,
+              },
+            }
+          );
+          console.log("API response:", response.data);
+          this.slotStudents = response.data;
+          console.log("slotStudents updated:", this.slotStudents);
+        } catch (error) {
+          console.error("Error fetching slot students:", error);
+        }
+      }
+    },
+  },
+  mounted() {
+    this.fetchClassDetails();
+    this.fetchSlotStudents();
   },
 };
 </script>

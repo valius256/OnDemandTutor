@@ -13,11 +13,21 @@
         :currentUser="user"
         v-if="$route.path == '/tutor/subject'"
       ></subject>
+      <tutor-classes
+        :id="user.id"
+        :currentUser="user"
+        v-if="$route.path == '/tutor/myclass'"
+      ></tutor-classes>
       <payment
         :id="user.id"
         :currentUser="user"
         v-if="$route.path == '/tutor/payment'"
       ></payment>
+      <withdraw-request
+        :id="user.id"
+        :currentUser="user"
+        v-if="$route.path == '/tutor/withdraw'"
+      ></withdraw-request>
       <preview
         :id="user.id"
         :currentUser="user"
@@ -34,10 +44,20 @@ import Profile from "../../components/TutorProfile/Profile.vue";
 import Schedule from "../../components/TutorProfile/Schedule.vue";
 import Preview from "../../components/TutorProfile/Preview.vue";
 import Subject from "../../components/TutorProfile/Subject.vue";
-
+import TutorClasses from "../../components/TutorProfile/TutorClasses.vue";
+import WithdrawRequest from "../../components/TutorProfile/WithdrawRequest.vue";
 export default {
   name: "ProfilePage",
-  components: { Profile, Schedule, Payment, Navigator, Preview, Subject },
+  components: {
+    Profile,
+    Schedule,
+    Payment,
+    Navigator,
+    Preview,
+    Subject,
+    TutorClasses,
+    WithdrawRequest,
+  },
   data() {
     return {
       user: null,

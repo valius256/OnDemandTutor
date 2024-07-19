@@ -27,17 +27,13 @@
             <span class="font-bold">Trạng thái : </span>
             <span
               :class="
-                getSlotStatus(
-                  upcomingSlot.slot.startTime,
-                  upcomingSlot.slot.endTime
-                ).style
+                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
+                  .style
               "
             >
               {{
-                getSlotStatus(
-                  upcomingSlot.slot.startTime,
-                  upcomingSlot.slot.endTime
-                ).display
+                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
+                  .display
               }}
             </span>
           </div>
@@ -45,13 +41,13 @@
             <div>
               <span class="mr-4 font-bold">Bắt đầu :</span>
               <span class="mr-4">{{
-                beautifyDatetime(upcomingSlot.slot.startTime)
+                beautifyDatetime(upcomingSlot.startTime)
               }}</span>
             </div>
             <div>
               <span class="mr-4 font-bold">Kết thúc :</span>
               <span class="mr-4">{{
-                beautifyDatetime(upcomingSlot.slot.endTime)
+                beautifyDatetime(upcomingSlot.endTime)
               }}</span>
             </div>
             <div>
@@ -71,7 +67,7 @@
             <span class="text-red-500">
               {{
                 (
-                  upcomingSlot.slot.createdBy?.tutorFeePerHour *
+                  upcomingSlot.createById?.tutorFeePerHour *
                   calcDuration(upcomingSlot)
                 ).toLocaleString("vi-VN", {
                   style: "currency",
@@ -110,8 +106,13 @@
       v-if="isOpenSlotDetailPopup"
       title="Chi tiết buổi học"
       :closeFunction="closeSlotDetailPopup"
+      :notOverflow="true"
     >
-      <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
+      <slot-detail-popup
+        :slot="selectingSlot"
+        :close="closeSlotDetailPopup"
+        :action="refresh"
+      />
     </generic-popup>
   </div>
 </template>
@@ -130,8 +131,6 @@ export default {
   data() {
     return {
       balance: 0,
-      from: null,
-      to: null,
       isOpenSlotDetailPopup: false,
       slots: [],
       upcomingSlot: null,
@@ -166,16 +165,39 @@ export default {
       }
     },
     async getClosestSlot() {
-      const response = await axios.get(
-        import.meta.env.VITE_API_URL + "/api/SlotTutor/get-upcoming-slot",
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.token,
-          },
+      const userId = this.currentUser.id;
+      const column = "startTime"; // Example column name
+      const isDesc = false; // We want to sort in ascending order to find the upcoming slot
+
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.token}`,
+            },
+          }
+        );
+
+        if (response.data && response.data.items) {
+          const slots = response.data.items;
+          const now = new Date();
+          // Find the closest upcoming slot
+          this.upcomingSlot = slots.find(
+            (slot) => new Date(slot.startTime) > now
+          );
+          console.log(
+            "sssssssssssssssssssssssssssssssssssssssssss" + this.upcomingSlot
+          );
+          console.log(this.upcomingSlot);
+        } else {
+          this.upcomingSlot = null; // Ensure upcomingSlot is null if no slots are found
         }
-      );
-      if (response.data) {
-        this.upcomingSlot = response.data;
+      } catch (error) {
+        console.error("Error fetching user slots:", error);
+        this.upcomingSlot = null; // Handle errors by setting upcomingSlot to null
       }
     },
     getSlotStatus(startTime, endTime) {
@@ -213,26 +235,31 @@ export default {
         this.balance = balanceResponse.data.data.balance;
       }
     },
-    async getUserSlots(from, to) {
-      let queryString = "?";
-      if (from != null) {
-        queryString += "From=" + from;
-      }
-      if (to != null) {
-        queryString += "&To=" + to;
-      }
-      const response = await axios.get(
-        import.meta.env.VITE_API_URL +
-          "/api/SlotTutor/get-slots-of-tutors" +
-          queryString,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.token,
-          },
+    async getUserSlots() {
+      const userId = this.currentUser.id;
+      const column = "startTime"; // Example column name
+      const isDesc = true; // Example sort order
+
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.token}`,
+            },
+          }
+        );
+        console.log(response.data); // Log the response data for debugging
+        if (response.data && response.data.items) {
+          this.slots = response.data.items;
+        } else {
+          this.slots = []; // Ensure slots is an array even if the response is empty
         }
-      );
-      if (response.data) {
-        this.slots = response.data;
+      } catch (error) {
+        console.error("Error fetching user slots:", error);
+        this.slots = []; // Handle errors by setting slots to an empty array
       }
     },
     addNewSlot(newSlot) {
@@ -241,7 +268,7 @@ export default {
     },
     async refresh() {
       try {
-        await this.getUserSlots(this.from, this.to);
+        await this.getUserSlots();
         await this.fetchBalance();
         await this.getClosestSlot();
       } catch (e) {
@@ -256,8 +283,8 @@ export default {
       this.isOpenSlotDetailPopup = false;
     },
     calcDuration(slot) {
-      const startTime = new Date(slot.slot.startTime);
-      const endTime = new Date(slot.slot.endTime);
+      const startTime = new Date(slot.startTime);
+      const endTime = new Date(slot.endTime);
       return (endTime - startTime) / 3600000;
     },
     openAddSlotModal() {
