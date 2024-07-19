@@ -36,7 +36,7 @@ public interface IUserServices
     Task<bool> DeaActiveAccountAsync(DeaActiveAccountDto request);
     Task<bool> ActiveAccount(int id);
     Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus status);
-
+    Task<bool> RecalculateTutorRating(int tutorId);
     Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
 
     Task<List<GetSimpleUserDto>> GetAllOperators();

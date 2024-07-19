@@ -155,6 +155,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             Status = PaymentStatus.Paid,
             CreatedDate = DateTime.Now,
             CreatedById = withdraw.UserId,
+            TransactionType = TransactionType.WithDraw
         };
 
         await _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });

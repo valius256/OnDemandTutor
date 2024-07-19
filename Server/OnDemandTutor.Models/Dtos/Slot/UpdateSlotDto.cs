@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.Slot
 {
-    public class UpdateSlotDtos
+    public class UpdateSlotDto
     {
         public int Id { get; set; }
         public DateTime StartTime { get; set; }

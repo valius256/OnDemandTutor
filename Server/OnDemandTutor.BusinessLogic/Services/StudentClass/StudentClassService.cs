@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
@@ -98,7 +99,6 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 throw new ModelException($"{recordInDB.Id}", "has not found");
             }
 
-
             // handle for rating in student class
             recordInDB.Rating = Rating;
             recordInDB.Feedback = Feedback;
@@ -109,11 +109,33 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             var tutorId = classModel.TutorId;
             var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
 
-            tutorModel.Rating = (tutorModel.Rating + Rating) / 2;
+            var listClassStudentRating = await _unitOfWork.StudentClassRepository
+                    .Where(ss => ss.ClassId == classModel.Id && ss.Rating.HasValue)
+                    .AverageAsync(l => l.Rating);
+            
+            tutorModel.Rating = (listClassStudentRating + Rating) / 2;
             await _userServices.UpdateTutorRating(tutorModel);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Models.Models.StudentClass> CreateStudentClassIfNotExist(int classId, int studentId)
+        {
+            var recordInDb = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st =>
+                st.ClassId == classId && st.StudentId == studentId);
+            if (recordInDb == null)
+            {
+                recordInDb = new Models.Models.StudentClass()
+                {
+                   ClassId = classId,
+                   StudentId = studentId,
+                };
+                await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            return recordInDb;
+        }
+        
 
         public async Task<bool> DeleteStudentFromStudentClassById(int classId, int userId)
         {

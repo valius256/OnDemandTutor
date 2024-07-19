@@ -7,6 +7,7 @@ using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -32,18 +33,18 @@ public class TransactionServices : ITransactionServices
     public async Task<int> TransactionPaid(string transactionId, DateTime paidTime)
     {
         var transactionModel =
-            await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(tr => tr.TransactionCode == transactionId);
+            await _unitOfWorkRepository.TransactionRepository.Where(tr => tr.TransactionCode == transactionId)
+                .ExecuteUpdateAsync(setter => setter
+                    .SetProperty(s => s.Status, PaymentStatus.Paid)
+                    .SetProperty(s => s.UpdatedDate, paidTime));
+            ;
         if (transactionModel == null)
         {
             throw new ModelException("Transaction model", "Not Found", "transaction not exist");
         }
-
-        transactionModel.Status = PaymentStatus.Paid;
-        transactionModel.UpdatedDate = paidTime;
-
-        _unitOfWorkRepository.TransactionRepository.Update(transactionModel);
+        
         await _unitOfWorkRepository.SaveChangesAsync();
-        return transactionModel.Id;
+        return transactionModel;
     }
 
     public async Task<TransactionDto?> GetTransactionById(int id, ClaimsPrincipal? userClaims)

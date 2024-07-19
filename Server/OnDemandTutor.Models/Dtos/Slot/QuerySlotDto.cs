@@ -1,4 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos.Slot
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OnDemandTutor.Models.Dtos.Slot
 {
     public class QuerySlotDto
     {

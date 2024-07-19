@@ -9,5 +9,6 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public int UserId { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public string Feedback { get; set; }
+        public decimal? Rating { get; set; }
     }
 }

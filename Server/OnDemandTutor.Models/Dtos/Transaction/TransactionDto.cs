@@ -9,6 +9,7 @@ public class TransactionDto
     public decimal Amount { get; set; }
     public DateTime CreatedDate { get; set; }
     public PaymentStatus? Status { get; set; }
+    public TransactionType TransactionType { get; set; }
     public string? Notes { get; set; }
     public int? SlotId { get; set; }
     public int? ClassId { get; set; }
