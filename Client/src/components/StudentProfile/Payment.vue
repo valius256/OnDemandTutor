@@ -65,21 +65,27 @@
         <div class="px-4 mb-4">
             <table class="bg-slate-50 p-6 rounded-xl text-center w-full" v-if="transactions.length > 0">
                 <thead>
-                    <th>Code</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Description</th>
+                    <th>Mã giao dịch</th>
+                    <th>Ngày</th>
+                    <th>Số lượng</th>
+                    <th>Loại</th>
+                    <th>Mô tả</th>
                 </thead>
                 <tbody>
                     <tr v-for="transaction in transactions" :key="transaction.id">
                         <td>{{ transaction.transactionCode }}</td>
                         <td>{{ this.beautifyDatetime(transaction.createdDate) }}</td>
-                        <td :class="getAmountStyle(transaction.amount)">
-                            {{ transaction.amount.toLocaleString('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND',
-                    }) }}
+                        <td :class="getAmountStyle(transaction)">
+                            {{  Math.abs(transaction.amount).toLocaleString('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }) }}
                         </td>
+                        <td v-if="transaction.transactionType == 0">Rút tiền</td>
+                        <td v-if="transaction.transactionType == 1">Nạp tiền</td>
+                        <td v-if="transaction.transactionType == 2">Trừ tiền</td>
+                        <td v-if="transaction.transactionType == 3">Nhận tiền</td>
+                        <td v-if="transaction.transactionType == 4">Thanh toán</td>
                         <td>{{ transaction.notes }}</td>
                     </tr>
                 </tbody>
@@ -148,12 +154,14 @@ export default {
             const endTime = new Date(slot.slot.endTime);
             return (endTime - startTime) / 3600000;
         },
-        getAmountStyle(amount) {
+        getAmountStyle(transaction) {
             let css = "font-bold"
-            if (amount < 0) {
+            if (transaction.transactionType == 0 || transaction.transactionType == 2) {
                 return css + " text-red-400"
-            } else {
+            } else if (transaction.transactionType == 1 || transaction.transactionType == 3) {
                 return css + " text-green-400"
+            } else {
+                return css + " text-blue-400"
             }
         },
         async handlePageChange() {
