@@ -15,7 +15,7 @@ namespace OnDemandTutor.Models.Dtos.Class
         public ClassStatus Status { get; set; }
 
         public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();
-        public GetProfileUserDtos User { get; set; } = new GetProfileUserDtos();
+        public GetProfileUserDtos Tutor { get; set; } = new GetProfileUserDtos();
 
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }

@@ -20,7 +20,7 @@
             @click="closeResultDialog">
             X
           </button>
-          <ResultDialog :message="this.rsMesage" :type="this.rsType" />
+          <ResultDialog :message="this.rsMesage" :type="this.rsType" :callback="this.rsCallback" />
         </div>
       </div>
     </div>
@@ -53,6 +53,7 @@ export default {
       isOpenLoadingPopup: false,
       rsMesage: "",
       rsType: "",
+      rsCallback : null,
       ldMessage: "",
       user: {
         name: "Hello World",
@@ -77,7 +78,7 @@ export default {
       );
     });
     this.eventBus.on("open-result-dialog", (request) => {
-      this.openResultDialog(request.message, request.type);
+      this.openResultDialog(request.message, request.type, request.callback);
     });
     this.eventBus.on("close-result-dialog", () => {
       this.closeResultDialog();
@@ -135,9 +136,10 @@ export default {
         this.cfmMethod = method;
       }
     },
-    openResultDialog(message, type) {
+    openResultDialog(message, type, callback) {
       this.rsMesage = message;
       (this.rsType = type), (this.isOpenResultDialog = true);
+      this.rsCallback = callback
     },
     closeResultDialog() {
       this.isOpenResultDialog = false;
@@ -163,7 +165,12 @@ export default {
           } else {
             localStorage.setItem("token", response.data.data.message);
             this.updateApp();
-            this.$router.push("/")
+            var user = await this.getUserFromToken()
+            if (user.role < 2) {
+              this.$router.push("/")
+            }  else {
+              this.$router.push("/admin/transactions/statistic")
+            }
           }
         }
       } catch (e) {

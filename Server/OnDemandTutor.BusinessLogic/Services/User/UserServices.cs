@@ -99,10 +99,10 @@ public class UserServices : IUserServices
                 mappedUser.Role = RoleStatus.Tutor;
             }
 
-        // mappedUser.Password = passwordHash; // open when present 
-        await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
+            // mappedUser.Password = passwordHash; // open when present 
+            await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
-        await _unitOfWorkRepository.SaveChangesAsync();
+            await _unitOfWorkRepository.SaveChangesAsync();
 
             var rs = mappedUser.Adapt<GetProfileUserDtos>();
 
@@ -318,7 +318,11 @@ public class UserServices : IUserServices
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
         if (userInDb == null)
         {
-            throw new InvalidOperationException("User not found.");
+            throw new NotFoundException("User not found.");
+        }
+        if (userInDb.Id !=  requestDto.Id && userInDb.Role < RoleStatus.Operator)
+        {
+            throw new BadRequestException("You do not have permission to do this!");
         }
 
         UpdateUserFields(userInDb, requestDto);
@@ -400,11 +404,11 @@ public class UserServices : IUserServices
             .FirstOrDefaultAsync(ld => ld.Id == userId);
         if (moneyDecrease > 0)
         {
-            record.Balance -= moneyIncrease;
+            record.Balance += moneyIncrease;
         }
-        else if (moneyIncrease >= 0)
+        else if (moneyDecrease == 0)
         {
-            record.Balance += moneyDecrease;
+            record.Balance -= moneyDecrease;
         }
 
         _unitOfWorkRepository.UserRepository.Update(record);
@@ -502,10 +506,16 @@ public class UserServices : IUserServices
         };
     }
 
-    public Task<bool> RecalculateTutorRating(int tutorId)
+    public async Task<bool> RecalculateTutorRating(int tutorId)
     {
-        throw new NotImplementedException();
+        var result = await _unitOfWorkRepository.UserRepository.RecalculateTutorRating(tutorId);
+        if (result)
+        {
+            await _unitOfWorkRepository.SaveChangesAsync();
+        }
+        return result;
     }
+
 
     public async Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page)
     {

@@ -33,7 +33,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IClassServices classServices, IEmailServices emailServices, IStudentClassService studentClassService,
+            IEmailServices emailServices, IStudentClassService studentClassService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -66,7 +66,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
         {
             var slotEntity = slotDto.Adapt<CreateSlotsDto>(); // Assuming Mapster is used for mapping
-            
+
             // Add the new Slot entity to repository
             var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
             await _unitOfWork.SaveChangesAsync();
@@ -126,7 +126,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             foreach (var slot in listSlotDb)
             {
                 var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
-                if (slotStudent.PaymentStatus == PaymentStatus.Notpaid && slotStudent != null)
+                if (slotStudent != null && slotStudent.PaymentStatus == PaymentStatus.Notpaid)
                 {
                     var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
                     var duration = (slot.EndTime - slot.StartTime).TotalHours;
@@ -261,13 +261,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 throw new ModelException($"{slotId}", "Slot not found");
             }
-            
+
             // check if student already enroll this slot
             var existEnrollSlot = await _slotRepository.Where(sl =>
                 sl.Id == slotId && sl.SlotStudents.Any(ss => ss.UserId == studentId)).FirstOrDefaultAsync();
             if (existEnrollSlot != null)
             {
-                throw new ModelException($"{slotId}", $"This user: {studentId} has enroll for this slot {slotId}");   
+                throw new ModelException($"{slotId}", $"This user: {studentId} has enroll for this slot {slotId}");
             }
 
             // Check if the student is already enrolled in this slot
@@ -277,7 +277,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 throw new ModelException($"{slotId}", "Student is already enrolled in this slot");
             }
             var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);
-            
+
             TimeSpan buffer = TimeSpan.FromMinutes(5);
             DateTime adjustedStartTime = currEnrollSlot.StartTime - buffer;
             DateTime adjustedEndTime = currEnrollSlot.EndTime + buffer;
@@ -293,7 +293,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                     throw new ModelException($"{slotId}", $"Conflicts with another slot id: {studentSlot.Id}");
                 }
             }
-            
+
             await _slotStudentServices.CreateSlotStudent(slotId, studentId);
             return true;
         }
@@ -317,7 +317,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                     {
                         conflictDto.IsConflict = true;
                         conflictDto.conflictSlotId = slot.Id;
-                        break; 
+                        break;
                     }
                 }
             }

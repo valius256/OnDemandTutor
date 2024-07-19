@@ -1,6 +1,5 @@
 ﻿
 using OnDemandTutor.Models.Dtos.User;
-using System.ComponentModel.DataAnnotations;
 
 namespace OnDemandTutor.Models.Dtos.StudentClass
 {

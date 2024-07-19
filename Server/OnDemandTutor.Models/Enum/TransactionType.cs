@@ -3,7 +3,7 @@
 public enum TransactionType
 {
     WithDraw,
-    Recharge, 
+    Recharge,
     Deduction,
     Receive_money,
     Payment

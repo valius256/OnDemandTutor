@@ -117,8 +117,52 @@ namespace OnDemandTutor.Models.MigrationData
                     ScheduleDesciption = "Có mặt cả ngày",
                     Password = "matkhau123",
                     Sex = Sex.Male,
-                    IsActive = false
-                }
+                    IsActive = false,
+                },
+                 new User
+                 {
+                     Id = 6,
+                     FireBaseid = "firebaseid6",
+                     FirstName = "Trần",
+                     LastName = "Văn F",
+                     Phone = "0344556877",
+                     Email = "tranvanf@example.com",
+                     Address = "Q9, TPHCM",
+                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/5d5bdfb9faad57c6410f29766fec60bfca7597de07347d3ffe132a28cd36f12c?w=1024&h=1024&pmaid=116002972",
+                     Dob = new DateTime(1975, 5, 5),
+                     Role = RoleStatus.Tutor,
+                     Balance = 50000,
+                     TutorFeePerHour = 60000,
+                     Rating = 4.5,
+                     IdCardImageUrl = "http://example.com/id5.png",
+                     ScheduleDesciption = "T3,T4,T5",
+                     Password = "123456",
+                     Sex = Sex.Male,
+                     IsActive = true,
+                     TutorStatus = TutorStatus.Verified,
+                 },
+                 new User
+                 {
+                     Id = 7,
+                     FireBaseid = "firebaseid7",
+                     FirstName = "Nguyễn",
+                     LastName = "Ngọc G",
+                     Phone = "0344556897",
+                     Email = "nguyenngocg@example.com",
+                     Address = "Q9, TPHCM",
+                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/d42d563313961baf10ebaf79a634d520a08528c709281d5420424ff5e5c09cb8?w=1024&h=1024&pmaid=112257600",
+                     Dob = new DateTime(1999, 5, 5),
+                     Role = RoleStatus.Tutor,
+                     Balance = 50000,
+                     TutorFeePerHour = 45000,
+                     Rating = 4.9,
+                     IdCardImageUrl = "http://example.com/id5.png",
+                     ScheduleDesciption = "T4,T5,T6,T7",
+                     Password = "123456",
+                     Sex = Sex.Female,
+                     IsActive = true,
+                     TutorStatus = TutorStatus.Un_Verified,
+                 }
             );
             #endregion
 
@@ -301,8 +345,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 1,
-                    StartTime = new DateTime(2024, 7, 15, 7, 0, 0),
-                    EndTime = new DateTime(2024, 7, 15, 8, 30, 0),
+                    StartTime = new DateTime(2024, 7, 20, 18, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 19, 30, 0),
                     CreateById = 2,
                     TeachAddress = "123 Đường Chính",
                     ClassId = 1,
@@ -327,8 +371,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new Slot
                 {
                     Id = 3,
-                    StartTime = new DateTime(2024, 7, 15, 9, 0, 0),
-                    EndTime = new DateTime(2024, 7, 15, 10, 30, 0),
+                    StartTime = new DateTime(2024, 7, 16, 9, 0, 0),
+                    EndTime = new DateTime(2024, 7, 16, 10, 30, 0),
                     CreateById = 2,
                     TeachAddress = "789 Đường Oak",
                     ClassId = 1,
@@ -355,13 +399,94 @@ namespace OnDemandTutor.Models.MigrationData
                     Id = 5,
                     StartTime = new DateTime(2024, 7, 19, 8, 0, 0),
                     EndTime = new DateTime(2024, 7, 19, 10, 0, 0),
-                    CreateById = 2,
-                    TeachAddress = "111 Đường Cedar",
+                    CreateById = 6,
+                    TeachAddress = "Q9,TPHCM",
                     ClassId = null,
                     SubjectId = 5,
                     IsOnline = true,
                     NumberOfStudents = 4,
                     ActualEndTime = DateTime.Today
+                },
+                new Slot
+                {
+                    Id = 6,
+                    StartTime = new DateTime(2024, 7, 20, 8, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 10, 0, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                new Slot
+                {
+                    Id = 7,
+                    StartTime = new DateTime(2024, 7, 21, 13, 0, 0),
+                    EndTime = new DateTime(2024, 7, 21, 14, 30, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                 new Slot
+                 {
+                     Id = 8,
+                     StartTime = new DateTime(2024, 7, 23, 8, 0, 0),
+                     EndTime = new DateTime(2024, 7, 23, 10, 0, 0),
+                     CreateById = 6,
+                     TeachAddress = "Biên Hòa, Đồng Nai",
+                     ClassId = 3,
+                     SubjectId = 3,
+                     IsOnline = false,
+                     NumberOfStudents = 5,
+                 },
+                new Slot
+                {
+                    Id = 9,
+                    StartTime = new DateTime(2024, 7, 25, 13, 0, 0),
+                    EndTime = new DateTime(2024, 7, 25, 14, 30, 0),
+                    CreateById = 6,
+                    TeachAddress = "Biên Hòa, Đồng Nai",
+                    ClassId = 3,
+                    SubjectId = 3,
+                    IsOnline = false,
+                    NumberOfStudents = 5,
+                },
+                new Slot
+                {
+                    Id = 10,
+                    StartTime = new DateTime(2024, 7, 15, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 15, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
+                },
+                new Slot
+                {
+                    Id = 11,
+                    StartTime = new DateTime(2024, 7, 17, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 17, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
+                },
+                new Slot
+                {
+                    Id = 12,
+                    StartTime = new DateTime(2024, 7, 20, 14, 0, 0),
+                    EndTime = new DateTime(2024, 7, 20, 16, 0, 0),
+                    CreateById = 4,
+                    TeachAddress = "meet.google.com",
+                    ClassId = null,
+                    IsOnline = true,
+                    NumberOfStudents = 1,
                 }
             );
 
@@ -657,7 +782,7 @@ namespace OnDemandTutor.Models.MigrationData
                 {
                     Id = 3,
                     Name = "Luyện thi Vật lý 9+ THPTQG",
-                    TutorId = 2, // Thay bằng TutorId đã có
+                    TutorId = 6, // Thay bằng TutorId đã có
                     SubjectId = 3, // Thay bằng SubjectId đã có
                     Location = "meet.google.com",
                     Method = "Online",
@@ -693,7 +818,7 @@ namespace OnDemandTutor.Models.MigrationData
                 new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5 },
                 new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
                 new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
-                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4},
+                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4 },
                 new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 }
             );
 

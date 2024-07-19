@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.DataAccess;
+using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
@@ -83,12 +84,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             }
 
             var rs = classEntity.Adapt<GetClassFullDataSlotDto>();
-
-            // if (rs is not null)
-            // {
-            //     rs.StartTime = classEntity.Slots.First().StartTime;
-            //     rs.EndTime = classEntity.Slots.Last().EndTime;
-            // }
+            var classSlots = classEntity?.Slots.OrderBy(s => s.StartTime).ToList() ?? new List<Models.Models.Slot>();
+            if (classSlots.Any())
+            {
+                rs.StartTime = classSlots[0].StartTime;
+                rs.EndTime = classSlots[classSlots.Count - 1].EndTime;
+            }
 
             return rs;
         }
@@ -200,10 +201,39 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> EnrollCLass(int classId, int slotId)
+        public async Task<bool> EnrollCLass(int classId, int studentId)
         {
-            throw new NotImplementedException();
+            var classToEnroll = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
+            if (classToEnroll == null)
+            {
+                throw new ModelException($"{classId}", "Class not found");
+            }
+            
+            var allClassRecordWithSlots = await _unitOfWork.ClassRepository.GetClassWithSlotsByStudentIdAsync(studentId);
+            
+            foreach (var slot in classToEnroll.Slots)
+            {
+                if (allClassRecordWithSlots.SelectMany(c => c.Slots).Any(s => s.StartTime < slot.EndTime && s.EndTime > slot.StartTime))
+                {
+                    throw new ModelException($"{classToEnroll}", $"The class has a time conflict with the student's existing slots the classId conflict is: {classId}");
+                }
+            }
+
+            // Create a new StudentClass entity
+            var studentClass = new Models.Models.StudentClass()
+            {
+                ClassId = classId,
+                StudentId = studentId,
+            };
+
+            // Add the student to the class
+            classToEnroll.StudentClasses.Add(studentClass);
+            _unitOfWork.ClassRepository.Update(classToEnroll);
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
         }
+
     }
 
 }

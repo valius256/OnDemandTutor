@@ -5,6 +5,7 @@ import LoginPage from "../pages/Auth/LoginPage.vue";
 import RegisterPage from "../pages/Auth/RegisterPage.vue";
 // import ForgotPasswordPage from "../pages/Auth/ForgotPasswordPage.vue";
 import BlogsPage from "../pages/Student/BlogsPage.vue";
+import BlogDetailPage from "../pages/Student/BlogDetailPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
 import StudentProfile from "../pages/Student/ProfilePage.vue";
 import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
@@ -20,6 +21,7 @@ import BlogEditorPage from "../pages/Operators/BlogEditorPage.vue";
 import FaqManagementPage from "../pages/Operators/FaqManagementPage.vue";
 import ConsultationPage from "../pages/Operators/ConsultationPage.vue";
 import WithdrawRequestPage from "../pages/Operators/WithdrawRequestsPage.vue";
+import MainDashboard from "../pages/Operators/MainDashboard.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
@@ -57,6 +59,11 @@ const routes = [
     path: "/blogs",
     name: "BlogsPage",
     component: BlogsPage,
+  },
+  {
+    path: "/blog-detail/:id",
+    name: "BlogDetailPage",
+    component: BlogDetailPage,
   },
   {
     path: "/faqs",
@@ -189,7 +196,7 @@ const routes = [
     children: [
       {
         path: "statistic",
-        component: SubjectManagementPage,
+        component: MainDashboard,
       },
       {
         path: "withdraw",

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using OnDemandTutor.Models.Enum;
+﻿using OnDemandTutor.Models.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnDemandTutor.Models.Models;
 
