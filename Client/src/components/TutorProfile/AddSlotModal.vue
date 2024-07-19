@@ -1,129 +1,173 @@
 <template>
-  <div class="modal" v-if="showModal">
-    <div class="modal-content">
-      <!-- Modal header -->
-      <div class="modal-header">
-        <span class="modal-title">Thêm slot mới</span>
-        <span class="close" @click="closeModal">&times;</span>
-      </div>
-      <!-- Modal body -->
-      <div class="modal-body">
-        <!-- Form for adding a new slot -->
-        <form @submit.prevent="addSlot">
-          <div class="form-group">
-            <label for="startTime">Bắt đầu:</label>
-            <input
-              type="datetime-local"
-              id="startTime"
-              v-model="newSlot.startTime"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="endTime">Kết thúc:</label>
-            <input
-              type="datetime-local"
-              id="endTime"
-              v-model="newSlot.endTime"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="teachAddress">Địa chỉ dạy:</label>
-            <input
-              type="text"
-              id="teachAddress"
-              v-model="newSlot.teachAddress"
-            />
-          </div>
-          <!-- Add other fields as needed -->
-          <button type="submit">Thêm slot</button>
-        </form>
-      </div>
+  <GenericPopup
+    v-if="showModal"
+    :title="'Thêm slot mới'"
+    :closeFunction="closeModal"
+  >
+    <div class="modal-body">
+      <form @submit.prevent="addSlot">
+        <div class="form-group">
+          <label for="startTime">Bắt đầu:</label>
+          <input
+            type="datetime-local"
+            id="startTime"
+            v-model="newSlot.startTime"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="endTime">Kết thúc:</label>
+          <input
+            type="datetime-local"
+            id="endTime"
+            v-model="newSlot.endTime"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="teachAddress">Địa chỉ dạy:</label>
+          <input type="text" id="teachAddress" v-model="newSlot.teachAddress" />
+        </div>
+        <div class="form-group">
+          <label for="numberOfStudents">Số lượng học sinh hạn mức:</label>
+          <input
+            type="number"
+            id="numberOfStudents"
+            v-model="newSlot.numberOfStudents"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="subjectId">Môn học:</label>
+          <select id="subjectId" v-model="newSlot.subjectId" required>
+            <option
+              v-for="subject in subjects"
+              :value="subject.id"
+              :key="subject.id"
+            >
+              {{ subject.name }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="isOnline">Học online:</label>
+          <input type="checkbox" id="isOnline" v-model="newSlot.isOnline" />
+        </div>
+        <button type="submit">Thêm slot</button>
+      </form>
     </div>
-  </div>
+  </GenericPopup>
 </template>
 
 <script>
+import axios from "axios";
+import GenericPopup from "../common/GenericPopup.vue";
+
 export default {
+  components: {
+    GenericPopup,
+  },
+  props: ["showModal", "currentUser"],
   data() {
     return {
       newSlot: {
         startTime: "",
         endTime: "",
         teachAddress: "",
-        // Add other fields here according to your slot model
+        numberOfStudents: 0,
+        subjectId: null,
+        isOnline: false,
+        createById: this.currentUser.id, // Replace with the actual tutor ID
+        classId: null, // Replace with actual class ID if needed
+        actualEndTime: "", // This could be dynamically set or calculated if needed
       },
+      subjects: [], // Array to hold subjects
     };
   },
-  props: ["showModal"],
   methods: {
     closeModal() {
       this.$emit("close");
     },
-    addSlot() {
-      // Emit an event to parent component to add the new slot
-      this.$emit("add", this.newSlot);
-      // Optionally, reset the form fields
-      this.newSlot = {
-        startTime: "",
-        endTime: "",
-        teachAddress: "",
-        // Initialize other fields as needed
-      };
-      this.closeModal();
+    async addSlot() {
+      try {
+        // Set the tutor ID
+        this.newSlot.createById = this.currentUser.id;
+
+        // Ensure actualEndTime matches endTime if it is not provided by the user
+        if (!this.newSlot.actualEndTime) {
+          this.newSlot.actualEndTime = this.newSlot.endTime;
+        }
+        console.log(this.newSlot);
+        const response = await axios.post(
+          import.meta.env.VITE_API_URL + "/api/Slot",
+          this.newSlot,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        );
+
+        this.$emit("add", response.data);
+
+        // Reset the form after successful submission
+        this.newSlot = {
+          startTime: "",
+          endTime: "",
+          teachAddress: "",
+          numberOfStudents: 0,
+          subjectId: null,
+          isOnline: false,
+          createById: 0,
+          classId: null,
+          actualEndTime: "",
+          //paymentStatus: 0,
+        };
+
+        this.closeModal();
+      } catch (error) {
+        console.error("Error adding slot:", error);
+      }
+    },
+    async fetchSubjects() {
+      try {
+        const tutorName = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+        const response = await axios.get(
+          import.meta.env.VITE_API_URL + "/api/TutorSubject",
+          {
+            params: {
+              "Filter.TutorName": tutorName,
+              Status: 3,
+              "Sorts[column]": "string",
+              "Sorts[isDesc]": true,
+            },
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        );
+
+        // Map the response to the desired structure
+        this.subjects = response.data.items.map((item) => ({
+          id: item.subject.id,
+          name: item.subject.name,
+        }));
+      } catch (error) {
+        console.error("Error fetching subjects:", error);
+      }
+    },
+  },
+  watch: {
+    showModal(newVal) {
+      if (newVal) {
+        this.fetchSubjects();
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add your modal CSS styles here */
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-}
-
-.modal-header {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-title {
-  font-size: 20px;
-}
-
-.close {
-  cursor: pointer;
-  font-size: 25px;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 .modal-body {
   padding: 10px 20px;
 }
@@ -137,7 +181,8 @@ export default {
   font-weight: bold;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;

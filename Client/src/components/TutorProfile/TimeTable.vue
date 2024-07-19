@@ -80,11 +80,13 @@
               class="relative border-r-2"
               v-for="day in daysInWeek"
               :key="day.dayInWeek"
+              :class="{ 'bg-slate-100': compareDateToToday(day.specificDay) }"
             >
               <slot-detail
                 :slots="getSlotsByDay(day.specificDay)"
                 :shiftZoomSize="shiftZoomSize"
                 :getDistanceInMin="getDistanceInMin"
+                :viewDetail="viewDetail"
               />
             </td>
           </tr>
@@ -99,7 +101,7 @@ import SlotDetail from "./SlotDetail.vue";
 export default {
   components: { SlotDetail },
   name: "TutorTimeTable",
-  props: ["slots"],
+  props: ["slots", "fetching", "viewDetail"],
   data() {
     return {
       daysInWeek: [
@@ -141,6 +143,10 @@ export default {
       let endDate = new Date(this.selectedWeek);
       endDate.setDate(this.selectedWeek.getDate() + 7);
       console.log(this.daysInWeek);
+      await this.fetching(
+        this.toSqlDateString(this.selectedWeek),
+        this.toSqlDateString(endDate)
+      );
       //await this.fetchLessons(this.selectedWeek, endDate)
     },
     async handleSelectedYearChange() {
@@ -210,9 +216,20 @@ export default {
       const dateToCompare = new Date(
         this.slashDateFormatToSqlDateString(date)
       ).getDate();
+      //console.log(new Date(this.slots[0].slot.startTime).getDate(), dateToCompare)
+      //console.log(this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare))
       return this.slots.filter(
-        (s) => new Date(s.startTime).getDate() == dateToCompare
+        (s) => new Date(s.slot.startTime).getDate() == dateToCompare
       );
+    },
+    compareDateToToday(date) {
+      const dateToCompare = this.slashDateFormatToSqlDateString(date);
+      const today = new Date();
+      const todayDateString = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+      console.log(dateToCompare, todayDateString);
+      return dateToCompare == todayDateString;
     },
   },
   mounted() {
