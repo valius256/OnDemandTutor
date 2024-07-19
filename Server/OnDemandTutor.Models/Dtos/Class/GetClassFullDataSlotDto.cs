@@ -1,4 +1,5 @@
 ﻿using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.StudentClass;
 using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
@@ -15,11 +16,12 @@ public class GetClassFullDataSlotDto
     public string? Method { get; set; }
     public ClassStatus Status { get; set; }
 
-    public GetSubjectDtos Subject { get; set; }
-    public GetProfileUserDtos User { get; set; }
+    public GetSubjectDtos Subject { get; set; } = default!;
+    public GetProfileUserDtos User { get; set; } = default!;
 
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
 
-    public List<GetSimpleSlotDto> Slots;
+    public List<GetSimpleSlotDto> Slots = new List<GetSimpleSlotDto>();
+    public List<GetStudentClassWithStudentDto> StudentClasses = new List<GetStudentClassWithStudentDto>();
 }

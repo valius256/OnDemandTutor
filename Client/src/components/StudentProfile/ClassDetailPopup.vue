@@ -1,19 +1,19 @@
 <template>
-    <div class="p-4 bg-white rounded-b-lg w-full">
-        <div class="font-bold text-2xl">{{ this.class.name }}</div>
-        <div class="mt-4 flex place-content-between gap-4">
+    <div class="py-4 px-8" v-if="this.class">
+        <div class="font-bold text-3xl">{{ this.class.name }}</div>
+        <div class="mt-4 flex flex-col md:flex-row md:place-content-between gap-4">
             <div>
-                <div class="flex">
+                <div class="flex" v-if="this.class.user">
                     <span>Gia sư : </span>
                     <button class="font-bold text-blue-400 underline ml-4">
-                        {{ (this.class.tutor.firstName ?? "") + " " + (this.class.tutor.lastName ?? "") }}
+                        {{ (this.class.user.firstName ?? "") + " " + (this.class.user.lastName ?? "") }}
                     </button>
                 </div>
                 <div class="mt-2">
                     <span class="">Thời gian :</span>
                     <span class="font-bold ml-4">
-                        {{ sqlDateStringToSlashFormat(this.class.startDate) }} đến
-                        {{ sqlDateStringToSlashFormat(this.class.endDate) }}
+                        {{ (this.class.startTime?.substring(0, 10)) ?? "" }} đến
+                        {{ (this.class.endTime?.substring(0, 10)) ?? "" }}
                     </span>
                 </div>
                 <div class="mt-2">
@@ -40,125 +40,84 @@
 
         </div>
         <hr class="mt-4">
-        <div class="h-80 overflow-y-auto">
-            <div class="font-bold ">Các buổi học :</div>
-            <div v-for="slot in this.class.slots" :key="slot.id" class="p-2  border shadow-md mb-2 rounded-lg" :class="{
-            'border-blue-400': this.compareDate(new Date(slot.endTime), new Date()) < 0,
-        }">
-                <div class="flex place-content-between">
-                    <div>
+        <div class="font-bold my-4">Thời khóa biểu :</div>
+        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" />
+        <hr class="mt-4">
+        <div class="font-bold my-4">Các buổi học :</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div v-for="(slot, index) in this.slots" :key="index" class="p-2  border-4 shadow-md mb-2 rounded-lg"
+                :class="{
+                    'border-blue-300': this.compareDate(new Date(slot.slot.endTime), new Date()) < 0,
+                }">
+                <div class="font-bold text-center text-xl">Buổi {{ index + 1 }}</div>
+                <hr>
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2 min-h-48">
                         <div class="text-sm">
                             <span class="font-bold">Bắt đầu :</span>
-                            <span class="ml-4">{{ this.beautifyDatetime(slot.startTime) }}</span>
+                            <span class="ml-4">{{ this.beautifyDatetime(slot.slot.startTime) }}</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="font-bold">Kết thúc :</span>
+                            <span class="ml-4">{{ this.beautifyDatetime(slot.slot.endTime) }}</span>
                         </div>
                         <div class="text-sm">
                             <span class="font-bold">Địa điểm :</span>
-                            <span class="ml-4">{{ (slot.teachAddress) }}</span>
+                            <span class="ml-4">{{ (slot.slot.teachAddress) }}</span>
                         </div>
                         <div class="text-sm mt-1">
                             <span class="font-bold">Hình thức :</span>
-                            <span :class="getMethodStyle(slot.isOnline ? 'Online' : 'Offline')">
+                            <span :class="getMethodStyle(slot.slot.isOnline ? 'Online' : 'Offline')">
                                 {{ (slot.isOnline ? "Online" : "Offline") }}
                             </span>
                         </div>
-                    </div>
-                    <div>
-                        <div class="text-sm">
-                            <span class="font-bold">Kết thúc :</span>
-                            <span class="ml-4">{{ this.beautifyDatetime(slot.endTime) }}</span>
-                        </div>
+
                         <div class="text-sm">
                             <span class="font-bold">Thời lượng :</span>
                             <span class="ml-4">{{ (calcDuration(slot)) }} tiếng</span>
                         </div>
-                        <!-- <div class="text-sm">
-                            <span class="font-bold">Giá cả :</span>
-                            <span class="ml-4 text-blue-300 font-bold">{{ (calcDuration(slot) * this.class.tutor.tutorPricePerHour).toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}}</span>
-                        </div> -->
+                        <div class="flex items-center">
+                            <span
+                                v-if="slot.paymentStatus == 0 && new Date(slot.slot.startTime) < new Date()"
+                                class="p-1 text-sm italic text-red-500">Bạn đang nợ slot này</span>
+                            <button v-if="slot.paymentStatus == 0"
+                                class="p-1 text-sm underline italic text-blue-400">Thanh toán ngay</button>
+                        </div>
                     </div>
-                </div>
-                <div class="flex place-content-between">
-                    <div class="flex items-center">
-                        <span v-if="slot.slotStudents[0].paymentStatus == 0  && new Date(slot.startTime) < new Date()" class="p-1 text-sm italic text-red-500">Bạn đang nợ slot này</span>
-                        <button v-if="slot.slotStudents[0].paymentStatus == 0" class="p-1 text-sm underline italic text-blue-400">Thanh toán ngay</button>
-                    </div>
-                    <button class="p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
+                    <button class=" p-1 bg-blue-300 font-bold text-white rounded-lg">Xem chi tiết</button>
                 </div>
             </div>
         </div>
-        <div class="flex justify-center">
-            <button v-if="this.class.status == 2" class="p-2 bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
+        <div class="flex justify-center mt-8">
+            <button v-if="this.class.status == 2"
+                class="p-2 bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
                 Đánh giá gia sư
             </button>
-            <button v-else class="p-2 bg-red-500 hover:bg-red-300 font-bold rounded-lg text-white">
+            <button v-else class=" p-2 bg-red-500 hover:bg-red-300 font-bold rounded-lg text-white">
                 Rời lớp học
             </button>
         </div>
-
+        <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup">
+            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup"/>
+        </generic-popup>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
+import TimeTable from './TimeTable.vue'
+import GenericPopup from '../common/GenericPopup.vue'
+import SlotDetailPopup from './SlotDetailPopup.vue'
 export default {
+    components: { TimeTable, GenericPopup, SlotDetailPopup },
     name: "ClassDetailPopup",
     props: ['classId', 'close'],
     data() {
         return {
-            class: {
-                id: 1,
-                name: "Luyện thi IELTS nâng cao",
-                startDate: "2024-01-01",
-                endDate: "2024-12-01",
-                method: "Online",
-                location: "Q9, TPHCM",
-                subject: {
-                    name: "Tiếng Anh"
-                },
-                studentNumber: 10,
-                maxStudentNumber: 20,
-                tutor: {
-                    firstName: "Thomas",
-                    lastName: "Shelby",
-                    avatarImgUrl: "/src/assets/noavatar.jpg",
-                    tutorPricePerHour: 50000
-                },
-                status: 0,
-                slots: [
-                    {
-                        startTime: "2024-01-01 7:00:00",
-                        endTime: "2024-01-01 8:30:00",
-                        isOnline: true,
-                        teachAddress: "Somewhere, TPHCM",
-                        slotStudents: [
-                            {
-                                paymentStatus: true
-                            }
-                        ]
-                    },
-                    {
-                        startTime: "2024-01-02 7:00:00",
-                        endTime: "2024-01-02 8:30:00",
-                        isOnline: true,
-                        teachAddress: "Somewhere, TPHCM",
-                        slotStudents: [
-                            {
-                                paymentStatus: false
-                            }
-                        ]
-                    },
-                    {
-                        startTime: "2024-07-14 18:00:00",
-                        endTime: "2024-07-14 18:30:00",
-                        isOnline: false,
-                        teachAddress: "Somewhere, TPHCM",
-                        slotStudents: [
-                            {
-                                paymentStatus: false
-                            }
-                        ]
-                    }
-                ]
-            }
+            class: null,
+            slots: [],
+            selectingSlot : null,
+            isOpenSlotDetailPopup : false
         }
     },
     methods: {
@@ -198,10 +157,52 @@ export default {
             }
         },
         calcDuration(slot) {
-            const startTime = new Date(slot.startTime);
-            const endTime = new Date(slot.endTime);
+            const startTime = new Date(slot.slot.startTime);
+            const endTime = new Date(slot.slot.endTime);
             return ((endTime - startTime) / 3600000).toFixed(2);
+        },
+        async getClassDetail() {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/' + this.classId, {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.class = response.data
+            }
+        },
+        async getUserSlots(from, to) {
+            console.log("Getting slot")
+            let queryString = ""
+            if (from != null) {
+                queryString += "&From=" + from
+            }
+            if (to != null) {
+                queryString += "&To=" + to
+            }
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students?ClassId=' + this.classId + queryString, {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.slots = response.data
+            }
+        },
+        openSlotDetailPopup(slot) {
+            this.selectingSlot = slot
+            this.isOpenSlotDetailPopup = true
+        },
+        closeSlotDetailPopup() {
+            this.isOpenSlotDetailPopup = false
+        },
+        async refresh() {
+            await this.getUserSlots(null, null)
+            await this.getClassDetail()
         }
+    },
+    mounted() {
+        this.refresh()
     }
 }
 </script>

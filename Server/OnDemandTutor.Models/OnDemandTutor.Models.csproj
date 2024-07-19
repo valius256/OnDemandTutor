@@ -31,7 +31,6 @@
         <Folder Include="Dtos\EmailTemplate\" />
         <Folder Include="Dtos\FAQ\" />
         <Folder Include="Dtos\Notification\" />
-        <Folder Include="Dtos\StudentClass\" />
     </ItemGroup>
 
     <ItemGroup>

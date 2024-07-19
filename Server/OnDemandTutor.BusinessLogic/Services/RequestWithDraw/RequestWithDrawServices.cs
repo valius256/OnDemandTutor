@@ -39,7 +39,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDrawAsAdmin(RequestWithDrawFilterDto request)
     {
         var requestWithDrawModelList = await
-            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, 0);
+            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request);
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 

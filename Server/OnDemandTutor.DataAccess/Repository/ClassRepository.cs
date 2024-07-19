@@ -14,14 +14,6 @@ namespace OnDemandTutor.DataAccess.Repository
         {
         }
 
-        public async Task<Class?> GetFullDataClass(int id)
-        {
-            var res = await dbSet.Include(ld => ld.Slots)
-                .Where(cl => cl.Id == id)
-                .FirstOrDefaultAsync();
-            ;
-            return res;
-        }
         public async Task<PagedResult<Class>> GetClasses(PagingModel<QueryClassDTO> pagingModel)
         {
             var classQuery = dbSet
@@ -49,12 +41,12 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (pagingModel.Filter.StartTime.HasValue)
                 {
-                    classQuery = classQuery.Where(c => c.Slots.Any(s => s.StartTime >= pagingModel.Filter.StartTime.Value));
+                    classQuery = classQuery.Where(c => c.Slots.OrderBy(s => s.StartTime).First().StartTime >= pagingModel.Filter.StartTime.Value);
                 }
 
                 if (pagingModel.Filter.EndTime.HasValue)
                 {
-                    classQuery = classQuery.Where(c => c.Slots.Any(s => s.EndTime <= pagingModel.Filter.EndTime.Value));
+                    classQuery = classQuery.Where(c => c.Slots.OrderBy(s => s.StartTime).Last().EndTime <= pagingModel.Filter.EndTime.Value);
                 }
 
                 if (pagingModel.Filter.MinFeePerHour.HasValue)
@@ -92,10 +84,49 @@ namespace OnDemandTutor.DataAccess.Repository
             return pagedResult;
         }
 
+        public async Task<PagedResult<Class>> GetClassesOfStudent(int studentId, int page, int limit)
+        {
+            var classQuery = dbSet
+                .Include(c => c.Subject)
+                .Include(c => c.User)
+                .Include(c => c.Slots)
+                .Include(c => c.StudentClasses)
+                .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId));
+
+           
+
+            limit = limit > 0 ? limit : 10;
+            page = page > 0 ? page : 1;
+            int skip = (page - 1) * limit;
+
+            var pagedResult = await classQuery.ToNewPagingAsync(page, limit);
+
+            return pagedResult;
+        }
+        public async Task<PagedResult<Class>> GetClassesOfTutor(int tutorId, int page, int limit)
+        {
+            var classQuery = dbSet
+                .Include(c => c.Subject)
+                .Include(c => c.User)
+                .Include(c => c.Slots)
+                .Where(c => c.User.Id == tutorId);
+
+            limit = limit > 0 ? limit : 10;
+            page = page > 0 ? page : 1;
+            int skip = (page - 1) * limit;
+
+            var pagedResult = await classQuery.ToNewPagingAsync(page, limit);
+
+            return pagedResult;
+        }
         public async Task<Class?> GetClassWithSlotsByIdAsync(int id)
         {
             return await dbSet
+                .Include(c => c.Subject)
+                .Include(c => c.User)
                 .Include(c => c.Slots)
+                .Include(c => c.StudentClasses)
+                    .ThenInclude(sc => sc.Student)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
     }
