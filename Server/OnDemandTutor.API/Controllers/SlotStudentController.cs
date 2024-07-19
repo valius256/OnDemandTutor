@@ -47,8 +47,8 @@ namespace OnDemandTutor.API.Controllers
         [Authorize]
         [HttpGet("get-upcoming-slot")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
-        public async Task<IActionResult> GetUpcomingSlot([FromQuery] QuerySlotStudentDto querySlotStudentDto)
+        [ProducesResponseType(typeof(GetSlotStudentDetailDto), 200)]
+        public async Task<IActionResult> GetUpcomingSlot()
         {
             var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var slotStudent = await _slotStudentService.GetClosestFutureSlot(user);
@@ -101,13 +101,14 @@ namespace OnDemandTutor.API.Controllers
             return BadRequest("Payment failed.");
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("feedback-rating")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> UpdateSlotStudent(int slotId, int studentId, [FromBody] UpdateSlotStudentDto updateDto)
+        public async Task<IActionResult> UpdateSlotStudent([FromQuery] int slotId, [FromBody] UpdateSlotStudentDto updateDto)
         {
-            var result = await _slotStudentService.UpdateSlotStudentAsync(slotId, studentId, updateDto.Rate, updateDto.Feedback);
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var result = await _slotStudentService.UpdateSlotStudentAsync(slotId, user.Id, updateDto.Rate, updateDto.Feedback);
 
             if (result)
             {

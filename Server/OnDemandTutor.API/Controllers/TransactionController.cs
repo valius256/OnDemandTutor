@@ -25,7 +25,14 @@ public class TransactionController : BaseController<TransactionController>
     {
         return Ok(await _transactionServices.ViewALlTransaction(requestDtos, HttpContext.User));
     }
-
+    [Authorize]
+    [HttpGet("all-admin")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
+    public async Task<ActionResult> ViewAllTransactionAsAdmin([FromQuery] TransactionFilterDto requestDtos)
+    {
+        return Ok(await _transactionServices.ViewALlTransactionAsAdmmin(requestDtos));
+    }
     [Authorize]
     [HttpGet("get-by-id")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]

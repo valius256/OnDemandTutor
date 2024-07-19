@@ -116,6 +116,25 @@ export default {
                             'Authorization' : "Bearer " + localStorage.token
                         }
                     })
+                    await axios.post(import.meta.env.VITE_API_URL + '/api/User/update-profile', request, {
+                        headers : {
+                            'Authorization' : "Bearer " + localStorage.token
+                        }
+                    })
+                    await axios.post(import.meta.env.VITE_API_URL + '/api/Email/send', {
+                        toAddresses : [this.email],
+                        ccAddresses : [],
+                        subject : "Mật khẩu để đăng nhập OnDemandTutor",
+                        body : `
+                            <h1>Mật khẩu để đăng nhập hệ thống vận hành OnDemandTutor</h1><p>
+                                Vui lòng không chia sẻ cho bất kì ai khác<p>
+                                    <h2>${randomPass}</h2>
+                        `
+                    }, {
+                        headers : {
+                            'Authorization' : "Bearer " + localStorage.token
+                        }
+                    })
                     this.eventBus.emit("open-result-dialog", {
                         message: "Tạo thành công",
                         type: "Success"

@@ -105,14 +105,14 @@
             v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class && !slot.rating && slot.paymentStatus != -1">
             <div class="text-sm italic text-center">Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!
             </div>
-            <button class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg"
+            <button v-if="!slot.rating || !slot.feedback" class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg"
                 @click="toggleIsOpenRatingPopup">
                 Đánh giá gia sư
             </button>
 
         </div>
         <generic-popup v-if="isOpenRatingPopup" title="Đánh giá slot học" :closeFunction="toggleIsOpenRatingPopup">
-            <rating-popup :slotId="slot.id"></rating-popup>
+            <rating-popup :slotId="slot.slot.id" :action="action" :close="close"></rating-popup>
         </generic-popup>
     </div>
 </template>
@@ -238,7 +238,8 @@ export default {
             if (this.paymentMethod == 1) {
                 await this.handleVnpay(true)
             }
-        }
+        },
+        
     },
     mounted() {
         this.fetchBalance()

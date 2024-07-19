@@ -274,6 +274,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var existingEnrollment = await _slotStudentServices.GetSlotStudentById(slotId);
             if (existingEnrollment != null && existingEnrollment.UserId == studentId)
             {
+                //return false;
                 throw new ModelException($"{slotId}", "Student is already enrolled in this slot");
             }
             var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);

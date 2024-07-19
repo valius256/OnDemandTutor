@@ -17,7 +17,7 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
     public async Task<PagedResult<Transaction>> ViewALlTransaction(TransactionFilterDto transactionFilter, int userId)
     {
         var transactionQuery = dbSet
-            .Where(ld => ld.CreatedById == userId)
+            .Where(ld => ld.CreatedById == userId || userId == 0)
             .AsQueryable();
 
         // Apply filters based on transactionFilterDto
