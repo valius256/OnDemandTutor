@@ -181,6 +181,10 @@
         </tbody>
       </table>
     </div>
+    <div>chỗ này là chứng minh nhân dân</div>
+    <div>cập nhập chứng mình nhân dân ở đâ</div>
+    <div>chỗ này là video</div>
+    <div>cập nhập video ở đây</div>
   </div>
 </template>
 

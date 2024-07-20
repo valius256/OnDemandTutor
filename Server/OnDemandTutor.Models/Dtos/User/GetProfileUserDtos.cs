@@ -11,6 +11,7 @@ public class GetProfileUserDtos
     public string Email { get; set; } = string.Empty;
     public string? Address { get; set; }
     public string? AvatarImageUrl { get; set; }
+
     public RoleStatus Role { get; set; }
     public DateTime? Dob { get; set; }
     public string? Sex { get; set; }
