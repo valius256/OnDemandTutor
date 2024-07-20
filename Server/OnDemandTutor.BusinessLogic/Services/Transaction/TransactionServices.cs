@@ -8,6 +8,9 @@ using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
+using OnDemandTutor.BusinessLogic.Services.Notification;
+using OnDemandTutor.Models.Dtos.Notification;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -15,10 +18,13 @@ public class TransactionServices : ITransactionServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     public readonly ISlotStudentServices _slotStudentServices;
-    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, ISlotStudentServices slotStudentServices)
+    private readonly INotificationService _notificationService;
+
+    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService, ISlotStudentServices slotStudentServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _slotStudentServices = slotStudentServices;
+        _notificationService = notificationService;
     }
 
     public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
@@ -82,6 +88,14 @@ public class TransactionServices : ITransactionServices
         var transactionModel = transaction.Adapt<Models.Models.Transaction>();
         _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
+
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"Giao dịch đã được tạo thành công  ",
+            IsViewed = true,
+            ReceiverId = transaction.CreatedById,
+        });
+
         return true;
     }
 
@@ -101,6 +115,15 @@ public class TransactionServices : ITransactionServices
         var transactionModel = transaction.Adapt<Models.Models.Transaction>();
         _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
         await _unitOfWorkRepository.SaveChangesAsync();
+
+
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"Giao dịch đã được tạo thành công  ",
+            IsViewed = true,
+            ReceiverId = transaction.CreatedById,
+        });
+
         return true;
     }
 
@@ -120,6 +143,14 @@ public class TransactionServices : ITransactionServices
 
         _unitOfWorkRepository.TransactionRepository.Add(transaction);
         await _unitOfWorkRepository.SaveChangesAsync();
+
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"Giao dịch đã được tạo thành công  ",
+            IsViewed = true,
+            ReceiverId = transaction.CreatedById,
+        });
+
 
         return transaction.Id;
     }

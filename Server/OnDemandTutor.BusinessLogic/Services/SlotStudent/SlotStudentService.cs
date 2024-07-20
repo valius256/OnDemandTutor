@@ -1,11 +1,13 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Dtos.User;
@@ -17,12 +19,15 @@ public class SlotStudentService : ISlotStudentServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IUserServices _userServices;
+    private readonly INotificationService _notificationService;
 
 
-    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository, IUserServices userServices)
+    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService, IUserServices userServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _userServices = userServices;
+        _notificationService = notificationService;
+
     }
     public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user)
     {
@@ -83,6 +88,12 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SaveChangesAsync();
         }
 
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this slot with slot Id{slotId } and studentId{studentId} has been created  ",
+            IsViewed = true,
+            ReceiverId = recordInDb.UserId,
+        });
         return recordInDb;
     }
 
@@ -105,9 +116,16 @@ public class SlotStudentService : ISlotStudentServices
         {
             throw new Exception("Slot Student not found");
         }
-       
+
         // studentClass.RecordStatus = RecordStatus.Deleted;
         // _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
+
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this slot with slot Id{slotId} and studentId{studentId} has been deleted  ",
+            IsViewed = true,
+            ReceiverId = slotstudent.UserId,
+        });
         _unitOfWorkRepository.SlotStudentRepository.Remove(slotstudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -156,6 +174,13 @@ public class SlotStudentService : ISlotStudentServices
 
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
+
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this slot with slot Id{slotId} and studentId{studentId} has been updated  ",
+            IsViewed = true,
+            ReceiverId = slotStudent.UserId,
+        });
         return true;
     }
 }

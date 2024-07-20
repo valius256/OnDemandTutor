@@ -23,6 +23,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     private readonly IUserServices _userServices;
     private readonly ITransactionServices _transactionServices;
     private readonly INotificationService _notificationService;
+
     public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IEmailServices emailServices, IUserServices userServices, 
         INotificationService notificationService,
         ITransactionServices transactionServices)
@@ -82,7 +83,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         await _emailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
            false);
-        
+
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
             Content = $"chuyển tiền Id{requestWithDrawModel.Id}  đã được tạo ",
