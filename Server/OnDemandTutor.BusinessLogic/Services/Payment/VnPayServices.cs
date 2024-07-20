@@ -81,17 +81,19 @@ public class VnPayServices : IVnPayServices
             if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1)
             {
                 await HandleSingleSlotPayment(response);
+                await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
             }
             else if (response.ClassId != null)
             {
                 await HandleClassPayment(response);
+                await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
             }
             else
             {
                 await _userServices.RechargeAccountAsync(response.UserId, response.Money);
             }
 
-            await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
+         
 
             if (response.VnPayResponseCode == "24")
             {
@@ -286,7 +288,7 @@ public class VnPayServices : IVnPayServices
 
         var transactionDtos = new List<TransactionDto>();
 
-        foreach (var slotId in slotIds)
+        if (slotIds == null)
         {
             var transactionDto = new TransactionDto
             {
@@ -294,7 +296,7 @@ public class VnPayServices : IVnPayServices
                 PaymentMethod = paymentMethod,
                 Amount = amount,
                 Notes = notes,
-                SlotId = slotId,
+                SlotId = null,
                 ClassId = classId,
                 Status = PaymentStatus.Notpaid,
                 CreatedDate = timeNow,
@@ -304,6 +306,29 @@ public class VnPayServices : IVnPayServices
 
             transactionDtos.Add(transactionDto);
         }
+        else
+        {
+            foreach (var slotId in slotIds)
+            {
+                var transactionDto = new TransactionDto
+                {
+                    TransactionCode = tick,
+                    PaymentMethod = paymentMethod,
+                    Amount = amount,
+                    Notes = notes,
+                    SlotId = slotId,
+                    ClassId = classId,
+                    Status = PaymentStatus.Notpaid,
+                    CreatedDate = timeNow,
+                    CreatedById = int.Parse(currUid),
+                    TransactionType = transactionType
+                };
+
+                transactionDtos.Add(transactionDto);
+            }
+        }
+        
+    
 
         return transactionDtos;
     }
