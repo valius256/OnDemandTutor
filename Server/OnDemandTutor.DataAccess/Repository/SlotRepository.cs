@@ -43,7 +43,7 @@ namespace OnDemandTutor.DataAccess.Repository
             }
             // Apply filtering if necessary
 
-            var results = await query.ToNewPagingAsync<Slot>(request.Page, request.Limit);
+            var results = await query.ToNewPagingAsync(request.Page, request.Limit);
             return results.Adapt<PagedResult<GetSlotsDtos>>();
         }
         public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)

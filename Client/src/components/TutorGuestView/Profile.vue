@@ -59,10 +59,12 @@
             <div class="bg-white shadow-md rounded-lg p-6 w-full mt-8">
                 <h2 class="text-2xl font-semibold mb-4">Đánh giá từ các học viên trước</h2>
                 <div class="flex">
-                    <button @click="setFeedbackMode(0)" class="rounded-lg w-full p-2" :class="{'bg-gray-300' : feedbackMode == 0}">
+                    <button @click="setFeedbackMode(0)" class="rounded-lg w-full p-2"
+                        :class="{ 'bg-gray-300': feedbackMode == 0 }">
                         Đánh giá buổi học
                     </button>
-                    <button @click="setFeedbackMode(1)" class="rounded-lg w-full p-2" :class="{'bg-gray-300' : feedbackMode == 1}">
+                    <button @click="setFeedbackMode(1)" class="rounded-lg w-full p-2"
+                        :class="{ 'bg-gray-300': feedbackMode == 1 }">
                         Đánh giá lớp học
                     </button>
                 </div>
@@ -71,9 +73,10 @@
                         <div class="p-4 flex gap-4">
                             <img class="w-24 h-24 rounded-full" :src="slot.user.avatarImageUrl">
                             <div>
-                                <div class="font-bold">{{ (slot.user.firstName ?? "") + " " + (slot.user.lastName ?? "") }}</div>
+                                <div class="font-bold">{{ (slot.user.firstName ?? "") + " " + (slot.user.lastName ?? "")
+                                    }}</div>
                                 <star-rating :star-size="20" :rating="slot.rating" :round-start-rating="false"
-                                :read-only="true" />
+                                    :read-only="true" />
                                 <div class="mt-2">
                                     {{ slot.feedback }}
                                 </div>
@@ -88,9 +91,10 @@
                         <div class="p-4 flex gap-4">
                             <img class="w-24 h-24 rounded-full" :src="class_.student.avatarImageUrl">
                             <div>
-                                <div class="font-bold">{{ (class_.student.firstName ?? "") + " " + (class_.student.lastName ?? "") }}</div>
+                                <div class="font-bold">{{ (class_.student.firstName ?? "") + " " +
+            (class_.student.lastName ?? "") }}</div>
                                 <star-rating :star-size="20" :rating="class_.student.rating" :round-start-rating="false"
-                                :read-only="true" />
+                                    :read-only="true" />
                                 <div class="mt-2" v-if="class_.student.feedback">
                                     {{ class_.student.feedback }}
                                 </div>
@@ -207,11 +211,12 @@ export default {
                 await this.handlePageChange()
             }
         },
-        async setFeedbackMode(mode){
+        async setFeedbackMode(mode) {
             this.feedbackMode = mode
             this.currentPage = 0
             await this.handlePageChange()
-        }
+        },
+        
     },
     mounted() {
         this.refresh()

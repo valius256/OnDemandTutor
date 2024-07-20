@@ -27,6 +27,7 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetNotifications([FromQuery] int page = 0, [FromQuery] int limit = 20)
         {
             var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            
             var notifications = await _notificationService.GetNotificationsAsync(page, limit, user);
             return Ok(notifications);
         }

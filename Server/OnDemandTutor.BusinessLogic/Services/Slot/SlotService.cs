@@ -59,7 +59,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 throw new BadRequestException("Slot not found");
             }
-            return slot.Adapt<GetSlotDetailDto>();
+            return slot;
         }
 
         public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
