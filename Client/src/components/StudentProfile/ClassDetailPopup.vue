@@ -242,6 +242,7 @@ export default {
                     console.log(slot)
                     this.slots.push({
                         slot: {
+                            id : slot.id,
                             startTime: slot.startTime,
                             endTime: slot.endTime,
                             teachAddress: slot.teachAddress,

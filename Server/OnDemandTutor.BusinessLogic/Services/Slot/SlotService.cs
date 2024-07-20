@@ -52,7 +52,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return await _unitOfWork.SlotRepository.GetSlotsAsync(request);
         }
 
-        public async Task<GetSlotsDtos> GetSlotByIdAsync(int id)
+        public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)
         {
             var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
             if (slot is null)
