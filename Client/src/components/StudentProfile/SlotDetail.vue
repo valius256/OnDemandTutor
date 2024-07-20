@@ -73,6 +73,8 @@ export default {
         bg = "bg-green-300";
       } else if (slot.paymentStatus == 1) {
         bg = "bg-blue-400";
+      } else if (slot.paymentStatus == -2 && this.compareDate(new Date(slot.slot.startTime), new Date()) > 0) {
+        bg = "bg-cyan-400";
       } else {
         bg = "bg-gray-400";
       }

@@ -22,5 +22,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();
         public GetProfileUserDtos CreatedBy { get; set; } = new GetProfileUserDtos();
         public GetClassDtos Class { get; set; } = new GetClassDtos();
+        public ICollection<GetStudentSlotDto> SlotStudents { get; set; } = new List<GetStudentSlotDto>();
+
     }
 }

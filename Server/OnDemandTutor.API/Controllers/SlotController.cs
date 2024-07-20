@@ -29,7 +29,7 @@ public class SlotController : ControllerBase
 
     [Authorize]
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(GetSlotsDtos), 200)]
+    [ProducesResponseType(typeof(GetSlotDetailDto), 200)]
     public async Task<IActionResult> GetSlotById(int id)
     {
         var slot = await _slotService.GetSlotByIdAsync(id);

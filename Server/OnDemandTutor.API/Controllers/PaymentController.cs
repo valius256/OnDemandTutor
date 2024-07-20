@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
@@ -6,6 +7,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Payment;
+using OnDemandTutor.Models.Dtos.Slot;
 
 namespace OnDemandTutor.API.Controllers;
 
@@ -38,7 +40,7 @@ public class PaymentController : BaseController<PaymentController>
         {
             var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
 
-            paymentUrl = await _vnPayServices.CreatePaymentForSlotUrl(paymentInfo, HttpContext, slot);
+            paymentUrl = await _vnPayServices.CreatePaymentForSlotUrl(paymentInfo, HttpContext, slot.Adapt<GetSlotsDtos>());
         }
         return Ok(paymentUrl);
     }
@@ -54,7 +56,7 @@ public class PaymentController : BaseController<PaymentController>
         {
             var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
 
-            result = await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot);
+            result = await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot.Adapt<GetSlotsDtos>());
             return Ok(result);
         }
 

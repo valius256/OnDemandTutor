@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
@@ -53,22 +52,32 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return await _unitOfWork.SlotRepository.GetSlotsAsync(request);
         }
 
-        public async Task<GetSlotsDtos> GetSlotByIdAsync(int id)
+        public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)
         {
             var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
             if (slot is null)
             {
                 throw new BadRequestException("Slot not found");
             }
-            return slot;
+            return slot.Adapt<GetSlotDetailDto>();
         }
 
         public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
         {
             var slotEntity = slotDto.Adapt<CreateSlotsDto>(); // Assuming Mapster is used for mapping
 
+            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slotDto.CreateById).ToListAsync();
+            foreach (var slot in tutorAllSlot)
+            {
+                if (slot.StartTime == slotDto.StartTime && slot.EndTime == slotDto.EndTime)
+                {
+                    throw new BadRequestException("This slot is already exist, try another time");
+                }
+            }
+
             // Add the new Slot entity to repository
             var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
+
             await _unitOfWork.SaveChangesAsync();
 
             // Map the created entity back to CreateSlotsDtos and return it
@@ -76,6 +85,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             return createdSlotDto;
         }
+
         public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
         {
             // Retrieve the existing slot entity from the database
@@ -140,11 +150,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                         await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
                         await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
                     }
-                    else
-                    {
-                        await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
-                            -amountToDecrease);
-                    }
+                    //else 
+                    //{
+                    //    await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
+                    //        -amountToDecrease);
+                    //}
                 }
             }
         }
@@ -181,7 +191,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
             var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-            var classId = slotTotalList.FirstOrDefault()?.ClassId;
+            var classId = slotTotalList.FirstOrDefault().ClassId;
 
             if (classId.HasValue)
             {

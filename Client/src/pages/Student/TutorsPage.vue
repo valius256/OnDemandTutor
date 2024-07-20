@@ -103,7 +103,7 @@
                         <star-rating class="flex justify-center" :star-size="20" :rating="tutor.rating"
                             :round-start-rating="false" :read-only="true" />
                         <div class="flex justify-center my-2">
-                            <button class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
+                            <button @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')" class="bg-blue-500 text-white font-bold p-2 rounded-lg">Xem thêm</button>
                         </div>
                     </div>
                 </div>

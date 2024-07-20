@@ -9,6 +9,7 @@ import BlogDetailPage from "../pages/Student/BlogDetailPage.vue";
 import FaqsPage from "../pages/Student/FaqPage.vue";
 import StudentProfile from "../pages/Student/ProfilePage.vue";
 import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
+import TutorGuestView from "../pages/Tutor/TutorGuestViewPage.vue";
 // import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
 // import CreateClassPage from "../pages/Student/CreateClassPage.vue";
 import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue";
@@ -143,7 +144,29 @@ const routes = [
       },
     ],
   },
-
+  {
+    path: "/tutor-guest/:id",
+    name: "TutorGuestPage",
+    //redirect: "/tutor/guest/:id",
+    children: [
+      {
+        path: "profile",
+        component: TutorGuestView,
+      },
+      {
+        path: "schedule",
+        component: TutorGuestView,
+      },
+      {
+        path: "subject",
+        component: TutorGuestView,
+      },
+      {
+        path: "class",
+        component: TutorGuestView,
+      },
+    ],
+  },
   {
     path: "/admin/accounts",
     name: "AccountManagement",

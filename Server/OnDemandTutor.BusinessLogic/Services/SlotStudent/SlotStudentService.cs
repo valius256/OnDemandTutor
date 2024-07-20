@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -15,11 +16,13 @@ namespace OnDemandTutor.BusinessLogic.Services.SlotStudent;
 public class SlotStudentService : ISlotStudentServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
+    private readonly IUserServices _userServices;
 
 
-    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository)
+    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository, IUserServices userServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
+        _userServices = userServices;
     }
     public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user)
     {
@@ -63,7 +66,7 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-    
+
     public async Task<Models.Models.SlotStudent> CreateSlotStudentIfNotExist(int slotId, int studentId)
     {
         var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
@@ -97,14 +100,15 @@ public class SlotStudentService : ISlotStudentServices
 
     public async Task<bool> SoftDeleteSlotStudent(int slotId, int studentId)
     {
-        var studentClass = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
-        if (studentClass == null)
+        var slotstudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
+        if (slotstudent == null)
         {
             throw new Exception("Slot Student not found");
         }
-        // _unitOfWork.StudentClassRepository.Remove(studentClass);
-        studentClass.RecordStatus = RecordStatus.Deleted;
-        _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
+       
+        // studentClass.RecordStatus = RecordStatus.Deleted;
+        // _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
+        _unitOfWorkRepository.SlotStudentRepository.Remove(slotstudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
@@ -145,6 +149,10 @@ public class SlotStudentService : ISlotStudentServices
 
         slotStudent.Rating = rate;
         slotStudent.Feedback = feedback;
+
+        var slot = await _unitOfWorkRepository.SlotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
+
+        await _userServices.RecalculateTutorRating(slot.CreateById);
 
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();

@@ -81,17 +81,19 @@ public class VnPayServices : IVnPayServices
             if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1)
             {
                 await HandleSingleSlotPayment(response);
+                await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
             }
             else if (response.ClassId != null)
             {
                 await HandleClassPayment(response);
+                await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
             }
             else
             {
                 await _userServices.RechargeAccountAsync(response.UserId, response.Money);
             }
 
-            await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
+         
 
             if (response.VnPayResponseCode == "24")
             {
@@ -206,8 +208,10 @@ public class VnPayServices : IVnPayServices
         var transactionDto = CreateTransactionDto(tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
         var studentModel = await _userServices.GetProfileAsync(int.Parse(userId), null, null);
+        await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, studentModel.Id);
         var slotStudentDto = await _slotStudentServices.GetSlotStudentAsync(slot.Id, studentModel.Id);
-        if (await _userServices.GetBalanceAsync(studentModel.Id) > slotCost && slotStudentDto.PaymentStatus == PaymentStatus.Notpaid)
+        var balance = await _userServices.GetBalanceAsync(studentModel.Id);
+        if (balance > slotCost && slotStudentDto.PaymentStatus == PaymentStatus.Notpaid)
         {
             await _transactionServices.TransactionPaid(tick, DateTime.Now);
             await _userServices.UpdateBalanceAsync(studentModel.Id, 0, slotCost);
@@ -284,7 +288,7 @@ public class VnPayServices : IVnPayServices
 
         var transactionDtos = new List<TransactionDto>();
 
-        foreach (var slotId in slotIds)
+        if (slotIds == null)
         {
             var transactionDto = new TransactionDto
             {
@@ -292,7 +296,7 @@ public class VnPayServices : IVnPayServices
                 PaymentMethod = paymentMethod,
                 Amount = amount,
                 Notes = notes,
-                SlotId = slotId,
+                SlotId = null,
                 ClassId = classId,
                 Status = PaymentStatus.Notpaid,
                 CreatedDate = timeNow,
@@ -302,6 +306,29 @@ public class VnPayServices : IVnPayServices
 
             transactionDtos.Add(transactionDto);
         }
+        else
+        {
+            foreach (var slotId in slotIds)
+            {
+                var transactionDto = new TransactionDto
+                {
+                    TransactionCode = tick,
+                    PaymentMethod = paymentMethod,
+                    Amount = amount,
+                    Notes = notes,
+                    SlotId = slotId,
+                    ClassId = classId,
+                    Status = PaymentStatus.Notpaid,
+                    CreatedDate = timeNow,
+                    CreatedById = int.Parse(currUid),
+                    TransactionType = transactionType
+                };
+
+                transactionDtos.Add(transactionDto);
+            }
+        }
+        
+    
 
         return transactionDtos;
     }

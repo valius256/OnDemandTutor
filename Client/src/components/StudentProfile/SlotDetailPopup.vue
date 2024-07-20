@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 bg-white rounded-b-lg w-full">
+    <div class="p-4 bg-white rounded-b-lg w-full" v-if="slotData">
         <div class="flex gap-4">
             <div>
                 <div class="mb-8" v-if="slot.slot.class">
@@ -101,11 +101,14 @@
                     class="p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Thanh toán ngay</button>
             </div>
         </div>
+        <button @click="isAboutToPay = true" v-if="!isAboutToPay && this.compareDate(new Date(slot.slot.startTime), new Date()) > 0 && slot.paymentStatus == -2 && !slot.slot.class && this.checkEnrollSlot()"
+            class="w-full p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Đặt ngay</button>
         <div class="flex flex-col justify-center mt-2"
-            v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class && !slot.rating && slot.paymentStatus != -1">
+            v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class && !slot.rating && slot.paymentStatus >= 0">
             <div class="text-sm italic text-center">Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!
             </div>
-            <button v-if="!slot.rating || !slot.feedback" class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg"
+            <button v-if="(!slot.rating || !slot.feedback) "
+                class="bg-cyan-600 hover:bg-cyan-400 text-white font-bold p-2 rounded-lg"
                 @click="toggleIsOpenRatingPopup">
                 Đánh giá gia sư
             </button>
@@ -125,13 +128,15 @@ export default {
     name: "SlotDetailPopup",
     components: { GenericPopup, RatingPopup },
     inject: ['eventBus'],
-    props: ['slot', 'close','action'],
+    props: ['slot', 'close', 'action'],
     data() {
         return {
             isOpenRatingPopup: false,
             balance: 0,
             isAboutToPay: false,
-            paymentMethod: 0
+            paymentMethod: 0,
+            slotData : null,
+            currentUser : null
         }
     },
     methods: {
@@ -239,10 +244,29 @@ export default {
                 await this.handleVnpay(true)
             }
         },
-        
+        async getSlotData(){
+            console.log(this.slot)
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Slot/'+this.slot.slot.id, {
+                headers: {
+                    'Authorization': "Bearer " + localStorage.token
+                }
+            })
+            if (response.data) {
+                this.slotData = response.data
+            }
+        },
+        checkEnrollSlot(){
+            return this.slotData.slotStudents.find(s => s.userId == this.currentUser.id) == null
+        },
+        async getCurrentUser(){
+            this.currentUser = await this.getUserFromToken()
+        }
+
     },
     mounted() {
         this.fetchBalance()
+        this.getCurrentUser()
+        this.getSlotData()
     }
 }
 </script>
