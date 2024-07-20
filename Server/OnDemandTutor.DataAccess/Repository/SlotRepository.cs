@@ -17,7 +17,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
         public async Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request)
         {
-            var query = dbSet.AsQueryable();
+            var query = dbSet.Include(s => s.CreatedBy).Include(s => s.Subject).Include(s => s.Class).AsQueryable();
             if (request.Filter != null)
             {
                 if (request.Filter.ClassId.HasValue)
@@ -46,13 +46,14 @@ namespace OnDemandTutor.DataAccess.Repository
             var results = await query.ToNewPagingAsync<Slot>(request.Page, request.Limit);
             return results.Adapt<PagedResult<GetSlotsDtos>>();
         }
-        public async Task<GetSlotsDtos> GetSlotByIdAsync(int id)
+        public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)
         {
-            var slot = await dbSet.FindAsync(id);
-            if (slot == null)
-                return null;
+            var slot = await dbSet
+                .Include(s => s.CreatedBy).Include(s => s.Subject).Include(s => s.Class)
+                .Include(s => s.SlotStudents)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
-            return slot.Adapt<GetSlotsDtos>();
+            return slot.Adapt<GetSlotDetailDto>();
         }
         public async Task<CreateSlotsDto> CreateSlotAsync(CreateSlotsDto slotDto)
         {

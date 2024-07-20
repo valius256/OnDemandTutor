@@ -27,10 +27,10 @@
             <div class="w-full lg:w-1/3 border-r-2">
                 <div class="font-bold text-xl border-b-2">Thông tin cá nhân</div>
                 <div class="mt-4 flex flex-col gap-4">
-                    <div>
+                    <!-- <div>
                         <span class="font-bold">Tiểu sử : </span>
                         <span class="italic">{{ tutor.user.bio }}</span>
-                    </div>
+                    </div> -->
                     <div>
                         <span class="font-bold">Ngày sinh : </span>
                         <span>{{ tutor.user.dob?.substring(0,10) ?? "" }}</span>
@@ -75,7 +75,7 @@
                             Mô tả kinh nghiệm trong môn học
                         </div>
                         <div class="italic">
-                            {{ tutor.otherDescription }}
+                            {{ tutor.description }}
                         </div>
                     </div>
 
