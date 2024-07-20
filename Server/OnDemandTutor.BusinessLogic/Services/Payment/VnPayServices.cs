@@ -206,8 +206,10 @@ public class VnPayServices : IVnPayServices
         var transactionDto = CreateTransactionDto(tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
         var studentModel = await _userServices.GetProfileAsync(int.Parse(userId), null, null);
+        await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, studentModel.Id);
         var slotStudentDto = await _slotStudentServices.GetSlotStudentAsync(slot.Id, studentModel.Id);
-        if (await _userServices.GetBalanceAsync(studentModel.Id) > slotCost && slotStudentDto.PaymentStatus == PaymentStatus.Notpaid)
+        var balance = await _userServices.GetBalanceAsync(studentModel.Id);
+        if (balance > slotCost && slotStudentDto.PaymentStatus == PaymentStatus.Notpaid)
         {
             await _transactionServices.TransactionPaid(tick, DateTime.Now);
             await _userServices.UpdateBalanceAsync(studentModel.Id, 0, slotCost);
