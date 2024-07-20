@@ -119,7 +119,13 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return pagedResult;
         }
-
+        public async Task<PagedResult<Class>> GetClassWithStudentClassOfTeacher(int tutorId, int page, int limit)
+        {
+            return await dbSet.Include(c => c.StudentClasses).ThenInclude(sc => sc.Student)
+                 .AsQueryable()
+                 .Where(c => c.TutorId == tutorId)
+                .ToNewPagingAsync(page > 0 ? page : 1, limit > 0 ? limit : 10);
+        }
         public async Task<Class?> GetClassWithSlotsByIdAsync(int id)
         {
             return await dbSet

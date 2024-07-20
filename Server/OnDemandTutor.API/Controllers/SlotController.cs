@@ -26,7 +26,15 @@ public class SlotController : ControllerBase
         return Ok(slots);
 
     }
+    [HttpGet("tutor-slot-student")]
+    [ProducesResponseType(typeof(PagedResult<GetSlotWithSlotStudentWithStudentDetailDto>), 200)]
+    public async Task<IActionResult> GetSlotWithStudentOfTutor([FromQuery] int tutorId, [FromQuery] int page = 1, [FromQuery] int limit = 10)
+    {
 
+        var slots = await _slotService.GetSlotWithStudentOfTutors(tutorId,page,limit);
+        return Ok(slots);
+
+    }
     [Authorize]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(GetSlotDetailDto), 200)]

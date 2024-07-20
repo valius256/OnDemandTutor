@@ -24,7 +24,7 @@
                 <tr v-for="registration in registrations" :key="registration.id">
                     <td>{{ registration.id }}</td>
                     <td>
-                        <button class="font-bold underline text-blue-400">
+                        <button @click="this.$router.push('/tutor-guest/' + registration.user.id + '/profile')" class="font-bold underline text-blue-400">
                             {{ (registration.user.firstName ?? "") + " " + (registration.user.lastName ?? "") }}
                         </button>
                     </td>

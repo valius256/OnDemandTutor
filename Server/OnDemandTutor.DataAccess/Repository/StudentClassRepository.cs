@@ -1,6 +1,8 @@
-﻿using OnDemandTutor.DataAccess.IRepository;
+﻿using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Models;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.DataAccess.Repository
 {
@@ -8,7 +10,10 @@ namespace OnDemandTutor.DataAccess.Repository
     {
         public StudentClassRepository(ApplicationDbContext context) : base(context)
         {
+
         }
+
+
     }
 }
 

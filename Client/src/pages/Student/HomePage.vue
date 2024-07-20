@@ -27,7 +27,7 @@
             Các gia sư chuyên môn ở nhiều lĩnh vực khác nhau sẵn sàng giúp bạn
             đạt được mục tiêu học tập của mình.
           </p>
-          <button class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
+          <button @click="$router.push('/tutors')" class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
             Bắt Đầu Ngay
           </button>
         </div>
@@ -58,7 +58,7 @@
           <div class="flex flex-wrap -mx-4">
             <div v-for="tutor in tutors" :key="tutor.tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8 transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow p-6">
-                <router-link to="/tutor">
+                <router-link :to="'/tutor-guest/' + tutor.tutor.id + '/profile'">
                   <img :src="tutor.tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
                 </router-link>
                 <p class="mt-4 font-bold">{{ tutor.tutor.fullName }}</p>

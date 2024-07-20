@@ -17,4 +17,6 @@ public interface ISlotServices
     Task<bool> EnrollForSlot(int studentId, int slotId);
     Task<SlotConflictDto> IsSlotConflict(int slotId, int studentId);
     Task<List<GetSlotWithSlotStudentDto>?> GetListSlotOfStudentByStudentId(int studentId);
+
+    Task<PagedResult<GetSlotWithSlotStudentWithStudentDetailDto>?> GetSlotWithStudentOfTutors(int tutorId, int page, int limit);
 }

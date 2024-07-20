@@ -1,5 +1,12 @@
 <template>
   <div v-if="user">
+    <div class="p-4 bg-slate-700 text-2xl font-bold text-white flex flex-col lg:flex-row lg:place-content-between" v-if="user.tutorStatus == 1 && currentUser.role > 1">
+      <div>Tài khoản gia sư này cần được xác thực</div>
+      <div class="flex gap-3">
+        <button class="bg-green-400 hover:bg-green-200 text-white font-bold px-4 py-2 rounded-lg">Xác thực</button>
+        <button class="bg-red-400 hover:bg-red-200 text-white font-bold px-4 py-2 rounded-lg">Từ chối</button>
+      </div>
+    </div>
     <div class="py-8 bg-slate-200 flex justify-center gap-8">
       <img :src="user.avatarImageUrl" class="w-48">
       <div class="flex flex-col justify-end">
@@ -41,6 +48,7 @@ export default {
     return {
       user: null,
       viewingId: 0,
+      currentUser : null,
     };
   },
   methods: {
@@ -50,6 +58,7 @@ export default {
         import.meta.env.VITE_API_URL + "/api/User/profile?userId=" + this.viewingId)
 
       this.user = response.data.data
+      this.currentUser = await this.getUserFromToken()
     },
   },
   mounted() {

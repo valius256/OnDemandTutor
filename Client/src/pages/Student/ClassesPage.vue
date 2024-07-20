@@ -70,7 +70,7 @@
                             <ul class="px-4 flex flex-col gap-2">
                                 <li>
                                     <span class="font-bold">Gia sư :</span>
-                                    <button class="ml-3 font-bold text-blue-400 underline">
+                                    <button class="ml-3 font-bold text-blue-400 underline" @click="this.$router.push('/tutor-guest/' + class_.tutor.id + '/profile')">
                                         {{ (class_.tutor.firstName ?? "") ?? (class_.tutor.lastName ?? "") }}
                                     </button>
                                 </li>

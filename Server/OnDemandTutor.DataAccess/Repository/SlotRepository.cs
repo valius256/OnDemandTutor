@@ -121,6 +121,14 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return listSlot?.Adapt<List<GetSlotWithSlotStudentDto>>();
         }
+
+        public async Task<PagedResult<Slot>> GetSlotWithStudentSlotOfTeacher(int tutorId, int page, int limit)
+        {
+            return await dbSet.Include(c => c.SlotStudents).ThenInclude(sl => sl.User)
+                 .AsQueryable()
+                 .Where(c => c.CreateById == tutorId && c.ClassId == null)
+                .ToNewPagingAsync(page > 0 ? page : 1, limit > 0 ? limit : 10);
+        }
     }
 }
 

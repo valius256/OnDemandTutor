@@ -13,6 +13,8 @@ namespace OnDemandTutor.DataAccess.IRepository
         Task<bool> DeleteSlotAsync(int id);
         Task<GetSlotWithSlotStudentDto?> GetSlotWithSlotStudentStudentById(int id);
         Task<List<GetSlotWithSlotStudentDto>?> GetSlotWithSlotStudentByStudentId(int studentId);
+
+        Task<PagedResult<Slot>> GetSlotWithStudentSlotOfTeacher(int tutorId, int page, int limit);
     }
 }
 
