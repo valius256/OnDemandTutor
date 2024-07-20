@@ -91,10 +91,10 @@ public class AuthServices : IAuthServices
         return record.Role.ToString();
     }
 
-    public async Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+    public async Task<bool> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal,ChangePasswordDto changePasswordDto)
     {
         // Retrieve the user's email or ID from claims
-        var user = await GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
+        var user = await GetUserProfileByClaim(claimsPrincipal);
       // var email = user.FindFirst(ClaimTypes.Email)?.Value;
         if (user is null)
         {
