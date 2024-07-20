@@ -18,7 +18,7 @@
     </div>
     <div class="flex gap-4 justify-center mt-4 text-2xl mb-6">
       <button
-        @click="null"
+        @click="toggleRechargePopup"
         class="mr-6 px-6 py-4 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
       >
         Nạp tiền
@@ -98,6 +98,17 @@
         :balance="balance"
       ></request-withdraw-popup>
     </generic-popup>
+    <generic-popup
+      v-if="isOpenRechargePopup"
+      :title="'Nạp tiền'"
+      :closeFunction="toggleRechargePopup"
+      :notOverflow="true"
+    >
+      <recharge-popup
+        :close="toggleRechargePopup"
+        :action="navigateToPayment"
+      ></recharge-popup>
+    </generic-popup>
   </div>
 </template>
 
@@ -105,8 +116,10 @@
 import axios from "axios";
 import GenericPopup from "../common/GenericPopup.vue";
 import RequestWithdrawPopup from "./RequestWithdrawPopup.vue";
+import RechargePopup from "./RechargePopup.vue"; // Import the new RechargePopup component
+
 export default {
-  components: { GenericPopup, RequestWithdrawPopup },
+  components: { GenericPopup, RequestWithdrawPopup, RechargePopup },
   props: ["id"],
   name: "TutorProfilePayment",
   data() {
@@ -118,6 +131,7 @@ export default {
       user: null,
       transactions: [],
       isOpenWithdrawPopup: false,
+      isOpenRechargePopup: false, // New state for the recharge popup
     };
   },
   methods: {
@@ -137,7 +151,6 @@ export default {
         this.currentPage = 1;
       }
       await this.fetchTranscations();
-      //await this.fetchRegistration(this.currentPage, this.pageSize, this.keyword_name)
     },
     async movePage(forward) {
       if (forward && this.currentPage < this.totalPage) {
@@ -153,7 +166,6 @@ export default {
         Page: this.currentPage,
         Limit: this.pageSize,
       };
-      //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
       const response = await axios.get(
         import.meta.env.VITE_API_URL +
           "/api/Transaction/all?" +
@@ -171,6 +183,9 @@ export default {
     },
     toggleWithdrawPopup() {
       this.isOpenWithdrawPopup = !this.isOpenWithdrawPopup;
+    },
+    toggleRechargePopup() {
+      this.isOpenRechargePopup = !this.isOpenRechargePopup;
     },
     navigateToPayment() {
       this.$router.push("/tutor/withdraw");
