@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
@@ -106,16 +105,18 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             await _unitOfWork.SaveChangesAsync();
 
             // handle for update tutor rating 
-            //var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
-            //var tutorId = classModel.TutorId;
+            var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
+            var tutorId = classModel.TutorId;
             //var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
 
             //var listClassStudentRating = await _unitOfWork.StudentClassRepository
             //        .Where(ss => ss.ClassId == classModel.Id && ss.Rating.HasValue)
             //        .AverageAsync(l => l.Rating);
-            
+
             //tutorModel.Rating = (listClassStudentRating + Rating) / 2;
             //await _userServices.UpdateTutorRating(tutorModel);
+
+            await _userServices.RecalculateTutorRating(tutorId);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
@@ -128,15 +129,15 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             {
                 recordInDb = new Models.Models.StudentClass()
                 {
-                   ClassId = classId,
-                   StudentId = studentId,
+                    ClassId = classId,
+                    StudentId = studentId,
                 };
                 await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
                 await _unitOfWork.SaveChangesAsync();
             }
             return recordInDb;
         }
-        
+
 
         public async Task<bool> DeleteStudentFromStudentClassById(int classId, int userId)
         {
@@ -145,9 +146,9 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             {
                 throw new Exception("StudentClass not found");
             }
-            // _unitOfWork.StudentClassRepository.Remove(studentClass);
-            studentClass.RecordStatus = RecordStatus.Deleted;
-            _unitOfWork.StudentClassRepository.Update(studentClass);
+            _unitOfWork.StudentClassRepository.Remove(studentClass);
+            // studentClass.RecordStatus = RecordStatus.Deleted;
+            // _unitOfWork.StudentClassRepository.Update(studentClass);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
