@@ -11,8 +11,6 @@ namespace OnDemandTutor.Models.Dtos.TutorDegree
         public string? TutorDegreeName { get; set; }
         public string DegreeNumber { get; set; }
         public DateOnly IssuranceDate { get; set; }
-        public TutorSubjectDegreeStatus TutorSubjectStatus { get; set; }
-        public string? RejectReason { get; set; }
 
     }
 }

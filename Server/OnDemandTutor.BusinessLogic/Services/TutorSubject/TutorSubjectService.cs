@@ -3,6 +3,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.TutorDegree;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorSubject;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Models.Dtos.TutorDegree;
 using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Paging;
 
@@ -37,12 +38,20 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             return mappedTutorSubject;
         }
 
-        public async Task<CreateTutorSubjectDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto)
+        public async Task<GetTutorSubjectDetailDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto)
         {
             var tutorSubjectEntity = tutorSubjectDto.Adapt<Models.Models.TutorSubject>();
             var createdTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.AddAsync(tutorSubjectEntity);
+            foreach (var degree in tutorSubjectDto.Degrees)
+            {
+                var createDto = degree.Adapt<CreateTutorDegreeDto>();
+                createDto.TutorId = tutorSubjectDto.UserId;
+                createDto.SubjectId = tutorSubjectDto.SubjectId;
+                await _tutorDegreeService.CreateTutorDegreeAsync(createDto);
+            }
+            createdTutorSubjectEntity.Entity.Status = Models.Enum.TutorSubjectStatus.Pending;
             await _unitOfWork.SaveChangesAsync();
-            return createdTutorSubjectEntity.Adapt<CreateTutorSubjectDto>();
+            return createdTutorSubjectEntity.Entity.Adapt<GetTutorSubjectDetailDto>();
         }
 
         public async Task<UpdateTutorSubjectDto> UpdateTutorSubjectAsync(UpdateTutorSubjectDto tutorSubjectDto)

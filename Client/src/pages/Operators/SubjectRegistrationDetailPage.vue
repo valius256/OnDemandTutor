@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full -ml-4 relative" v-if="tutor">
+    <div class="w-full -ml-4 relative min-h-screen" v-if="tutor">
         <div class="px-4 pb-32 bg-slate-300">
             <div class="flex flex-wrap lg:place-content-between pt-2">
                 <div class="flex gap-2">

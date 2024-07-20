@@ -1,4 +1,5 @@
 <template>
+  
   <div class="py-4 px-8 relative" v-if="this.class">
     <div class="font-bold text-3xl">{{ this.class.name }}</div>
     <div class="mt-4 flex flex-col md:flex-row md:place-content-between gap-4">
