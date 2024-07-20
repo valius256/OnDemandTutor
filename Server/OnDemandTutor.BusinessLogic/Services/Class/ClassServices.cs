@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
@@ -12,12 +14,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
 
+        private readonly INotificationService _notificationService;
         // private readonly ISlotServices _slotServices;
 
-        public ClassServices(IUnitOfWorkRepository unitOfWork)
+        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             // _slotServices = slotServices;
+            _notificationService = notificationService;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -110,7 +114,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     _unitOfWork.SlotRepository.Update(mapper);
                 }
             }
-
+            
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"Class with classId {classDto.SubjectId} has successfully created",
+                IsViewed = true,
+                ReceiverId = classEntity.TutorId,
+            });
             await _unitOfWork.SaveChangesAsync();
             return rs;
         }
@@ -119,6 +129,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
             var updatedClass = _unitOfWork.ClassRepository.Update(classEntity);
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this class {classDto.Id} has been update",
+                IsViewed = true,
+                ReceiverId = classEntity.TutorId,
+            });
             await _unitOfWork.SaveChangesAsync();
             return updatedClass.Entity.Adapt<GetClassDtos>();
         }
@@ -225,7 +241,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 ClassId = classId,
                 StudentId = studentId,
             };
-
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this user has enroll class  {classToEnroll.Name} successfully",
+                IsViewed = true,
+                ReceiverId = studentId,
+            });
             // Add the student to the class
             classToEnroll.StudentClasses.Add(studentClass);
             _unitOfWork.ClassRepository.Update(classToEnroll);
