@@ -59,15 +59,25 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 throw new BadRequestException("Slot not found");
             }
-            return slot;
+            return slot.Adapt<GetSlotDetailDto>();
         }
 
         public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
         {
             var slotEntity = slotDto.Adapt<CreateSlotsDto>(); // Assuming Mapster is used for mapping
 
+            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slotDto.CreateById).ToListAsync();
+            foreach (var slot in tutorAllSlot)
+            {
+                if (slot.StartTime == slotDto.StartTime && slot.EndTime == slotDto.EndTime)
+                {
+                    throw new BadRequestException("This slot is already exist, try another time");
+                }
+            }
+
             // Add the new Slot entity to repository
             var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
+
             await _unitOfWork.SaveChangesAsync();
 
             // Map the created entity back to CreateSlotsDtos and return it
@@ -75,6 +85,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             return createdSlotDto;
         }
+
         public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
         {
             // Retrieve the existing slot entity from the database
