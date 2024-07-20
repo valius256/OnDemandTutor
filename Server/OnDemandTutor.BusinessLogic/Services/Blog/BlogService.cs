@@ -56,8 +56,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             await _unitOfWork.SaveChangesAsync();
             _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = blogDto.Content,
-                IsViewed = true,
+                Content = $"blog với id = {blogDto.Thumbnail} đã được tạo thành công",
+                IsViewed = false,
                 ReceiverId = user.Id,
             });
             return createdBlogEntity.Entity.Adapt<CreateBlogDtos>();
@@ -81,8 +81,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             await _unitOfWork.SaveChangesAsync();
              await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = blogDto.Content,
-                IsViewed = true,
+                Content = $"blog với content {blogDto.Id} đã được cập nhập thành công",
+                IsViewed = false,
                 ReceiverId = user.Id,
             });
             return updatedBlogEntity.Entity.Adapt<UpdateBlogDtos>();
@@ -98,16 +98,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"this blog {existingBlogEntity.Content} has been remove",
-                IsViewed = true,
+                Content = $"blog với BlogId =  {id} đã được xóa",
+                IsViewed = false,
                 ReceiverId = existingBlogEntity.CreateById,
             });
 
             _unitOfWork.BlogRepository.Remove(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();
-            
-          
-
             return true;
         }
 
