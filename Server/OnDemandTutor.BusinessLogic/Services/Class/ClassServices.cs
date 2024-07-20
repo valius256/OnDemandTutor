@@ -117,8 +117,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"Class with classId {classDto.SubjectId} has successfully created",
-                IsViewed = true,
+                Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
+                IsViewed = false,
                 ReceiverId = classEntity.TutorId,
             });
             await _unitOfWork.SaveChangesAsync();
@@ -132,7 +132,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
                 Content = $"this class {classDto.Id} has been update",
-                IsViewed = true,
+                IsViewed = false,
                 ReceiverId = classEntity.TutorId,
             });
             await _unitOfWork.SaveChangesAsync();
@@ -243,8 +243,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             };
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"this user has enroll class  {classToEnroll.Name} successfully",
-                IsViewed = true,
+                Content = $"User {studentId} đã tham gia class: {classToEnroll.Name} thành công",
+                IsViewed = false,
                 ReceiverId = studentId,
             });
             // Add the student to the class

@@ -82,10 +82,11 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         await _emailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
            false);
+        
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"this withdraw with Id{requestWithDrawModel.Id}  has been created  ",
-            IsViewed = true,
+            Content = $"chuyển tiền Id{requestWithDrawModel.Id}  đã được tạo ",
+            IsViewed = false,
             ReceiverId = requestWithDrawModel.UserId,
         });
         return true;
@@ -104,6 +105,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         await CreateTransaction(withdraw, operatorId);
         await _unitOfWorkRepository.SaveChangesAsync();
         
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $" đon rút tiền với Id{withdraw.Id}  đã được xử li  ",
+            IsViewed = false,
+            ReceiverId = withdraw.UserId
+        });
         return true;
     }
 
