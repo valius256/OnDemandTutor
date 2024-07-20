@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
@@ -140,11 +139,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                         await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
                         await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
                     }
-                    else
-                    {
-                        await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
-                            -amountToDecrease);
-                    }
+                    //else 
+                    //{
+                    //    await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
+                    //        -amountToDecrease);
+                    //}
                 }
             }
         }
