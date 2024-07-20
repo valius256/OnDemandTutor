@@ -8,7 +8,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.TutorDegree
         Task<PagedResult<GetTutorDegreeDto>> GetTutorDegreesAsync(PagingModel<GetTutorDegreeDto> request);
         Task<GetTutorDegreeDto> GetTutorDegreeByIdAsync(int id);
         Task<List<GetTutorDegreeDto>> GetTutorDegreesByTutorIdAndSubjectId(int tutorId, int subjectId);
-        Task<CreateTutorDegreeDto> CreateTutorDegreeAsync(CreateTutorDegreeDto tutorDegreeDto);
+        Task<GetTutorDegreeDto> CreateTutorDegreeAsync(CreateTutorDegreeDto tutorDegreeDto);
         Task<UpdateTutorDegreeDto> UpdateTutorDegreeAsync(UpdateTutorDegreeDto tutorDegreeDto);
         Task<bool> DeleteTutorDegreeAsync(int id);
     }

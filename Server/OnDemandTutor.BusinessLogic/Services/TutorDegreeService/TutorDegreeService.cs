@@ -44,12 +44,12 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
             return tutorDegree.Adapt<List<GetTutorDegreeDto>>();
         }
 
-        public async Task<CreateTutorDegreeDto> CreateTutorDegreeAsync(CreateTutorDegreeDto tutorDegreeDto)
+        public async Task<GetTutorDegreeDto> CreateTutorDegreeAsync(CreateTutorDegreeDto tutorDegreeDto)
         {
             var tutorDegree = tutorDegreeDto.Adapt<Models.Models.TutorDegree>();
             var createdTutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.AddAsync(tutorDegree);
             await _unitOfWorkRepository.SaveChangesAsync();
-            return createdTutorDegree.Entity.Adapt<CreateTutorDegreeDto>();
+            return createdTutorDegree.Entity.Adapt<GetTutorDegreeDto>();
         }
 
         public async Task<UpdateTutorDegreeDto> UpdateTutorDegreeAsync(UpdateTutorDegreeDto tutorDegreeDto)

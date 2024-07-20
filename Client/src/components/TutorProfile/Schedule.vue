@@ -1,118 +1,99 @@
 <template>
   <div>
-    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-      Slot học tiếp theo
-    </div>
-    <div class="m-8">
-      <div class="flex gap-4 mb-2">
-        <div class="text-xl font-bold py-1">
-          <span class="mr-4">Số dư hiện tại : </span>
-          <span class="text-green-200 p-1 bg-green-600 rounded-lg">{{
-            balance.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })
-          }}</span>
-        </div>
-        <router-link
-          to="/tutor/payment"
-          class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-        >
-          Nạp tiền
-        </router-link>
+    <div v-if="currentUser.tutorStatus == 3">
+      <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
+        Slot học tiếp theo
       </div>
-      <div v-if="upcomingSlot">
-        <div class="p-4 bg-blue-100 rounded-lg">
-          <div>
-            <span class="font-bold">Trạng thái : </span>
-            <span
-              :class="
-                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
-                  .style
-              "
-            >
-              {{
-                getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
-                  .display
-              }}
-            </span>
+      <div class="m-8">
+        <div class="flex gap-4 mb-2">
+          <div class="text-xl font-bold py-1">
+            <span class="mr-4">Số dư hiện tại : </span>
+            <span class="text-green-200 p-1 bg-green-600 rounded-lg">{{
+      balance.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      })
+    }}</span>
           </div>
-          <div class="flex place-content-between mt-4">
+          <router-link to="/tutor/payment"
+            class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
+            Nạp tiền
+          </router-link>
+        </div>
+        <div v-if="upcomingSlot">
+          <div class="p-4 bg-blue-100 rounded-lg">
             <div>
-              <span class="mr-4 font-bold">Bắt đầu :</span>
-              <span class="mr-4">{{
-                beautifyDatetime(upcomingSlot.startTime)
-              }}</span>
+              <span class="font-bold">Trạng thái : </span>
+              <span :class="getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
+        .style
+      ">
+                {{
+      getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
+        .display
+    }}
+              </span>
             </div>
-            <div>
-              <span class="mr-4 font-bold">Kết thúc :</span>
-              <span class="mr-4">{{
-                beautifyDatetime(upcomingSlot.endTime)
-              }}</span>
+            <div class="flex place-content-between mt-4">
+              <div>
+                <span class="mr-4 font-bold">Bắt đầu :</span>
+                <span class="mr-4">{{
+        beautifyDatetime(upcomingSlot.startTime)
+      }}</span>
+              </div>
+              <div>
+                <span class="mr-4 font-bold">Kết thúc :</span>
+                <span class="mr-4">{{
+        beautifyDatetime(upcomingSlot.endTime)
+      }}</span>
+              </div>
+              <div>
+                <span class="mr-4 font-bold">Tổng thời lượng :</span>
+                <span class="mr-4">{{ calcDuration(upcomingSlot).toFixed(2) }} tiếng</span>
+              </div>
             </div>
-            <div>
-              <span class="mr-4 font-bold">Tổng thời lượng :</span>
-              <span class="mr-4"
-                >{{ calcDuration(upcomingSlot).toFixed(2) }} tiếng</span
-              >
+          </div>
+          <div class="font-bold italic mt-4 text-gray-500">
+            <div v-if="upcomingSlot.paymentStatus == 0">
+              *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý
+              khách. Để tránh những rắc rối về sau, bạn vui lòng nạp tiền vào ví
+              đầy đủ trước khi bắt đầu vào học nhé!<br />
+              *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
+              <span class="text-red-500">
+                {{
+      (
+        upcomingSlot.createById?.tutorFeePerHour *
+        calcDuration(upcomingSlot)
+      ).toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      })
+    }}
+              </span>
             </div>
           </div>
         </div>
-        <div class="font-bold italic mt-4 text-gray-500">
-          <div v-if="upcomingSlot.paymentStatus == 0">
-            *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý
-            khách. Để tránh những rắc rối về sau, bạn vui lòng nạp tiền vào ví
-            đầy đủ trước khi bắt đầu vào học nhé!<br />
-            *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
-            <span class="text-red-500">
-              {{
-                (
-                  upcomingSlot.createById?.tutorFeePerHour *
-                  calcDuration(upcomingSlot)
-                ).toLocaleString("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                })
-              }}
-            </span>
-          </div>
-        </div>
+        <div v-else class="italic">Hiện không còn slot nào</div>
       </div>
-      <div v-else class="italic">Hiện không còn slot nào</div>
+      <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
+        Thời khóa biểu
+      </div>
+      <div class="flex justify-end mr-8 mb-4">
+        <button class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-400 rounded-lg" @click="openAddSlotModal">
+          Thêm slot
+        </button>
+      </div>
+      <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" />
     </div>
-    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-      Thời khóa biểu
+    <div v-else class="p-8">
+      <div class="p-8 bg-red-200 rounded-lg text-center font-bold">
+        Bạn cần xác thực tài khoản để sử dụng tính năng này
+
+      </div>
     </div>
-    <div class="flex justify-end mr-8 mb-4">
-      <button
-        class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-400 rounded-lg"
-        @click="openAddSlotModal"
-      >
-        Thêm slot
-      </button>
-    </div>
-    <time-table
-      :slots="slots"
-      :fetching="getUserSlots"
-      :viewDetail="openSlotDetailPopup"
-    />
-    <add-slot-modal
-      :showModal="showModal"
-      @close="showModal = false"
-      @add="addNewSlot"
-      :currentUser="currentUser"
-    />
-    <generic-popup
-      v-if="isOpenSlotDetailPopup"
-      title="Chi tiết buổi học"
-      :closeFunction="closeSlotDetailPopup"
-      :notOverflow="true"
-    >
-      <slot-detail-popup
-        :slot="selectingSlot"
-        :close="closeSlotDetailPopup"
-        :action="refresh"
-      />
+    <add-slot-modal :showModal="showModal" @close="showModal = false" @add="addNewSlot" :currentUser="currentUser" />
+    <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
+      :notOverflow="true">
+      <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh" />
     </generic-popup>
   </div>
 </template>
@@ -171,8 +152,7 @@ export default {
 
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
+          `${import.meta.env.VITE_API_URL
           }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
           {
             headers: {
@@ -242,8 +222,7 @@ export default {
 
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
+          `${import.meta.env.VITE_API_URL
           }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
           {
             headers: {

@@ -44,11 +44,11 @@ namespace OnDemandTutor.API.Controllers
         //[Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(CreateTutorDegreeDto), 201)]
+        [ProducesResponseType(typeof(GetTutorDegreeDto), 201)]
         public async Task<IActionResult> CreateTutorDegree([FromBody] CreateTutorDegreeDto tutorDegreeDto)
         {
             var createdTutorDegree = await _tutorDegreeService.CreateTutorDegreeAsync(tutorDegreeDto);
-            return CreatedAtAction(nameof(GetTutorDegreeById), createdTutorDegree);
+            return CreatedAtAction(nameof(GetTutorDegreeById), new { Id = createdTutorDegree.Id }, createdTutorDegree);
         }
 
         //[Authorize]
