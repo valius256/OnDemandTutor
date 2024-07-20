@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Reactive;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
@@ -15,7 +18,6 @@ public class UserController : BaseController<UserController>
 {
     private readonly IUserServices _userService;
     private readonly IAuthServices _authServices;
-
     public UserController(ILogger<UserController> logger, IUserServices userService, IAuthServices authServices) : base(logger)
     {
         _userService = userService;
@@ -30,6 +32,7 @@ public class UserController : BaseController<UserController>
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetAllUsersAsync(request, user);
+       
         return OKAsync(result);
     }
 
@@ -41,6 +44,7 @@ public class UserController : BaseController<UserController>
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetProfileAsync(userId, null, user);
+        
         return OKAsync(result);
     }
 

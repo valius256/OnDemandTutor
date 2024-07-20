@@ -38,9 +38,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
         public async Task<NotificationGetDto> CreateNotificationAsync(NotificationCreateDto notificationCreateDto)
         {
             var notificationEntity = notificationCreateDto.Adapt<Models.Models.Notification>();
-            var createdNotificationEntity = await _unitOfWork.NotificationRepository.AddAsync(notificationEntity);
+            await _unitOfWork.NotificationRepository.AddAsync(notificationEntity);
             await _unitOfWork.SaveChangesAsync();
-            return createdNotificationEntity.Adapt<NotificationGetDto>();
+            return notificationEntity.Adapt<NotificationGetDto>();
         }
 
         public async Task<NotificationGetDto> UpdateViewStatus(int id)
