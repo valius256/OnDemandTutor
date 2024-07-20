@@ -404,20 +404,20 @@ public class UserServices : IUserServices
             .FirstOrDefaultAsync(ld => ld.Id == userId);
         if (moneyDecrease > 0)
         {
-            record.Balance += moneyIncrease;
-        }
-        else if (moneyDecrease == 0)
-        {
             record.Balance -= moneyDecrease;
         }
-
-        _unitOfWorkRepository.UserRepository.Update(record);
+        else if (moneyIncrease >= 0)
+        {
+            record.Balance += moneyIncrease;
+        }
+        
         if (record.Balance < 0)
         {
             throw new ModelException($"{record.Balance}", "The balance cannot be negative",
                 "The balance cannot be negative");
         }
 
+        _unitOfWorkRepository.UserRepository.Update(record);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }

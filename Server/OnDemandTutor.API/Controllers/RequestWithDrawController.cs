@@ -49,7 +49,7 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
         return Ok(result);
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin, Operator")]
     [HttpPost("approve")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(bool), 200)]

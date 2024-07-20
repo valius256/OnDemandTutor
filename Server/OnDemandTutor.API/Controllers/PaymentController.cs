@@ -74,7 +74,7 @@ public class PaymentController : BaseController<PaymentController>
         return Ok(classPaymentUrl);
     }
 
-    [HttpGet("execute")] // demo xóa di
+    [HttpGet("execute")]
     public async Task<IActionResult> PaymentExecute()
     {
         var response = await _vnPayServices.PaymentExecute(Request.Query);
