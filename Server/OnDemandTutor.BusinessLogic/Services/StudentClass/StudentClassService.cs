@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.StudentClass;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.StudentClass
@@ -19,14 +22,17 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IClassServices _classServices;
         private readonly IUserServices _userServices;
+        private readonly INotificationService _notificationService;
+
         public StudentClassService(IUnitOfWorkRepository unitOfWork, IAuthServices authService,
-            IUserServices userServices, IClassServices classServices, IHttpContextAccessor HttpContextAccessor)
+            IUserServices userServices, IClassServices classServices, INotificationService notificationService, IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _authService = authService;
             _classServices = classServices;
             _userServices = userServices;
             _httpContextAccessor = HttpContextAccessor;
+            _notificationService = notificationService;
         }
         public async Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel)
         {
@@ -45,6 +51,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             var studentClass = studentClassDto.Adapt<Models.Models.StudentClass>();
             var createdStudentClass = await _unitOfWork.StudentClassRepository.AddAsync(studentClass);
             await _unitOfWork.SaveChangesAsync();
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this withdraw with Id{studentClass.Id}  has been created  ",
+                IsViewed = true,
+                ReceiverId = studentClass.StudentId,
+            });
             return createdStudentClass.Entity.Adapt<CreateStudentClassDto>();
         }
         public async Task<UpdateStudentClassDto> UpdateStudentClassAsync(UpdateStudentClassDto studentClassDto)
@@ -87,6 +99,13 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             }
             _unitOfWork.StudentClassRepository.Remove(studentClass);
             await _unitOfWork.SaveChangesAsync();
+
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this withdraw with Id{studentClass.Id}  has been deleted  ",
+                IsViewed = true,
+                ReceiverId = studentClass.StudentId,
+            });
             return true;
         }
 
@@ -135,6 +154,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
                 await _unitOfWork.SaveChangesAsync();
             }
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this withdraw with Id{recordInDb.Id}  has been created  ",
+                IsViewed = true,
+                ReceiverId = recordInDb.StudentId,
+            });
             return recordInDb;
         }
 
@@ -150,6 +175,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             // studentClass.RecordStatus = RecordStatus.Deleted;
             // _unitOfWork.StudentClassRepository.Update(studentClass);
             await _unitOfWork.SaveChangesAsync();
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this withdraw with Id{studentClass.Id}  has been created  ",
+                IsViewed = true,
+                ReceiverId = studentClass.StudentId,
+            });
             return true;
         }
     }
