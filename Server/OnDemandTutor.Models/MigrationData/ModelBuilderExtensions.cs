@@ -819,7 +819,8 @@ namespace OnDemandTutor.Models.MigrationData
                 new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
                 new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
                 new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4 },
-                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 }
+                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 },
+                new StudentClass { Id = 6, StudentId = 3, ClassId = 5, Rating = 4 }
             );
 
             #endregion

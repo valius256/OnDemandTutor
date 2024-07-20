@@ -181,7 +181,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
             var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-            var classId = slotTotalList.FirstOrDefault()?.ClassId;
+            var classId = slotTotalList.FirstOrDefault().ClassId;
 
             if (classId.HasValue)
             {
