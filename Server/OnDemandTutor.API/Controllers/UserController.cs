@@ -139,7 +139,7 @@ public class UserController : BaseController<UserController>
     /// <param ></param>
     /// 
     /// <returns>boolean</returns>
-    [Authorize]
+    [Authorize(Roles = "Admin, Operator")]
     [HttpPost("remove-tutor")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -148,7 +148,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.DeleteTutorAsync(requestDto));
     }
 
-    [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [Authorize(Roles = "Admin, Operator")]
     [HttpPatch("deactive-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -157,7 +157,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.DeaActiveAccountAsync(requestDto));
     }
 
-    [AllowAnonymous] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [Authorize(Policy = "Operator")]
     [HttpPatch("active-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -166,8 +166,8 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.ActiveAccount(request.Id));
     }
 
-    [AllowAnonymous]
-    [HttpPatch("change-status")] // sau sửa lại thành authorize r gán thêm operatorId vào 
+    [Authorize(Policy = "Operator")]
+    [HttpPatch("change-status")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<CompareStatusDto>), 200)]
     public async Task<IApiResult<CompareStatusDto>> ChangeStatusTutor([FromBody] ChangeStatusDto request)
