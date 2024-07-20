@@ -11,6 +11,8 @@ using OnDemandTutor.Models.Dtos.WithDrawDto;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
+using OnDemandTutor.Models.Dtos.Notification;
 
 namespace OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
 
@@ -20,12 +22,15 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     private readonly IEmailServices _emailServices;
     private readonly IUserServices _userServices;
     private readonly ITransactionServices _transactionServices;
-
-    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IEmailServices emailServices, IUserServices userServices, ITransactionServices transactionServices)
+    private readonly INotificationService _notificationService;
+    public RequestWithDrawServices(IUnitOfWorkRepository unitOfWorkRepository, IEmailServices emailServices, IUserServices userServices, 
+        INotificationService notificationService,
+        ITransactionServices transactionServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _emailServices = emailServices;
         _userServices = userServices;
+        _notificationService = notificationService;
         _transactionServices = transactionServices;
     }
 
@@ -77,7 +82,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         await _emailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
            false);
-
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this withdraw with Id{requestWithDrawModel.Id}  has been created  ",
+            IsViewed = true,
+            ReceiverId = requestWithDrawModel.UserId,
+        });
         return true;
     }
 
@@ -93,7 +103,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         await CreateTransaction(withdraw, operatorId);
         await _unitOfWorkRepository.SaveChangesAsync();
-
+        
         return true;
     }
 

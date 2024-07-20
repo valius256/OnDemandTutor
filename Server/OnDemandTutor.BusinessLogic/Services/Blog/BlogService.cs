@@ -3,10 +3,12 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models.Dtos.Blog;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Blog
@@ -16,12 +18,16 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly IAuthServices _authService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INotificationService _notificationService;
 
-        public BlogService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        public BlogService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, 
+            INotificationService notificationService,
+            IHttpContextAccessor HttpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _authService = authService;
             _httpContextAccessor = HttpContextAccessor;
+            _notificationService = notificationService;
         }
         public async Task<PagedResult<GetBlogDtos>> GetBlogsAsync(PagingModel<QueryBlogDto> request)
         {
@@ -48,6 +54,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             createdBlogEntity.Entity.CreatedDate = DateTime.Now;
             createdBlogEntity.Entity.CreateById = user.Id;
             await _unitOfWork.SaveChangesAsync();
+            _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = blogDto.Content,
+                IsViewed = true,
+                ReceiverId = user.Id,
+            });
             return createdBlogEntity.Entity.Adapt<CreateBlogDtos>();
         }
 
@@ -67,7 +79,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
 
             var updatedBlogEntity = _unitOfWork.BlogRepository.Update(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();
-
+             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = blogDto.Content,
+                IsViewed = true,
+                ReceiverId = user.Id,
+            });
             return updatedBlogEntity.Entity.Adapt<UpdateBlogDtos>();
         }
 
@@ -78,9 +95,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             {
                 throw new NotFoundException($"Blog with ID {id} not found.");
             }
+            
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"this blog {existingBlogEntity.Content} has been remove",
+                IsViewed = true,
+                ReceiverId = existingBlogEntity.CreateById,
+            });
 
             _unitOfWork.BlogRepository.Remove(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();
+            
+          
 
             return true;
         }

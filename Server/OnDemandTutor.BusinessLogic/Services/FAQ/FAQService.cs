@@ -3,10 +3,12 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.FAQ;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models.Dtos.FAQ;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
@@ -15,12 +17,13 @@ public class FAQService : IFAQService
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IAuthServices _authService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public FAQService(IUnitOfWorkRepository unitOfWorkRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+    private readonly INotificationService _notificationService;
+    public FAQService(IUnitOfWorkRepository unitOfWorkRepository,INotificationService notificationService ,IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _authService = authService;
         _httpContextAccessor = HttpContextAccessor;
+        _notificationService = notificationService;
     }
 
     public async Task<PagedResult<FAQDTO>> GetFAQsAsync(PagingModel<QueryFAQDTO> request)
@@ -54,7 +57,12 @@ public class FAQService : IFAQService
 
         var createdFAQEntity = await _unitOfWorkRepository.FAQRepository.AddAsync(faqEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
-
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this FAQ with Id{createdFAQEntity.Entity.Id}  has been created  ",
+            IsViewed = true,
+            ReceiverId = faqEntity.CreateById,
+        });
         return createdFAQEntity.Entity.Adapt<CreateFAQDto>();
     }
 
@@ -72,7 +80,12 @@ public class FAQService : IFAQService
 
         var updatedFAQEntity = _unitOfWorkRepository.FAQRepository.Update(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
-
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this FAQ with Id{existingFAQEntity.Id}  has been updated  ",
+            IsViewed = true,
+            ReceiverId = existingFAQEntity.CreateById,
+        });
         return updatedFAQEntity.Entity.Adapt<UpdateFAQDto>();
     }
 
@@ -83,7 +96,12 @@ public class FAQService : IFAQService
         {
             throw new NotFoundException($"FAQ with ID {id} not found.");
         }
-
+        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        {
+            Content = $"this FAQ with Id{existingFAQEntity.Id}  has been deleted  ",
+            IsViewed = true,
+            ReceiverId = existingFAQEntity.CreateById,
+        });
         _unitOfWorkRepository.FAQRepository.Remove(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
 
