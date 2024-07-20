@@ -192,10 +192,7 @@ public class UserServices : IUserServices
     public async Task<bool> RechargeAccountAsync(int uId, decimal money)
     {
         var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
-
-        recordInDb.Balance += money;
-        _unitOfWorkRepository.UserRepository.Update(recordInDb);
-        await _unitOfWorkRepository.SaveChangesAsync();
+        await UpdateBalanceAsync(recordInDb.Id, money, 0);
         return true;
     }
 
@@ -320,7 +317,7 @@ public class UserServices : IUserServices
         {
             throw new NotFoundException("User not found.");
         }
-        if (userInDb.Id !=  requestDto.Id && userInDb.Role < RoleStatus.Operator)
+        if (userInDb.Id != requestDto.Id && userInDb.Role < RoleStatus.Operator)
         {
             throw new BadRequestException("You do not have permission to do this!");
         }
@@ -406,11 +403,11 @@ public class UserServices : IUserServices
         {
             record.Balance -= moneyDecrease;
         }
-        else if (moneyIncrease >= 0)
+        else if (moneyIncrease > 0)
         {
             record.Balance += moneyIncrease;
         }
-        
+
         if (record.Balance < 0)
         {
             throw new ModelException($"{record.Balance}", "The balance cannot be negative",
