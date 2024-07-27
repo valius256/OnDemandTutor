@@ -5,7 +5,7 @@
         <StudentLayout />
       </div>
       <div v-else-if="user?.role == 1">
-        <TutorLayout /> 
+        <TutorLayout />
       </div>
       <!-- <div v-else-if="user?.role == 2">
         <OperatorLayout />
@@ -17,6 +17,14 @@
         <UnexpectedLayout />
       </div>
     </Authorization>
+    <!-- Add BubbleChat component -->
+    <BubbleChat
+      :messages="messages"
+      textField="text"
+      senderNameField="name"
+      avatarLinkField="avatar"
+      position="right"
+    />
   </div>
 </template>
 
@@ -28,6 +36,7 @@ import UnexpectedLayout from "./layouts/UnexpectedLayout.vue";
 import TutorLayout from "./layouts/TutorLayout.vue";
 import OperatorLayout from "./layouts/OperatorLayout.vue";
 import GuestLayout from "./layouts/GuestLayout.vue";
+import BubbleChat from "./components/BubbleChat.vue"; // Import BubbleChat
 
 export default {
   name: "App",
@@ -39,11 +48,16 @@ export default {
     TutorLayout,
     OperatorLayout,
     GuestLayout,
-    UnexpectedLayout
+    UnexpectedLayout,
+    BubbleChat, // Register BubbleChat
   },
   data() {
     return {
       user: null,
+      messages: [
+        { name: "John", text: "Hello!", avatar: "link_to_avatar" },
+        { name: "Doe", text: "Hi!", avatar: "link_to_avatar" },
+      ],
     };
   },
   methods: {

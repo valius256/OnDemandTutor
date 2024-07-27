@@ -50,7 +50,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             {
                 throw new NotFoundException($"Notification with ID {id} not found.");
             }
-            existingNotification.IsViewed = true;
+            existingNotification.IsViewed = false;
             var updatedNotification = _unitOfWork.NotificationRepository.Update(existingNotification);
             await _unitOfWork.SaveChangesAsync();
 

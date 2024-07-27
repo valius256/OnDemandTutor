@@ -10,8 +10,14 @@
           Chỉnh sửa
         </button>
         <!-- Button to send verification request -->
-        <button @click="openVerificationDialog" v-if="!editMode"
-          class="mr-6 p-2 font-bold text-white bg-yellow-400 hover:bg-yellow-200 rounded-lg">
+        <button
+          @click="openVerificationDialog"
+          v-if="!editMode && canSendVerificationRequest()"
+          :class="[
+            'mr-6 p-2 font-bold text-white rounded-lg',
+            getVerificationButtonClass(),
+          ]"
+        >
           Gửi yêu cầu xác thực
         </button>
         <button @click="handleUpdate(true)" v-if="editMode"
@@ -76,6 +82,18 @@
             <td>Giới tính</td>
             <td>{{ user.sex }}</td>
           </tr>
+          <tr>
+            <td>Giá dạy mỗi giờ</td>
+            <td>{{ user.tutorFeePerHour }}</td>
+          </tr>
+          <tr>
+            <td>Lịch dạy</td>
+            <td>{{ user.scheduleDescription }}</td>
+          </tr>
+          <tr>
+            <td>Trạng thái gia sư</td>
+            <td>{{ getTutorStatusText() }}</td>
+          </tr>
         </tbody>
         <tbody v-else>
           <tr>
@@ -120,6 +138,25 @@
                 <option :value="0">Female</option>
                 <option :value="2">Other</option>
               </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Giá dạy mỗi giờ</td>
+            <td>
+              <input
+                class="w-full rounded border border-gray-200 p-1"
+                type="number"
+                v-model="editDto.tutorFeePerHour"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>Lịch dạy</td>
+            <td>
+              <textarea
+                class="w-full rounded border border-gray-200 p-1"
+                v-model="editDto.scheduleDescription"
+              ></textarea>
             </td>
           </tr>
         </tbody>
@@ -190,6 +227,8 @@ export default {
         dob: "",
         address: "",
         gender: 0,
+        tutorFeePerHour: 0,
+        scheduleDescription: "",
       },
       editMode: false,
       imageBase64: null,
@@ -216,6 +255,8 @@ export default {
       this.editDto.address = this.user.address;
       this.editDto.gender =
         this.user.sex == "Male" ? 1 : this.user.sex == "Female" ? 0 : 2;
+      this.editDto.tutorFeePerHour = this.user.tutorFeePerHour;
+      this.editDto.scheduleDescription = this.user.scheduleDescription;
     },
     async refresh() {
       this.loginedUser = await this.getUserFromToken();
@@ -249,6 +290,8 @@ export default {
           phone: this.editDto.phone,
           sex: this.editDto.gender,
           dob: this.editDto.dob,
+          tutorFeePerHour: this.editDto.tutorFeePerHour,
+          scheduleDescription: this.editDto.scheduleDescription,
         };
         this.eventBus.emit("open-loading-popup", {
           message: "Vui lòng chờ...",
@@ -285,6 +328,29 @@ export default {
       if (this.loginedUser.id == this.user.id) return true;
       return false;
     },
+    canSendVerificationRequest() {
+      return [0, 2].includes(this.user.tutorStatus);
+    },
+    getVerificationButtonClass() {
+      if (this.user.tutorStatus === 1) return "bg-gray-400 hover:bg-gray-200";
+      return "bg-yellow-400 hover:bg-yellow-200";
+    },
+    getTutorStatusText() {
+      switch (this.user.tutorStatus) {
+        case 0:
+          return "Unverified";
+        case 1:
+          return "Verification Request Sent";
+        case 2:
+          return "Verification Request Rejected";
+        case 3:
+          return "Verified";
+        case -4:
+          return "Banned";
+        default:
+          return "Unknown Status";
+      }
+    },
     openVerificationDialog() {
       this.eventBus.emit("open-confirmation-popup", {
         message: "Bạn có chắc chắn muốn gửi yêu cầu xác thực?",
@@ -311,6 +377,7 @@ export default {
           message: "Yêu cầu xác thực đã được gửi thành công",
           type: "Success",
         });
+        await this.refresh();
       } catch (e) {
         console.log(e);
         this.eventBus.emit("open-result-dialog", {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
@@ -12,6 +13,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
@@ -29,10 +31,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly ITransactionServices _transactionServices;
         private readonly IEmailServices _emailServices;
         private readonly IStudentClassService _studentClassService;
+        private readonly INotificationService _notificationService;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IEmailServices emailServices, IStudentClassService studentClassService,
+            IEmailServices emailServices, IStudentClassService studentClassService, INotificationService notificationService,
             ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -44,6 +47,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _userServices = userServices;
             _emailServices = emailServices;
             _studentClassService = studentClassService;
+            _notificationService = notificationService;
         }
 
 
@@ -82,7 +86,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Map the created entity back to CreateSlotsDtos and return it
             var createdSlotDto = createdSlotEntity.Adapt<GetSlotsDtos>(); // Mapster mapping
-
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"slot với slot Id{createdSlotDto.Id} đã được tạo    ",
+                IsViewed = false,
+                ReceiverId = createdSlotEntity.CreateById,
+            });
             return createdSlotDto;
         }
 
@@ -112,7 +121,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Save the changes
             await _unitOfWork.SaveChangesAsync();
-
+            
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"Slot với Id{existingSlotEntity.Id} đã được cập nhập  ",
+                IsViewed = false,
+                ReceiverId = existingSlotEntity.CreateById,
+            });
             // Return the updated DTO
             return updatedSlotEntity.Entity.Adapt<UpdateSlotDto>();
         }
@@ -122,6 +137,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
             await _unitOfWork.SaveChangesAsync();
+            
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            {
+                Content = $"Slot với slotid = {id} đã được xóa   ",
+                IsViewed = false,
+            });
             if (!isDeleted)
             {
                 throw new NotFoundException($"Slot with ID {id} not found.");
