@@ -17,7 +17,14 @@ namespace OnDemandTutor.API.Controllers
         {
             _studentClassService = studentClassService;
         }
-
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(PagedResult<GetStudentClassDetailDto>), 200)]
+        public async Task<ActionResult<PagedResult<GetStudentClassDetailDto>>> GetQueriedStudentClass([FromQuery] PagingModel<QueryStudentClassDto> getStudentClassDetailDto)
+        {
+            var result = await _studentClassService.QueryStudentClassAsync(getStudentClassDetailDto);
+            return Ok(result);
+        }
         [Authorize]
         [HttpPost("create")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -25,16 +32,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<ActionResult> CreateStudentClass([FromBody] CreateStudentClassDto studentClassDto)
         {
             var result = await _studentClassService.CreateStudentClassAsync(studentClassDto);
-            return Ok(result);
-        }
-
-        [Authorize]
-        [HttpGet("all")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(PagedResult<GetStudentClassDto>), 200)]
-        public async Task<ActionResult<PagedResult<GetStudentClassDto>>> GetStudentClasses([FromQuery] PagingModel<GetStudentClassDto> pagingModel)
-        {
-            var result = await _studentClassService.GetStudentClassesAsync(pagingModel);
             return Ok(result);
         }
 

@@ -363,11 +363,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
         }
 
-        public async Task<PagedResult<GetSlotWithSlotStudentWithStudentDetailDto>?> GetSlotWithStudentOfTutors(int tutorId, int page, int limit)
-        {
-            var rs = await _slotRepository.GetSlotWithStudentSlotOfTeacher(tutorId,page,limit);
-            return rs.Adapt<PagedResult<GetSlotWithSlotStudentWithStudentDetailDto>>();
-        }
     }
 }
 

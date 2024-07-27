@@ -5,11 +5,14 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
+using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.StudentClass;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
@@ -34,12 +37,17 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             _httpContextAccessor = HttpContextAccessor;
             _notificationService = notificationService;
         }
-        public async Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel)
+        //public async Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel)
+        //{
+        //    var pagedResult = await _unitOfWork.StudentClassRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.StudentClass>>());
+        //    return pagedResult.Adapt<PagedResult<GetStudentClassDto>>();
+        //}
+        public async Task<PagedResult<GetStudentClassDetailDto>> QueryStudentClassAsync(PagingModel<QueryStudentClassDto> querySlotStudentDto)
         {
-            var pagedResult = await _unitOfWork.StudentClassRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.StudentClass>>());
-            return pagedResult.Adapt<PagedResult<GetStudentClassDto>>();
+            var slotStudent =
+                await _unitOfWork.StudentClassRepository.QueryStudentClass(querySlotStudentDto);
+            return slotStudent.Adapt<PagedResult<GetStudentClassDetailDto>>();
         }
-
         public async Task<GetStudentClassDto> GetStudentClassByIdAsync(int id)
         {
             var studentClass = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(sc => sc.Id == id);
@@ -183,6 +191,8 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             });
             return true;
         }
+
+
     }
 }
 

@@ -70,10 +70,6 @@ namespace OnDemandTutor.DataAccess.Repository
                 }
             }
 
-            if (pagingModel.Sorts != null)
-            {
-                classQuery = classQuery.OrderProperty(pagingModel.Sorts);
-            }
 
             int limit = pagingModel.Limit > 0 ? pagingModel.Limit : 10;
             int page = pagingModel.Page > 0 ? pagingModel.Page : 1;
@@ -119,13 +115,13 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return pagedResult;
         }
-        public async Task<PagedResult<Class>> GetClassWithStudentClassOfTeacher(int tutorId, int page, int limit)
-        {
-            return await dbSet.Include(c => c.StudentClasses).ThenInclude(sc => sc.Student)
-                 .AsQueryable()
-                 .Where(c => c.TutorId == tutorId)
-                .ToNewPagingAsync(page > 0 ? page : 1, limit > 0 ? limit : 10);
-        }
+        //public async Task<PagedResult<Class>> GetClassWithStudentClassOfTeacher(int tutorId, int page, int limit)
+        //{
+        //    return await dbSet.Include(c => c.StudentClasses).ThenInclude(sc => sc.Student)
+        //         .AsQueryable()
+        //         .Where(c => c.TutorId == tutorId)
+        //        .ToNewPagingAsync(page > 0 ? page : 1, limit > 0 ? limit : 10);
+        //}
         public async Task<Class?> GetClassWithSlotsByIdAsync(int id)
         {
             return await dbSet

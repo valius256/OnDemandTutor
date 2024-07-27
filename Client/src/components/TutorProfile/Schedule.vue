@@ -15,10 +15,6 @@
       })
     }}</span>
           </div>
-          <router-link to="/tutor/payment"
-            class="mr-6 p-1 text-xl font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
-            Nạp tiền
-          </router-link>
         </div>
         <div v-if="upcomingSlot">
           <div class="p-4 bg-blue-100 rounded-lg">
@@ -52,33 +48,14 @@
               </div>
             </div>
           </div>
-          <div class="font-bold italic mt-4 text-gray-500">
-            <div v-if="upcomingSlot.paymentStatus == 0">
-              *Khi slot bắt đầu, hệ thống sẽ tự quét trừ tiền trong ví của quý
-              khách. Để tránh những rắc rối về sau, bạn vui lòng nạp tiền vào ví
-              đầy đủ trước khi bắt đầu vào học nhé!<br />
-              *Dựa trên thời lượng và giá cả thỏa thuận, slot này sẽ trừ bạn :
-              <span class="text-red-500">
-                {{
-      (
-        upcomingSlot.createById?.tutorFeePerHour *
-        calcDuration(upcomingSlot)
-      ).toLocaleString("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      })
-    }}
-              </span>
-            </div>
-          </div>
         </div>
         <div v-else class="italic">Hiện không còn slot nào</div>
       </div>
       <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
         Thời khóa biểu
       </div>
-      <div class="flex justify-end mr-8 mb-4">
-        <button class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-400 rounded-lg" @click="openAddSlotModal">
+      <div class="flex justify-center mr-8 mb-4">
+        <button class="px-32 py-2 font-bold text-xl text-white bg-blue-400 hover:bg-blue-200 rounded-lg" @click="openAddSlotModal">
           Thêm slot
         </button>
       </div>
@@ -217,13 +194,10 @@ export default {
     },
     async getUserSlots() {
       const userId = this.currentUser.id;
-      const column = "startTime"; // Example column name
-      const isDesc = true; // Example sort order
-
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL
-          }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
+          }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.token}`,

@@ -58,10 +58,10 @@ namespace OnDemandTutor.DataAccess.Repository
                     blogQuery = blogQuery.Where(b => b.CreateById == pagingModel.Filter.CreateBy);
                 }
             }
-            if (pagingModel.Sorts != null)
-            {
-                blogQuery.OrderProperty(pagingModel.Sorts);
-            }
+            //if (pagingModel.Sorts != null)
+            //{
+            //    blogQuery.OrderProperty(pagingModel.Sorts);
+            //}
 
             int limit = pagingModel.Limit > 0 ? pagingModel.Limit : 10;
             int page = pagingModel.Page > 0 ? pagingModel.Page : 1;

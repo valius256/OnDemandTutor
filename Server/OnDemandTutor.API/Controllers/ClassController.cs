@@ -54,14 +54,6 @@ namespace OnDemandTutor.API.Controllers
             var classes = await _classServices.GetClassesOfTutor(tutor.Id, page, limit);
             return Ok(classes);
         }
-        [HttpGet("tutor-class-student")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(PagedResult<GetClassWithStudentClassDto>), 200)]
-        public async Task<IActionResult> GetStudentClassesOfTutor([FromQuery] int tutorId, [FromQuery] int page = 1, [FromQuery] int limit = 10)
-        {
-            var classes = await _classServices.GetClassesWithStudentsOfTutor(tutorId, page, limit);
-            return Ok(classes);
-        }
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassFullDataSlotDto), 200)]
