@@ -68,7 +68,7 @@ export default {
       })
       try {
         await axios.patch(import.meta.env.VITE_API_URL + '/api/User/change-status', {
-          id: this.viewingId.id,
+          id: this.viewingId,
           status: isApprove ? 3 : 2
         }, {
           headers: {

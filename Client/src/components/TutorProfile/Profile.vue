@@ -297,10 +297,10 @@ export default {
         message: "Đang gửi yêu cầu xác thực...",
       });
       try {
-        await axios.post(
+        await axios.patch(
           //TODO: Change the API URL
-          import.meta.env.VITE_API_URL + "/api/User/verify-request",
-          { userId: this.user.id },
+          import.meta.env.VITE_API_URL + "/api/User/change-status",
+          { id: this.user.id, status : 1 },
           {
             headers: {
               Authorization: "Bearer " + localStorage.token,

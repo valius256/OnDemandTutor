@@ -1,28 +1,14 @@
 <template>
-  <GenericPopup
-    v-if="showModal"
-    :title="'Thêm slot mới'"
-    :closeFunction="closeModal"
-  >
-    <div class="modal-body">
+  <GenericPopup v-if="showModal" :title="'Thêm slot mới'" :closeFunction="closeModal">
+    <div class="modal-body bg-white">
       <form @submit.prevent="addSlot">
         <div class="form-group">
           <label for="startTime">Bắt đầu:</label>
-          <input
-            type="datetime-local"
-            id="startTime"
-            v-model="newSlot.startTime"
-            required
-          />
+          <input type="datetime-local" id="startTime" v-model="newSlot.startTime" required />
         </div>
         <div class="form-group">
           <label for="endTime">Kết thúc:</label>
-          <input
-            type="datetime-local"
-            id="endTime"
-            v-model="newSlot.endTime"
-            required
-          />
+          <input type="datetime-local" id="endTime" v-model="newSlot.endTime" required />
         </div>
         <div class="form-group">
           <label for="teachAddress">Địa chỉ dạy:</label>
@@ -30,21 +16,12 @@
         </div>
         <div class="form-group">
           <label for="numberOfStudents">Số lượng học sinh hạn mức:</label>
-          <input
-            type="number"
-            id="numberOfStudents"
-            v-model="newSlot.numberOfStudents"
-            required
-          />
+          <input type="number" id="numberOfStudents" v-model="newSlot.numberOfStudents" required />
         </div>
         <div class="form-group">
           <label for="subjectId">Môn học:</label>
           <select id="subjectId" v-model="newSlot.subjectId" required>
-            <option
-              v-for="subject in subjects"
-              :value="subject.id"
-              :key="subject.id"
-            >
+            <option v-for="subject in subjects" :value="subject.id" :key="subject.id">
               {{ subject.name }}
             </option>
           </select>
