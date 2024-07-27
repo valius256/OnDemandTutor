@@ -77,6 +77,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
             return mappedResult;
         }
+        //public async Task<PagedResult<GetClassWithStudentClassDto>> GetClassesWithStudentsOfTutor(int tutorId, int page, int limit)
+        //{
+        //    var pagedResult = await _unitOfWork.ClassRepository.GetClassWithStudentClassOfTeacher(tutorId, page, limit);
+        //    var mappedResult = pagedResult.Adapt<PagedResult<GetClassWithStudentClassDto>>();
+        //    return mappedResult;
+        //}
 
         public async Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id)
         {

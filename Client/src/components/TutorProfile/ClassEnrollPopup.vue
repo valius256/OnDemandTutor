@@ -29,7 +29,7 @@
         </div>
         <hr />
         <div class="flex flex-col gap-2 mt-4">
-          <div class="flex gap-4">
+          <!-- <div class="flex gap-4">
             <input type="radio" v-model="paymentMethod" :value="0" />
             <span class="text-center">Trừ trực tiếp số dư</span>
             <span class="text-center text-green-400 font-bold"
@@ -40,7 +40,7 @@
                 })
               }})</span
             >
-          </div>
+          </div> -->
           <div class="flex gap-4">
             <input type="radio" v-model="paymentMethod" :value="1" />
             <span class="text-center">Thanh toán bằng VnPay</span>
@@ -113,6 +113,7 @@ export default {
       }
     },
     async handleVnpay(confirmation) {
+      
       if (confirmation) {
         this.eventBus.emit("open-confirmation-popup", {
           message: "Bạn có chắc chắn muốn thanh toán bằng VnPay?",

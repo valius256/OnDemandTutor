@@ -15,6 +15,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Class
         Task<bool> DeleteClassAsync(int id);
         Task CronForAutoChangeStatusClassAndSlot();
         Task<bool> EnrollCLass(int classId, int studentId);
+       // Task<PagedResult<GetClassWithStudentClassDto>> GetClassesWithStudentsOfTutor(int tutorId, int page, int limit);
     }
 }
 

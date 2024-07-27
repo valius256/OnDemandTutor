@@ -24,7 +24,7 @@
             <tbody>
                 <tr v-for="tutor in tutors" :key="tutor.id">
                     <td>{{ tutor.id }}</td>
-                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
+                    <td><button @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')" class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
                     </td>
                     <td><img :src="tutor.avatar" class="w-24 h-24"></td>
                     <td class="break-all">{{ tutor.email }}</td>
@@ -93,7 +93,7 @@ export default {
                 toDob: null,
                 fromJoinDate: null,
                 toJoinDate: null,
-                isChanged: false
+                isChanged: false,
             }
         }
     },
@@ -115,11 +115,8 @@ export default {
             if (this.filterDto.gender != "All") {
                 query['Sex'] = this.filterDto.gender
             }
-            if (this.filterDto.status != "All") {
-                query['Status'] = this.filterDto.status
-            }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?' +
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?TutorsStatus=1' +
                 this.jsonToQueryString(query))
             if (response.data) {
                 this.tutors = response.data.data.items

@@ -27,14 +27,14 @@
                 </div>
                 <hr>
                 <div class="flex flex-col gap-2 mt-4">
-                    <div class="flex gap-4">
+                    <!-- <div class="flex gap-4">
                         <input type="radio" v-model="paymentMethod" :value="0">
                         <span class="text-center">Trừ trực tiếp số dư</span>
                         <span class="text-center text-green-400 font-bold">({{ balance.toLocaleString('vi-VN', {
         style: 'currency',
         currency: 'VND',
                             }) }})</span>
-                    </div>
+                    </div> -->
                     <div class="flex gap-4">
                         <input type="radio" v-model="paymentMethod" :value="1">
                         <span class="text-center">Thanh toán bằng VnPay</span>
@@ -43,7 +43,8 @@
             </div>
         </div>
         <div class="flex flex-col w-96 mt-4">
-            <button class="mt-8 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg py-2" @click="handleConfirm">Xác nhận</button>
+            <button class="mt-8 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg py-2"
+                @click="handleConfirm">Xác nhận</button>
         </div>
     </div>
 </template>
@@ -95,6 +96,15 @@ export default {
             }
         },
         async handleVnpay(confirmation) {
+            var user = await this.getUserFromToken()
+            if (user == null) {
+                this.eventBus.emit("open-result-dialog", {
+                    message: "Vui lòng đăng nhập trước khi thanh toán",
+                    type: "Information"
+                })
+                this.$router.push("/login")
+                return;
+            }
             if (confirmation) {
                 this.eventBus.emit("open-confirmation-popup", {
                     message: "Bạn có chắc chắn muốn thanh toán bằng VnPay?",
@@ -112,7 +122,7 @@ export default {
                     message: "Vui lòng chờ..."
                 })
                 try {
-                    const url = await axios.post(import.meta.env.VITE_API_URL + '/api/Payment/create-payment-class', request,{
+                    const url = await axios.post(import.meta.env.VITE_API_URL + '/api/Payment/create-payment-class', request, {
                         headers: {
                             'Authorization': "Bearer " + localStorage.token
                         }
@@ -133,9 +143,9 @@ export default {
                 this.eventBus.emit("close-loading-popup")
             }
         },
-        async handleConfirm(){
+        async handleConfirm() {
             //console.log(this.paymentMethod)
-            if (this.paymentMethod == 1){
+            if (this.paymentMethod == 1) {
                 await this.handleVnpay(true)
             }
         }

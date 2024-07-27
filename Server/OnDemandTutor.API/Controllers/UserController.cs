@@ -143,7 +143,7 @@ public class UserController : BaseController<UserController>
     /// <param ></param>
     /// 
     /// <returns>boolean</returns>
-    [Authorize(Roles = "Admin, Operator")]
+    [Authorize]
     [HttpPost("remove-tutor")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -152,7 +152,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.DeleteTutorAsync(requestDto));
     }
 
-    [Authorize(Roles = "Admin, Operator")]
+    [Authorize]
     [HttpPatch("deactive-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -161,7 +161,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.DeaActiveAccountAsync(requestDto));
     }
 
-    [Authorize(Policy = "Operator")]
+    [Authorize]
     [HttpPatch("active-account")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<bool>), 200)]
@@ -170,7 +170,7 @@ public class UserController : BaseController<UserController>
         return OKAsync(await _userService.ActiveAccount(request.Id));
     }
 
-    [Authorize(Policy = "Operator")]
+    [Authorize]
     [HttpPatch("change-status")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<CompareStatusDto>), 200)]

@@ -26,8 +26,7 @@ public class SlotController : ControllerBase
         return Ok(slots);
 
     }
-
-    [Authorize]
+    
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(GetSlotDetailDto), 200)]
     public async Task<IActionResult> GetSlotById(int id)

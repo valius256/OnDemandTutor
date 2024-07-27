@@ -194,7 +194,7 @@ export default {
             })
             if (response.data) {
                 this.class = response.data
-                if ( this.class.studentClasses.filter(sc => sc.studentId == this.user.id).length > 0){
+                if (this.user != null && this.class.studentClasses.filter(sc => sc.studentId == this.user.id).length > 0){
                     this.isStudiedThisClass = true;
                 }
             }

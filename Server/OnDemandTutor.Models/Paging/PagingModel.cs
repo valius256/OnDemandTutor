@@ -3,7 +3,7 @@
 public class PagingModel<T> : PagingSizeModel
 {
     public T Filter { get; set; }
-    public List<SortItems> Sorts { get; set; }
+    //public List<SortItems> Sorts { get; set; }
 }
 
 public class PagingSizeModel

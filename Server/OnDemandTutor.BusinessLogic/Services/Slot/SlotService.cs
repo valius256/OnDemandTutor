@@ -362,6 +362,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
         }
+
     }
 }
 

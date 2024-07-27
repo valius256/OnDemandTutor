@@ -18,13 +18,6 @@
       </div>
     </Authorization>
     <!-- Add BubbleChat component -->
-    <BubbleChat
-      :messages="messages"
-      textField="text"
-      senderNameField="name"
-      avatarLinkField="avatar"
-      position="right"
-    />
   </div>
 </template>
 
@@ -36,7 +29,7 @@ import UnexpectedLayout from "./layouts/UnexpectedLayout.vue";
 import TutorLayout from "./layouts/TutorLayout.vue";
 import OperatorLayout from "./layouts/OperatorLayout.vue";
 import GuestLayout from "./layouts/GuestLayout.vue";
-import BubbleChat from "./components/BubbleChat.vue"; // Import BubbleChat
+//import BubbleChat from "./components/BubbleChat.vue"; // Import BubbleChat
 
 export default {
   name: "App",
@@ -49,15 +42,15 @@ export default {
     OperatorLayout,
     GuestLayout,
     UnexpectedLayout,
-    BubbleChat, // Register BubbleChat
+    //BubbleChat, // Register BubbleChat
   },
   data() {
     return {
       user: null,
-      messages: [
-        { name: "John", text: "Hello!", avatar: "link_to_avatar" },
-        { name: "Doe", text: "Hi!", avatar: "link_to_avatar" },
-      ],
+      // messages: [
+      //   { username: "John", message: "Hello!", iconUrl: "link_to_avatar" },
+      //   { username: "Doe", message: "Hi!", iconUrl: "link_to_avatar" },
+      // ],
     };
   },
   methods: {

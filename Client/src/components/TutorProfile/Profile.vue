@@ -5,82 +5,48 @@
     </div>
     <div class="flex justify-end" v-if="user">
       <div class="flex gap-4">
-        <button
-          @click="openEditMode"
-          v-if="!editMode && checkOwner()"
-          class="mr-6 p-2 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-        >
+        <button @click="openEditMode" v-if="!editMode && checkOwner()"
+          class="mr-6 p-2 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">
           Chỉnh sửa
         </button>
         <!-- Button to send verification request -->
-        <button
-          @click="openVerificationDialog"
-          v-if="!editMode && canSendVerificationRequest()"
-          :class="[
-            'mr-6 p-2 font-bold text-white rounded-lg',
-            getVerificationButtonClass(),
-          ]"
-        >
+        <button @click="openVerificationDialog" v-if="!editMode && canSendVerificationRequest()" :class="[
+      'mr-6 p-2 font-bold text-white rounded-lg',
+      getVerificationButtonClass(),
+    ]">
           Gửi yêu cầu xác thực
         </button>
-        <button
-          @click="handleUpdate(true)"
-          v-if="editMode"
-          class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg"
-        >
+        <button @click="handleUpdate(true)" v-if="editMode"
+          class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg">
           Xác nhận
         </button>
-        <button
-          @click="closeEditMode"
-          v-if="editMode"
-          class="mr-6 p-2 font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg"
-        >
+        <button @click="closeEditMode" v-if="editMode"
+          class="mr-6 p-2 font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg">
           Hủy bỏ
         </button>
       </div>
     </div>
     <div class="flex gap-8 p-6" v-if="user">
       <div class="flex flex-col items-center">
-        <img
-          v-if="!this.file"
-          class="max-w-64 min-w-64 h-64 rounded-full"
-          :src="user.avatarImageUrl ?? '/src/assets/noavatar.jpg'"
-        />
-        <img
-          v-else
-          class="max-w-64 min-w-64 h-64 rounded-full"
-          :src="imageBase64"
-        />
-        <button
-          v-if="checkOwner() && !this.file"
-          class="p-2 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
-          @click="uploadImage"
-        >
+        <img v-if="!this.file" class="max-w-64 min-w-64 h-64 rounded-full"
+          :src="user.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
+        <img v-else class="max-w-64 min-w-64 h-64 rounded-full" :src="imageBase64" />
+        <button v-if="checkOwner() && !this.file"
+          class="p-2 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg" @click="uploadImage">
           Cập nhật ảnh
         </button>
         <div v-if="checkOwner() && this.file" class="flex gap-4">
-          <button
-            class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg"
-            @click="handleChangeAvatar(true)"
-          >
+          <button class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg"
+            @click="handleChangeAvatar(true)">
             Xác nhận
           </button>
-          <button
-            v-if="checkOwner()"
-            class="p-2 font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg"
-            @click="this.file = null"
-          >
+          <button v-if="checkOwner()" class="p-2 font-bold text-white bg-red-400 hover:bg-red-200 rounded-lg"
+            @click="this.file = null">
             Hủy bỏ
           </button>
         </div>
 
-        <input
-          type="file"
-          ref="fileInput"
-          @change="onFileChange"
-          class="hidden"
-          accept="image/*"
-        />
+        <input type="file" ref="fileInput" @change="onFileChange" class="hidden" accept="image/*" />
       </div>
       <table class="ml-4 bg-slate-50 p-6 rounded-xl w-full">
         <tbody v-if="!this.editMode">
@@ -129,21 +95,13 @@
           <tr>
             <td>First Name</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="text"
-                v-model="editDto.firstName"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="text" v-model="editDto.firstName" />
             </td>
           </tr>
           <tr>
             <td>Last Name</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="text"
-                v-model="editDto.lastName"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="text" v-model="editDto.lastName" />
             </td>
           </tr>
           <tr>
@@ -153,40 +111,25 @@
           <tr>
             <td>Phone</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="text"
-                v-model="editDto.phone"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="text" v-model="editDto.phone" />
             </td>
           </tr>
           <tr>
             <td>Date of Birth</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="date"
-                v-model="editDto.dob"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="date" v-model="editDto.dob" />
             </td>
           </tr>
           <tr>
             <td>Address</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="text"
-                v-model="editDto.address"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="text" v-model="editDto.address" />
             </td>
           </tr>
           <tr>
             <td>Gender</td>
             <td>
-              <select
-                class="w-full rounded border border-gray-200 p-1"
-                v-model="editDto.gender"
-              >
+              <select class="w-full rounded border border-gray-200 p-1" v-model="editDto.gender">
                 <option :value="1">Male</option>
                 <option :value="0">Female</option>
                 <option :value="2">Other</option>
@@ -196,32 +139,30 @@
           <tr>
             <td>Giá dạy mỗi giờ</td>
             <td>
-              <input
-                class="w-full rounded border border-gray-200 p-1"
-                type="number"
-                v-model="editDto.tutorFeePerHour"
-              />
+              <input class="w-full rounded border border-gray-200 p-1" type="number"
+                v-model="editDto.tutorFeePerHour" />
             </td>
           </tr>
           <tr>
             <td>Lịch dạy</td>
             <td>
-              <textarea
-                class="w-full rounded border border-gray-200 p-1"
-                v-model="editDto.scheduleDescription"
-              ></textarea>
+              <textarea class="w-full rounded border border-gray-200 p-1"
+                v-model="editDto.scheduleDescription"></textarea>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+    <previous-feedback :tutorId="id" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import PreviousFeedback from './PreviousFeedback.vue';
 
 export default {
+  components: { PreviousFeedback },
   name: "TutorProfile",
   inject: ["eventBus"],
   props: ["id"],
@@ -242,6 +183,7 @@ export default {
       editMode: false,
       imageBase64: null,
       file: null,
+      currentUser: null,
     };
   },
   methods: {
@@ -273,6 +215,7 @@ export default {
       if (response.data) {
         this.user = response.data.data;
       }
+      this.feedbackMode = 0;
     },
     async handleUpdate(confirmation) {
       if (confirmation) {
@@ -364,6 +307,7 @@ export default {
       });
       try {
         await axios.patch(
+          //TODO: Change the API URL
           import.meta.env.VITE_API_URL + "/api/User/change-status",
           { id: this.user.id, status: 1 },
           {
@@ -417,8 +361,8 @@ export default {
           formData.append("file", this.file);
           const response = await axios.post(
             import.meta.env.VITE_API_URL +
-              "/api/Upload/upload-image?fileName=" +
-              fileName,
+            "/api/Upload/upload-image?fileName=" +
+            fileName,
             formData,
             {
               headers: {

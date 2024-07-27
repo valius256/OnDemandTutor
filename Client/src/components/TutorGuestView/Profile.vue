@@ -56,12 +56,7 @@
 
                 </div>
             </div>
-            <div class="bg-white shadow-md rounded-lg p-6 w-full mt-8">
-                <h2 class="text-2xl font-semibold mb-4">Đánh giá từ các học viên trước</h2>
-                <div>
-
-                </div>
-            </div>
+            <previous-feedback :tutorId="tutor.id"/>
         </div>
     </div>
 </template>
@@ -69,21 +64,22 @@
 <script>
 import axios from 'axios'
 import StarRating from 'vue-star-rating'
+import PreviousFeedback from '../TutorProfile/PreviousFeedback.vue'
 
 export default {
     name: "StudentProfile",
     inject: ['eventBus'],
     props: ['tutor'],
-    components: { StarRating },
+    components: { StarRating,PreviousFeedback },
     data() {
-        return {
-            currentUser: null
+        return {         
+            currentUser: null,
         }
     },
     methods: {
         async refresh() {
             this.currentUser = await this.getUserFromToken()
-
+            this.feedbackMode = 0;
         },
         async getUserSlots() {
             const column = "startTime"; // Example column name
@@ -105,6 +101,8 @@ export default {
                 this.slots = []; // Handle errors by setting slots to an empty array
             }
         },
+
+
     },
     mounted() {
         this.refresh()

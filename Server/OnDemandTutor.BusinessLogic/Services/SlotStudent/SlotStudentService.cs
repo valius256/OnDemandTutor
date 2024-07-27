@@ -10,8 +10,10 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
+using OnDemandTutor.Models.Dtos.StudentSlot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.SlotStudent;
 
@@ -29,11 +31,17 @@ public class SlotStudentService : ISlotStudentServices
         _notificationService = notificationService;
 
     }
-    public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user)
+    public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user)
     {
         var slotStudent =
-            await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user.Id);
+            await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user?.Id);
         return slotStudent.Adapt<List<GetSlotStudentDetailDto>>();
+    }
+    public async Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto)
+    {
+        var slotStudent =
+            await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotByTutor(queryRatingDto);
+        return slotStudent.Adapt<PagedResult<GetSlotStudentDetailDto>>();
     }
     public async Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user)
     {
@@ -88,12 +96,12 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SaveChangesAsync();
         }
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"this slot with slot Id{slotId } and studentId{studentId} has been created  ",
-            IsViewed = true,
-            ReceiverId = recordInDb.UserId,
-        });
+        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        //{
+        //    Content = $"this slot with slot Id{slotId } and studentId{studentId} has been created  ",
+        //    IsViewed = true,
+        //    ReceiverId = recordInDb.UserId,
+        //});
         return recordInDb;
     }
 
@@ -120,12 +128,12 @@ public class SlotStudentService : ISlotStudentServices
         // studentClass.RecordStatus = RecordStatus.Deleted;
         // _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"this slot with slot Id{slotId} and studentId{studentId} has been deleted  ",
-            IsViewed = true,
-            ReceiverId = slotstudent.UserId,
-        });
+        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        //{
+        //    Content = $"this slot with slot Id{slotId} and studentId{studentId} has been deleted  ",
+        //    IsViewed = true,
+        //    ReceiverId = slotstudent.UserId,
+        //});
         _unitOfWorkRepository.SlotStudentRepository.Remove(slotstudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -175,12 +183,19 @@ public class SlotStudentService : ISlotStudentServices
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"this slot with slot Id{slotId} and studentId{studentId} has been updated  ",
-            IsViewed = true,
-            ReceiverId = slotStudent.UserId,
-        });
+        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+        //{
+        //    Content = $"this slot with slot Id{slotId} and studentId{studentId} has been updated  ",
+        //    IsViewed = true,
+        //    ReceiverId = slotStudent.UserId,
+        //});
         return true;
     }
+
+
+    //public async Task<PagedResult<GetSlotStudentDetailDto>?> GetSlotWithStudentOfTutors(PagingModel<QueryRatingDto> queryDto)
+    //{
+    //    var rs = await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotOfTutor(queryDto);
+    //    return rs.Adapt<PagedResult<GetSlotStudentDetailDto>>();
+    //}
 }

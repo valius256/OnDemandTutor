@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Dtos.StudentSlot;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers
 {
@@ -23,7 +25,7 @@ namespace OnDemandTutor.API.Controllers
             _slotStudentService = slotStudentService;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("get-slots-of-students")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
@@ -34,13 +36,12 @@ namespace OnDemandTutor.API.Controllers
             return Ok(slotStudent);
         }
 
-        [HttpGet("get-students-of-slots")]
+        [HttpGet("get-student-slots-tutor")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(List<GetSlotStudentDetailDto>), 200)]
-        public async Task<IActionResult> QueryStudent([FromQuery] QuerySlotStudentDto querySlotStudentDto)
+        [ProducesResponseType(typeof(PagingModel<GetSlotStudentDetailDto>), 200)]
+        public async Task<IActionResult> QuerySlotStudentOfTutor([FromQuery] PagingModel<QueryRatingDto> querySlotStudentDto)
         {
-            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
-            var slotStudent = await _slotStudentService.QuerySlotStudent(querySlotStudentDto, user);
+            var slotStudent = await _slotStudentService.GetStudentSlotByTutor(querySlotStudentDto);
             return Ok(slotStudent);
         }
 
@@ -54,7 +55,15 @@ namespace OnDemandTutor.API.Controllers
             var slotStudent = await _slotStudentService.GetClosestFutureSlot(user);
             return Ok(slotStudent);
         }
-
+        //[Authorize]
+        [HttpGet("{slotId}")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(typeof(IEnumerable<SlotStudentDto>), 200)]
+        public async Task<IActionResult> GetStudentSlotsOfSlot(int slotId)
+        {
+            var slotStudents = await _slotStudentService.GetSlotStudentsOfSlotAsync(slotId);
+            return Ok(slotStudents);
+        }
         //[Authorize]
         [HttpGet("{slotId}/{studentId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -69,20 +78,7 @@ namespace OnDemandTutor.API.Controllers
             return Ok(slotStudent);
         }
 
-        //[Authorize]
-        [HttpGet("{slotId}")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IEnumerable<SlotStudentDto>), 200)]
-        public async Task<IActionResult> GetStudentSlotsOfSlot(int slotId)
-        {
-            var slotStudents = await _slotStudentService.GetSlotStudentsOfSlotAsync(slotId);
-            if (slotStudents == null || !slotStudents.Any())
-            {
-                return Ok(new { message = "No students enrolled yet." });
-            }
-            return Ok(slotStudents);
-        }
-
+       
         [Authorize]
         [HttpPost("{slotId}/{studentId}/pay")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]

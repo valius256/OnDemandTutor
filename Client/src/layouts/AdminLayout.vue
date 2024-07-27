@@ -1,7 +1,7 @@
 <template>
     <div class="flex gap-4">
         <VerticalNavbar/>
-        <RouterView class="overflow-y-auto h-screen max-w-screen overflow-x-auto"/>
+        <RouterView class="overflow-y-auto h-screen w-full overflow-x-auto"/>
     </div>
 </template>
 

@@ -1,14 +1,18 @@
 ﻿using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.SlotStudent;
+using OnDemandTutor.Models.Dtos.StudentSlot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 public interface ISlotStudentServices
 {
-    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos user);
+    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user);
+
+    Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto);
     Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<IEnumerable<SlotStudentDto>> GetSlotStudentsOfSlotAsync(int slotId);
@@ -21,4 +25,6 @@ public interface ISlotStudentServices
 
     Task<List<SlotStudentDto>> GetListSlotStudentByStudentId(int studentId);
     Task<bool> CreateSlotStudent(int slotId, int studentId);
+
+    //Task<PagedResult<GetSlotStudentDetailDto>?> GetSlotWithStudentOfTutors(PagingModel<QueryRatingDto> queryDto);
 }

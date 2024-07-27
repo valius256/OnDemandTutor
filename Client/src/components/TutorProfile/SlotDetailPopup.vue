@@ -2,21 +2,17 @@
   <div class="p-4 bg-white rounded-b-lg w-full">
     <div class="flex gap-4">
       <div>
-        <div class="mb-8" v-if="classDetails">
+        <div class="mb-8" v-if="slot.class">
           <div>
             <span class="font-bold">Tên lớp :</span>
-            <span class="ml-4">{{ classDetails.name }}</span>
-          </div>
-          <div>
-            <span class="font-bold">Buổi thứ :</span>
-            <span class="ml-4">1/10</span>
+            <span class="ml-4">{{ slot.class.name }}</span>
           </div>
           <hr />
         </div>
         <div>
           <span class="font-bold">Môn học :</span>
           <span class="font-bold text-blue-400 ml-4">{{
-            classDetails?.subject?.name
+            slot.subject?.name
           }}</span>
         </div>
         <hr />
@@ -49,27 +45,27 @@
         <img
           class="w-48 h-48"
           :src="
-            classDetails?.tutor?.avatarImageUrl ?? '/src/assets/noavatar.jpg'
+            slot.createdBy?.avatarImageUrl ?? '/src/assets/noavatar.jpg'
           "
         />
         <div class="mt-2 text-center">
           <div>Gia sư</div>
           <div class="font-bold text-2xl">
             {{
-              classDetails?.tutor?.firstName +
+              (slot.createdBy?.firstName ?? "") +
               " " +
-              classDetails?.tutor?.lastName
+              (slot.createdBy?.lastName ?? "" )
             }}
           </div>
         </div>
         <div class="">
           <div>
             <span class="font-bold">Email : </span>
-            <span class="italic">{{ classDetails?.tutor?.email }}</span>
+            <span class="italic">{{ slot.createdBy?.email }}</span>
           </div>
           <div>
             <span class="font-bold">Phone : </span>
-            <span class="italic">{{ classDetails?.tutor?.phone }}</span>
+            <span class="italic">{{ slot.createdBy?.phone }}</span>
           </div>
         </div>
       </div>
@@ -94,7 +90,6 @@ export default {
   props: ["slot", "close"],
   data() {
     return {
-      classDetails: null,
       slotStudents: [],
     };
   },
@@ -113,27 +108,6 @@ export default {
         minute: "2-digit",
       };
       return new Date(datetime).toLocaleDateString("vi-VN", options);
-    },
-    async fetchClassDetails() {
-      console.log("Fetching class details for classId:", this.slot.classId);
-      if (this.slot.classId) {
-        try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/Class/${this.slot.classId}`,
-            {
-              headers: {
-                Accept: "application/json",
-                Authorization: `Bearer ${localStorage.token}`,
-              },
-            }
-          );
-          console.log("API response:", response.data);
-          this.classDetails = response.data;
-          console.log("classDetails updated:", this.classDetails);
-        } catch (error) {
-          console.error("Error fetching class details:", error);
-        }
-      }
     },
     async fetchSlotStudents() {
       console.log("Fetching slot students for slotId:", this.slot.id);
@@ -158,8 +132,8 @@ export default {
     },
   },
   mounted() {
-    this.fetchClassDetails();
     this.fetchSlotStudents();
+    console.log(this.slot)
   },
 };
 </script>

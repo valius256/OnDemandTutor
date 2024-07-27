@@ -9,14 +9,17 @@
                 </div>
             </div>
         </div>
-
-        <div v-if="selectedSubject" class="mt-6 px-6 py-8 bg-slate-50 rounded-lg flex flex-col gap-4">
-            <h3 class="text-xl font-bold mb-4">{{ selectedSubject.subject.name }}</h3>
+        <hr>
+        <div class="italic text-center" v-if="!selectedSubject">
+            Chọn 1 môn học để xem chi tiết
+        </div>
+        <div v-else class="mt-6 px-6 py-8 bg-slate-50 rounded-lg flex flex-col gap-4">
+            <h3 class="text-3xl text-center font-bold mb-4">{{ selectedSubject.subject.name }}</h3>
             <hr>
             <div><span class="font-bold">Ngày đăng kí:</span> {{ formatDate(selectedSubject.createdDate) }}</div>
             <div><span class="font-bold">Mô tả:</span> {{ selectedSubject.description || "Không có mô tả" }}</div>
             <div class="font-bold">Bằng cấp:</div>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-8">
                 <div v-for="(degree, index) in tutorSubject.degrees" :key="index" class="flex flex-col">
                     <img :src="degree.degreeImgUrl" class="w-96 h-96 object-cover rounded-lg" />
                     <div><span class="font-bold mr-4">Tên bằng</span>{{ degree.tutorDegreeName }}</div>
@@ -70,6 +73,7 @@ export default {
                     }
                 );
                 this.tutorSubjects = response.data.items;
+                this.tutorSubjects = this.tutorSubjects.filter(ts => ts.status == 3)
             } catch (error) {
                 console.error("Error fetching tutor subjects:", error);
             }

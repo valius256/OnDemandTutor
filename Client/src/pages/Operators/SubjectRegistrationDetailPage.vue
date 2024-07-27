@@ -5,7 +5,7 @@
                 <div class="flex gap-2">
                     <button @click="$router.go(-1)"
                         class="p-2 bg-blue-300 hover:bg-blue-100 font-bold text-white rounded-lg">Trở về</button>
-                    <router-link to="/tutor/profile">
+                    <router-link :to="'/tutor-guest/' + tutor.user.id + '/profile'">
                         <div class="p-2 bg-cyan-500 hover:bg-cyan-300 font-bold text-white rounded-lg">Xem hồ sơ đầy đủ
                         </div>
                     </router-link>

@@ -23,7 +23,7 @@
             </thead>
             <tbody>
                 <tr v-for="tutor in tutors" :key="tutor.id">
-                    <td><button class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
+                    <td><button @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')" class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
                     </td>
                     <td><img :src="tutor.avatarImageUrl" class="w-24 h-24"></td>
                     <td>
@@ -42,7 +42,7 @@
                         <div v-if="selectId == tutor.id"
                             class="absolute right-0 bg-white rounded-lg shadow-lg z-10 w-64 animate-fade-down animate-duration-[400ms] animate-normal font-bold flex flex-col">
                             <!-- Content of your menu -->
-                            <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left">
+                            <button class="hover:bg-slate-200 p-2 rounded-t-lg text-left" @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')">
                                 <i class="fa fa-user mr-4"></i>Xem hồ sơ
                             </button>
                             <!-- <li class="hover:bg-slate-200 p-2"></li> -->

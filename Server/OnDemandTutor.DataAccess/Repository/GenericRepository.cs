@@ -187,14 +187,14 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public virtual Task<PagedResult<TEntity>> PagingAsync<T>(PagingModel<T> request)
     {
         return dbSet
-            .OrderProperty(request.Sorts)
+            //.OrderProperty(request.Sorts)
             .ToPagingAsync<TEntity, TEntity>(request.Page, request.Limit);
     }
 
     public virtual Task<PagedResult<T>> PagingAsync<F, T>(PagingModel<F> request, Func<List<TEntity>, List<T>> mapping)
     {
         return dbSet
-            .OrderProperty(request.Sorts)
+            //.OrderProperty(request.Sorts)
             .ToPagingAsync(request.Page, request.Limit, mapping);
     }
 
@@ -234,7 +234,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return dbSet
             .Where(predicate)
-            .OrderProperty(request.Sorts)
+            //.OrderProperty(request.Sorts)
             .ToPagingAsync<TEntity, TEntity>(request.Page, request.Limit);
     }
 
@@ -244,7 +244,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return dbSet
             .Where(predicate)
-            .OrderProperty(request.Sorts)
+            //.OrderProperty(request.Sorts)
             .ToPagingAsync(request.Page, request.Limit, mapping);
     }
 
@@ -256,7 +256,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         return dbSet
             .Where(predicate)
-            .OrderProperty(request.Sorts, propertyMapping)
+            //.OrderProperty(request.Sorts, propertyMapping)
             .ToPagingAsync(request.Page, request.Limit, mapping);
     }
 
