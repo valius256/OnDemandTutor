@@ -191,7 +191,7 @@ export default {
         firstName: "",
         lastName: "",
         phone: "",
-        dob: "",
+        dob: null,
         address: "",
         gender: 0,
       },
@@ -209,10 +209,10 @@ export default {
       this.editDto.firstName = this.user.firstName;
       this.editDto.lastName = this.user.lastName;
       this.editDto.phone = this.user.phone;
-      this.editDto.dob = this.user.dob;
+      this.editDto.dob = this.user.dob.substring(0,10);
       this.editDto.address = this.user.address;
       this.editDto.gender =
-        this.user.sex == "Male" ? 1 : this.user.sex == "Female" ? 0 : 2;
+        this.user.sex == "Male" ? 1 : (this.user.sex == "Female" ? 0 : 2);
     },
     async refresh() {
       this.loginedUser = await this.getUserFromToken();

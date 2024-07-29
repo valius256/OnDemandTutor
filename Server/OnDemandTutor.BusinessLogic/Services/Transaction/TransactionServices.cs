@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Services.Notification;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -53,18 +54,16 @@ public class TransactionServices : ITransactionServices
         return transactionModel;
     }
 
-    public async Task<TransactionDto?> GetTransactionById(int id, ClaimsPrincipal? userClaims)
+    public async Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDtos user)
     {
-        var uid = userClaims?.FindFirst(cl => cl.Type == "id")?.Value;
         var model = await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(ts =>
-            ts.Id == id && ts.CreatedById == int.Parse(uid));
+            ts.Id == id && ts.CreatedById == user.Id);
         return model?.Adapt<TransactionDto>();
     }
 
-    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, ClaimsPrincipal userClaim)
+    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDtos user)
     {
-        var id = userClaim.FindFirst(cl => cl.Type == "id")?.Value;
-        var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, int.Parse(id));
+        var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, user.Id);
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }
     public async Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction)

@@ -5,6 +5,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 
@@ -96,9 +97,9 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             return true;
         }
 
-        public async Task<bool> HandleConsultationRequestAsync(ClaimsPrincipal claimsPrincipal, HandleConsultationRequestDto requestDtos)
+        public async Task<bool> HandleConsultationRequestAsync(GetProfileUserDtos user, HandleConsultationRequestDto requestDtos)
         {
-            var operatorId = int.Parse(claimsPrincipal.FindFirst(c => c.Type == "id")?.Value);
+            var operatorId = user.Id;
 
             var recordInDb = await _unitOfWorkRepository.ConsultationRequestRepository
                 .FirstOrDefaultAsync(l => l.Id == requestDtos.Id);

@@ -80,10 +80,10 @@ public class JwtProviderServices : IJwtProviderServices
             }
 
             var customClaims = new Dictionary<string, object>
-        {
-            { "roles", userInDb.Role.ToString() },
-            { "id", userInDb.Id.ToString() }
-        };
+            {
+                { "roles", userInDb.Role.ToString() },
+                { "id", userInDb.Id.ToString() }
+            };
             await _fireBaseAuthServices.SetCustomClaimsAsync(authToken.LocalId, customClaims);
             var options = new SessionCookieOptions
             {

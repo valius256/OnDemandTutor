@@ -5,6 +5,7 @@ namespace OnDemandTutor.Models.Dtos.User;
 public class GetProfileUserDtos
 {
     public int Id { get; set; }
+    public string FireBaseid { get; set; } = string.Empty;
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Phone { get; set; }

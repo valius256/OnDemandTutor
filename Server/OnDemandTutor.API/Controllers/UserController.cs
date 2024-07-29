@@ -59,25 +59,25 @@ public class UserController : BaseController<UserController>
         return OKAsync(result);
     }
 
-    [Authorize]
-    [HttpPost("register-tutor")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
-    public async Task<IApiResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
-    {
-        var result = await _userService.RegisterTutorAsync(body, HttpContext.User);
-        return OKAsync(result);
-    }
+    //[Authorize]
+    //[HttpPost("register-tutor")]
+    //[ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    //[ProducesResponseType(typeof(GetProfileTutorDtos), 200)]
+    //public async Task<IApiResult<GetProfileTutorDtos>> RegisterTutor([FromBody] RegisterTutorDtos body)
+    //{
+    //    var result = await _userService.RegisterTutorAsync(body, HttpContext.User);
+    //    return OKAsync(result);
+    //}
 
-    [Authorize]
-    [HttpPost("approve-tutor-registration")]
-    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
-    public async Task<IApiResult<bool>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
-    {
-        return OKAsync(await _userService.ApprovedTutorRegistrationAsync(body, HttpContext.User));
-        ;
-    }
+    //[Authorize]
+    //[HttpPost("approve-tutor-registration")]
+    //[ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    //[ProducesResponseType(typeof(IApiResult<List<TutorRegistrationResponseDtos>>), 200)]
+    //public async Task<IApiResult<bool>> ApprovedTutorRegis([FromBody] TutorRegistrationRequestDtos body)
+    //{
+    //    return OKAsync(await _userService.ApprovedTutorRegistrationAsync(body, HttpContext.User));
+    //    ;
+    //}
 
 
     /// <summary>
@@ -93,7 +93,8 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<IApiResult<bool>> UpdateProfile([FromBody] UpdateUserDto requestDto)
     {
-        var result = await _userService.UpdateProfileAsync(requestDto, HttpContext.User);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _userService.UpdateProfileAsync(requestDto, user);
         return OKAsync(result);
     }
 
@@ -103,7 +104,8 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<IApiResult<bool>> UpdateAvatar([FromBody] ChangeAvatarUrlDto request)
     {
-        var result = await _userService.UpdateAvatarImage(request.Url, HttpContext.User);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _userService.UpdateAvatarImage(request.Url, user);
         return OKAsync(result);
     }
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
+using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Dtos.Transaction;
 
@@ -12,8 +14,10 @@ namespace OnDemandTutor.API.Controllers;
 public class TransactionController : BaseController<TransactionController>
 {
     private readonly ITransactionServices _transactionServices;
-    public TransactionController(ILogger<TransactionController> logger, ITransactionServices transactionServices) : base(logger)
+    private readonly IAuthServices _authService;
+    public TransactionController(ILogger<TransactionController> logger, ITransactionServices transactionServices, IAuthServices authServices) : base(logger)
     {
+        _authService = authServices;
         _transactionServices = transactionServices;
     }
 
@@ -23,7 +27,8 @@ public class TransactionController : BaseController<TransactionController>
     [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
     public async Task<ActionResult> ViewAllTransaction([FromQuery] TransactionFilterDto requestDtos)
     {
-        return Ok(await _transactionServices.ViewALlTransaction(requestDtos, HttpContext.User));
+        var user = await _authService.GetUserProfileByClaim(HttpContext.User);
+        return Ok(await _transactionServices.ViewALlTransaction(requestDtos, user));
     }
     [Authorize]
     [HttpGet("all-admin")]
@@ -39,7 +44,8 @@ public class TransactionController : BaseController<TransactionController>
     [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
     public async Task<ActionResult> GetTransactionById([FromQuery] int id)
     {
-        return Ok(await _transactionServices.GetTransactionById(id, HttpContext.User));
+        var user = await _authService.GetUserProfileByClaim(HttpContext.User);
+        return Ok(await _transactionServices.GetTransactionById(id, user));
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.RequestWithDraw;
 using OnDemandTutor.Models.Dtos.WithDrawDto;
 using OnDemandTutor.Models.Paging;
@@ -12,9 +13,11 @@ namespace OnDemandTutor.API.Controllers;
 public class RequestWithDrawController : BaseController<RequestWithDrawController>
 {
     private readonly IRequestWithDrawServices _requestWithDrawServices;
-    public RequestWithDrawController(ILogger<RequestWithDrawController> logger, IRequestWithDrawServices requestWithDrawServices) : base(logger)
+    private readonly IAuthServices _authServices;
+    public RequestWithDrawController(ILogger<RequestWithDrawController> logger, IRequestWithDrawServices requestWithDrawServices, IAuthServices authServices) : base(logger)
     {
         _requestWithDrawServices = requestWithDrawServices;
+        _authServices = authServices;
     }
 
     [Authorize]
@@ -23,8 +26,8 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
     [ProducesResponseType(typeof(PagedResult<GetRequestWithdrawDto>), 200)]
     public async Task<IActionResult> ViewRequestWithDraw([FromQuery] RequestWithDrawFilterDto request)
     {
-
-        var result = await _requestWithDrawServices.ViewAllRequestWithDraw(request, HttpContext.User);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _requestWithDrawServices.ViewAllRequestWithDraw(request, user);
         return Ok(result);
     }
     [Authorize]
@@ -45,7 +48,8 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<IActionResult> CreateWithdrawRequest([FromBody] CreateRequestWithdrawDto request)
     {
-        var result = await _requestWithDrawServices.CreateWithdrawRequest(request, HttpContext.User);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _requestWithDrawServices.CreateWithdrawRequest(request, user);
         return Ok(result);
     }
 
@@ -55,7 +59,8 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
     [ProducesResponseType(typeof(bool), 200)]
     public async Task<IActionResult> ApproveWithDraw([FromBody] ApproveWithDrawDto request)
     {
-        var result = await _requestWithDrawServices.ApproveWithDraw(request, HttpContext.User);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var result = await _requestWithDrawServices.ApproveWithDraw(request, user);
         return Ok(result);
     }
 

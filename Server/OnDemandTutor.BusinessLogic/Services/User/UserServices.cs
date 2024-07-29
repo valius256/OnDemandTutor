@@ -127,55 +127,55 @@ public class UserServices : IUserServices
     }
 
 
-    public async Task<GetProfileTutorDtos> RegisterTutorAsync(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal userPrincipal)
-    {
-        var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
-        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.FireBaseid == userUid);
+    //public async Task<GetProfileTutorDtos> RegisterTutorAsync(RegisterTutorDtos registerTutorDtos, ClaimsPrincipal userPrincipal)
+    //{
+    //    var userUid = userPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+    //    var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.FireBaseid == userUid);
 
-        if (userInDb == null)
-        {
-            throw new Exception("User not found.");
+    //    if (userInDb == null)
+    //    {
+    //        throw new Exception("User not found.");
 
-        }
-        userInDb.AvatarImageUrl = registerTutorDtos.AvatarImageurl;
-        userInDb.ScheduleDesciption = registerTutorDtos.ScheduleDescription;
-        userInDb.IdCardImageUrl = registerTutorDtos.IdentityCardUrl;
-        userInDb.Role = RoleStatus.Tutor;
-        userInDb.TutorStatus = TutorStatus.Un_Verified;
+    //    }
+    //    userInDb.AvatarImageUrl = registerTutorDtos.AvatarImageurl;
+    //    userInDb.ScheduleDesciption = registerTutorDtos.ScheduleDescription;
+    //    userInDb.IdCardImageUrl = registerTutorDtos.IdentityCardUrl;
+    //    userInDb.Role = RoleStatus.Tutor;
+    //    userInDb.TutorStatus = TutorStatus.Un_Verified;
 
-        if (userInDb.AvatarImageUrl == registerTutorDtos.AvatarImageurl)
-        {
-            throw new ModelException("AvatarImageUrl", "AvatarImageUrl is dupplicated", "AvatarImageUrl is dupplicated");
-        }
+    //    if (userInDb.AvatarImageUrl == registerTutorDtos.AvatarImageurl)
+    //    {
+    //        throw new ModelException("AvatarImageUrl", "AvatarImageUrl is dupplicated", "AvatarImageUrl is dupplicated");
+    //    }
 
-        if (userInDb.IdCardImageUrl == registerTutorDtos.IdentityCardUrl)
-            throw new ModelException("IdCardImageUrl", "IdCardImageUrl is dupplicated", "IdCardImageUrl is dupplicated");
+    //    if (userInDb.IdCardImageUrl == registerTutorDtos.IdentityCardUrl)
+    //        throw new ModelException("IdCardImageUrl", "IdCardImageUrl is dupplicated", "IdCardImageUrl is dupplicated");
 
-        _unitOfWorkRepository.UserRepository.Update(userInDb);
-        // Assign degrees to the tutor
-        foreach (var degreeDto in registerTutorDtos.Degrees)
-        {
-            if (userInDb.TutorDegrees.Any(ld => ld.DegreeImgUrl == degreeDto.DegreeImgUrl))
-            {
-                throw new Exception("Degree image is duplicated, add another link");
-            }
-            var tutorDegree = new TutorDegree
-            {
-                TutorId = userInDb.Id,
-                DegreeNumber = degreeDto.DegreeNumber,
-                SubjectId = degreeDto.SubjectId,
-                IssuranceDate = degreeDto.IssuranceDate,
-                DegreeImgUrl = degreeDto.DegreeImgUrl,
-                TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
-            };
-            userInDb.TutorDegrees.Add(tutorDegree);
-        }
+    //    _unitOfWorkRepository.UserRepository.Update(userInDb);
+    //    // Assign degrees to the tutor
+    //    foreach (var degreeDto in registerTutorDtos.Degrees)
+    //    {
+    //        if (userInDb.TutorDegrees.Any(ld => ld.DegreeImgUrl == degreeDto.DegreeImgUrl))
+    //        {
+    //            throw new Exception("Degree image is duplicated, add another link");
+    //        }
+    //        var tutorDegree = new TutorDegree
+    //        {
+    //            TutorId = userInDb.Id,
+    //            DegreeNumber = degreeDto.DegreeNumber,
+    //            SubjectId = degreeDto.SubjectId,
+    //            IssuranceDate = degreeDto.IssuranceDate,
+    //            DegreeImgUrl = degreeDto.DegreeImgUrl,
+    //            TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
+    //        };
+    //        userInDb.TutorDegrees.Add(tutorDegree);
+    //    }
 
-        await _unitOfWorkRepository.SaveChangesAsync();
+    //    await _unitOfWorkRepository.SaveChangesAsync();
 
-        var result = userInDb.Adapt<GetProfileTutorDtos>();
-        return result;
-    }
+    //    var result = userInDb.Adapt<GetProfileTutorDtos>();
+    //    return result;
+    //}
 
     public async Task<GetProfileUserDtos> GetUserProfileByIdAsync(int id)
     {
@@ -234,50 +234,50 @@ public class UserServices : IUserServices
         return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request)).Adapt<PagedResult<TutorSimpleProfileDto>>();
     }
 
-    public async Task<bool> ApprovedTutorRegistrationAsync(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
-    {
-        if (!requestDtos.tutorRegistrationDtos.Any())
-        {
-            return false;
-        }
-        foreach (var dto in requestDtos.tutorRegistrationDtos)
-        {
-            await _unitOfWorkRepository.TutorDegreeRepository
-                .Where(td => td.Id == dto.TutorDegreeId)
-                .ExecuteUpdateAsync(setter => setter
-                    .SetProperty(s => s.TutorSubjectStatus, requestDtos.StatusApproved)
-                    .SetProperty(s => s.RejectReason, dto.RejectReason)
-                );
+    //public async Task<bool> ApprovedTutorRegistrationAsync(TutorRegistrationRequestDtos requestDtos, ClaimsPrincipal userPrincipal)
+    //{
+    //    if (!requestDtos.tutorRegistrationDtos.Any())
+    //    {
+    //        return false;
+    //    }
+    //    foreach (var dto in requestDtos.tutorRegistrationDtos)
+    //    {
+    //        await _unitOfWorkRepository.TutorDegreeRepository
+    //            .Where(td => td.Id == dto.TutorDegreeId)
+    //            .ExecuteUpdateAsync(setter => setter
+    //                .SetProperty(s => s.TutorSubjectStatus, requestDtos.StatusApproved)
+    //                .SetProperty(s => s.RejectReason, dto.RejectReason)
+    //            );
 
-            var tutorId = await _unitOfWorkRepository.TutorDegreeRepository
-                .Where(td => td.Id == dto.TutorDegreeId)
-                .Select(ld => ld.TutorId)
-                .FirstOrDefaultAsync();
+    //        var tutorId = await _unitOfWorkRepository.TutorDegreeRepository
+    //            .Where(td => td.Id == dto.TutorDegreeId)
+    //            .Select(ld => ld.TutorId)
+    //            .FirstOrDefaultAsync();
 
 
-            var tutorEmailDb = await _unitOfWorkRepository.UserRepository
-                .Where(ld => ld.Id == tutorId)
-                .Select(ld => ld.Email)
-                .FirstOrDefaultAsync();
-            var tutorEmails = new List<string>();
+    //        var tutorEmailDb = await _unitOfWorkRepository.UserRepository
+    //            .Where(ld => ld.Id == tutorId)
+    //            .Select(ld => ld.Email)
+    //            .FirstOrDefaultAsync();
+    //        var tutorEmails = new List<string>();
 
-            if (tutorEmailDb != null)
-            {
-                tutorEmails.Add(tutorEmailDb);
-            }
+    //        if (tutorEmailDb != null)
+    //        {
+    //            tutorEmails.Add(tutorEmailDb);
+    //        }
 
-            var emailParams = new Dictionary<string, string>()
-            {
-                // { "TutorName", $"{user.Email}" }, for testing( using the Email can receive mail)
-                { "TutorName", $"{tutorEmailDb}" },
-                { "ApprovalStatus", $"{requestDtos.StatusApproved}" },
-                { "RejectionReason", $"{requestDtos.tutorRegistrationDtos.FirstOrDefault()?.RejectReason}" },
-            };
+    //        var emailParams = new Dictionary<string, string>()
+    //        {
+    //            // { "TutorName", $"{user.Email}" }, for testing( using the Email can receive mail)
+    //            { "TutorName", $"{tutorEmailDb}" },
+    //            { "ApprovalStatus", $"{requestDtos.StatusApproved}" },
+    //            { "RejectionReason", $"{requestDtos.tutorRegistrationDtos.FirstOrDefault()?.RejectReason}" },
+    //        };
 
-            await _emailServices.SendAsync(EmailType.Tutor_Registration_Approval, tutorEmails, new List<string>(), emailParams);
-        }
-        return true;
-    }
+    //        await _emailServices.SendAsync(EmailType.Tutor_Registration_Approval, tutorEmails, new List<string>(), emailParams);
+    //    }
+    //    return true;
+    //}
 
     public async Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto)
     {
@@ -299,17 +299,12 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, ClaimsPrincipal userClaims)
+    public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDtos user)
     {
-        var userIdClaim = userClaims.FindFirst(c => c.Type == "id")?.Value;
-        if (string.IsNullOrEmpty(userIdClaim))
-        {
-            throw new ArgumentException("User ID claim is missing.");
-        }
 
         if (requestDto.Id == null || requestDto.Id == 0)
         {
-            requestDto.Id = int.Parse(userIdClaim);
+            requestDto.Id = user.Id;
         }
 
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
@@ -378,10 +373,9 @@ public class UserServices : IUserServices
 
     }
 
-    public async Task<bool> UpdateAvatarImage(string imageUrl, ClaimsPrincipal claims)
+    public async Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDtos user)
     {
-        var userid = claims.FindFirst(c => c.Type == "id")?.Value;
-        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => userid != null && l.Id == int.Parse(userid));
+        var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == user.Id);
         userInDb.AvatarImageUrl = imageUrl;
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
