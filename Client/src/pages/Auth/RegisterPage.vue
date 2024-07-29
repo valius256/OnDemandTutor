@@ -166,14 +166,14 @@ export default {
             }
           );
           if (response.data) {
-            const response = await axios.post(
+            const loginResponse = await axios.post(
               import.meta.env.VITE_API_URL + "/api/auth/login-firebase",
               {
                 email: this.email,
                 password: this.password,
               }
             );
-            localStorage.setItem("token", response.data.data.message);
+            localStorage.setItem("token", loginResponse.data.data.message);
             await this.eventBus.emit("update-everything");
             this.$router.push((this.role == 0 ? "student" : "tutor") + "/profile")
           }

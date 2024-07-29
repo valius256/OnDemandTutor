@@ -7,6 +7,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Dtos.User;
+using OnDemandTutor.Models.Models;
 using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
@@ -42,13 +43,14 @@ public class AuthServices : IAuthServices
     {
         if (claimsPrincipal.Identities == null) throw new BadRequestException("User not Authenticate");
 
-        var userId = claimsPrincipal.FindFirst(c => c.Type == "id")?.Value;
-        if (userId.IsNullOrEmpty()) throw new BadRequestException("User not found");
+        var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
+        if (userId.IsNullOrEmpty()) throw new BadRequestException("Invalid Claims");
 
-
-        var user = await _userServices.GetUserByIdAsync(int.Parse(userId));
-        if (user == null) throw new BadRequestException("User not found");
-
+        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId!);
+        if (user is null)
+        {
+            throw new NotFoundException("User not found");
+        }
         return user;
     }
 

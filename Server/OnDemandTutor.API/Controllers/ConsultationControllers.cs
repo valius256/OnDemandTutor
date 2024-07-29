@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Paging;
 
@@ -13,10 +14,11 @@ namespace OnDemandTutor.API.Controllers
     public class ConsultationControllers : BaseController<ConsultationControllers>
     {
         private readonly IConsultationRequestService _consultationRequestService;
-
-        public ConsultationControllers(ILogger<ConsultationControllers> logger, IConsultationRequestService consultationRequestService) : base(logger)
+        private readonly IAuthServices _authServices;
+        public ConsultationControllers(ILogger<ConsultationControllers> logger, IConsultationRequestService consultationRequestService, IAuthServices authServices) : base(logger)
         {
             _consultationRequestService = consultationRequestService;
+            _authServices = authServices;
         }
 
         // [AllowAnonymous]
@@ -57,7 +59,8 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(bool), 200)]
         public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDto requestDto)
         {
-            return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(HttpContext.User, requestDto));
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(user, requestDto));
         }
 
         [HttpDelete("delete")]

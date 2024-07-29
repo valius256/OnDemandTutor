@@ -13,6 +13,7 @@ using OnDemandTutor.Models.Paging;
 using System.Security.Claims;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.BusinessLogic.Services.RequestWithDraw;
 
@@ -35,11 +36,11 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         _transactionServices = transactionServices;
     }
 
-    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, ClaimsPrincipal userClaims)
+    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, GetProfileUserDtos user)
     {
-        var id = userClaims.FindFirst(c => c.Type == "id")?.Value;
+        var id = user.Id;
         var requestWithDrawModelList = await
-            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, int.Parse(id));
+            _unitOfWorkRepository.RequestWithDrawRepository.GetAllRequestWithDraws(request, id);
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
     public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDrawAsAdmin(RequestWithDrawFilterDto request)
@@ -49,10 +50,10 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 
-    public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, ClaimsPrincipal userClaims)
+    public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, GetProfileUserDtos user)
     {
-        var uid = userClaims.FindFirst(cl => cl.Type == "id")?.Value;
-        var userInfo = await _userServices.GetUserByIdAsync(int.Parse(uid));
+        var uid = user.Id;
+        var userInfo = await _userServices.GetUserByIdAsync(uid);
         // check money 
         var balanceFromSoureAcc = await _userServices.GetBalanceAsync(userInfo.Id);
         if (balanceFromSoureAcc - request.Amount < 0)
@@ -62,11 +63,11 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         }
         // update balance for src acc 
         var requestWithDrawModel = request.Adapt<Models.Models.RequestWithDraw>();
-        requestWithDrawModel.UserId = int.Parse(uid);
+        requestWithDrawModel.UserId = uid;
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
         await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
-        await _userServices.UpdateBalanceAsync(int.Parse(uid), 0, request.Amount);
+        await _userServices.UpdateBalanceAsync(uid, 0, request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
         // send Email 
@@ -93,9 +94,9 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         return true;
     }
 
-    public async Task<bool> ApproveWithDraw(ApproveWithDrawDto request, ClaimsPrincipal userClaims)
+    public async Task<bool> ApproveWithDraw(ApproveWithDrawDto request, GetProfileUserDtos user)
     {
-        var operatorId = GetOperatorIdFromClaims(userClaims);
+        var operatorId = user.Id;
         var withdraw = await GetWithdrawRequest(request.Id);
 
         ValidateWithdrawRequest(withdraw);
@@ -115,13 +116,6 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         return true;
     }
 
-
-
-    private int GetOperatorIdFromClaims(ClaimsPrincipal userClaims)
-    {
-        var uid = userClaims.FindFirst(cl => cl.Type == "id")?.Value;
-        return int.Parse(uid);
-    }
 
     private async Task<Models.Models.RequestWithDraw> GetWithdrawRequest(int requestId)
     {

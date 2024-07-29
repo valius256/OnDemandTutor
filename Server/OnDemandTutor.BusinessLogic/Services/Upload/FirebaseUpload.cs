@@ -3,6 +3,7 @@ using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.Models.Dtos.Upload;
+using OnDemandTutor.Models.Dtos.User;
 using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Upload;
@@ -15,12 +16,11 @@ public class FirebaseUploadServices : IFirebaseUploadServices
     private readonly string StorageBucketName = "ondemandtutor-a049e.appspot.com";
 
 
-    public async Task<string> UploadImageAsync(ClaimsPrincipal claimsPrincipal, string fileName, Stream fileStream)
+    public async Task<string> UploadImageAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
     {
         try
         {
-            var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
-            var imageUrl = await UploadImageToFirebaseStorage(userUid, fileName, fileStream);
+            var imageUrl = await UploadImageToFirebaseStorage(user.FireBaseid, fileName, fileStream);
             return imageUrl;
         }
         catch (Exception ex)
@@ -119,7 +119,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         }
     }
 
-    public async Task<string> UploadVideoAsync(ClaimsPrincipal claimsPrincipal, string fileName, Stream fileStream)
+    public async Task<string> UploadVideoAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
     {
         try
         {
@@ -128,8 +128,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
             {
                 throw new ArgumentException("Invalid video file type");
             }
-            var userUid = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
-            var videoUrl = await UploadMediaToFirebaseStorage(userUid, fileName, fileStream, contentType);
+            var videoUrl = await UploadMediaToFirebaseStorage(user.FireBaseid, fileName, fileStream, contentType);
 
 
             return videoUrl;

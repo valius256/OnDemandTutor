@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 
 namespace OnDemandTutor.API.Controllers;
@@ -9,10 +10,11 @@ namespace OnDemandTutor.API.Controllers;
 public class UploadController : ControllerBase
 {
     private readonly IFirebaseUploadServices _firebaseUploadServices;
-
-    public UploadController(IFirebaseUploadServices firebaseUploadServices)
+    private readonly IAuthServices _authServices;
+    public UploadController(IFirebaseUploadServices firebaseUploadServices, IAuthServices authServices)
     {
         _firebaseUploadServices = firebaseUploadServices;
+        _authServices = authServices;
     }
 
     [HttpPost("upload-image")]
@@ -25,7 +27,8 @@ public class UploadController : ControllerBase
         // Upload image to Firebase Storage and get the URL
         using (var stream = file.OpenReadStream())
         {
-            var imageUrl = await _firebaseUploadServices.UploadImageAsync(HttpContext.User, fileName, stream);
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var imageUrl = await _firebaseUploadServices.UploadImageAsync(user, fileName, stream);
             return Ok(imageUrl);
         }
     }
@@ -50,7 +53,8 @@ public class UploadController : ControllerBase
 
         using (var stream = file.OpenReadStream())
         {
-            var videoUrl = await _firebaseUploadServices.UploadVideoAsync(HttpContext.User, file.FileName, stream);
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var videoUrl = await _firebaseUploadServices.UploadVideoAsync(user, file.FileName, stream);
             return Ok(videoUrl);
         }
     }
