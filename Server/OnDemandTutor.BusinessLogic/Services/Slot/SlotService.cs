@@ -88,7 +88,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var createdSlotDto = createdSlotEntity.Adapt<GetSlotsDtos>(); // Mapster mapping
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"slot với slot Id{createdSlotDto.Id} đã được tạo    ",
+                Content = $"slot với slot Id{createdSlotDto.Id} đã được tạo",
                 IsViewed = false,
                 ReceiverId = createdSlotEntity.CreateById,
             });
@@ -121,7 +121,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Save the changes
             await _unitOfWork.SaveChangesAsync();
-            
+
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
                 Content = $"Slot với Id{existingSlotEntity.Id} đã được cập nhập  ",
@@ -137,7 +137,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
             await _unitOfWork.SaveChangesAsync();
-            
+
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
                 Content = $"Slot với slotid = {id} đã được xóa   ",

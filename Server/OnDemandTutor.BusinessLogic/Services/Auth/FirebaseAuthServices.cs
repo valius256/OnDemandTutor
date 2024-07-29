@@ -90,5 +90,5 @@ public class FirebaseAuthServices : IFireBaseAuthServices
             .CreateSessionCookieAsync(idToken, options);
         return sessionCookie;
     }
-
+    
 }
