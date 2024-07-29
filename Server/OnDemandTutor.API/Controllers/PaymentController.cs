@@ -51,7 +51,7 @@ public class PaymentController : BaseController<PaymentController>
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
     public async Task<IActionResult> CreatePaymentForSlotByBalance([FromBody] PaySlotDto paymentInfo)
     {
-        bool result;
+        string result;
         if (paymentInfo.SlotId != null)
         {
             var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
