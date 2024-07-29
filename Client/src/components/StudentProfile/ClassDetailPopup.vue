@@ -41,7 +41,7 @@
         </div>
         <hr class="mt-4">
         <div class="font-bold my-4">Thời khóa biểu :</div>
-        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" />
+        <time-table :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" :role="'student'" />
         <hr class="mt-4">
         <div class="font-bold my-4">Các buổi học :</div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

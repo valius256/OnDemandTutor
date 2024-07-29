@@ -1,6 +1,6 @@
 <template>
-    <div class="popup-overlay">
-        <div class="flex flex-col items-center animate-jump-in" 
+    <div class="popup-overlay ">
+        <div class="flex flex-col items-center animate-jump-in w-screen lg:w-auto" 
         :class="{'overflow-y-auto' : !notOverflow}">
             <div class="flex place-content-between gap-8 bg-slate-700 p-2 rounded-t-lg w-full">
                 <div class="font-bold text-white">{{ title }}</div>

@@ -59,7 +59,7 @@
           Thêm slot
         </button>
       </div>
-      <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" />
+      <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" :role="'tutor'"/>
     </div>
     <div v-else class="p-8">
       <div class="p-8 bg-red-200 rounded-lg text-center font-bold">
@@ -77,7 +77,7 @@
 
 <script>
 import axios from "axios";
-import TimeTable from "./TimeTable.vue";
+import TimeTable from "../StudentProfile/TimeTable.vue";
 import AddSlotModal from "./AddSlotModal.vue";
 import GenericPopup from "../common/GenericPopup.vue";
 import SlotDetailPopup from "./SlotDetailPopup.vue";
@@ -197,7 +197,7 @@ export default {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL
-          }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
+          }/api/Slot?get-student-slots-tutor?Filter.TutorId=${userId}&Page=1&Limit=100`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.token}`,

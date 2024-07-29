@@ -63,7 +63,7 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Thời khóa biểu
         </div>
-        <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup"/>
+        <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" :role="'student'"/>
         <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup" :notOverflow="true">
             <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh"/>
         </generic-popup>
