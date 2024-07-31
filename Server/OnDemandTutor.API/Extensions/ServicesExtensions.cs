@@ -136,7 +136,7 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var projectId = configuration["Authentication:project_id"];
+        var projectId = configuration["Authentication:Audiences"];
 
         services.AddAuthentication(options =>
         {
@@ -153,6 +153,7 @@ public static class ServiceExtensions
                 ValidateAudience = true,
                 ValidAudience = projectId,
                 ValidateLifetime = true,
+                RoleClaimType = ClaimTypes.Role
             };
 
 
@@ -160,13 +161,25 @@ public static class ServiceExtensions
 
         services.AddAuthorization(options =>
         {
+            // base roles
             options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
             options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
             options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
             options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
 
+            // comb roles
+            options.AddPolicy("CustomerOrAdmin", policy => policy.RequireRole("Customer", "Admin"));
+            options.AddPolicy("OperatorOrAdmin", policy => policy.RequireRole("Operator", "Admin"));
         });
 
+
+        services.AddAuthorization(config =>
+        {
+            config.AddPolicy("CustomerOrAdmin", policyBuilder =>
+            {
+                policyBuilder.RequireRole("Customer", "Admin");
+            });
+        });
         return services;
     }
 
