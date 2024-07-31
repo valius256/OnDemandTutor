@@ -9,9 +9,18 @@
                     </div>
                     <hr>
                 </div>
-                <div>
-                    <span class="font-bold">Môn học :</span>
-                    <span class="font-bold text-blue-400 ml-4">{{ this.slot.slot.subject?.name }}</span>
+                <div class="flex place-content-between">
+                    <div>
+                        <span class="font-bold">Môn học :</span>
+                        <span class="font-bold text-blue-400 ml-4">
+                            {{ slot.slot.subject?.name }}
+                        </span>
+                    </div>
+                    <div>
+                        <span :class="getSlotStyle(slot.slot).style">
+                            {{ getSlotStyle(slot.slot).display }}
+                        </span>
+                    </div>
                 </div>
                 <hr>
                 <div class="mt-8">
@@ -35,6 +44,10 @@
                     <span class="font-bold">Phương thức :</span>
                     <span v-if="this.slot.slot.isOnline" class="ml-4 font-bold text-green-500">Online</span>
                     <span v-else class="ml-4 font-bold text-gray-500">Offline</span>
+                </div>
+                <div class="">
+                    <span class="font-bold">Số học sinh :</span>
+                    <span class="ml-4">{{ totalStudent }} / {{ this.slot.slot.numberOfStudents }}</span>
                 </div>
             </div>
             <div>
@@ -80,6 +93,15 @@
 
         <div v-else class="flex flex-col mt-2 w-full">
             <hr>
+            <div class="italic text-center text-sm">
+                Bạn cần trả trước để đặt gia sư
+            </div>
+            <span class="text-center text-red-500 font-bold text-xl">
+                {{ (calcDuration() * slot.slot.createdBy.tutorFeePerHour).toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                }) }}
+            </span>
             <div class="italic text-center">
                 Vui lòng chọn phương thức thanh toán
             </div>
@@ -137,10 +159,23 @@ export default {
             isAboutToPay: false,
             paymentMethod: 0,
             slotData: null,
-            currentUser: null
+            currentUser: null,
+            totalStudent: 0,
         }
     },
     methods: {
+        async fetchSlotStudents() {
+            if (this.slot.slot.id) {
+                try {
+                    const response = await axios.get(
+                        `${import.meta.env.VITE_API_URL}/api/SlotStudent/${this.slot.slot.id}`
+                    );
+                    this.totalStudent = response.data.total
+                } catch (error) {
+                    console.error("Error fetching slot students:", error);
+                }
+            }
+        },
         calcDuration() {
             const startTime = new Date(this.slot.slot.startTime);
             const endTime = new Date(this.slot.slot.endTime);
@@ -195,8 +230,16 @@ export default {
                     })
                 } catch (e) {
                     console.log(e)
+                    let message = "Có vấn đề xảy ra khi gửi yêu cầu"
+                    var errorMessage = e.response.data?.errors[0]?.errorMessage
+                    if (errorMessage && errorMessage.includes("conflict")) {
+                        message = "Bạn không thể tham gia buổi học này do bị trùng lịch với 1 buổi học khác. Hãy thử liên hệ các gia sư để có thể sắp xếp lịch học hợp lý"
+                    }
+                    if (errorMessage && errorMessage.includes("Balance")) {
+                        message = "Dell đủ số dư"
+                    }
                     this.eventBus.emit("open-result-dialog", {
-                        message: "Có vấn đề xảy ra khi gửi yêu cầu",
+                        message: message,
                         type: "Error"
                     })
                 }
@@ -233,8 +276,16 @@ export default {
                     })
                 } catch (e) {
                     console.log(e)
+                    let message = "Có vấn đề xảy ra khi gửi yêu cầu"
+                    var errorMessage = e.response.data?.errors[0]?.errorMessage
+                    if (errorMessage && errorMessage.includes("conflict")) {
+                        message = "Bạn không thể tham gia buổi học này do bị trùng lịch với 1 buổi học khác. Hãy thử liên hệ các gia sư để có thể sắp xếp lịch học hợp lý"
+                    }
+                    if (errorMessage && errorMessage.includes("Balance")) {
+                        message = "Dell đủ số dư"
+                    }
                     this.eventBus.emit("open-result-dialog", {
-                        message: "Có vấn đề xảy ra khi gửi yêu cầu",
+                        message: message,
                         type: "Error"
                     })
                 }
@@ -274,13 +325,34 @@ export default {
         },
         async getCurrentUser() {
             this.currentUser = await this.getUserFromToken()
-        }
+        },
+        getSlotStyle(slot) {
+            let bg = "font-bold ";
+            let display = "";
+            if (slot.slotStatus == 0) {
+                bg += "text-gray-300";
+                display = "Sắp diễn ra"
+            } else if (slot.slotStatus == 1) {
+                bg += "text-green-400";
+                display = "Đang diễn ra"
+            } else if (slot.slotStatus == 2) {
+                bg += "text-black";
+                display = "Đã hủy"
+            } else if (slot.slotStatus == 3) {
+                bg += "text-blue-400";
+                display = "Đã hoàn tất"
+            }
+            return {
+                style: bg, display: display
+            };
+        },
 
     },
     mounted() {
         this.fetchBalance()
         this.getCurrentUser()
         this.getSlotData()
+        this.fetchSlotStudents()
     }
 }
 </script>

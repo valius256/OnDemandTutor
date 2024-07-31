@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using Google.Rpc;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -55,13 +56,20 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             return await _unitOfWork.SlotRepository.GetSlotsAsync(request);
         }
-
+        public async Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDtos tutor)
+        {
+            if (tutor.Role != RoleStatus.Tutor)
+            {
+                throw new BadRequestException("This User is not a tutor");
+            }
+            return (await _unitOfWork.SlotRepository.GetClosestFutureSlotOfTutor(tutor.Id)).Adapt<GetSlotsDtos>();
+        }
         public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)
         {
             var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
             if (slot is null)
             {
-                throw new BadRequestException("Slot not found");
+                throw new NotFoundException("Slot not found");
             }
             return slot;
         }
@@ -87,9 +95,29 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slot.CreateById).ToListAsync();
             foreach (var existSlot in tutorAllSlot)
             {
+                if (slot.Id == existSlot.Id) continue;
                 if (slot.StartTime <= existSlot.EndTime && slot.EndTime >= existSlot.StartTime)
                 {
                     throw new BadRequestException($"There is a schedule conflict with slot [Start : {existSlot.StartTime}; End : {existSlot.EndTime}], please check again");
+                }
+            }
+        }
+        public async Task ValidateSlotForStudent(int slotId, int studentId)
+        {
+            var slot = await _slotRepository.FirstOrDefaultAsync(s => s.Id == slotId);
+            if (slot == null)
+            {
+                throw new NotFoundException("Slot not found");
+            }
+            var listOfStudentSlots = await _slotStudentServices.GetSimpleStudentSlotOfStudent(studentId);
+
+            foreach (var studentSlot in listOfStudentSlots)
+            {
+                if (studentSlot.Slot.Id ==  slotId) continue;
+                // Check if the slot times overlap
+                if (slot.StartTime <= studentSlot.Slot.EndTime && slot.EndTime >= studentSlot.Slot.StartTime)
+                {
+                    throw new BadRequestException($"There is a schedule conflict with slot [Start : {studentSlot.Slot.StartTime}; End : {studentSlot.Slot.EndTime}], please check again");
                 }
             }
         }
@@ -172,7 +200,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                     decimal slotCost = tutor.TutorFeePerHour * (decimal)duration;
                     if (studentBalance - slotCost >= 0)
                     {
-                        await _userServices.UpdateBalanceAsync(slotStudent.UserId, 0, slotCost);
+                        await _userServices.UpdateBalanceAsync(slotStudent.UserId, -slotCost);
                         await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
                         await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
                     }
@@ -292,81 +320,23 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
         public async Task<bool> EnrollForSlot(int studentId, int slotId)
         {
-            var currEnrollSlot = await _slotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
-            if (currEnrollSlot == null)
-            {
-                throw new ModelException($"{slotId}", "Slot not found");
-            }
-
             // check if student already enroll this slot
-            var existEnrollSlot = await _slotRepository.Where(sl =>
-                sl.Id == slotId && sl.SlotStudents.Any(ss => ss.UserId == studentId)).FirstOrDefaultAsync();
-            if (existEnrollSlot != null)
+            var existStudentSlot = await _slotStudentServices.GetSlotStudentAsync(studentId, slotId);
+            if (existStudentSlot != null)
             {
-                throw new ModelException($"{slotId}", $"This user: {studentId} has enroll for this slot {slotId}");
+                throw new BadRequestException($"This user: {studentId} has enroll for this slot {slotId}");
             }
 
-            // Check if the student is already enrolled in this slot
-            var existingEnrollment = await _slotStudentServices.GetSlotStudentById(slotId);
-            if (existingEnrollment != null && existingEnrollment.UserId == studentId)
-            {
-                //return false;
-                throw new ModelException($"{slotId}", "Student is already enrolled in this slot");
-            }
-            var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);
+            await ValidateSlotForStudent(slotId, studentId);
 
-            TimeSpan buffer = TimeSpan.FromMinutes(5);
-            DateTime adjustedStartTime = currEnrollSlot.StartTime - buffer;
-            DateTime adjustedEndTime = currEnrollSlot.EndTime + buffer;
-
-            foreach (var studentSlot in listOfStudentSlots)
-            {
-                // Exclude the current slot being checked
-                if (studentSlot.Id == slotId) continue;
-
-                // Check if the slot times overlap
-                if (studentSlot.StartTime < adjustedEndTime && studentSlot.EndTime > adjustedStartTime)
-                {
-                    throw new ModelException($"{slotId}", $"Conflicts with another slot id: {studentSlot.Id}");
-                }
-            }
-
-            await _slotStudentServices.CreateSlotStudent(slotId, studentId);
+            await _slotStudentServices.CreateSlotStudentIfNotExists(slotId, studentId);
             return true;
         }
 
-        public async Task<SlotConflictDto> IsSlotConflict(int slotId, int studentId)
-        {
-            var currEnrollSlot = await _slotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
-            if (currEnrollSlot == null)
-            {
-                throw new ModelException($"{slotId}", "Slot not found");
-            }
-
-            var listOfStudentSlots = await GetListSlotOfStudentByStudentId(studentId);
-            var conflictDto = new SlotConflictDto();
-
-            if (listOfStudentSlots != null)
-            {
-                foreach (var slot in listOfStudentSlots)
-                {
-                    if (slot.Id != slotId && slot.StartTime == currEnrollSlot.StartTime && slot.EndTime == currEnrollSlot.EndTime)
-                    {
-                        conflictDto.IsConflict = true;
-                        conflictDto.conflictSlotId = slot.Id;
-                        break;
-                    }
-                }
-            }
-
-            return conflictDto;
-        }
-
-
-        public async Task<List<GetSlotWithSlotStudentDto>?> GetListSlotOfStudentByStudentId(int studentId)
-        {
-            return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
-        }
+        //public async Task<List<GetSlotWithSlotStudentDto>> GetListSlotOfStudentByStudentId(int studentId)
+        //{
+        //    return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
+        //}
 
     }
 }

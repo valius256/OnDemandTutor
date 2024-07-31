@@ -5,6 +5,9 @@
           <router-link :to="'/tutor-guest/' + viewingId + '/profile'" class="px-4 py-2 rounded-lg hover:bg-blue-800">
             <i class="fa fa-user text-2xl mr-2"></i>Thông tin gia sư
           </router-link>
+          <router-link :to="'/tutor-guest/' + viewingId + '/videos'" class="px-4 py-2 rounded-lg hover:bg-blue-800">
+            <i class="fa fa-film text-2xl mr-2"></i>Video
+          </router-link>
           <router-link :to="'/tutor-guest/' + viewingId + '/schedule'" class="px-4 py-2 rounded-lg hover:bg-blue-800">
             <i class="fa fa-calendar text-2xl mr-2"></i>Thời khóa biểu
           </router-link>

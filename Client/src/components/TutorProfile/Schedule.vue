@@ -71,7 +71,7 @@
     <add-slot-modal :showModal="showModal" @close="showModal = false" @add="refresh" :currentUser="currentUser" />
     <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
       :notOverflow="true">
-      <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh" />
+      <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh" :tutorId="currentUser.id" :refresh="refresh" />
     </generic-popup>
   </div>
 </template>
@@ -124,32 +124,13 @@ export default {
       }
     },
     async getClosestSlot() {
-      const userId = this.currentUser.id;
-
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL
-          }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.token}`,
-            },
-          }
-        );
-
-        if (response.data && response.data.items) {
-          const slots = response.data.items;
-          const now = new Date();
-          // Find the closest upcoming slot
-          this.upcomingSlot = slots.find(
-            (slot) => new Date(slot.startTime) > now
-          );
-        } else {
-          this.upcomingSlot = null; // Ensure upcomingSlot is null if no slots are found
+      const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Slot/closest-of-tutor', {
+        headers: {
+          'Authorization': "Bearer " + localStorage.token
         }
-      } catch (error) {
-        console.error("Error fetching user slots:", error);
-        this.upcomingSlot = null; // Handle errors by setting upcomingSlot to null
+      })
+      if (response.data) {
+        this.upcomingSlot = response.data
       }
     },
     getSlotStatus(startTime, endTime) {

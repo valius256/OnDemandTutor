@@ -1,11 +1,13 @@
 ﻿using Mapster;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
+using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
@@ -15,13 +17,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         private readonly IUnitOfWorkRepository _unitOfWork;
 
         private readonly INotificationService _notificationService;
-        // private readonly ISlotServices _slotServices;
+        private readonly ISlotStudentServices _slotStudentServices;
 
-        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService)
+        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, ISlotStudentServices slotStudentServices)
         {
             _unitOfWork = unitOfWork;
-            // _slotServices = slotServices;
             _notificationService = notificationService;
+            _slotStudentServices = slotStudentServices;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -77,12 +79,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
             return mappedResult;
         }
-        //public async Task<PagedResult<GetClassWithStudentClassDto>> GetClassesWithStudentsOfTutor(int tutorId, int page, int limit)
-        //{
-        //    var pagedResult = await _unitOfWork.ClassRepository.GetClassWithStudentClassOfTeacher(tutorId, page, limit);
-        //    var mappedResult = pagedResult.Adapt<PagedResult<GetClassWithStudentClassDto>>();
-        //    return mappedResult;
-        //}
 
         public async Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id)
         {
@@ -225,21 +221,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
         public async Task<bool> EnrollCLass(int classId, int studentId)
         {
+            await ValidateClassForStudent(classId, studentId);
             var classToEnroll = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
-            if (classToEnroll == null)
-            {
-                throw new ModelException($"{classId}", "Class not found");
-            }
-            
-            var allClassRecordWithSlots = await _unitOfWork.ClassRepository.GetClassWithSlotsByStudentIdAsync(studentId);
-            
-            foreach (var slot in classToEnroll.Slots)
-            {
-                if (allClassRecordWithSlots.SelectMany(c => c.Slots).Any(s => s.StartTime < slot.EndTime && s.EndTime > slot.StartTime))
-                {
-                    throw new ModelException($"{classToEnroll}", $"The class has a time conflict with the student's existing slots the classId conflict is: {classId}");
-                }
-            }
 
             // Create a new StudentClass entity
             var studentClass = new Models.Models.StudentClass()
@@ -249,7 +232,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             };
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"User {studentId} đã tham gia class: {classToEnroll.Name} thành công",
+                Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
                 IsViewed = false,
                 ReceiverId = studentId,
             });
@@ -261,6 +244,28 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return true;
         }
 
+        public async Task ValidateClassForStudent(int classId, int studentId)
+        {
+            var listOfStudentSlots = await _slotStudentServices.GetSimpleStudentSlotOfStudent(studentId);
+            var classDetail = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
+            if (classDetail == null)
+            {
+                throw new NotFoundException("Class not found");
+            }
+            foreach (var classSlot in classDetail.Slots)
+            {
+                foreach (var studentSlot in listOfStudentSlots)
+                {
+                    // Check if the slot times overlap
+                    if (classSlot.StartTime <= studentSlot.Slot.EndTime && classSlot.EndTime >= studentSlot.Slot.StartTime)
+                    {
+                        throw new BadRequestException($"Slot [Start : {classSlot.StartTime}; End : {classSlot.EndTime}] of the class has conflict with a current slot of student" +
+                            $" [Start : {studentSlot.Slot.StartTime}; End : {studentSlot.Slot.EndTime}], please check again");
+                    }
+                }
+            }
+
+        }
     }
 
 }

@@ -103,10 +103,10 @@ export default {
                                 endTime: slot.endTime,
                                 teachAddress: slot.teachAddress,
                                 isOnline: slot.isOnline,
-                                user: slot.user,
                                 createdBy: this.tutor,
                                 subject: slot.subject,
-                                class: slot.class
+                                class: slot.class,
+                                numberOfStudents : slot.numberOfStudents
                             },
                             paymentStatus: -2
                         })

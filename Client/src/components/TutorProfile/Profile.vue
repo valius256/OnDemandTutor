@@ -84,7 +84,7 @@
           </tr>
           <tr>
             <td>Lịch dạy</td>
-            <td>{{ user.scheduleDescription }}</td>
+            <td>{{ user.scheduleDesciption }}</td>
           </tr>
           <tr>
             <td>Trạng thái gia sư</td>
@@ -117,7 +117,8 @@
           <tr>
             <td>Date of Birth</td>
             <td>
-              <input class="w-full rounded border border-gray-200 p-1" type="date" v-model="editDto.dob" />
+              <input class="w-full rounded border border-gray-200 p-1" type="date"
+              v-model="editDto.dob" />
             </td>
           </tr>
           <tr>
@@ -195,12 +196,12 @@ export default {
       this.editDto.firstName = this.user.firstName;
       this.editDto.lastName = this.user.lastName;
       this.editDto.phone = this.user.phone;
-      this.editDto.dob = this.user.dob;
+      this.editDto.dob = this.user.dob.substring(0,10);
       this.editDto.address = this.user.address;
       this.editDto.gender =
         this.user.sex == "Male" ? 1 : this.user.sex == "Female" ? 0 : 2;
       this.editDto.tutorFeePerHour = this.user.tutorFeePerHour;
-      this.editDto.scheduleDescription = this.user.scheduleDescription;
+      this.editDto.scheduleDescription = this.user.scheduleDesciption;
     },
     async refresh() {
       this.loginedUser = await this.getUserFromToken();
@@ -234,7 +235,7 @@ export default {
           sex: this.editDto.gender,
           dob: this.editDto.dob,
           tutorFeePerHour: this.editDto.tutorFeePerHour,
-          scheduleDescription: this.editDto.scheduleDescription,
+          scheduleDesciption: this.editDto.scheduleDescription,
         };
         this.eventBus.emit("open-loading-popup", {
           message: "Vui lòng chờ...",

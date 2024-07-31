@@ -36,31 +36,19 @@ public class PaymentController : BaseController<PaymentController>
     public async Task<IActionResult> CreatePaymentForSlot([FromBody] PaySlotDto paymentInfo)
     {
         var paymentUrl = string.Empty;
-        if (paymentInfo.SlotId != null)
-        {
-            var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
-
-            paymentUrl = await _vnPayServices.CreatePaymentForSlotUrl(paymentInfo, HttpContext, slot.Adapt<GetSlotsDtos>());
-        }
+        var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId);
+        paymentUrl = await _vnPayServices.CreatePaymentForSlotUrl(paymentInfo, HttpContext, slot.Adapt<GetSlotsDtos>());
         return Ok(paymentUrl);
     }
 
     [HttpPost("create-payment-slot-user-balance")]
     [Authorize]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<string>), 200)]
+    [ProducesResponseType(typeof(IActionResult), 200)]
     public async Task<IActionResult> CreatePaymentForSlotByBalance([FromBody] PaySlotDto paymentInfo)
     {
-        string result;
-        if (paymentInfo.SlotId != null)
-        {
-            var slot = await _slotServices.GetSlotByIdAsync(paymentInfo.SlotId.Value);
-
-            result = await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext, slot.Adapt<GetSlotsDtos>());
-            return Ok(result);
-        }
-
-        return BadRequest("cannot inittialize payment cause slot is null");
+        await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext);
+        return Ok();
     }
     [Authorize]
     [HttpPost("create-payment-class")]
@@ -80,7 +68,7 @@ public class PaymentController : BaseController<PaymentController>
     public async Task<IActionResult> PaymentExecute()
     {
         var response = await _vnPayServices.PaymentExecute(Request.Query);
-        var redirectTo = Redirect(response.RedirectResult);
+        var redirectTo = Redirect(response.RedirectResult ?? "");
         if (redirectTo == null)
         {
             return Ok(response);
