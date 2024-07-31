@@ -1,5 +1,11 @@
 <template>
   <div class="p-4 bg-white rounded-b-lg flex flex-col w-screen lg:w-auto">
+    <div class="flex gap-4 justify-center" v-if="slot.slotStatus == 0">
+      <button v-if="!isEdit" @click="toggleEditMode" class="px-4 py-2 bg-blue-400 hover:bg-blue-200 font-bold text-white rounded-lg">Chỉnh sửa</button>
+      <button v-if="isEdit" @click="toggleEditMode" class="px-4 py-2 bg-green-400 hover:bg-green-200 font-bold text-white rounded-lg">Xác nhận</button>
+      <button v-if="isEdit" @click="toggleEditMode" class="px-4 py-2 bg-red-400 hover:bg-red-200 font-bold text-white rounded-lg">Hủy bỏ</button>
+      <button class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Hủy Slot</button>
+    </div>
     <div class="flex gap-4 w-full">
       <div class="w-full">
         <div class="mb-8" v-if="slot.class">
@@ -67,19 +73,20 @@
               <td class="p-2">
                 <div class="flex gap-2 items-center">
                   <img class="w-16 h-16 rounded-full" :src="student.user.avatarImageUrl">
-                  <span class="font-bold">{{ (student.user.firstName ?? "") + " " + (student.user.lastName ?? "") }}</span>
+                  <span class="font-bold">{{ (student.user.firstName ?? "") + " " + (student.user.lastName ?? "")
+                    }}</span>
                 </div>
 
               </td>
               <td class="p-2">{{ student.user.email }}</td>
               <td class="p-2">{{ student.user.phone }}</td>
               <td class="w-48 text-wrap">
-                <star-rating class="flex justify-center" :star-size="20" :rating="student.rating" :round-start-rating="false"
-                            :read-only="true" />
+                <star-rating class="flex justify-center" :star-size="20" :rating="student.rating"
+                  :round-start-rating="false" :read-only="true" />
                 {{ student.feedback }}
               </td>
             </tr>
-            
+
           </tbody>
         </table>
       </div>
@@ -108,30 +115,35 @@ import StarRating from 'vue-star-rating'
 export default {
   name: "SlotDetailPopup",
   props: ["slot", "close"],
-  components : {StarRating},
+  components: { StarRating },
   data() {
     return {
       totalPage: 100,
       pageSize: 5,
       currentPage: 1,
       slotStudents: [],
+      isEdit : false,
+      editingDate : null,
+      editingStartHour : null,
+      editingEndHour : null,
+      editDto : {
+        startTime : null,
+        endTime : null,
+        teachAddress : "",
+        subjectId : 0,
+        isOnline : false,
+        numberOfStudents : 1
+      }
     };
   },
   methods: {
+    toggleEditMode(){
+      this.isEdit = !this.isEdit
+    },
     calcDuration() {
       const startTime = new Date(this.slot.startTime);
       const endTime = new Date(this.slot.endTime);
       return (endTime - startTime) / 3600000;
-    },
-    beautifyDatetime(datetime) {
-      const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      };
-      return new Date(datetime).toLocaleDateString("vi-VN", options);
     },
     async fetchSlotStudents() {
       console.log("Fetching slot students for slotId:", this.slot.id);

@@ -55,39 +55,6 @@ namespace OnDemandTutor.DataAccess.Repository
 
             return slot.Adapt<GetSlotDetailDto>();
         }
-        public async Task<CreateSlotsDto> CreateSlotAsync(CreateSlotsDto slotDto)
-        {
-            var slot = slotDto.Adapt<Slot>();
-
-            await dbSet.AddAsync(slot);
-            await context.SaveChangesAsync();
-
-            return slotDto;
-        }
-        public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
-        {
-            var existingSlot = await dbSet.FindAsync(slotDto.Id);
-            if (existingSlot == null)
-            {
-                throw new Exception("Slot not found");
-            }
-
-            existingSlot.StartTime = slotDto.StartTime;
-            existingSlot.EndTime = slotDto.EndTime;
-            existingSlot.TeachAddress = slotDto.TeachAddress;
-            existingSlot.ClassId = slotDto.ClassId;
-            existingSlot.SubjectId = slotDto.SubjectId;
-            existingSlot.IsOnline = slotDto.IsOnline;
-            existingSlot.NumberOfStudents = slotDto.NumberOfStudents;
-            existingSlot.SlotStudents.FirstOrDefault().PaymentStatus = slotDto.PaymentStatus;
-            existingSlot.ActualEndTime = slotDto.ActualEndTime;
-            // Update other properties as needed
-
-            context.Entry(existingSlot).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-
-            return slotDto;
-        }
         public async Task<bool> DeleteSlotAsync(int id)
         {
             var slot = await dbSet.FindAsync(id);

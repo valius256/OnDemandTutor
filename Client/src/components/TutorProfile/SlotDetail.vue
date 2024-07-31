@@ -46,9 +46,7 @@ export default {
     },
     slotStyle(slot) {
       const startTime = new Date(slot.startTime);
-      console.log(startTime);
       const endTime = new Date(slot.endTime);
-      console.log(endTime);
       const durationInHour = (endTime - startTime) / 3600000;
       const distanceInMin = this.getDistanceInMin(this.shiftZoomSize);
       const top =

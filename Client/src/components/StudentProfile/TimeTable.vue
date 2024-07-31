@@ -103,12 +103,10 @@ export default {
                 const nextDay = new Date(this.selectedWeek);
                 nextDay.setDate(this.selectedWeek.getDate() + i);
                 const dateStr = this.toSqlDateString(nextDay)
-                console.log(dateStr)
                 this.daysInWeek[i].specificDay = this.sqlDateStringToSlashFormat(dateStr)
             }
             let endDate = new Date(this.selectedWeek)
             endDate.setDate(this.selectedWeek.getDate() + 7)
-            console.log(this.daysInWeek)
             await this.fetching(this.toSqlDateString(this.selectedWeek), this.toSqlDateString(endDate))
             //await this.fetchLessons(this.selectedWeek, endDate)
         },
@@ -183,7 +181,6 @@ export default {
             const dateToCompare = (this.slashDateFormatToSqlDateString(date))
             const today = new Date()
             const todayDateString = `${today.getFullYear()}-${String((today.getMonth() + 1)).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
-            console.log(dateToCompare, todayDateString)
             return dateToCompare == todayDateString
         }
     },

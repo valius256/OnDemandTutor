@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Paging;
@@ -11,10 +12,12 @@ namespace OnDemandTutor.API.Controllers;
 public class SlotController : ControllerBase
 {
     private readonly ISlotServices _slotService;
+    private readonly IAuthServices _authServices;
 
-    public SlotController(ISlotServices slotService)
+    public SlotController(ISlotServices slotService, IAuthServices authServices)
     {
         _slotService = slotService;
+        _authServices = authServices;
     }
     //[Authorize]
     [HttpGet]
@@ -45,25 +48,19 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> CreateSlot([FromBody] CreateSlotsDto slotDto)
     {
-        var createdSlot = await _slotService.CreateSlotAsync(slotDto);
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var createdSlot = await _slotService.CreateSlotAsync(slotDto, user);
         return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
 
     }
 
     [Authorize]
-    [HttpPut("{id}")]
-    [ProducesResponseType(typeof(UpdateSlotDto), 200)]
-    public async Task<IActionResult> UpdateSlot(int id, [FromBody] UpdateSlotDto slotDto)
+    [HttpPut]
+    [ProducesResponseType(typeof(GetSlotsDtos), 200)]
+    public async Task<IActionResult> UpdateSlot([FromBody] UpdateSlotDto slotDto)
     {
-        if (id != slotDto.Id)
-        {
-            return BadRequest("ID mismatch between route parameter and request body.");
-        }
-        var updatedSlot = await _slotService.UpdateSlotAsync(slotDto);
-        if (updatedSlot == null)
-        {
-            return NotFound();
-        }
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        await _slotService.UpdateSlotAsync(slotDto, user);
         return NoContent();
 
     }
