@@ -1,5 +1,5 @@
 <template>
-  <div class="w-64 bg-blue-50">
+  <div class="w-64 bg-blue-100 ">
     <div>
       <div class="flex flex-col font-bold">
         <router-link to="/tutor/profile" class="px-2 py-4 hover:bg-blue-800">
@@ -9,10 +9,13 @@
           <i class="fa fa-calendar text-2xl mr-2"></i>Thời khóa biểu
         </router-link>
         <router-link to="/tutor/subject" class="px-2 py-4 hover:bg-blue-800">
-          <i class="fa fa-calendar text-2xl mr-2"></i>Môn học của tôi
+          <i class="fa fa-book text-2xl mr-2"></i>Môn học của tôi
         </router-link>
         <router-link to="/tutor/myclass" class="px-2 py-4 hover:bg-blue-800">
           <i class="fa fa-group text-2xl mr-2"></i>Lớp học của tôi
+        </router-link>
+        <router-link to="/tutor/videos" class="px-2 py-4 hover:bg-blue-800">
+          <i class="fa fa-film text-2xl mr-2"></i>Video của tôi
         </router-link>
         <router-link to="/tutor/payment" class="px-2 py-4 hover:bg-blue-800">
           <i class="fa fa-money text-2xl mr-2"></i>Thanh toán

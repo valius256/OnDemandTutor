@@ -135,8 +135,13 @@ export default {
                     })
                 } catch (e) {
                     console.log(e)
+                    let message = "Có vấn đề xảy ra khi gửi yêu cầu"
+                    var errorMessage = e.response.data?.errors[0]?.errorMessage
+                    if (errorMessage && errorMessage.includes("conflict")) {
+                        message = "Bạn không thể tham gia lớp học vì thời khóa biểu của lớp này vướng các buổi học khác của bạn. Hãy thử liên hệ các gia sư để có thể sắp xếp lịch học hợp lý"
+                    }
                     this.eventBus.emit("open-result-dialog", {
-                        message: "Có vấn đề xảy ra khi gửi yêu cầu",
+                        message: message,
                         type: "Error"
                     })
                 }

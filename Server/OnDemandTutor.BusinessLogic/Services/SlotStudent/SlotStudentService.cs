@@ -37,6 +37,11 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user?.Id);
         return slotStudent.Adapt<List<GetSlotStudentDetailDto>>();
     }
+
+    public async Task<List<GetSlotStudentDetailDto>> GetSimpleStudentSlotOfStudent(int studentId)
+    {
+        return (await _unitOfWorkRepository.SlotStudentRepository.GetSlotOfStudent(studentId)).Adapt<List<GetSlotStudentDetailDto>>();
+    }
     public async Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto)
     {
         var slotStudent =
@@ -77,32 +82,6 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-
-    public async Task<Models.Models.SlotStudent> CreateSlotStudentIfNotExist(int slotId, int studentId)
-    {
-        var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
-            st.SlotId == slotId && st.UserId == studentId);
-        if (recordInDb == null)
-        {
-            recordInDb = new Models.Models.SlotStudent()
-            {
-                SlotId = slotId,
-                UserId = studentId,
-                PaymentStatus = PaymentStatus.Notpaid,
-            };
-            await _unitOfWorkRepository.SlotStudentRepository.AddAsync(recordInDb);
-            await _unitOfWorkRepository.SaveChangesAsync();
-        }
-
-        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        //{
-        //    Content = $"this slot with slot Id{slotId } and studentId{studentId} has been created  ",
-        //    IsViewed = true,
-        //    ReceiverId = recordInDb.UserId,
-        //});
-        return recordInDb;
-    }
-
     public async Task<SlotStudentDto> GetSlotStudentById(int slotId)
     {
         var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(u => u.SlotId == slotId);
@@ -148,17 +127,20 @@ public class SlotStudentService : ISlotStudentServices
         return slotStudentModel.Adapt<List<SlotStudentDto>>();
     }
 
-    public async Task<bool> CreateSlotStudent(int slotId, int studentId)
+    public async Task<bool> CreateSlotStudentIfNotExists(int slotId, int studentId)
     {
-        var newSlotStudentModel = new Models.Models.SlotStudent()
+        var existSlotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(ss => ss.SlotId == slotId && ss.UserId == studentId);
+        if (existSlotStudent == null)
         {
-            UserId = studentId,
-            SlotId = slotId,
-            CreatedDate = DateTime.Now,
-            PaymentStatus = PaymentStatus.Notpaid,
-        };
-        await _unitOfWorkRepository.SlotStudentRepository.AddAsync(newSlotStudentModel);
-        await _unitOfWorkRepository.SaveChangesAsync();
+            var newSlotStudentModel = new Models.Models.SlotStudent()
+            {
+                UserId = studentId,
+                SlotId = slotId,
+                PaymentStatus = PaymentStatus.Notpaid,
+            };
+            await _unitOfWorkRepository.SlotStudentRepository.AddAsync(newSlotStudentModel);
+            await _unitOfWorkRepository.SaveChangesAsync();
+        }   
         return true;
     }
     public async Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, decimal rate, string feedback)

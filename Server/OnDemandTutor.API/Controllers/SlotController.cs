@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.WithDrawDto;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers;
@@ -24,7 +25,6 @@ public class SlotController : ControllerBase
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
     public async Task<IActionResult> GetSlots([FromQuery] PagingModel<QuerySlotDto> pagingModel)
     {
-
         var slots = await _slotService.GetSlotsAsync(pagingModel);
         return Ok(slots);
 
@@ -35,14 +35,18 @@ public class SlotController : ControllerBase
     public async Task<IActionResult> GetSlotById(int id)
     {
         var slot = await _slotService.GetSlotByIdAsync(id);
-        if (slot == null)
-        {
-            return NotFound();
-        }
         return Ok(slot);
 
     }
+    [HttpGet("closest-of-tutor")]
+    [ProducesResponseType(typeof(GetSlotsDtos), 200)]
+    public async Task<IActionResult> GetClosestSlotOfTutor()
+    {
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        var slot = await _slotService.GetClosestSlotOfTutor(user);
+        return Ok(slot);
 
+    }
     [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]

@@ -31,6 +31,10 @@ namespace OnDemandTutor.DataAccess.Repository
             var queryTutorSubjectDto = request.Filter;
             if (queryTutorSubjectDto != null)
             {
+                if (queryTutorSubjectDto.TutorId.HasValue)
+                {
+                    query = query.Where(ts => ts.UserId == queryTutorSubjectDto.TutorId);
+                }
                 if (queryTutorSubjectDto.Status.HasValue)
                 {
                     query = query.Where(ts => ts.Status == queryTutorSubjectDto.Status);

@@ -67,29 +67,29 @@ namespace OnDemandTutor.DataAccess.Repository
             await context.SaveChangesAsync();
             return true;
         }
+        //public async Task<List<GetSlotWithSlotStudentDto>> GetSlotWithSlotStudentByStudentId(int studentId)
+        //{
+        //    var listSlot = await dbSet
+        //        .Include(ld => ld.SlotStudents)
+        //        .Where(ld => ld.SlotStudents.Any(ss => ss.UserId == studentId))
+        //        .ToListAsync();
 
 
-        public async Task<GetSlotWithSlotStudentDto?> GetSlotWithSlotStudentStudentById(int id)
+        //    return listSlot.Adapt<List<GetSlotWithSlotStudentDto>>();
+        //}
+
+        public async Task<Slot?> GetClosestFutureSlotOfTutor(int tutorId)
         {
-            var slot = await dbSet
-                .Include(ld => ld.SlotStudents)
-                .FirstOrDefaultAsync(ld => ld.Id == id);
-
-            return slot?.Adapt<GetSlotWithSlotStudentDto>();
+            return await dbSet.AsQueryable()
+                .Include(s => s.Subject)
+                .Include(s => s.CreatedBy)
+                .Include(s => s.Class)
+                .OrderBy(s => s.StartTime)
+                .Where(s => s.EndTime > DateTime.Now)
+                .Take(1)
+                .FirstOrDefaultAsync(s => s.CreateById == tutorId);
         }
 
-        public async Task<List<GetSlotWithSlotStudentDto>?> GetSlotWithSlotStudentByStudentId(int studentId)
-        {
-            var listSlot = await dbSet
-                .Include(ld => ld.SlotStudents)
-                .Where(ld => ld.SlotStudents.Any(ss => ss.UserId == studentId))
-                .ToListAsync();
-
-
-            return listSlot?.Adapt<List<GetSlotWithSlotStudentDto>>();
-        }
-
-        
     }
 }
 

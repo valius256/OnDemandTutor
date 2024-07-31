@@ -7,6 +7,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Slot;
 public interface ISlotServices
 {
     Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
+    Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDtos tutor);
     Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
     Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user);
     Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
@@ -16,6 +17,6 @@ public interface ISlotServices
     Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
     Task<bool> EnrollForSlot(int studentId, int slotId);
-    Task<SlotConflictDto> IsSlotConflict(int slotId, int studentId);
-    Task<List<GetSlotWithSlotStudentDto>?> GetListSlotOfStudentByStudentId(int studentId);
+    Task ValidateSlotForStudent(int slotId, int studentId);
+
 }

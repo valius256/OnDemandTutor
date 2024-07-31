@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Payment;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
@@ -32,6 +34,7 @@ public class VnPayServices : IVnPayServices
     private readonly IClassServices _classServices;
     private readonly ISlotServices _slotServices;
     private readonly IStudentClassService _studentClassService;
+    private readonly IAuthServices _authServices;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public VnPayServices(IOptions<VnPay> vnPay, IConfiguration configuration,
@@ -39,7 +42,7 @@ public class VnPayServices : IVnPayServices
         ISlotStudentServices slotStudentServices, IPaymentProcessor paymentProcessor,
         IStudentClassService studentClassService, ISlotServices slotServices,
         IClassServices classServices, IHttpContextAccessor httpContextAccessor,
-        IUserServices userServices)
+        IUserServices userServices, IAuthServices authServices)
     {
         _vnPay = vnPay.Value;
         _configuration = configuration;
@@ -51,14 +54,18 @@ public class VnPayServices : IVnPayServices
         _classServices = classServices;
         _slotServices = slotServices;
         _studentClassService = studentClassService;
+        _authServices = authServices;
         _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<string> CreatePaymentForSlotUrl(PaySlotDto model, HttpContext context, GetSlotsDtos slot)
     {
+        var student = await _authServices.GetUserProfileByClaim(context.User); 
+
+        await _slotServices.ValidateSlotForStudent(slot.Id, student.Id);
+
         List<int> listSlotId = new List<int> { slot.Id };
         var tick = DateTime.Now.Ticks.ToString();
-
         var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
         var slotCost = (tutor.TutorFeePerHour * (decimal)(slot.EndTime - slot.StartTime).TotalHours);
 
@@ -106,16 +113,20 @@ public class VnPayServices : IVnPayServices
 
     private async Task HandleSingleSlotPayment(IPaymentResponse response)
     {
-        var slotStudent = await _slotStudentServices.GetSlotStudentAsync(response.SlotId.First(), response.UserId);
-        if (slotStudent == null)
+        if (response.SlotId == null)
         {
-            await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());
+            throw new BadRequestException("Payment Error");
         }
+        await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());     
         await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId);
     }
 
     private async Task HandleClassPayment(IPaymentResponse response)
     {
+        if (response.ClassId == null)
+        {
+            throw new BadRequestException("Payment Error");
+        }
         var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
         
         await _transactionServices.CreateTransactionForClassPayment(response.OrderId, response.UserId, response.ClassId.Value, response.Money);
@@ -124,7 +135,7 @@ public class VnPayServices : IVnPayServices
     
         foreach (var slot in slotInClass.Slots)
         {
-            await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, response.UserId);
+            await _slotServices.EnrollForSlot(response.UserId, slot.Id);
             await _slotStudentServices.SlotStudentPaidAsync(slot.Id, response.UserId);
         }
     }
@@ -155,19 +166,22 @@ public class VnPayServices : IVnPayServices
         var tick = DateTime.Now.Ticks.ToString();
         var paymentUrl = CreateVnPayRequest(model, context, null, null, model.Amount, model.Notes, true, tick, model.returnUrl);
 
-        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, null, null, context, TransactionType.Recharge);
+        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", model.Amount, model.Notes, new List<int>(), null, context, TransactionType.Recharge);
         await _transactionServices.CreateTransactionDb(transactionDto);
         return paymentUrl;
     }
 
     public async Task<string> CreatePaymentForClassUrl(PayClassDto model, HttpContext context, GetClassFullDataSlotDto classDto)
     {
-        var userId = context.User.FindFirst(cl => cl.Type == "id")?.Value;
+        var student = await _authServices.GetUserProfileByClaim(context.User);
+        await _classServices.ValidateClassForStudent(classDto.Id, student.Id);
+
         var tutorPriceInCurr = await _userServices.GetUserProfileByIdAsync(classDto.TutorId);
         var tutorFee = tutorPriceInCurr.TutorFeePerHour;
 
         double totalHoursNotYet = 0;
         List<int> slotIds = new List<int>();
+
         foreach (var slot in classDto.Slots)
         {
             if (slot.SlotStatus == SlotStatus.NotYet && slot.PaymentStatus == PaymentStatus.Notpaid)
@@ -177,6 +191,7 @@ public class VnPayServices : IVnPayServices
                 slotIds.Add(slot.Id);
             }
         }
+
         var totalAmount = (decimal)(tutorFee * (decimal)totalHoursNotYet)!;
         if (!model.IsFullPay)
         {
@@ -194,30 +209,33 @@ public class VnPayServices : IVnPayServices
         return paymentUrl;
     }
 
-    public async Task<string> CreatePaymentForSlotByUserBalance(PaySlotDto model, HttpContext context,
-        GetSlotsDtos slot)
+    public async Task CreatePaymentForSlotByUserBalance(PaySlotDto model, HttpContext context)
     {
-        var userId = context.User.FindFirst(c => c.Type == "id")?.Value;
-        var listSlotId = new List<int>();
-        listSlotId.Add(slot.Id);
-        var tick = DateTime.Now.Ticks.ToString();
+        var slot = await _slotServices.GetSlotByIdAsync(model.SlotId);
+        var user = await _authServices.GetUserProfileByClaim(context.User);
+
+        await _slotServices.ValidateSlotForStudent(slot.Id, user.Id);
+
+        var listSlotId = new List<int>
+        {
+            slot.Id
+        };
 
         var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
         decimal slotCost = (tutor.TutorFeePerHour * (decimal)(slot.EndTime - slot.StartTime).TotalHours);
-        var studentBalance = await _userServices.GetBalanceAsync(int.Parse(userId));
+        var studentBalance = await _userServices.GetBalanceAsync(user.Id);
         
         if (slotCost > studentBalance )
         {
-            throw new ModelException($"{nameof(Models.Models.User.Balance)}", "don't have enought to paid");
+            throw new BadRequestException($"Inadequate Balance");
         }
         
-        
+        var tick = DateTime.Now.Ticks.ToString();
         var transactionDto = CreateTransactionDto(tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
-        var studentModel = await _userServices.GetProfileAsync(int.Parse(userId), null, null);
-        await _slotStudentServices.CreateSlotStudentIfNotExist(slot.Id, studentModel.Id);
-        
-        return model.ReturnUrl;
+        await _slotServices.EnrollForSlot(user.Id, slot.Id);
+        await _userServices.UpdateBalanceAsync(user.Id, -slotCost);
+        await _slotStudentServices.SlotStudentPaidAsync(slot.Id, user.Id);
 
     }
 

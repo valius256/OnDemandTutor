@@ -14,4 +14,6 @@ public interface ISlotStudentRepository : IGenericRepository<SlotStudent>
 
     Task<PagedResult<SlotStudent>> GetStudentsSlotWithStudentBySlotId(int slotId, int page, int limit);
 
+    Task<List<SlotStudent>> GetSlotOfStudent(int studentId);
+
 }

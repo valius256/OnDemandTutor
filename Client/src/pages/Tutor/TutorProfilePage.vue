@@ -8,7 +8,7 @@
       <tutor-classes :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass'"></tutor-classes>
       <payment :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/payment'"></payment>
       <withdraw-request :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/withdraw'"></withdraw-request>
-\    </div>
+    </div>
   </div>
 </template>
 

@@ -12,5 +12,5 @@ public interface IVnPayServices
     Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context);
     // Task<bool> ProcessCashbackAsync(CashBackDto cashbackDto, HttpContext context);
     Task<string> CreatePaymentForClassUrl(PayClassDto model, HttpContext context, GetClassFullDataSlotDto classDto);
-    Task<string> CreatePaymentForSlotByUserBalance(PaySlotDto model, HttpContext context, GetSlotsDtos slot);
+    Task CreatePaymentForSlotByUserBalance(PaySlotDto model, HttpContext context);
 }

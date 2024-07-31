@@ -64,6 +64,14 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         return await query.ToListAsync();
     }
 
+    public async Task<List<SlotStudent>> GetSlotOfStudent(int studentId)
+    {
+        var query = dbSet.AsQueryable()
+            .Include(ss => ss.Slot)
+            .Where(ss => ss.UserId == studentId);
+
+        return await query.ToListAsync();
+    }
     public async Task<PagedResult<SlotStudent>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryDto)
     {
         var query = dbSet.Include(s => s.Slot).ThenInclude(s => s.Subject)

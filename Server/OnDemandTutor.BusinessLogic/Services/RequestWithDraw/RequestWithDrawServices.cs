@@ -67,7 +67,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
         await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
-        await _userServices.UpdateBalanceAsync(uid, 0, request.Amount);
+        await _userServices.UpdateBalanceAsync(uid, -request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
         // send Email 
