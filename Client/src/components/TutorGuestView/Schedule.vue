@@ -81,13 +81,11 @@ export default {
 
         async getUserSlots() {
             const userId = this.tutor.id;
-            const column = "startTime"; // Example column name
-            const isDesc = true; // Example sort order
 
             try {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL
-                    }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}&Page=1&Limit=100`,
+                    }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.token}`,

@@ -1,4 +1,5 @@
 ﻿using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.Slot;
@@ -7,8 +8,8 @@ public interface ISlotServices
 {
     Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
     Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
-    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto);
-    Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto);
+    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user);
+    Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
     Task<bool> DeleteSlotAsync(int id);
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
     Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();

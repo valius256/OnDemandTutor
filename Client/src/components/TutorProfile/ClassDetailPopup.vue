@@ -47,6 +47,7 @@
       :slots="this.slots"
       :fetching="getUserSlots"
       :view-detail="openSlotDetailPopup"
+      :role="'tutor'"
     />
     <hr class="mt-4" />
     <div class="font-bold my-4">Các buổi học :</div>
@@ -111,7 +112,7 @@
 
 <script>
 import axios from "axios";
-import TimeTable from "./TimeTable.vue";
+import TimeTable from "../StudentProfile/TimeTable.vue";
 import GenericPopup from "../common/GenericPopup.vue";
 import SlotDetailPopup from "./SlotDetailPopup.vue";
 

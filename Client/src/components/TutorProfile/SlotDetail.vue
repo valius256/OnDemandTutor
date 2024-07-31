@@ -1,18 +1,11 @@
 <!-- SlotDetail.vue -->
 <template>
   <div>
-    <button
-      v-for="slot in slots"
-      :key="slot.id"
-      :class="slotClass(slot)"
-      :style="slotStyle(slot)"
-      @click="viewDetail(slot)"
-    >
+    <button v-for="slot in slots" :key="slot.id" :class="slotClass(slot)" :style="slotStyle(slot)"
+      @click="viewDetail(slot)">
       <div class="absolute inset-0" v-if="slot.isOnline">
         <div class="relative">
-          <div
-            class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"
-          ></div>
+          <div class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"></div>
         </div>
       </div>
       <div v-if="slotHeight(slot) > 45">
@@ -53,15 +46,13 @@ export default {
     },
     slotStyle(slot) {
       const startTime = new Date(slot.startTime);
-      console.log(startTime);
       const endTime = new Date(slot.endTime);
-      console.log(endTime);
       const durationInHour = (endTime - startTime) / 3600000;
       const distanceInMin = this.getDistanceInMin(this.shiftZoomSize);
       const top =
         8 +
         ((startTime.getHours() + startTime.getMinutes() / 60) * 40 * 60) /
-          distanceInMin;
+        distanceInMin;
       const height = (durationInHour * 40 * 60) / distanceInMin;
       return { top: `${top}px`, height: `${height}px` };
     },
@@ -76,17 +67,9 @@ export default {
     getSlotStyle(slot) {
       let bg = "";
       if (
-        slot.paymentStatus === 0 &&
-        this.compareDate(new Date(slot.startTime), new Date()) < 0
-      ) {
-        bg = "bg-red-400";
-      } else if (
-        slot.paymentStatus === 1 &&
         this.compareDate(new Date(slot.endTime), new Date()) < 0
       ) {
-        bg = "bg-green-400";
-      } else if (slot.paymentStatus === 1) {
-        bg = "bg-blue-400";
+        bg = "bg-green-300";
       } else {
         bg = "bg-gray-400";
       }

@@ -19,7 +19,7 @@ namespace OnDemandTutor.DataAccess.Repository
         public async Task<PagedResult<StudentClass>> QueryStudentClass(PagingModel<QueryStudentClassDto> request)
         {
             var query = dbSet.AsQueryable()
-               .Include(sc => sc.Class)
+               .Include(sc => sc.Class).ThenInclude(c => c.Subject)
                .Include(sc => sc.Student)
                .AsQueryable();
 

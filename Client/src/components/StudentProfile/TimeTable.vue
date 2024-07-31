@@ -48,7 +48,9 @@
                         </td>
                         <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek"
                         :class="{'bg-slate-100': compareDateToToday(day.specificDay)}">
-                            <slot-detail :slots="getSlotsByDay(day.specificDay)" 
+                            <slot-detail v-if="role != 'tutor'" :slots="getSlotsByDay(day.specificDay)" 
+                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
+                            <SlotDetailTutor v-else :slots="getSlotsByDay(day.specificDay)" 
                                 :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
                         </td>
                     </tr>
@@ -60,10 +62,11 @@
 
 <script>
 import SlotDetail from './SlotDetail.vue';
+import SlotDetailTutor from '../TutorProfile/SlotDetail.vue';
 export default {
-  components: { SlotDetail },
+  components: { SlotDetail, SlotDetailTutor },
     name: "StudentTimeTable",
-    props: ['slots','fetching','viewDetail','isGuest'],
+    props: ['slots','fetching','viewDetail','role'],
     data() {
         return {
             daysInWeek: [
@@ -100,12 +103,10 @@ export default {
                 const nextDay = new Date(this.selectedWeek);
                 nextDay.setDate(this.selectedWeek.getDate() + i);
                 const dateStr = this.toSqlDateString(nextDay)
-                console.log(dateStr)
                 this.daysInWeek[i].specificDay = this.sqlDateStringToSlashFormat(dateStr)
             }
             let endDate = new Date(this.selectedWeek)
             endDate.setDate(this.selectedWeek.getDate() + 7)
-            console.log(this.daysInWeek)
             await this.fetching(this.toSqlDateString(this.selectedWeek), this.toSqlDateString(endDate))
             //await this.fetchLessons(this.selectedWeek, endDate)
         },
@@ -174,15 +175,12 @@ export default {
         },
         getSlotsByDay(date) {
             const dateToCompare = (new Date(this.slashDateFormatToSqlDateString(date)).getDate())
-            //console.log(new Date(this.slots[0].slot.startTime).getDate(), dateToCompare)
-            //console.log(this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare))
-            return this.slots.filter(s => new Date(s.slot.startTime).getDate() == dateToCompare)
+            return this.slots.filter(s => new Date(s.slot?.startTime ?? s.startTime).getDate() == dateToCompare)
         },
         compareDateToToday(date){
             const dateToCompare = (this.slashDateFormatToSqlDateString(date))
             const today = new Date()
             const todayDateString = `${today.getFullYear()}-${String((today.getMonth() + 1)).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
-            console.log(dateToCompare, todayDateString)
             return dateToCompare == todayDateString
         }
     },

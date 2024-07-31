@@ -3,57 +3,30 @@
     <Navigator></Navigator>
     <div class="w-full">
       <profile :id="user.id" v-if="$route.path == '/tutor/profile'"></profile>
-      <schedule
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/schedule'"
-      ></schedule>
-      <subject
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/subject'"
-      ></subject>
-      <tutor-classes
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/myclass'"
-      ></tutor-classes>
-      <payment
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/payment'"
-      ></payment>
-      <withdraw-request
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/withdraw'"
-      ></withdraw-request>
-      <preview
-        :id="user.id"
-        :currentUser="user"
-        v-if="$route.path == '/tutor/preview'"
-      ></preview>
-    </div>
+      <schedule :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/schedule'"></schedule>
+      <subject :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/subject'"></subject>
+      <tutor-classes :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass'"></tutor-classes>
+      <payment :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/payment'"></payment>
+      <withdraw-request :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/withdraw'"></withdraw-request>
+\    </div>
   </div>
 </template>
 
 <script>
 import Navigator from "../../components/TutorProfile/Navigator.vue";
-import Payment from "../../components/TutorProfile/Payment.vue";
+import Payment from "../../components/StudentProfile/Payment.vue";
 import Profile from "../../components/TutorProfile/Profile.vue";
 import Schedule from "../../components/TutorProfile/Schedule.vue";
-import Preview from "../../components/TutorProfile/Preview.vue";
 import Subject from "../../components/TutorProfile/Subject.vue";
 import TutorClasses from "../../components/TutorProfile/TutorClasses.vue";
-import WithdrawRequest from "../../components/TutorProfile/WithdrawRequest.vue";
+import WithdrawRequest from "../../components/StudentProfile/WithdrawRequest.vue";
 export default {
   name: "ProfilePage",
   components: {
     Profile,
     Schedule,
-    Payment,
     Navigator,
-    Preview,
+    Payment,
     Subject,
     TutorClasses,
     WithdrawRequest,

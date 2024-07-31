@@ -15,7 +15,9 @@ using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
@@ -25,7 +27,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly ISlotRepository _slotRepository;
         private readonly IAuthServices _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IUserServices _userServices;
         private readonly ITransactionServices _transactionServices;
@@ -36,12 +37,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
             IEmailServices emailServices, IStudentClassService studentClassService, INotificationService notificationService,
-            ISlotRepository slotRepository, IAuthServices authService, IHttpContextAccessor httpContextAccessor)
+            ISlotRepository slotRepository, IAuthServices authService)
         {
             _unitOfWork = unitOfWorkRepository;
             _slotRepository = slotRepository;
             _authService = authService;
-            _httpContextAccessor = httpContextAccessor;
             _slotStudentServices = slotStudentServices;
             _transactionServices = transactionServices;
             _userServices = userServices;
@@ -65,37 +65,51 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
             return slot;
         }
-
-        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto)
+        private async Task ValidateSlot(Models.Models.Slot slot)
         {
-            var slotEntity = slotDto.Adapt<CreateSlotsDto>(); // Assuming Mapster is used for mapping
-
-            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slotDto.CreateById).ToListAsync();
-            foreach (var slot in tutorAllSlot)
+            if (slot.StartTime >= slot.EndTime)
             {
-                if (slot.StartTime == slotDto.StartTime && slot.EndTime == slotDto.EndTime)
+                throw new BadRequestException($"Start time must be smaller than end time");
+            }
+            if (slot.StartTime <= DateTime.Now)
+            {
+                throw new BadRequestException($"Start time must be in the future");
+            }
+            var duration = slot.EndTime - slot.StartTime;
+            if (duration.TotalMinutes < 15)
+            {
+                throw new BadRequestException($"Slot duration is minimum 15 minutes");
+            }
+            if (duration.TotalHours > 4)
+            {
+                throw new BadRequestException($"Slot duration is maximum 4 hours");
+            }
+            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slot.CreateById).ToListAsync();
+            foreach (var existSlot in tutorAllSlot)
+            {
+                if (slot.StartTime <= existSlot.EndTime && slot.EndTime >= existSlot.StartTime)
                 {
-                    throw new BadRequestException("This slot is already exist, try another time");
+                    throw new BadRequestException($"There is a schedule conflict with slot [Start : {existSlot.StartTime}; End : {existSlot.EndTime}], please check again");
                 }
             }
-
+        }
+        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user)
+        {
             // Add the new Slot entity to repository
-            var createdSlotEntity = await _unitOfWork.SlotRepository.CreateSlotAsync(slotEntity);
+            var mappedSlot = slotDto.Adapt<Models.Models.Slot>();
+            mappedSlot.CreateById = user.Id;
 
+            await ValidateSlot(mappedSlot);
+
+            var createdSlotEntity = await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
             await _unitOfWork.SaveChangesAsync();
 
             // Map the created entity back to CreateSlotsDtos and return it
-            var createdSlotDto = createdSlotEntity.Adapt<GetSlotsDtos>(); // Mapster mapping
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"slot với slot Id{createdSlotDto.Id} đã được tạo",
-                IsViewed = false,
-                ReceiverId = createdSlotEntity.CreateById,
-            });
+            var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>(); // Mapster mapping
             return createdSlotDto;
         }
 
-        public async Task<UpdateSlotDto> UpdateSlotAsync(UpdateSlotDto slotDto)
+        public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user)
         {
             // Retrieve the existing slot entity from the database
             var existingSlotEntity = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == slotDto.Id);
@@ -106,11 +120,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 throw new NotFoundException($"Slot with ID {slotDto.Id} not found.");
             }
 
-            // Get the current user from the authentication service
-            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
-
             // Adapt the incoming DTO to the existing entity
             existingSlotEntity = slotDto.Adapt(existingSlotEntity);
+            await ValidateSlot(existingSlotEntity);
 
             // Set the updated fields
             existingSlotEntity.UpdatedById = user.Id; // Assuming there is an UpdatedById property
@@ -121,15 +133,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Save the changes
             await _unitOfWork.SaveChangesAsync();
-
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Slot với Id{existingSlotEntity.Id} đã được cập nhập  ",
-                IsViewed = false,
-                ReceiverId = existingSlotEntity.CreateById,
-            });
             // Return the updated DTO
-            return updatedSlotEntity.Entity.Adapt<UpdateSlotDto>();
+            return updatedSlotEntity.Entity.Adapt<GetSlotsDtos>();
         }
 
 

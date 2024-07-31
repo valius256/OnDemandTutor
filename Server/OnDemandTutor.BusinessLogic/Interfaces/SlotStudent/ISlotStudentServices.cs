@@ -15,7 +15,7 @@ public interface ISlotStudentServices
     Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto);
     Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
-    Task<IEnumerable<SlotStudentDto>> GetSlotStudentsOfSlotAsync(int slotId);
+    Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId, int page, int limit);
     Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
     Task<Models.Models.SlotStudent> CreateSlotStudentIfNotExist(int slotId, int studentId);
     Task<SlotStudentDto> GetSlotStudentById(int slotId);

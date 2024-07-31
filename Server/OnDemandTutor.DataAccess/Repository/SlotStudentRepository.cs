@@ -66,7 +66,8 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
 
     public async Task<PagedResult<SlotStudent>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryDto)
     {
-        var query = dbSet.Include(s => s.Slot).Include(s => s.User)
+        var query = dbSet.Include(s => s.Slot).ThenInclude(s => s.Subject)
+            .Include(s => s.User)
              .AsQueryable();
 
         if (queryDto.Filter != null)
@@ -82,5 +83,13 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         }
 
         return await query.ToNewPagingAsync(queryDto.Page > 0 ? queryDto.Page : 1, queryDto.Limit > 0 ? queryDto.Limit : 10);
+    }
+
+    public async Task<PagedResult<SlotStudent>> GetStudentsSlotWithStudentBySlotId(int slotId, int page, int limit)
+    {
+        var query = dbSet.Include(s => s.User)
+             .Where(s => s.SlotId == slotId);
+
+        return await query.ToNewPagingAsync(page > 0 ? page : 1, limit > 0 ? limit : 10);
     }
 }

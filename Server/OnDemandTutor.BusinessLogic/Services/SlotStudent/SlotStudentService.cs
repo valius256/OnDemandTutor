@@ -57,12 +57,10 @@ public class SlotStudentService : ISlotStudentServices
         return slotStudent.Adapt<SlotStudentDto>();
     }
 
-    public async Task<IEnumerable<SlotStudentDto>> GetSlotStudentsOfSlotAsync(int slotId)
+    public async Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId, int page, int limit)
     {
-        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository
-            .Where(st => st.SlotId == slotId)
-            .ToListAsync();
-        return slotStudents.Adapt<IEnumerable<SlotStudentDto>>();
+        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetStudentsSlotWithStudentBySlotId(slotId, page, limit);
+        return slotStudents.Adapt<PagedResult<GetSlotStudentWithDetailStudentDto>>();
     }
     public async Task<bool> SlotStudentPaidAsync(int slotId, int studentId)
     {

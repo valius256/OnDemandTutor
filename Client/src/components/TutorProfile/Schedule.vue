@@ -21,7 +21,7 @@
             <div>
               <span class="font-bold">Trạng thái : </span>
               <span :class="getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
-        .style
+      .style
       ">
                 {{
       getSlotStatus(upcomingSlot.startTime, upcomingSlot.endTime)
@@ -55,11 +55,12 @@
         Thời khóa biểu
       </div>
       <div class="flex justify-center mr-8 mb-4">
-        <button class="px-32 py-2 font-bold text-xl text-white bg-blue-400 hover:bg-blue-200 rounded-lg" @click="openAddSlotModal">
+        <button class="px-32 py-2 font-bold text-xl text-white bg-blue-400 hover:bg-blue-200 rounded-lg"
+          @click="openAddSlotModal">
           Thêm slot
         </button>
       </div>
-      <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" />
+      <time-table :slots="slots" :fetching="getUserSlots" :viewDetail="openSlotDetailPopup" :role="'tutor'" />
     </div>
     <div v-else class="p-8">
       <div class="p-8 bg-red-200 rounded-lg text-center font-bold">
@@ -67,7 +68,7 @@
 
       </div>
     </div>
-    <add-slot-modal :showModal="showModal" @close="showModal = false" @add="addNewSlot" :currentUser="currentUser" />
+    <add-slot-modal :showModal="showModal" @close="showModal = false" @add="refresh" :currentUser="currentUser" />
     <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
       :notOverflow="true">
       <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" :action="refresh" />
@@ -77,7 +78,7 @@
 
 <script>
 import axios from "axios";
-import TimeTable from "./TimeTable.vue";
+import TimeTable from "../StudentProfile/TimeTable.vue";
 import AddSlotModal from "./AddSlotModal.vue";
 import GenericPopup from "../common/GenericPopup.vue";
 import SlotDetailPopup from "./SlotDetailPopup.vue";
@@ -124,13 +125,11 @@ export default {
     },
     async getClosestSlot() {
       const userId = this.currentUser.id;
-      const column = "startTime"; // Example column name
-      const isDesc = false; // We want to sort in ascending order to find the upcoming slot
 
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL
-          }/api/Slot?Filter.UserId=${userId}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`,
+          }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.token}`,
@@ -145,10 +144,6 @@ export default {
           this.upcomingSlot = slots.find(
             (slot) => new Date(slot.startTime) > now
           );
-          console.log(
-            "sssssssssssssssssssssssssssssssssssssssssss" + this.upcomingSlot
-          );
-          console.log(this.upcomingSlot);
         } else {
           this.upcomingSlot = null; // Ensure upcomingSlot is null if no slots are found
         }
@@ -194,6 +189,7 @@ export default {
     },
     async getUserSlots() {
       const userId = this.currentUser.id;
+
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL
@@ -204,20 +200,11 @@ export default {
             },
           }
         );
-        console.log(response.data); // Log the response data for debugging
-        if (response.data && response.data.items) {
-          this.slots = response.data.items;
-        } else {
-          this.slots = []; // Ensure slots is an array even if the response is empty
-        }
+        this.slots = response.data.items
       } catch (error) {
         console.error("Error fetching user slots:", error);
         this.slots = []; // Handle errors by setting slots to an empty array
       }
-    },
-    addNewSlot(newSlot) {
-      this.slots.push(newSlot);
-      this.upcomingSlot = this.getClosestSlot(this.slots);
     },
     async refresh() {
       try {
