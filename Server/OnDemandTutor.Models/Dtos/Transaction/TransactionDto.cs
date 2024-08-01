@@ -4,8 +4,8 @@ namespace OnDemandTutor.Models.Dtos.Transaction;
 
 public class TransactionDto
 {
-    public string TransactionCode { get; set; }
-    public string PaymentMethod { get; set; }
+    public string TransactionCode { get; set; } = string.Empty;
+    public string PaymentMethod { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public DateTime CreatedDate { get; set; }
     public PaymentStatus? Status { get; set; }

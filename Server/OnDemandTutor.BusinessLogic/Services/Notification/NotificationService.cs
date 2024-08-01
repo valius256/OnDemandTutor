@@ -17,44 +17,49 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<NotificationGetDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user)
+        public async Task<PagedResult<GetNotificationDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user)
         {
             var pagedNotifications = await _unitOfWork.NotificationRepository.GetNotificationByReceiverId(user.Id, page, limit);
-            return pagedNotifications.Adapt<PagedResult<NotificationGetDto>>();
+            return pagedNotifications.Adapt<PagedResult<GetNotificationDto>>();
         }
 
-        public async Task<NotificationGetDto> GetNotificationByIdAsync(int id)
+        public async Task<GetNotificationDto> GetNotificationByIdAsync(int id)
         {
             var notification = await _unitOfWork.NotificationRepository.GetNotificationWithReceiverByIdAsync(id);
             if (notification == null)
             {
                 throw new NotFoundException($"Notification with ID {id} not found.");
             }
-            var notificationDto = notification.Adapt<NotificationGetDto>();
+            var notificationDto = notification.Adapt<GetNotificationDto>();
             notificationDto.ReceiverName = notification.Receiver?.LastName; // Assuming User has a Name property
             return notificationDto;
         }
 
-        public async Task<NotificationGetDto> CreateNotificationAsync(NotificationCreateDto notificationCreateDto)
+        public async Task CreateNotificationAsync(CreateNotificationDto notificationCreateDto)
         {
-            var notificationEntity = notificationCreateDto.Adapt<Models.Models.Notification>();
-            await _unitOfWork.NotificationRepository.AddAsync(notificationEntity);
-            await _unitOfWork.SaveChangesAsync();
-            return notificationEntity.Adapt<NotificationGetDto>();
+            foreach (var receiveId in notificationCreateDto.ReceiverIds)
+            {
+                var notificationEntity = notificationCreateDto.Adapt<Models.Models.Notification>();
+                notificationEntity.ReceiverId = receiveId;
+                notificationEntity.IsViewed = false;
+
+                await _unitOfWork.NotificationRepository.AddAsync(notificationEntity);
+                await _unitOfWork.SaveChangesAsync();
+            }
         }
 
-        public async Task<NotificationGetDto> UpdateViewStatus(int id)
+        public async Task<GetNotificationDto> UpdateViewStatus(int id)
         {
             var existingNotification = await _unitOfWork.NotificationRepository.FirstOrDefaultAsync(n => n.Id == id);
             if (existingNotification == null)
             {
                 throw new NotFoundException($"Notification with ID {id} not found.");
             }
-            existingNotification.IsViewed = false;
+            existingNotification.IsViewed = true;
             var updatedNotification = _unitOfWork.NotificationRepository.Update(existingNotification);
             await _unitOfWork.SaveChangesAsync();
 
-            return updatedNotification.Adapt<NotificationGetDto>();
+            return updatedNotification.Adapt<GetNotificationDto>();
         }
 
         public async Task<bool> DeleteNotificationAsync(int id)

@@ -117,12 +117,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 }
             }
 
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
-                IsViewed = false,
-                ReceiverId = new List<int>(classDto.TutorId),
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
+            //    IsViewed = false,
+            //    ReceiverId = new List<int>(classDto.TutorId),
+            //});
             await _unitOfWork.SaveChangesAsync();
             return rs;
         }
@@ -138,12 +138,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
             receiverIds.Add(classDto.TutorId);
             receiverIds.AddRange(listOfStudentInClassId);
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"this class {classDto.Id} has been update",
-                IsViewed = false,
-                ReceiverId = receiverIds
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"this class {classDto.Id} has been update",
+            //    IsViewed = false,
+            //    ReceiverId = receiverIds
+            //});
             await _unitOfWork.SaveChangesAsync();
             return updatedClass.Entity.Adapt<GetClassDtos>();
         }
@@ -242,12 +242,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             receiverId.Add(studentId);
             receiverId.Add(classToEnroll!.TutorId);
 
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
-                IsViewed = false,
-                ReceiverId = receiverId,
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
+            //    IsViewed = false,
+            //    ReceiverId = receiverId,
+            //});
             // Add the student to the class
             classToEnroll.StudentClasses.Add(studentClass);
             _unitOfWork.ClassRepository.Update(classToEnroll);

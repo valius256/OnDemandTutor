@@ -147,10 +147,6 @@ export default {
                 "Filter.CreateTo" : this.filterDto.toCreateAt,
                 "Filter.UpdateFrom" : this.filterDto.fromUpdateAt,
                 "Filter.UpdateTo" : this.filterDto.toUpdateAt,
-                Sorts: {
-                    column: "Id",
-                    isDesc: true
-                },
                 Page: this.currentPage,
                 Limit: this.pageSize
             }

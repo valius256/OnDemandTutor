@@ -33,7 +33,6 @@ public class FAQService : IFAQService
         {
             throw new NotFoundException($"FAQs not found.");
         }
-        pagedFAQs.Items.ForEach(b => b.Question = ConverterHelper.ConvertHtmlToPlainText(b.Question ?? ""));
         return pagedFAQs.Adapt<PagedResult<FAQDTO>>();
     }
 
@@ -57,12 +56,6 @@ public class FAQService : IFAQService
 
         var createdFAQEntity = await _unitOfWorkRepository.FAQRepository.AddAsync(faqEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"FAQ với Id{createdFAQEntity.Entity.Id} đã được tạo  ",
-            IsViewed = false,
-            ReceiverId =  new List<int>(faqEntity.CreateById),
-        });
         return createdFAQEntity.Entity.Adapt<CreateFAQDto>();
     }
 
@@ -80,12 +73,6 @@ public class FAQService : IFAQService
 
         var updatedFAQEntity = _unitOfWorkRepository.FAQRepository.Update(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"FAQ {existingFAQEntity.Question} đã được update  ",
-            IsViewed = false,
-            ReceiverId =  new List<int>(existingFAQEntity.CreateById),
-        });
         return updatedFAQEntity.Entity.Adapt<UpdateFAQDto>();
     }
 
@@ -96,12 +83,6 @@ public class FAQService : IFAQService
         {
             throw new NotFoundException($"FAQ with ID {id} not found.");
         }
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"FAQ {existingFAQEntity.Question} đã được xóa  ",
-            IsViewed = false,
-            ReceiverId =   new List<int>(existingFAQEntity.CreateById),
-        });
         _unitOfWorkRepository.FAQRepository.Remove(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();
 

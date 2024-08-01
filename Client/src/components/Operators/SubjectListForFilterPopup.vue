@@ -29,10 +29,6 @@ export default {
     methods : {
         async fetchSubject(){
             let query = {
-                Sorts: {
-                    column: "Id",
-                    isDesc: true
-                },
                 "Filter.Name" : this.keyword
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))

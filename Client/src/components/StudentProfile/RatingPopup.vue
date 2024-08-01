@@ -71,7 +71,7 @@ export default {
                         })
                     }
 
-                    this.action()
+                    this.action(null, null)
                     this.close()
                     //var paymentUrl = url.data
                     //window.location.href = paymentUrl

@@ -248,7 +248,7 @@ public static class ServiceExtensions
 
         services.AddHangfireServer(cf =>
         {
-            RecurringJob.AddOrUpdate<SlotService>(x =>
+            RecurringJob.AddOrUpdate<SlotStudentService>(x =>
             x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
             RecurringJob.AddOrUpdate<SlotService>(x =>
             x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);

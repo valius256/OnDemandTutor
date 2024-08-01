@@ -16,6 +16,7 @@ using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
@@ -158,21 +159,25 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Save the changes
             await _unitOfWork.SaveChangesAsync();
+
+            //Send noti to students
+            var studentsOfSlot = await _slotStudentServices.GetSlotStudentsOfSlotAsync(slotDto.Id); 
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                Content = $"Slot bạn đã đăng ký học đã có sự thay đổi, vui lòng kiểm tra",
+                ReceiverIds = studentsOfSlot.Select(ss => ss.User.Id).ToList(),
+                RefImageUrl = user.AvatarImageUrl,
+                RefUrl = "/student/schedule"
+            });
+
             // Return the updated DTO
             return updatedSlotEntity.Entity.Adapt<GetSlotsDtos>();
         }
-
-
         public async Task<bool> DeleteSlotAsync(int id)
         {
             var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
             await _unitOfWork.SaveChangesAsync();
 
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Slot với slotid = {id} đã được xóa   ",
-                IsViewed = false,
-            });
             if (!isDeleted)
             {
                 throw new NotFoundException($"Slot with ID {id} not found.");
@@ -180,35 +185,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return isDeleted;
         }
 
-        public async Task CronJobForAutoDereasedMoneyAfterSlotStart()
-        {
-            var listSlotDb = await _unitOfWork.SlotRepository.Where(slot => slot.StartTime >= DateTime.Now.AddHours(-1)).ToListAsync();
-
-            foreach (var slot in listSlotDb)
-            {
-                var slotStudent = await _slotStudentServices.GetSlotStudentById(slot.Id);
-                if (slotStudent != null && slotStudent.PaymentStatus == PaymentStatus.Notpaid)
-                {
-                    var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
-                    var duration = (slot.EndTime - slot.StartTime).TotalHours;
-
-                    var studentBalance = await _userServices.GetBalanceAsync(slotStudent.UserId);
-                    var amountToDecrease = tutor.TutorFeePerHour * (decimal)duration;
-                    decimal slotCost = tutor.TutorFeePerHour * (decimal)duration;
-                    if (studentBalance - slotCost >= 0)
-                    {
-                        await _userServices.UpdateBalanceAsync(slotStudent.UserId, -slotCost);
-                        await _transactionServices.CreateTransactionForAutoDecreaMoneySlotAsync(slot.Id, -amountToDecrease);
-                        await _slotStudentServices.SlotStudentPaidAsync(slot.Id, slotStudent.UserId);
-                    }
-                    //else 
-                    //{
-                    //    await _transactionServices.CreateTransactionForAutoDecreaMoneySlotFailedAsync(slot.Id,
-                    //        -amountToDecrease);
-                    //}
-                }
-            }
-        }
+        
 
 
         // improved listOfSlotIds later, cause it foreach all the slotId in same class if have
@@ -242,7 +219,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
             var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-            var classId = slotTotalList.FirstOrDefault().ClassId;
+            var classId = slotTotalList.FirstOrDefault()?.ClassId;
 
             if (classId.HasValue)
             {
@@ -327,6 +304,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await ValidateSlotForStudent(slotId, studentId);
 
             await _slotStudentServices.CreateSlotStudentIfNotExists(slotId, studentId);
+
+            //Notification
+            var student = await _userServices.GetProfileAsync(studentId, null, null);
+            var slot = await GetSlotByIdAsync(slotId);
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                Content = $"1 học viên đã đăng ký slot {slot.StartTime} đến {slot.EndTime} của bạn.",
+                ReceiverIds = new List<int> { slot.CreateById},
+                RefImageUrl = student.AvatarImageUrl,
+                RefUrl = "/tutor/schedule"
+            });
+
             return true;
         }
 

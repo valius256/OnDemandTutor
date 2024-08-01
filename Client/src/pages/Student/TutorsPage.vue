@@ -267,6 +267,9 @@ export default {
                 const response = await axios.get(import.meta.env.VITE_API_URL + '/api/User/view-tutor-list?tutorStatus=3&' + queryStr)
                 if (response.data) {
                     this.tutors = response.data.data.items
+                    this.tutors.map(t => {
+                        if (t.rating) {t.rating = Math.round(t.rating * 100) / 100}
+                    })
                     this.totalPage = Math.ceil(response.data.data.total / this.pageSize)
                 }
             } catch (e) {

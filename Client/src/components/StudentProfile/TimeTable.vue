@@ -107,7 +107,7 @@ export default {
             }
             let endDate = new Date(this.selectedWeek)
             endDate.setDate(this.selectedWeek.getDate() + 7)
-            await this.fetching(this.toSqlDateString(this.selectedWeek), this.toSqlDateString(endDate))
+            await this.fetching(this.toSqlDateString(new Date(this.selectedWeek)), this.toSqlDateString(endDate))
             //await this.fetchLessons(this.selectedWeek, endDate)
         },
         async handleSelectedYearChange() {

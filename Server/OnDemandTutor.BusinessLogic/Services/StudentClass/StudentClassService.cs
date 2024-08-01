@@ -65,12 +65,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             var classEntity =
                 await _unitOfWork.ClassRepository.FirstOrDefaultAsync(ld => ld.Id == studentClassDto.ClassId);
            
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Bạn {student.FirstName} {student.LastName} đã được thêm vào lớp {studentClass.Class.Name} thành công ",
-                IsViewed = true,
-                ReceiverId = new List<int> { studentClass.StudentId, classEntity.TutorId }
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"Bạn {student.FirstName} {student.LastName} đã được thêm vào lớp {studentClass.Class.Name} thành công ",
+            //    IsViewed = true,
+            //    ReceiverId = new List<int> { studentClass.StudentId, classEntity.TutorId }
+            //});
             return createdStudentClass.Entity.Adapt<CreateStudentClassDto>();
         }
         public async Task<UpdateStudentClassDto> UpdateStudentClassAsync(UpdateStudentClassDto studentClassDto)
@@ -114,12 +114,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             _unitOfWork.StudentClassRepository.Remove(studentClass);
             await _unitOfWork.SaveChangesAsync();
 
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Bạn đã bị xóa khỏi lớp {studentClass.ClassId}  ",
-                IsViewed = true,
-                ReceiverId =new List<int>(studentClass.StudentId),
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"Bạn đã bị xóa khỏi lớp {studentClass.ClassId}  ",
+            //    IsViewed = true,
+            //    ReceiverId =new List<int>(studentClass.StudentId),
+            //});
             return true;
         }
 
@@ -158,12 +158,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                     StudentId = studentId,
                 };
                 var newStudentClassEntity =  await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
-                await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-                {
-                    Content = $"Bạn đã được thêm vào class {newStudentClassEntity.Entity.Class.Name}",
-                    IsViewed = true,
-                    ReceiverId =new List<int>(newStudentClassEntity.Entity.StudentId),
-                });
+                //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+                //{
+                //    Content = $"Bạn đã được thêm vào class {newStudentClassEntity.Entity.Class.Name}",
+                //    IsViewed = true,
+                //    ReceiverId =new List<int>(newStudentClassEntity.Entity.StudentId),
+                //});
                 await _unitOfWork.SaveChangesAsync();
             }
           
@@ -181,12 +181,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             _unitOfWork.StudentClassRepository.Remove(studentClass);
          
             await _unitOfWork.SaveChangesAsync();
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Bạn đã bị xóa khỏi class {studentClass.Class.Name}",
-                IsViewed = true,
-                ReceiverId = new List<int>(studentClass.StudentId),
-            });
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"Bạn đã bị xóa khỏi class {studentClass.Class.Name}",
+            //    IsViewed = true,
+            //    ReceiverId = new List<int>(studentClass.StudentId),
+            //});
             return true;
         }
 

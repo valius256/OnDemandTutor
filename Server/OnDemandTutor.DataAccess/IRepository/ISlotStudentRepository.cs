@@ -12,8 +12,12 @@ public interface ISlotStudentRepository : IGenericRepository<SlotStudent>
 
     Task<PagedResult<SlotStudent>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryDto);
 
-    Task<PagedResult<SlotStudent>> GetStudentsSlotWithStudentBySlotId(int slotId, int page, int limit);
+    Task<PagedResult<SlotStudent>> GetStudentsSlotWithStudentBySlotIdPaged(int slotId, int page, int limit);
+    Task<List<SlotStudent>> GetStudentsSlotWithStudentBySlotId(int slotId);
 
     Task<List<SlotStudent>> GetSlotOfStudent(int studentId);
 
+    Task<List<SlotStudent>> GetAboutToStartStudentSlots();
+
+    Task<SlotStudent?> GetSlotStudentBySlotIdAndStudentId(int slotId, int studentId);
 }

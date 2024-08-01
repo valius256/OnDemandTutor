@@ -1,6 +1,6 @@
 ﻿namespace OnDemandTutor.Models.Dtos.Notification
 {
-    public class NotificationGetDto
+    public class GetNotificationDto
     {
         public int Id { get; set; }
         public string? Content { get; set; }

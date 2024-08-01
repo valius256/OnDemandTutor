@@ -5,6 +5,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.TutorVideo;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.TutorVideo;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
@@ -13,25 +14,21 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
 
-        private readonly IAuthServices _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TutorVideoService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        public TutorVideoService(IUnitOfWorkRepository unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _authService = authService;
-            _httpContextAccessor = HttpContextAccessor;
         }
 
-        public async Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<GetTutorVideoDto> request)
+        public async Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<QueryTutorVideoDto> request)
         {
-            var pagedTutorVideos = await _unitOfWork.TutorVideoRepository.PagingAsync(request.Adapt<PagingModel<Models.Models.TutorVideo>>());
+            var pagedTutorVideos = await _unitOfWork.TutorVideoRepository.QueryTutorVideoAsync(request);
             return pagedTutorVideos.Adapt<PagedResult<GetTutorVideoDto>>();
         }
 
         public async Task<GetTutorVideoDto> GetTutorVideoByIdAsync(int id)
         {
-            var tutorVideoEntity = await _unitOfWork.TutorVideoRepository.FirstOrDefaultAsync(tv => tv.Id == id);
+            var tutorVideoEntity = await _unitOfWork.TutorVideoRepository.GetTutorVideoByIdAsync(id);
             if (tutorVideoEntity == null)
             {
                 throw new NotFoundException($"TutorVideo with ID {id} not found.");
@@ -39,15 +36,18 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             return tutorVideoEntity.Adapt<GetTutorVideoDto>();
         }
 
-        public async Task<CreateTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto)
+        public async Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDtos user)
         {
             var tutorVideoEntity = tutorVideoDto.Adapt<Models.Models.TutorVideo>();
+            tutorVideoEntity.TutorId = user.Id;
+
             var createdTutorVideoEntity = await _unitOfWork.TutorVideoRepository.AddAsync(tutorVideoEntity);
             await _unitOfWork.SaveChangesAsync();
-            return createdTutorVideoEntity.Adapt<CreateTutorVideoDto>();
+
+            return createdTutorVideoEntity.Entity.Adapt<GetTutorVideoDto>();
         }
 
-        public async Task<UpdateTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto)
+        public async Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDtos user)
         {
             // Retrieve the existing tutor video entity from the database
             var existingTutorVideoEntity = await _unitOfWork.TutorVideoRepository.FirstOrDefaultAsync(tv => tv.Id == tutorVideoDto.Id);
@@ -58,8 +58,6 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
                 throw new NotFoundException($"TutorVideo with ID {tutorVideoDto.Id} not found.");
             }
 
-            // Get the current user from the authentication service
-            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
 
             // Adapt the incoming DTO to the existing entity
             existingTutorVideoEntity = tutorVideoDto.Adapt(existingTutorVideoEntity);
@@ -75,7 +73,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             await _unitOfWork.SaveChangesAsync();
 
             // Return the updated DTO
-            return updatedTutorVideoEntity.Adapt<UpdateTutorVideoDto>();
+            return updatedTutorVideoEntity.Adapt<GetTutorVideoDto>();
         }
 
 
