@@ -7,6 +7,7 @@
       <subject :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/subject'"></subject>
       <tutor-classes :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass'"></tutor-classes>
       <payment :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/payment'"></payment>
+      <Videos :currentUser="user" v-if="$route.path == '/tutor/videos'"></Videos>
       <withdraw-request :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/withdraw'"></withdraw-request>
     </div>
   </div>
@@ -20,6 +21,7 @@ import Schedule from "../../components/TutorProfile/Schedule.vue";
 import Subject from "../../components/TutorProfile/Subject.vue";
 import TutorClasses from "../../components/TutorProfile/TutorClasses.vue";
 import WithdrawRequest from "../../components/StudentProfile/WithdrawRequest.vue";
+import Videos from "../../components/TutorProfile/Videos.vue";
 export default {
   name: "ProfilePage",
   components: {
@@ -30,6 +32,7 @@ export default {
     Subject,
     TutorClasses,
     WithdrawRequest,
+    Videos
   },
   data() {
     return {

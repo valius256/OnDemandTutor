@@ -139,7 +139,7 @@ const routes = [
         component: TutorProfile,
       },
       {
-        path: "preview",
+        path: "videos",
         component: TutorProfile,
       },
     ],
@@ -163,6 +163,10 @@ const routes = [
       },
       {
         path: "class",
+        component: TutorGuestView,
+      },
+      {
+        path: "videos",
         component: TutorGuestView,
       },
     ],

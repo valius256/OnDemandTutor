@@ -21,6 +21,7 @@
       <schedule :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/schedule'">
       </schedule>
       <subject :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/subject'"></subject>
+      <video-list :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/videos'"></video-list>
       <!-- <tutor-classes :id="viewingId"
           v-if="$route.path == '/tutor/myclass' + viewingId"
         ></tutor-classes> -->
@@ -35,6 +36,7 @@ import Profile from "../../components/TutorGuestView/Profile.vue";
 import Schedule from "../../components/TutorGuestView/Schedule.vue";
 import Subject from "../../components/TutorGuestView/Subject.vue";
 import TutorClasses from "../../components/TutorProfile/TutorClasses.vue";
+import VideoList from '../../components/TutorGuestView/VideoList.vue';
 export default {
   name: "ProfilePage",
   inject : ['eventBus'],
@@ -45,6 +47,7 @@ export default {
     Subject,
     TutorClasses,
     Navbar,
+    VideoList,
   },
   data() {
     return {

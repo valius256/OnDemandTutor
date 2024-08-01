@@ -1,87 +1,75 @@
 <template>
   <div>
-    <div v-if="currentUser.tutorStatus == 3">
-
-      <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-        Môn học của bạn
-      </div>
-      <div class="px-6 py-8">
-        <div v-if="tutorSubjects.length === 0">Bạn chưa có môn học nào.</div>
-        <div v-else class="flex flex-wrap gap-4">
+    <div class="text-2xl font-bold px-6 py-8 bg-slate-200">
+      Môn học của bạn
+    </div>
+    <div v-if="currentUser.tutorStatus == 3" class="space-y-8 p-6 bg-gray-100 min-h-screen">
+      <div class="bg-white shadow-lg rounded-lg p-6">
+        <div v-if="tutorSubjects.length === 0" class="text-gray-500">Bạn chưa có môn học nào.</div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="tutorSubject in tutorSubjects" :key="tutorSubject.id" @click="selectSubject(tutorSubject)"
-            class="cursor-pointer p-4 bg-blue-100 rounded-lg hover:bg-blue-200">
-            {{ tutorSubject.subject.name }}
+            class="cursor-pointer p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition duration-300 ease-in-out transform hover:scale-105">
+            <div class="text-xl font-semibold text-gray-800">{{ tutorSubject.subject.name }}</div>
           </div>
         </div>
       </div>
 
-      <div v-if="selectedSubject" class="mt-6 px-6 py-8 bg-slate-50 rounded-lg">
-        <h3 class="text-xl font-bold mb-4">{{ selectedSubject.subject.name }}</h3>
-        <div>Ngày đăng kí: {{ formatDate(selectedSubject.createdDate) }}</div>
-        <div>Mô tả: {{ selectedSubject.description || "Không có mô tả" }}</div>
-        <div>Trạng thái: {{ getStatus(selectedSubject.status) }}</div>
-        <div v-if="selectedSubject.status === 2">
+      <div v-if="selectedSubject" class="bg-white shadow-lg rounded-lg p-6 space-y-4">
+        <h3 class="text-2xl font-extrabold text-gray-800 mb-4">{{ selectedSubject.subject.name }}</h3>
+        <div class="text-gray-600">Ngày đăng kí: {{ formatDate(selectedSubject.createdDate) }}</div>
+        <div class="text-gray-600">Mô tả: {{ selectedSubject.description || "Không có mô tả" }}</div>
+        <div class="text-gray-600">Trạng thái: {{ getStatus(selectedSubject.status) }}</div>
+        <div v-if="selectedSubject.status === 2" class="text-red-500">
           Lý do từ chối: {{ selectedSubject.reasonReject || "Không có lý do" }}
         </div>
-        <div>Bằng cấp:</div>
+        <div class="text-gray-800 font-semibold">Bằng cấp:</div>
         <div class="flex flex-wrap gap-2">
           <img v-for="(img, index) in selectedSubject.qualification" :key="index" :src="img"
-            class="w-24 h-24 object-cover rounded-lg" />
+            class="w-24 h-24 object-cover rounded-lg border border-gray-200" />
         </div>
-        <!-- <div>
-        Video:
-        <a :href="selectedSubject.videoLink" target="_blank">{{
-        selectedSubject.videoLink
-      }}</a>
-      </div> -->
       </div>
 
-      <div class="mt-6 px-6 py-8 bg-slate-50 rounded-lg">
-        <h3 class="text-xl font-bold mb-4">Đăng kí môn học mới</h3>
-        <form @submit.prevent="registerSubject">
-          <div class="mb-4">
-            <label for="subjectName" class="block font-bold mb-2">Tên môn học</label>
-            <select id="subjectName" v-model="newSubject.subjectId" class="w-full rounded border border-gray-200 p-2"
-              required>
+      <div class="bg-white shadow-lg rounded-lg p-6">
+        <h3 class="text-2xl font-extrabold text-gray-800 mb-4">Đăng kí môn học mới</h3>
+        <form @submit.prevent="registerSubject" class="space-y-4">
+          <div>
+            <label for="subjectName" class="block text-gray-700 font-bold mb-2">Tên môn học</label>
+            <select id="subjectName" v-model="newSubject.subjectId"
+              class="w-full rounded-lg border border-gray-300 p-3 focus:ring-2 focus:ring-blue-200" required>
               <option v-for="subject in subjects" :key="subject.id" :value="subject.id">
                 {{ subject.name }}
               </option>
             </select>
           </div>
-          <div class="mb-4">
-            <label for="qualification" class="block font-bold mb-2">Bằng cấp</label>
+          <div>
+            <label for="qualification" class="block text-gray-700 font-bold mb-2">Bằng cấp</label>
             <input type="file" id="qualification" multiple accept="image/*" @change="handleQualificationUpload"
-              class="w-full rounded border border-gray-200 p-2" />
-            <div class="flex flex-wrap gap-2 mt-2">
-              <div v-for="(qualification, index) in newSubject.qualification" :key="index">
-                <img :src="qualificationPreview[index]" class="w-24 h-24 object-cover rounded-lg" />
-                <div class="flex flex-col gap-2">
-                  <input v-model="qualification.degreeName" class="p-1 border rounded-lg" placeholder="Tên bằng cấp">
-                  <input v-model="qualification.degreeNumber" class="p-1 border rounded-lg" placeholder="Số bằng cấp">
-                  <input v-model="qualification.date" class="p-1 border rounded-lg" placeholder="Ngày hiệu lực"
-                    type="date">
-                  <!-- <button @click="removeQualification(index)"
-                  class="p-1 border rounded-lg bg-red-500 text-white">Remove</button> -->
-                </div>
+              class="w-full rounded-lg border-gray-300 p-3 focus:ring-2 focus:ring-blue-200" />
+            <div class="flex flex-col gap-4 mt-2">
+              <div v-for="(qualification, index) in newSubject.qualification" :key="index" class="space-y-2">
+                <img :src="qualificationPreview[index]" class="w-64 h-32 object-cover rounded-lg border-gray-300" />
+                <input v-model="qualification.degreeName" class="w-full border p-2 border-gray-300 rounded-lg"
+                  placeholder="Tên bằng cấp">
+                <input v-model="qualification.degreeNumber" class="w-full border p-2 border-gray-300 rounded-lg"
+                  placeholder="Số bằng cấp">
+                <input v-model="qualification.date" class="w-full p-2 border border-gray-300 rounded-lg"
+                  placeholder="Ngày hiệu lực" type="date">
               </div>
             </div>
           </div>
-          <!-- <div class="mb-4">
-          <label for="videoLink" class="block font-bold mb-2">Upload video</label>
-          <input type="file" id="videoLink" accept="video/*" @change="handleVideoUpload"
-            class="w-full rounded border border-gray-200 p-2" />
-        </div> -->
-          <div class="mb-4">
-            <label for="description" class="block font-bold mb-2">Mô tả</label>
+          <div>
+            <label for="description" class="block text-gray-700 font-bold mb-2">Mô tả</label>
             <textarea id="description" v-model="newSubject.description"
-              class="w-full rounded border border-gray-200 p-2"></textarea>
+              class="w-full border rounded-lg border-gray-300 p-3 focus:ring-2 focus:ring-blue-200"></textarea>
           </div>
-          <button type="submit" class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg">
+          <button type="submit" class="w-full p-3 font-bold text-white bg-green-500 hover:bg-green-400 rounded-lg">
             Đăng kí
           </button>
         </form>
       </div>
+
     </div>
+
     <div v-else class="p-8">
       <div class="p-8 bg-red-200 rounded-lg text-center font-bold">
         Bạn cần xác thực tài khoản để sử dụng tính năng này

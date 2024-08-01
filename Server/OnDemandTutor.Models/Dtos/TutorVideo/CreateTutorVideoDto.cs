@@ -2,8 +2,7 @@ namespace OnDemandTutor.Models.Dtos.TutorVideo
 {
     public class CreateTutorVideoDto
     {
-        public int? TutorId { get; set; }
-        public string VideoUrl { get; set; }
-        public string Description { get; set; }
+        public string VideoUrl { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }
