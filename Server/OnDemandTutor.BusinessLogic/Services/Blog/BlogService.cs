@@ -20,7 +20,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly INotificationService _notificationService;
 
-        public BlogService(IUnitOfWorkRepository unitOfWork, IAuthServices authService, 
+        public BlogService(IUnitOfWorkRepository unitOfWork, IAuthServices authService,
             INotificationService notificationService,
             IHttpContextAccessor HttpContextAccessor)
         {
@@ -54,11 +54,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             createdBlogEntity.Entity.CreatedDate = DateTime.Now;
             createdBlogEntity.Entity.CreateById = user.Id;
             await _unitOfWork.SaveChangesAsync();
-            _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"blog với id = {blogDto.Thumbnail} đã được tạo thành công",
+                Content = $"blog {blogDto.Thumbnail} đã được tạo thành công",
                 IsViewed = false,
-                ReceiverId = user.Id,
+                ReceiverId = new List<int>(user.Id),
             });
             return createdBlogEntity.Entity.Adapt<CreateBlogDtos>();
         }
@@ -79,11 +79,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
 
             var updatedBlogEntity = _unitOfWork.BlogRepository.Update(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();
-             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
                 Content = $"blog với content {blogDto.Id} đã được cập nhập thành công",
                 IsViewed = false,
-                ReceiverId = user.Id,
+                ReceiverId = new List<int>(existingBlogEntity.CreateById),
             });
             return updatedBlogEntity.Entity.Adapt<UpdateBlogDtos>();
         }
@@ -95,12 +95,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             {
                 throw new NotFoundException($"Blog with ID {id} not found.");
             }
-            
+
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"blog với BlogId =  {id} đã được xóa",
+                Content = $"blog {existingBlogEntity.Thumbnail} đã được xóa",
                 IsViewed = false,
-                ReceiverId = existingBlogEntity.CreateById,
+                ReceiverId =  new List<int>(existingBlogEntity.CreateById),
             });
 
             _unitOfWork.BlogRepository.Remove(existingBlogEntity);

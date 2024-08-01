@@ -1,17 +1,15 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Transaction;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using OnDemandTutor.BusinessLogic.Interfaces.Notification;
-using OnDemandTutor.BusinessLogic.Services.Notification;
-using OnDemandTutor.Models.Dtos.Notification;
-using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
@@ -44,12 +42,12 @@ public class TransactionServices : ITransactionServices
                 .ExecuteUpdateAsync(setter => setter
                     .SetProperty(s => s.Status, PaymentStatus.Paid)
                     .SetProperty(s => s.UpdatedDate, paidTime));
-            ;
+        ;
         if (transactionModel == null)
         {
             throw new ModelException("Transaction model", "Not Found", "transaction not exist");
         }
-        
+
         await _unitOfWorkRepository.SaveChangesAsync();
         return transactionModel;
     }
@@ -90,9 +88,9 @@ public class TransactionServices : ITransactionServices
 
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"Giao dịch đã được tạo thành công  ",
+            Content = $"Giao dịch {transaction.TransactionCode} đã được tạo thành công ",
             IsViewed = true,
-            ReceiverId = transaction.CreatedById,
+            ReceiverId = new List<int>(transaction.CreatedById),
         });
 
         return true;
@@ -118,9 +116,9 @@ public class TransactionServices : ITransactionServices
 
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"Giao dịch đã được tạo thành công  ",
+            Content = $"Giao dịch với mã {transaction.TransactionCode} đã được tạo thành công  ",
             IsViewed = true,
-            ReceiverId = transaction.CreatedById,
+            ReceiverId = new List<int>(transaction.CreatedById),
         });
 
         return true;
@@ -145,9 +143,9 @@ public class TransactionServices : ITransactionServices
 
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"Giao dịch đã được tạo thành công  ",
+            Content = $"Giao dịch với mã {transaction.TransactionCode} đã được tạo thành công  ",
             IsViewed = true,
-            ReceiverId = transaction.CreatedById,
+            ReceiverId =new List<int>(transaction.CreatedById)
         });
 
 

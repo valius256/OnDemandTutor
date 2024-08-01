@@ -58,12 +58,18 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
         {
             var studentClass = studentClassDto.Adapt<Models.Models.StudentClass>();
             var createdStudentClass = await _unitOfWork.StudentClassRepository.AddAsync(studentClass);
+            // get name of student 
+            var student =
+                await _unitOfWork.UserRepository.FirstOrDefaultAsync(ld => ld.Id == studentClassDto.StudentId);
             await _unitOfWork.SaveChangesAsync();
+            var classEntity =
+                await _unitOfWork.ClassRepository.FirstOrDefaultAsync(ld => ld.Id == studentClassDto.ClassId);
+           
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"this withdraw with Id{studentClass.Id}  has been created  ",
+                Content = $"Bạn {student.FirstName} {student.LastName} đã được thêm vào lớp {studentClass.Class.Name} thành công ",
                 IsViewed = true,
-                ReceiverId = studentClass.StudentId,
+                ReceiverId = new List<int> { studentClass.StudentId, classEntity.TutorId }
             });
             return createdStudentClass.Entity.Adapt<CreateStudentClassDto>();
         }
@@ -110,9 +116,9 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
 
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"this withdraw with Id{studentClass.Id}  has been deleted  ",
+                Content = $"Bạn đã bị xóa khỏi lớp {studentClass.ClassId}  ",
                 IsViewed = true,
-                ReceiverId = studentClass.StudentId,
+                ReceiverId =new List<int>(studentClass.StudentId),
             });
             return true;
         }
@@ -134,15 +140,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             // handle for update tutor rating 
             var classModel = await _classServices.GetClassByIdAsync(recordInDB.ClassId);
             var tutorId = classModel.TutorId;
-            //var tutorModel = await _userServices.GetUserByIdAsync(tutorId);
-
-            //var listClassStudentRating = await _unitOfWork.StudentClassRepository
-            //        .Where(ss => ss.ClassId == classModel.Id && ss.Rating.HasValue)
-            //        .AverageAsync(l => l.Rating);
-
-            //tutorModel.Rating = (listClassStudentRating + Rating) / 2;
-            //await _userServices.UpdateTutorRating(tutorModel);
-
+            
             await _userServices.RecalculateTutorRating(tutorId);
             await _unitOfWork.SaveChangesAsync();
             return true;
@@ -159,15 +157,16 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                     ClassId = classId,
                     StudentId = studentId,
                 };
-                await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
+                var newStudentClassEntity =  await _unitOfWork.StudentClassRepository.AddAsync(recordInDb);
+                await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
+                {
+                    Content = $"Bạn đã được thêm vào class {newStudentClassEntity.Entity.Class.Name}",
+                    IsViewed = true,
+                    ReceiverId =new List<int>(newStudentClassEntity.Entity.StudentId),
+                });
                 await _unitOfWork.SaveChangesAsync();
             }
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"this withdraw with Id{recordInDb.Id}  has been created  ",
-                IsViewed = true,
-                ReceiverId = recordInDb.StudentId,
-            });
+          
             return recordInDb;
         }
 
@@ -180,14 +179,13 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 throw new Exception("StudentClass not found");
             }
             _unitOfWork.StudentClassRepository.Remove(studentClass);
-            // studentClass.RecordStatus = RecordStatus.Deleted;
-            // _unitOfWork.StudentClassRepository.Update(studentClass);
+         
             await _unitOfWork.SaveChangesAsync();
             await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
             {
-                Content = $"this withdraw with Id{studentClass.Id}  has been created  ",
+                Content = $"Bạn đã bị xóa khỏi class {studentClass.Class.Name}",
                 IsViewed = true,
-                ReceiverId = studentClass.StudentId,
+                ReceiverId = new List<int>(studentClass.StudentId),
             });
             return true;
         }

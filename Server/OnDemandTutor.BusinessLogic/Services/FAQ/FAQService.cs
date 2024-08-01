@@ -61,7 +61,7 @@ public class FAQService : IFAQService
         {
             Content = $"FAQ với Id{createdFAQEntity.Entity.Id} đã được tạo  ",
             IsViewed = false,
-            ReceiverId = faqEntity.CreateById,
+            ReceiverId =  new List<int>(faqEntity.CreateById),
         });
         return createdFAQEntity.Entity.Adapt<CreateFAQDto>();
     }
@@ -82,9 +82,9 @@ public class FAQService : IFAQService
         await _unitOfWorkRepository.SaveChangesAsync();
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"FAQ với Id{existingFAQEntity.Id}  đã được update  ",
+            Content = $"FAQ {existingFAQEntity.Question} đã được update  ",
             IsViewed = false,
-            ReceiverId = existingFAQEntity.CreateById,
+            ReceiverId =  new List<int>(existingFAQEntity.CreateById),
         });
         return updatedFAQEntity.Entity.Adapt<UpdateFAQDto>();
     }
@@ -98,9 +98,9 @@ public class FAQService : IFAQService
         }
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"FAQ với Id{existingFAQEntity.Id} đã được xóa  ",
+            Content = $"FAQ {existingFAQEntity.Question} đã được xóa  ",
             IsViewed = false,
-            ReceiverId = existingFAQEntity.CreateById,
+            ReceiverId =   new List<int>(existingFAQEntity.CreateById),
         });
         _unitOfWorkRepository.FAQRepository.Remove(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();

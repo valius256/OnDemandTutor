@@ -66,7 +66,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         requestWithDrawModel.UserId = uid;
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
-        await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
+       var requestWithDrawEntity =   await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
         await _userServices.UpdateBalanceAsync(uid, -request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
@@ -87,9 +87,9 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
         await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
         {
-            Content = $"chuyển tiền Id{requestWithDrawModel.Id}  đã được tạo ",
+            Content = $"giao dịch với ID = {requestWithDrawEntity.Entity.Id}  đã được tạo ",
             IsViewed = false,
-            ReceiverId = requestWithDrawModel.UserId,
+            ReceiverId = new List<int>(userInfo.Id),
         });
         return true;
     }
@@ -111,7 +111,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         {
             Content = $" đon rút tiền với Id{withdraw.Id}  đã được xử li  ",
             IsViewed = false,
-            ReceiverId = withdraw.UserId
+            ReceiverId = new List<int>(withdraw.UserId),
         });
         return true;
     }

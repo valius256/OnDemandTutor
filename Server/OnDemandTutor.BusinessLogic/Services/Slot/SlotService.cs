@@ -1,6 +1,4 @@
-﻿using Google.Rpc;
-using Mapster;
-using Microsoft.AspNetCore.Http;
+﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
@@ -18,7 +16,6 @@ using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
-using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
@@ -113,7 +110,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             foreach (var studentSlot in listOfStudentSlots)
             {
-                if (studentSlot.Slot.Id ==  slotId) continue;
+                if (studentSlot.Slot.Id == slotId) continue;
                 // Check if the slot times overlap
                 if (slot.StartTime <= studentSlot.Slot.EndTime && slot.EndTime >= studentSlot.Slot.StartTime)
                 {
@@ -133,7 +130,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _unitOfWork.SaveChangesAsync();
 
             // Map the created entity back to CreateSlotsDtos and return it
-            var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>(); // Mapster mapping
+            var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
             return createdSlotDto;
         }
 
