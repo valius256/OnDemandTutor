@@ -1,30 +1,28 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
+using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Transaction;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using OnDemandTutor.BusinessLogic.Interfaces.Notification;
-using OnDemandTutor.BusinessLogic.Services.Notification;
-using OnDemandTutor.Models.Dtos.Notification;
-using OnDemandTutor.Models.Dtos.User;
 
 namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
 public class TransactionServices : ITransactionServices
 {
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-    public readonly ISlotStudentServices _slotStudentServices;
+    //public readonly ISlotStudentServices _slotStudentServices;
     private readonly INotificationService _notificationService;
 
-    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService, ISlotStudentServices slotStudentServices)
+    public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
-        _slotStudentServices = slotStudentServices;
+        //_slotStudentServices = slotStudentServices;
         _notificationService = notificationService;
     }
 
@@ -44,12 +42,12 @@ public class TransactionServices : ITransactionServices
                 .ExecuteUpdateAsync(setter => setter
                     .SetProperty(s => s.Status, PaymentStatus.Paid)
                     .SetProperty(s => s.UpdatedDate, paidTime));
-            ;
-        if (transactionModel == null)
-        {
-            throw new ModelException("Transaction model", "Not Found", "transaction not exist");
-        }
         
+        //if (transactionModel == null)
+        //{
+        //    throw new ModelException("Transaction model", "Not Found", "transaction not exist");
+        //}
+
         await _unitOfWorkRepository.SaveChangesAsync();
         return transactionModel;
     }
@@ -71,60 +69,46 @@ public class TransactionServices : ITransactionServices
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, 0);
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }
-    public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
-    {
-        var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
-        TransactionDto transaction = new TransactionDto()
-        {
-            TransactionCode = $"AutoPaid_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
-            Status = PaymentStatus.Paid,
-            SlotId = slotInfor.SlotId,
-            CreatedById = slotInfor.UserId,
-            Amount = amount,
-            CreatedDate = DateTime.UtcNow,
-            PaymentMethod = "Internal"
-        };
-        var transactionModel = transaction.Adapt<Models.Models.Transaction>();
-        _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
-        await _unitOfWorkRepository.SaveChangesAsync();
+    //public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
+    //{
+    //    var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
+    //    TransactionDto transaction = new TransactionDto()
+    //    {
+    //        TransactionCode = $"AutoPaid_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
+    //        Status = PaymentStatus.Paid,
+    //        SlotId = slotInfor.SlotId,
+    //        CreatedById = slotInfor.UserId,
+    //        Amount = amount,
+    //        CreatedDate = DateTime.UtcNow,
+    //        PaymentMethod = "Internal"
+    //    };
+    //    var transactionModel = transaction.Adapt<Models.Models.Transaction>();
+    //    _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
+    //    await _unitOfWorkRepository.SaveChangesAsync();
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"Giao dịch đã được tạo thành công  ",
-            IsViewed = true,
-            ReceiverId = transaction.CreatedById,
-        });
+    //    return true;
+    //}
 
-        return true;
-    }
-
-    public async Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount)
-    {
-        var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
-        TransactionDto transaction = new TransactionDto()
-        {
-            TransactionCode = $"AutoPaid_NotSuccess_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
-            Status = PaymentStatus.Notpaid,
-            SlotId = slotInfor.SlotId,
-            CreatedById = slotInfor.UserId,
-            Amount = amount,
-            CreatedDate = DateTime.UtcNow,
-            PaymentMethod = "Internal"
-        };
-        var transactionModel = transaction.Adapt<Models.Models.Transaction>();
-        _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
-        await _unitOfWorkRepository.SaveChangesAsync();
+    //public async Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount)
+    //{
+    //    var slotInfor = await _slotStudentServices.GetSlotStudentById(slotId);
+    //    TransactionDto transaction = new TransactionDto()
+    //    {
+    //        TransactionCode = $"AutoPaid_NotSuccess_UserId:{slotInfor.UserId}_SlotId:{slotInfor.SlotId}",
+    //        Status = PaymentStatus.Notpaid,
+    //        SlotId = slotInfor.SlotId,
+    //        CreatedById = slotInfor.UserId,
+    //        Amount = amount,
+    //        CreatedDate = DateTime.UtcNow,
+    //        PaymentMethod = "Internal"
+    //    };
+    //    var transactionModel = transaction.Adapt<Models.Models.Transaction>();
+    //    _unitOfWorkRepository.TransactionRepository.Add(transactionModel);
+    //    await _unitOfWorkRepository.SaveChangesAsync();
 
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"Giao dịch đã được tạo thành công  ",
-            IsViewed = true,
-            ReceiverId = transaction.CreatedById,
-        });
-
-        return true;
-    }
+    //    return true;
+    //}
 
     public async Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount)
     {
@@ -142,13 +126,6 @@ public class TransactionServices : ITransactionServices
 
         _unitOfWorkRepository.TransactionRepository.Add(transaction);
         await _unitOfWorkRepository.SaveChangesAsync();
-
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"Giao dịch đã được tạo thành công  ",
-            IsViewed = true,
-            ReceiverId = transaction.CreatedById,
-        });
 
 
         return transaction.Id;

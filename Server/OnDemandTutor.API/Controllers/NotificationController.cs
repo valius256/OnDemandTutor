@@ -23,7 +23,7 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpGet]
-        [ProducesResponseType(typeof(PagedResult<NotificationGetDto>), 200)]
+        [ProducesResponseType(typeof(PagedResult<GetNotificationDto>), 200)]
         public async Task<IActionResult> GetNotifications([FromQuery] int page = 0, [FromQuery] int limit = 20)
         {
             var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
@@ -34,36 +34,27 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(NotificationGetDto), 200)]
+        [ProducesResponseType(typeof(GetNotificationDto), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetNotificationById(int id)
         {
             var notification = await _notificationService.GetNotificationByIdAsync(id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
             return Ok(notification);
         }
 
         [Authorize]
         [HttpPost]
-        [ProducesResponseType(typeof(NotificationGetDto), 201)]
+        [ProducesResponseType(typeof(IActionResult), 201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateNotification([FromBody] NotificationCreateDto notificationCreateDto)
+        public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationDto notificationCreateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var createdNotification = await _notificationService.CreateNotificationAsync(notificationCreateDto);
-            return CreatedAtAction(nameof(GetNotificationById), new { id = createdNotification.Id }, createdNotification);
+            await _notificationService.CreateNotificationAsync(notificationCreateDto);
+            return Ok();
         }
 
         [Authorize]
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(NotificationGetDto), 200)]
+        [ProducesResponseType(typeof(GetNotificationDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateNotification(int id)

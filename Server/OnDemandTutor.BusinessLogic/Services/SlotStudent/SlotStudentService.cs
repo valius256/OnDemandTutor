@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
@@ -14,6 +15,7 @@ using OnDemandTutor.Models.Dtos.StudentSlot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
+using System.Globalization;
 
 namespace OnDemandTutor.BusinessLogic.Services.SlotStudent;
 
@@ -22,13 +24,15 @@ public class SlotStudentService : ISlotStudentServices
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IUserServices _userServices;
     private readonly INotificationService _notificationService;
+    private readonly ITransactionServices _transactionServices;
 
 
-    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService, IUserServices userServices)
+    public SlotStudentService(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService, IUserServices userServices, ITransactionServices transactionServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _userServices = userServices;
         _notificationService = notificationService;
+        _transactionServices = transactionServices;
 
     }
     public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user)
@@ -62,10 +66,15 @@ public class SlotStudentService : ISlotStudentServices
         return slotStudent.Adapt<SlotStudentDto>();
     }
 
-    public async Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId, int page, int limit)
+    public async Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotPaged(int slotId, int page, int limit)
     {
-        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetStudentsSlotWithStudentBySlotId(slotId, page, limit);
+        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetStudentsSlotWithStudentBySlotIdPaged(slotId, page, limit);
         return slotStudents.Adapt<PagedResult<GetSlotStudentWithDetailStudentDto>>();
+    }
+    public async Task<List<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId)
+    {
+        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetStudentsSlotWithStudentBySlotId(slotId);
+        return slotStudents.Adapt<List<GetSlotStudentWithDetailStudentDto>>();
     }
     public async Task<bool> SlotStudentPaidAsync(int slotId, int studentId)
     {
@@ -145,8 +154,7 @@ public class SlotStudentService : ISlotStudentServices
     }
     public async Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, decimal rate, string feedback)
     {
-        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
-            st.SlotId == slotId && st.UserId == studentId);
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.GetSlotStudentBySlotIdAndStudentId(slotId, studentId);
 
         if (slotStudent == null)
         {
@@ -156,26 +164,63 @@ public class SlotStudentService : ISlotStudentServices
         slotStudent.Rating = rate;
         slotStudent.Feedback = feedback;
 
-        var slot = await _unitOfWorkRepository.SlotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
-
-        await _userServices.RecalculateTutorRating(slot.CreateById);
+        await _userServices.RecalculateTutorRating(slotStudent.Slot.CreateById);
 
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
 
-        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        //{
-        //    Content = $"this slot with slot Id{slotId} and studentId{studentId} has been updated  ",
-        //    IsViewed = true,
-        //    ReceiverId = slotStudent.UserId,
-        //});
+        await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+        {
+            Content = $"Bạn đã nhận được 1 đánh giá về buổi học {slotStudent.Slot.StartTime} đến {slotStudent.Slot.EndTime} từ học sinh {slotStudent.User.FirstName} {slotStudent.User.LastName}",
+            ReceiverIds = new List<int> { slotStudent.Slot.CreateById },
+            RefImageUrl = slotStudent.User.AvatarImageUrl,
+            RefUrl = "/tutor/profile"
+        });
+
         return true;
     }
 
 
-    //public async Task<PagedResult<GetSlotStudentDetailDto>?> GetSlotWithStudentOfTutors(PagingModel<QueryRatingDto> queryDto)
-    //{
-    //    var rs = await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotOfTutor(queryDto);
-    //    return rs.Adapt<PagedResult<GetSlotStudentDetailDto>>();
-    //}
+    public async Task CronJobForAutoDereasedMoneyAfterSlotStart()
+    {
+        var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetAboutToStartStudentSlots();
+        foreach (var slotStudent in slotStudents) 
+        {
+            var tutor = slotStudent.User;
+            var duration = (slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
+
+            var studentBalance = await _userServices.GetBalanceAsync(slotStudent.UserId);
+            var amountToDecrease = (tutor.TutorFeePerHour ?? 0) * (decimal)duration;
+            decimal slotCost = (tutor.TutorFeePerHour ?? 0) * (decimal)duration;
+            if (studentBalance - slotCost >= 0)
+            {
+                await _userServices.UpdateBalanceAsync(slotStudent.UserId, -slotCost);
+                await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto>
+                {
+                    new Models.Dtos.Transaction.TransactionDto
+                    {
+                        TransactionCode = DateTime.Now.Ticks + "_" + slotStudent.UserId,
+                        Notes = $"AutoPaid_UserId:{slotStudent.UserId}_SlotId:{slotStudent.SlotId}",
+                        Status = PaymentStatus.Paid,
+                        SlotId = slotStudent.SlotId,
+                        CreatedById = slotStudent.UserId,
+                        Amount = amountToDecrease,
+                        CreatedDate = DateTime.UtcNow,
+                        PaymentMethod = "Internal"
+                    }
+                });
+                await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+                {
+                    Content = $"Hệ thống đã tự quét trừ {amountToDecrease.ToString("C0", CultureInfo.CreateSpecificCulture("vi-VN"))} từ số dư tài khoản để trả cho Slot học sắp tới của bạn." +
+                    $"Chúc bạn và gia sư có 1 buổi học thành công tốt đẹp.",
+                    ReceiverIds = new List<int> { slotStudent.UserId },
+                    RefImageUrl = tutor.AvatarImageUrl,
+                    RefUrl = "/student/schedule"
+                    
+                });
+                await SlotStudentPaidAsync(slotStudent.SlotId, slotStudent.UserId);
+            }           
+        }
+        
+    }
 }

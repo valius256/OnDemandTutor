@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
@@ -7,7 +8,6 @@ using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Enum;
-using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
@@ -116,13 +116,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                     _unitOfWork.SlotRepository.Update(mapper);
                 }
             }
-            
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
-                IsViewed = false,
-                ReceiverId = classEntity.TutorId,
-            });
+
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
+            //    IsViewed = false,
+            //    ReceiverId = new List<int>(classDto.TutorId),
+            //});
             await _unitOfWork.SaveChangesAsync();
             return rs;
         }
@@ -131,12 +131,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
             var updatedClass = _unitOfWork.ClassRepository.Update(classEntity);
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"this class {classDto.Id} has been update",
-                IsViewed = false,
-                ReceiverId = classEntity.TutorId,
-            });
+
+            var receiverIds = new List<int>();
+            var listOfStudentInClass = await GetAllStudentInClassWithClassId(updatedClass.Entity.Id);
+            var listOfStudentInClassId = listOfStudentInClass.Select(ld => ld.StudentId).ToList();
+
+            receiverIds.Add(classDto.TutorId);
+            receiverIds.AddRange(listOfStudentInClassId);
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"this class {classDto.Id} has been update",
+            //    IsViewed = false,
+            //    ReceiverId = receiverIds
+            //});
             await _unitOfWork.SaveChangesAsync();
             return updatedClass.Entity.Adapt<GetClassDtos>();
         }
@@ -230,18 +237,28 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 ClassId = classId,
                 StudentId = studentId,
             };
-            await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-            {
-                Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
-                IsViewed = false,
-                ReceiverId = studentId,
-            });
+
+            var receiverId = new List<int>();
+            receiverId.Add(studentId);
+            receiverId.Add(classToEnroll!.TutorId);
+
+            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            //{
+            //    Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
+            //    IsViewed = false,
+            //    ReceiverId = receiverId,
+            //});
             // Add the student to the class
             classToEnroll.StudentClasses.Add(studentClass);
             _unitOfWork.ClassRepository.Update(classToEnroll);
             await _unitOfWork.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId)
+        {
+            return await _unitOfWork.StudentClassRepository.Where(sc => sc.ClassId == classId).ToListAsync();
         }
 
         public async Task ValidateClassForStudent(int classId, int studentId)

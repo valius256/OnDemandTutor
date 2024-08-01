@@ -170,6 +170,7 @@ public static class ServiceExtensions
             // comb roles
             options.AddPolicy("CustomerOrAdmin", policy => policy.RequireRole("Customer", "Admin"));
             options.AddPolicy("OperatorOrAdmin", policy => policy.RequireRole("Operator", "Admin"));
+            options.AddPolicy("All", policy => policy.RequireRole("Tutor", "Admin", "Operator", "Customer"));
         });
 
 
@@ -247,7 +248,7 @@ public static class ServiceExtensions
 
         services.AddHangfireServer(cf =>
         {
-            RecurringJob.AddOrUpdate<SlotService>(x =>
+            RecurringJob.AddOrUpdate<SlotStudentService>(x =>
             x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
             RecurringJob.AddOrUpdate<SlotService>(x =>
             x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);

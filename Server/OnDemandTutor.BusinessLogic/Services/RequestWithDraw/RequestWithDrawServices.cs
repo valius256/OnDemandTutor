@@ -66,7 +66,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         requestWithDrawModel.UserId = uid;
         requestWithDrawModel.CreatedDate = DateTime.UtcNow;
 
-        await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
+       var requestWithDrawEntity =   await _unitOfWorkRepository.RequestWithDrawRepository.AddAsync(requestWithDrawModel);
         await _userServices.UpdateBalanceAsync(uid, -request.Amount);
         await _unitOfWorkRepository.SaveChangesAsync();
 
@@ -85,12 +85,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         await _emailServices.SendAsync(EmailType.Request_Withdraw_Notification, toAddress, new List<string>(), emailParams,
            false);
 
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $"chuyển tiền Id{requestWithDrawModel.Id}  đã được tạo ",
-            IsViewed = false,
-            ReceiverId = requestWithDrawModel.UserId,
-        });
+        //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+        //{
+        //    Content = $"giao dịch với ID = {requestWithDrawEntity.Entity.Id}  đã được tạo ",
+        //    IsViewed = false,
+        //    ReceiverId = new List<int>(userInfo.Id),
+        //});
         return true;
     }
 
@@ -107,12 +107,12 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         await CreateTransaction(withdraw, operatorId);
         await _unitOfWorkRepository.SaveChangesAsync();
         
-        await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        {
-            Content = $" đon rút tiền với Id{withdraw.Id}  đã được xử li  ",
-            IsViewed = false,
-            ReceiverId = withdraw.UserId
-        });
+        //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+        //{
+        //    Content = $" đon rút tiền với Id{withdraw.Id}  đã được xử li  ",
+        //    IsViewed = false,
+        //    ReceiverId = new List<int>(withdraw.UserId),
+        //});
         return true;
     }
 

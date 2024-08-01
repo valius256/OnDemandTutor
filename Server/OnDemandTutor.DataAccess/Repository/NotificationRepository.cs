@@ -19,9 +19,10 @@ namespace OnDemandTutor.DataAccess.Repository
         {
             return await dbSet
                 .Where(n => n.ReceiverId == id)
+                .OrderByDescending(n => n.CreatedDate)
                 .ToNewPagingAsync(page, limit);
         }
-        public async Task<Notification> GetNotificationWithReceiverByIdAsync(int id)
+        public async Task<Notification?> GetNotificationWithReceiverByIdAsync(int id)
         {
             return await _context.Notifications
                 .Include(n => n.Receiver)

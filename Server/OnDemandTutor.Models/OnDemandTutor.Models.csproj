@@ -28,7 +28,6 @@
     <ItemGroup>
         <Folder Include="Dtos\Subject\" />
         <Folder Include="Dtos\FAQ\" />
-        <Folder Include="Dtos\Notification\" />
     </ItemGroup>
 
     <ItemGroup>

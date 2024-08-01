@@ -27,12 +27,14 @@
             Các gia sư chuyên môn ở nhiều lĩnh vực khác nhau sẵn sàng giúp bạn
             đạt được mục tiêu học tập của mình.
           </p>
-          <button @click="$router.push('/tutors')" class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
+          <button @click="$router.push('/tutors')"
+            class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-bold">
             Bắt Đầu Ngay
           </button>
         </div>
-        <img class="mr-4 relative" src="https://www.greatschools.org/gk/wp-content/uploads/2010/01/Looking-for-a-tutor.jpg">
-        
+        <img class="mr-4 relative"
+          src="https://www.greatschools.org/gk/wp-content/uploads/2010/01/Looking-for-a-tutor.jpg">
+
       </section>
       <section id="popular-tutors" class="relative">
         <div class="absolute inset-0 flex justify-end">
@@ -50,13 +52,14 @@
             <div class="bg-[#c5e3ff] w-[400px] h-full transform -skew-x-12 -mr-48">
               <!-- This div creates the trapezoid shape -->
             </div>
-          </div>   
+          </div>
         </div>
 
         <div class="relative mx-auto text-center py-20 w-10/12">
           <h2 class="text-3xl font-bold mb-10">Các Gia Sư Tiêu Biểu</h2>
           <div class="flex flex-wrap -mx-4">
-            <div v-for="tutor in tutors" :key="tutor.tutor.id" class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8 transition duration-200 hover:scale-110">
+            <div v-for="tutor in tutors" :key="tutor.tutor.id"
+              class="w-full lg:w-1/4 md:w-1/2 px-4 mb-8 transition duration-200 hover:scale-110">
               <div class="bg-white rounded-lg shadow p-6">
                 <router-link :to="'/tutor-guest/' + tutor.tutor.id + '/profile'">
                   <img :src="tutor.tutor.avatarImageUrl ?? '/src/assets/noavatar.jpg'" />
@@ -75,7 +78,8 @@
               </div>
             </div>
           </div>
-          <button class="mt-3 bg-white hover:bg-slate-200 text-blue-600 py-3 px-12 rounded-full text-lg font-bold" @click="$router.push('/tutors')">
+          <button class="mt-3 bg-white hover:bg-slate-200 text-blue-600 py-3 px-12 rounded-full text-lg font-bold"
+            @click="$router.push('/tutors')">
             Xem thêm gia sư
           </button>
         </div>
@@ -151,7 +155,7 @@
             <div class="bg-[#c5e3ff] w-[400px] h-full transform -skew-x-12 -mr-48">
               <!-- This div creates the trapezoid shape -->
             </div>
-          </div>   
+          </div>
         </div>
         <div class="container mx-auto text-center relative">
           <h2 class="text-3xl font-bold mb-10">Cách Thức Hoạt Động</h2>
@@ -333,6 +337,9 @@ export default {
         this.jsonToQueryString(query))
       if (response.data) {
         this.tutors = response.data.data.items
+        this.tutors.map(t => {
+          if (t.tutor?.rating) { t.tutor.rating = Math.round(t.tutor.rating * 100) / 100 }
+        })
       }
     },
   },
