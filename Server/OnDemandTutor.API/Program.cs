@@ -31,7 +31,10 @@ internal class Program
 
         // ADD CORS
         builder.Services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
-                policyBuilder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
+            policyBuilder.WithOrigins("http://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()));
 
 
         builder.Services.AddRepositories()
@@ -80,19 +83,16 @@ internal class Program
         });
 
 
-        // Swagger
-        app.UseSwagger();
-        app.UseSwaggerUI();
 
         // Middleware
         app.UseMiddleware<ExceptionHandlingMiddleware>();
-
+        app.UseCors();
         app.UseRouting();
         app.UseStatusCodePages();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseCors();
+
 
         app.UseEndpoints(endpoints =>
         {
@@ -102,6 +102,9 @@ internal class Program
         });
 
 
+        // Swagger
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
 
         app.Run();

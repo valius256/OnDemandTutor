@@ -170,6 +170,7 @@ public static class ServiceExtensions
             // comb roles
             options.AddPolicy("CustomerOrAdmin", policy => policy.RequireRole("Customer", "Admin"));
             options.AddPolicy("OperatorOrAdmin", policy => policy.RequireRole("Operator", "Admin"));
+            options.AddPolicy("All", policy => policy.RequireRole("Tutor", "Admin", "Operator", "Customer"));
         });
 
 
