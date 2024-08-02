@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.API", "OnDemandTutor.API\OnDemandTutor.API.csproj", "{8B753431-F83F-4F11-8E16-D643628525E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.BusinessLogic", "OnDemandTutor.BusinessLogic\OnDemandTutor.BusinessLogic.csproj", "{79239CD6-8B1D-49EF-8FFC-D9A2A1FA8755}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.DataAccess", "OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj", "{22F442DA-AEDD-41B2-AF1F-D2CF46B39198}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.Helper", "OnDemandTutor.Helper\OnDemandTutor.Helper.csproj", "{FA5505D8-3149-4DF0-9A62-771AB26F8BF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.Models", "OnDemandTutor.Models\OnDemandTutor.Models.csproj", "{226EF8FF-15C8-4BE3-91DB-EFD701BAA47F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnDemandTutor.SchedulerJobs", "OnDemandTutor.SchedulerJobs\OnDemandTutor.SchedulerJobs.csproj", "{21D3FC8A-6BB6-451B-8DA0-467550A4E511}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B753431-F83F-4F11-8E16-D643628525E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B753431-F83F-4F11-8E16-D643628525E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B753431-F83F-4F11-8E16-D643628525E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B753431-F83F-4F11-8E16-D643628525E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79239CD6-8B1D-49EF-8FFC-D9A2A1FA8755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79239CD6-8B1D-49EF-8FFC-D9A2A1FA8755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79239CD6-8B1D-49EF-8FFC-D9A2A1FA8755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79239CD6-8B1D-49EF-8FFC-D9A2A1FA8755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22F442DA-AEDD-41B2-AF1F-D2CF46B39198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22F442DA-AEDD-41B2-AF1F-D2CF46B39198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22F442DA-AEDD-41B2-AF1F-D2CF46B39198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22F442DA-AEDD-41B2-AF1F-D2CF46B39198}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA5505D8-3149-4DF0-9A62-771AB26F8BF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA5505D8-3149-4DF0-9A62-771AB26F8BF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA5505D8-3149-4DF0-9A62-771AB26F8BF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA5505D8-3149-4DF0-9A62-771AB26F8BF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226EF8FF-15C8-4BE3-91DB-EFD701BAA47F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226EF8FF-15C8-4BE3-91DB-EFD701BAA47F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226EF8FF-15C8-4BE3-91DB-EFD701BAA47F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226EF8FF-15C8-4BE3-91DB-EFD701BAA47F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21D3FC8A-6BB6-451B-8DA0-467550A4E511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D3FC8A-6BB6-451B-8DA0-467550A4E511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D3FC8A-6BB6-451B-8DA0-467550A4E511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D3FC8A-6BB6-451B-8DA0-467550A4E511}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7816C90B-852B-46D5-860A-BD6051CA1971}
+	EndGlobalSection
+EndGlobal
