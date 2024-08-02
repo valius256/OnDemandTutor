@@ -20,7 +20,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
-        <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
