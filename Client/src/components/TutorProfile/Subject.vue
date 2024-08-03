@@ -23,9 +23,15 @@
           Lý do từ chối: {{ selectedSubject.reasonReject || "Không có lý do" }}
         </div>
         <div class="text-gray-800 font-semibold">Bằng cấp:</div>
-        <div class="flex flex-wrap gap-2">
-          <img v-for="(img, index) in selectedSubject.qualification" :key="index" :src="img"
-            class="w-24 h-24 object-cover rounded-lg border border-gray-200" />
+        <div class="flex flex-col gap-2">
+          <div v-for="degree in selectedSubject.degrees" :key="degree.id" class="flex gap-8">
+            <img :src="degree.degreeImgUrl" class="w-1/3 object-cover rounded-lg border border-gray-200" />
+            <div>
+              <span class="font-bold">Tên bằng cấp : </span> {{ degree.tutorDegreeName }}<br>
+              <span class="font-bold">Số bằng cấp : </span> {{ degree.degreeNumber }}<br>
+              <span class="font-bold">Ngày cấp : </span> {{ degree.issuranceDate }}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -147,8 +153,23 @@ export default {
         console.error("Error fetching subjects:", error);
       }
     },
-    selectSubject(subject) {
-      this.selectedSubject = subject;
+    async selectSubject(subject) {
+      await this.fetchTutorSubjectDetail(subject.id)
+    },
+    async fetchTutorSubjectDetail(id) {
+      try {
+        const response = await axios.get(
+          import.meta.env.VITE_API_URL + "/api/TutorSubject/" + id,
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        );
+        this.selectedSubject = response.data;
+      } catch (error) {
+        console.error("Error fetching tutor subjects:", error);
+      }
     },
     handleQualificationUpload(event) {
       const files = event.target.files;

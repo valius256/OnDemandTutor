@@ -34,7 +34,7 @@
                     </div>
                     <div class="flex flex-col">
                         <span class="font-medium text-gray-600">Đánh giá</span>
-                        <span> <star-rating :star-size="20" :rating="tutor.rating.toFixed(2)" :round-start-rating="false"
+                        <span> <star-rating :star-size="20" :rating="tutor.rating?.toFixed(2)" :round-start-rating="false"
                                 :read-only="true" /></span>
                     </div>
                     <div class="flex flex-col">

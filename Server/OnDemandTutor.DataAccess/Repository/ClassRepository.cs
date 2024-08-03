@@ -28,15 +28,18 @@ namespace OnDemandTutor.DataAccess.Repository
                 {
                     classQuery = classQuery.Where(c => c.SubjectId == pagingModel.Filter.SubjectId.Value);
                 }
-
+                if (pagingModel.Filter.TutorId.HasValue)
+                {
+                    classQuery = classQuery.Where(c => c.TutorId == pagingModel.Filter.TutorId);
+                }
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Name))
                 {
-                    classQuery = classQuery.Where(c => c.Name.Contains(pagingModel.Filter.Name));
+                    classQuery = classQuery.Where(c => c.Name != null && c.Name.Contains(pagingModel.Filter.Name));
                 }
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Address))
                 {
-                    classQuery = classQuery.Where(c => c.Location.Contains(pagingModel.Filter.Address));
+                    classQuery = classQuery.Where(c => c.Location != null && c.Location.Contains(pagingModel.Filter.Address));
                 }
 
                 if (pagingModel.Filter.StartTime.HasValue)
@@ -61,7 +64,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Method))
                 {
-                    classQuery = classQuery.Where(c => c.Method.Contains(pagingModel.Filter.Method));
+                    classQuery = classQuery.Where(c => c.Method != null && c.Method.Contains(pagingModel.Filter.Method));
                 }
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.UserName))

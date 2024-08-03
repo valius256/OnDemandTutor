@@ -47,11 +47,24 @@
                             </div>
                         </td>
                         <td class="relative border-r-2" v-for="day in daysInWeek" :key="day.dayInWeek"
-                        :class="{'bg-slate-100': compareDateToToday(day.specificDay)}">
-                            <slot-detail v-if="role != 'tutor'" :slots="getSlotsByDay(day.specificDay)" 
-                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
-                            <SlotDetailTutor v-else :slots="getSlotsByDay(day.specificDay)" 
-                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin" :viewDetail="viewDetail"/>
+                            :class="{ 'bg-slate-100': compareDateToToday(day.specificDay) }">
+                            <slot-detail-for-creating-class
+                                 v-if="role == 'tutorCreating'"                   
+                                 :slots="getSlotsByDay(day.specificDay)"
+                                :shiftZoomSize="shiftZoomSize"
+                                :getDistanceInMin="getDistanceInMin"
+                                :day="day.specificDay"
+                                :day-picked="dayPicked"
+                                :set-picked-day="setPickedDay">
+                            </slot-detail-for-creating-class>
+                            <SlotDetailTutor v-else-if="role == 'tutor'" 
+                                :slots="getSlotsByDay(day.specificDay)"
+                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin"
+                                :viewDetail="viewDetail" />
+                            <slot-detail v-else 
+                                :slots="getSlotsByDay(day.specificDay)"
+                                :shiftZoomSize="shiftZoomSize" :getDistanceInMin="getDistanceInMin"
+                                :viewDetail="viewDetail" />
                         </td>
                     </tr>
                 </tbody>
@@ -63,10 +76,11 @@
 <script>
 import SlotDetail from './SlotDetail.vue';
 import SlotDetailTutor from '../TutorProfile/SlotDetail.vue';
+import SlotDetailForCreatingClass from '../TutorProfile/SlotDetailForCreatingClass.vue';
 export default {
-  components: { SlotDetail, SlotDetailTutor },
+    components: { SlotDetail, SlotDetailTutor, SlotDetailForCreatingClass },
     name: "StudentTimeTable",
-    props: ['slots','fetching','viewDetail','role'],
+    props: ['slots', 'fetching', 'viewDetail', 'role','dayPicked','setPickedDay'],
     data() {
         return {
             daysInWeek: [
@@ -177,10 +191,10 @@ export default {
             const dateToCompare = (new Date(this.slashDateFormatToSqlDateString(date)).getDate())
             return this.slots.filter(s => new Date(s.slot?.startTime ?? s.startTime).getDate() == dateToCompare)
         },
-        compareDateToToday(date){
+        compareDateToToday(date) {
             const dateToCompare = (this.slashDateFormatToSqlDateString(date))
             const today = new Date()
-            const todayDateString = `${today.getFullYear()}-${String((today.getMonth() + 1)).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
+            const todayDateString = `${today.getFullYear()}-${String((today.getMonth() + 1)).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
             return dateToCompare == todayDateString
         }
     },

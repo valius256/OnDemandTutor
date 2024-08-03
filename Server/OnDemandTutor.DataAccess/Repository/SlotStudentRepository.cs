@@ -111,9 +111,9 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
     public async Task<List<SlotStudent>> GetAboutToStartStudentSlots()
     {
         var query = dbSet.AsQueryable()
-            .Include(ss => ss.Slot)
+            .Include(ss => ss.Slot).ThenInclude(s => s.CreatedBy)
             .Include(ss => ss.User)
-            .Where(ss => ss.Slot.StartTime >= DateTime.Now.AddHours(-1) && ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid);
+            .Where(ss => ss.Slot.StartTime <= DateTime.Now.AddHours(1) && ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid);
 
         return await query.ToListAsync();
     }

@@ -186,7 +186,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetAboutToStartStudentSlots();
         foreach (var slotStudent in slotStudents) 
         {
-            var tutor = slotStudent.User;
+            var tutor = slotStudent.Slot.CreatedBy;
             var duration = (slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
 
             var studentBalance = await _userServices.GetBalanceAsync(slotStudent.UserId);
@@ -206,7 +206,8 @@ public class SlotStudentService : ISlotStudentServices
                         CreatedById = slotStudent.UserId,
                         Amount = amountToDecrease,
                         CreatedDate = DateTime.UtcNow,
-                        PaymentMethod = "Internal"
+                        PaymentMethod = "Internal",
+                        TransactionType = TransactionType.Deduction
                     }
                 });
                 await _notificationService.CreateNotificationAsync(new CreateNotificationDto

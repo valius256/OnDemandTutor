@@ -1,33 +1,30 @@
 <template>
     <div class="">
-        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
-            Lớp học bạn đã tham gia
+        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-100 ">
+            Lớp học của gia sư
         </div>
-        <class-list v-if="!isOpenClassDetailPopup" :classes="classes" :handlePageChange="handlePageChange" :movePage="movePage" :currentUser="user" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{total : totalPage, page : currentPage}"></class-list>
+        <class-list v-if="!isOpenClassDetailPopup" :classes="classes" :handlePageChange="handlePageChange" :movePage="movePage" :currentUser="null" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{total : totalPage, page : currentPage}"></class-list>
         <div v-else>
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
             <class-detail-popup :classId="selectedClass"></class-detail-popup>
         </div>
-        <generic-popup title="Đánh giá lớp học" v-if="isOpenRatingPopup" :closeFunction="toggleClassRatingPopup">
-            <rating-popup :classId="selectedClass" :close="toggleClassRatingPopup" :action="fetchData"></rating-popup>
-        </generic-popup>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
 import ClassList from '../common/ClassList.vue'
+import ClassDetailPopup from '../StudentProfile/ClassDetailPopup.vue'
 export default {
-    components: { ClassList },
+    components: { ClassList, ClassDetailPopup },
     inject: ['eventBus'],
-    name: "StudentClasses",
+    props : ['viewingId','tutor'],
     data() {
         return {
             classes: [],
             isOpenClassDetailPopup: false,
-            isOpenRatingPopup: false,
             user : null,
             totalPage: 100,
             pageSize: 10,
@@ -42,8 +39,7 @@ export default {
             }
             let queryStr = this.jsonToQueryString(query)
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/student?' +
-                queryStr, {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/?Filter.TutorId=' + this.tutor.id + "&" +  queryStr, {
                 headers: {
                     "Authorization": "Bearer " + localStorage.token
                 }
@@ -61,10 +57,6 @@ export default {
             scrollTo(0, 0)
             this.selectedClass = id
             this.isOpenClassDetailPopup = !this.isOpenClassDetailPopup
-        },
-        toggleClassRatingPopup(id) {
-            this.selectedClass = id
-            this.isOpenRatingPopup = !this.isOpenRatingPopup
         },
         async handlePageChange() {
             if (this.currentPage > this.totalPage) {

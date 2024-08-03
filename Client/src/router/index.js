@@ -11,7 +11,6 @@ import StudentProfile from "../pages/Student/ProfilePage.vue";
 import TutorProfile from "../pages/Tutor/TutorProfilePage.vue";
 import TutorGuestView from "../pages/Tutor/TutorGuestViewPage.vue";
 // import ClassDetailPage from "../pages/Student/ClassDetailPage.vue";
-// import CreateClassPage from "../pages/Student/CreateClassPage.vue";
 import StudentManagementPage from "../pages/Operators/StudentManagementPage.vue";
 import OperatorManagementPage from "../pages/Operators/OperatorMangementPage.vue";
 import TutorManagementPage from "../pages/Operators/TutorManagementPage.vue";
@@ -129,6 +128,17 @@ const routes = [
       {
         path: "myclass",
         component: TutorProfile,
+        redirect: "/tutor/myclass/list",
+        children: [
+          {
+            path: "list",
+            component: TutorProfile,
+          },
+          {
+            path: "create",
+            component: TutorProfile,
+          },
+        ]
       },
       {
         path: "withdraw",

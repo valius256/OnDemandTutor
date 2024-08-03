@@ -3,97 +3,18 @@
     <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
       Lớp học bạn đã tạo
     </div>
+    <div class="flex justify-center">
+      <button @click="this.$router.push('/tutor/myclass/create')"
+        class="font-bold bg-blue-400 text-white rounded-lg hover:bg-blue-200 px-12 py-2">
+        Tạo lớp mới
+      </button>
+    </div>
+    <hr class="mt-4">
     <div class="px-8 py-2" v-if="!isOpenClassDetailPopup">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div
-          v-for="class_ in classes"
-          :key="class_.id"
-          class="shadow-md rounded-lg"
-        >
-          <div :class="getStatusStyleHeader(class_.status)">
-            {{ class_.name }}
-          </div>
-          <div class="p-4 max-h-72 overflow-y-auto">
-            <ul class="px-4 flex flex-col gap-2">
-              <li>
-                <span class="font-bold">Gia sư :</span>
-                <button class="ml-3 font-bold text-blue-400 underline">
-                  {{
-                    (class_.tutor.firstName ?? "") +
-                    " " +
-                    (class_.tutor.lastName ?? "")
-                  }}
-                </button>
-              </li>
-              <li>
-                <span class="font-bold">Thời gian :</span>
-                <span class="ml-3">
-                  {{ class_.startTime?.substring(0, 10) ?? "" }} đến
-                  {{ class_.endTime?.substring(0, 10) ?? "" }}
-                </span>
-              </li>
-              <li>
-                <span class="font-bold">Môn học :</span>
-                <span class="ml-3">{{ class_.subject.name }}</span>
-              </li>
-              <li v-if="class_.method == 'Offline'">
-                <span class="font-bold">Địa điểm :</span>
-                <span class="ml-3">{{ class_.location }}</span>
-              </li>
-              <li>
-                <span class="font-bold">Hình thức :</span>
-                <span :class="getMethodStyle(class_.method)">{{
-                  class_.method
-                }}</span>
-              </li>
-              <li>
-                <span class="font-bold">Trạng thái :</span>
-                <span :class="getStatusStyle(class_.status)">
-                  {{ getStatusDisplay(class_.status) }}
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div class="flex justify-center gap-2 my-2">
-            <button
-              v-if="class_.status == 2"
-              class="bg-blue-500 text-white font-bold p-2 rounded-lg"
-            >
-              Đánh giá gia sư
-            </button>
-            <button
-              @click="toggleClassDetailPopup(class_.id)"
-              class="bg-blue-500 text-white font-bold p-2 rounded-lg"
-            >
-              Xem thêm
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="flex gap-4 justify-center mt-4" v-if="classes.length > 0">
-        <button @click="movePage(false)">
-          <i class="fa fa-arrow-left text-2xl"></i>
-        </button>
-        <div class="flex gap-2">
-          <input
-            class="border p-1 rounded-md w-16"
-            type="number"
-            v-model="currentPage"
-            min="1"
-            @change="handlePageChange"
-          />
-          <div class="p-1">/ {{ this.totalPage }}</div>
-        </div>
-        <button @click="movePage(true)">
-          <i class="fa fa-arrow-right text-2xl"></i>
-        </button>
-      </div>
+     <class-list :currentUser="user" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{page : currentPage, total: totalPage}"></class-list>
     </div>
     <div v-else>
-      <button
-        class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
-        @click="toggleClassDetailPopup"
-      >
+      <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
         Trở về
       </button>
       <class-detail-popup :classId="selectedClass"></class-detail-popup>
@@ -105,8 +26,9 @@
 import axios from "axios";
 import GenericPopup from "../common/GenericPopup.vue";
 import ClassDetailPopup from "./ClassDetailPopup.vue";
+import ClassList from '../common/ClassList.vue';
 export default {
-  components: { GenericPopup, ClassDetailPopup },
+  components: { GenericPopup, ClassDetailPopup, ClassList },
   name: "TutorClasses",
   data() {
     return {
@@ -114,6 +36,7 @@ export default {
       pageSize: 10,
       currentPage: 1,
       selectedClass: 0,
+      currentUser : null,
       isOpenClassDetailPopup: false,
       classes: [],
     };
@@ -121,7 +44,6 @@ export default {
   methods: {
     async fetchData() {
       let query = {
-        Sorts: {},
         Page: this.currentPage,
         Limit: this.pageSize,
       };

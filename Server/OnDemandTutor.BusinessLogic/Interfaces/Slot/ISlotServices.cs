@@ -1,4 +1,5 @@
-﻿using OnDemandTutor.Models.Dtos.Slot;
+﻿using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
@@ -10,6 +11,8 @@ public interface ISlotServices
     Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDtos tutor);
     Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
     Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user);
+
+    Task CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
     Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
     Task<bool> DeleteSlotAsync(int id);
     Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();

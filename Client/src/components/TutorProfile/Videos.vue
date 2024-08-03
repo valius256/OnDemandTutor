@@ -26,7 +26,7 @@
                         <div class="italic">{{ this.beautifyDatetime(video.createdDate) }}</div>
                     </div>
                 </div>
-                <div>{{ video.description }}</div>
+                <div v-html="video.description.replace(/\n/g, '<br />')"></div>
                 <video class="w-5/6 mt-4" controls>
                     <source :src="video.videoUrl" type="video/mp4">
                     Your browser does not support the video tag.

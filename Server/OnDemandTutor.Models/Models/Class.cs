@@ -10,6 +10,7 @@ public class Class : BaseEntity
     public int SubjectId { get; set; }
     public string? Location { get; set; }
     public string? Method { get; set; }
+    public int NumberOfStudents { get; set; }
     public ClassStatus Status { get; set; }
     public virtual Subject Subject { get; set; }
     public virtual User Tutor { get; set; }

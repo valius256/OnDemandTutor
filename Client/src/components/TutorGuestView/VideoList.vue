@@ -5,12 +5,13 @@
                 <div class="flex gap-4">
                     <img class="w-16 h-16 rounded-full" :src="video.tutor.avatarImageUrl" />
                     <div>
-                        <div class="font-bold">{{ (video.tutor.firstName ?? "") + " " + (video.tutor.lastName ?? "")}}</div>
+                        <div class="font-bold">{{ (video.tutor.firstName ?? "") + " " + (video.tutor.lastName ?? "") }}
+                        </div>
                         <div class="italic">{{ this.beautifyDatetime(video.createdDate) }}</div>
                     </div>
                 </div>
-                <div>{{ video.description }}</div>
-                <video class="w-full mt-4" controls>
+                <div v-html="video.description.replace(/\n/g, '<br />')"></div>
+                <video class="w-full mt-4" controls @timeupdate="null">
                     <source :src="video.videoUrl" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -37,20 +38,20 @@
 <script>
 import axios from 'axios';
 export default {
-    props : ["tutor","viewingId"],
+    props: ["tutor", "viewingId"],
     data() {
         return {
             totalPage: 100,
             pageSize: 10,
             currentPage: 1,
-            isOpenUploadPopup : false,
+            isOpenUploadPopup: false,
             videos: [
 
             ]
         }
     },
     methods: {
-        toggleOpenUploadPopup(){
+        toggleOpenUploadPopup() {
             this.isOpenUploadPopup = !this.isOpenUploadPopup
         },
         async fetchVideos() {
@@ -59,7 +60,7 @@ export default {
                     import.meta.env.VITE_API_URL + "/api/TutorVideo",
                     {
                         params: {
-                            "Filter.TutorId" : this.tutor.id,
+                            "Filter.TutorId": this.tutor.id,
                             Page: this.currentPage,
                             Limit: this.pageSize
                         },
@@ -91,6 +92,20 @@ export default {
                 this.currentPage--
                 await this.handlePageChange()
             }
+        },
+        checkVideoProgress(event) {
+            const videoElement = event.target;
+            const videoDuration = videoElement.duration;
+            const currentTime = videoElement.currentTime;
+
+            // Check if 50% of the video has been watched
+            if (currentTime >= videoDuration * 0.5 && !this.videoWatched) {
+                this.videoWatched = true;
+                this.incrementVideoViews();
+            }
+        },
+        incrementVideoViews() {
+            
         },
     },
 

@@ -21,7 +21,7 @@ export default {
             this.eventBus.emit("open-result-dialog", {
               message: "Tài khoản của bạn đã bị ngưng hoạt động. Lý do : " + user.deaActiveReason,
               type: "Error",
-              callback : this.clearToken
+              callback: this.clearToken
             })
           }
           return user
@@ -29,18 +29,18 @@ export default {
           console.log(e)
           //console.log("Token can't be used")
           this.eventBus.emit("open-result-dialog", {
-              message: "Phiên đã hết hạn. Vui lòng đăng nhập lại",
-              type: "Error",
-              callback : this.clearToken
-            })
+            message: "Phiên đã hết hạn. Vui lòng đăng nhập lại",
+            type: "Error",
+            callback: this.clearToken
+          })
         }
       }
       //this.eventBus.emit("close-loading-popup")
 
       return null
     },
-    clearToken(){
-      this.$router.push("/login"); 
+    clearToken() {
+      this.$router.push("/login");
       localStorage.removeItem("token")
       this.eventBus.emit("update-everything")
     },
@@ -128,7 +128,13 @@ export default {
         return datetimeStr.substring(8, 10) + "/" + datetimeStr.substring(5, 7) + "/" + datetimeStr.substring(0, 4) + " lúc " + datetimeStr.substring(11, 19)
       }
       return ""
-    }
+    },
+    formatDatetime(date, time) {
+      if (date && time) {
+        return `${date} ${time}:00`;
+      }
+      return '';
+    },
     // Define other global methods here if needed
   },
 };

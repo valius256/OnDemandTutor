@@ -2,11 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
 
@@ -15,7 +17,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
     public class ClassServices : IClassServices
     {
         private readonly IUnitOfWorkRepository _unitOfWork;
-
         private readonly INotificationService _notificationService;
         private readonly ISlotStudentServices _slotStudentServices;
 
@@ -100,29 +101,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return rs;
         }
 
-        public async Task<CreateClassDTO> CreateClassAsync(CreateClassDTO classDto)
+        public async Task<GetClassDtos> CreateClassAsync(CreateClassDTO classDto, GetProfileUserDtos user)
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
+            classEntity.TutorId = user.Id;
+
             var createdClass = await _unitOfWork.ClassRepository.AddAsync(classEntity);
-            var rs = createdClass.Entity.Adapt<CreateClassDTO>();
-            foreach (var slotId in classDto.SlotIds)
-            {
-                var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(slotId);
-                if (slot != null)
-                {
-                    var mapper = slot.Adapt<Models.Models.Slot>();
-                    slot.ClassId = createdClass.Entity.Id;
-
-                    _unitOfWork.SlotRepository.Update(mapper);
-                }
-            }
-
-            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
-            //{
-            //    Content = $"Lớp học với tutor {classEntity.Tutor.Email} đã được tạo thành công",
-            //    IsViewed = false,
-            //    ReceiverId = new List<int>(classDto.TutorId),
-            //});
+            var rs = createdClass.Entity.Adapt<GetClassDtos>();
             await _unitOfWork.SaveChangesAsync();
             return rs;
         }
@@ -238,9 +223,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 StudentId = studentId,
             };
 
-            var receiverId = new List<int>();
-            receiverId.Add(studentId);
-            receiverId.Add(classToEnroll!.TutorId);
+            var receiverId = new List<int>
+            {
+                studentId,
+                classToEnroll!.TutorId
+            };
 
             //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
             //{
