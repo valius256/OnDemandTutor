@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Class;
+using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Paging;
@@ -16,12 +17,14 @@ namespace OnDemandTutor.API.Controllers
         private readonly IClassServices _classServices;
         private readonly IAuthServices _authServices;
         private readonly IStudentClassService _studentClassService;
+        private readonly ISlotServices _slotServices;
 
-        public ClassController(IClassServices classServices, IAuthServices authServices, IStudentClassService studentClassService)
+        public ClassController(IClassServices classServices, IAuthServices authServices, IStudentClassService studentClassService, ISlotServices slotServices)
         {
             _classServices = classServices;
             _authServices = authServices;
             _studentClassService = studentClassService;
+            _slotServices = slotServices;
         }
 
 
@@ -73,7 +76,9 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(typeof(GetClassDtos), 200)]
         public async Task<IActionResult> CreateClass([FromBody] CreateClassDTO classDto)
         {
-            var createdClass = await _classServices.CreateClassAsync(classDto);
+            var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var createdClass = await _classServices.CreateClassAsync(classDto, tutor);
+            await _slotServices.CreateClassSlotAsync(classDto.Slots, createdClass, tutor.Id);
             return CreatedAtAction(nameof(GetClassById), createdClass);
         }
 

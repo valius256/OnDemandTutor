@@ -42,6 +42,7 @@ export default {
             }
         },
         async handleUpload(confirmation) {
+            console.log(this.description.split('\n').join('\\n'))
             if (confirmation) {
                 this.eventBus.emit("open-confirmation-popup", {
                     message: "Bạn có chắc chắn muốn đăng tải video này?",

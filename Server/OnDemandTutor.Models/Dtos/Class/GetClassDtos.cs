@@ -12,6 +12,7 @@ namespace OnDemandTutor.Models.Dtos.Class
         public int SubjectId { get; set; }
         public string? Location { get; set; }
         public string? Method { get; set; }
+        public int NumberOfStudents { get; set; }
         public ClassStatus Status { get; set; }
 
         public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();

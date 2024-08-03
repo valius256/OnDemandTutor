@@ -5,6 +5,7 @@
         public string? Name { get; set; }
         public int? SubjectId { get; set; }
         public string? UserName { get; set; }
+        public int? TutorId { get; set; }
         public string? Address { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }

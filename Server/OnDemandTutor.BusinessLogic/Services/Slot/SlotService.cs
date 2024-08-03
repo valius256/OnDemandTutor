@@ -12,6 +12,7 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.DataAccess.IRepository;
 using OnDemandTutor.Models;
+using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.User;
@@ -134,7 +135,27 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
             return createdSlotDto;
         }
+        public async Task CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId)
+        {
+            foreach (var slotDto in slotDtos)
+            {
+                var mappedSlot = slotDto.Adapt<Models.Models.Slot>();
+                mappedSlot.CreateById = userId;
+                mappedSlot.ClassId = classDto.Id;
+                mappedSlot.TeachAddress = classDto.Location;
+                mappedSlot.IsOnline = classDto.Method == "Online" ? true : false;
+                mappedSlot.ClassId = classDto.Id;
+                mappedSlot.NumberOfStudents = classDto.NumberOfStudents;
 
+                await ValidateSlot(mappedSlot);
+
+                var createdSlotEntity = await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Map the created entity back to CreateSlotsDtos and return it
+                var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
+            }
+        }
         public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user)
         {
             // Retrieve the existing slot entity from the database

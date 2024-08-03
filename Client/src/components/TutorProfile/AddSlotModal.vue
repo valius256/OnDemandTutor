@@ -150,8 +150,6 @@ export default {
             params: {
               "Filter.TutorName": tutorName,
               Status: 3,
-              "Sorts[column]": "string",
-              "Sorts[isDesc]": true,
             },
             headers: {
               Authorization: "Bearer " + localStorage.token,

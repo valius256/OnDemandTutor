@@ -22,6 +22,7 @@
       </schedule>
       <subject :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/subject'"></subject>
       <video-list :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/videos'"></video-list>
+      <classes :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/class'"></classes>
       <!-- <tutor-classes :id="viewingId"
           v-if="$route.path == '/tutor/myclass' + viewingId"
         ></tutor-classes> -->
@@ -35,7 +36,7 @@ import Navbar from "../../components/TutorGuestView/Navbar.vue";
 import Profile from "../../components/TutorGuestView/Profile.vue";
 import Schedule from "../../components/TutorGuestView/Schedule.vue";
 import Subject from "../../components/TutorGuestView/Subject.vue";
-import TutorClasses from "../../components/TutorProfile/TutorClasses.vue";
+import Classes from "../../components/TutorGuestView/Classes.vue";
 import VideoList from '../../components/TutorGuestView/VideoList.vue';
 export default {
   name: "ProfilePage",
@@ -45,7 +46,7 @@ export default {
     Schedule,
     Navigator,
     Subject,
-    TutorClasses,
+    Classes,
     Navbar,
     VideoList,
   },

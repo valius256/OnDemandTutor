@@ -184,7 +184,7 @@ public class VnPayServices : IVnPayServices
 
         foreach (var slot in classDto.Slots)
         {
-            if (slot.SlotStatus == SlotStatus.NotYet && slot.PaymentStatus == PaymentStatus.Notpaid)
+            if (slot.SlotStatus == SlotStatus.NotYet)
             {
                 var totalTime = slot.EndTime - slot.StartTime;
                 totalHoursNotYet += totalTime.TotalHours;
