@@ -4,9 +4,10 @@
     <button @click="handleClickDay" class="absolute inset-0 hover:bg-slate-50" 
     :class="{'bg-slate-200' : day == dayPicked}"></button>
     <button v-for="slot in slots" :key="slot.id" class="rounded-lg absolute w-full text-white text-center bg-gray-400 flex justify-center items-center" 
-      :class="{'bg-orange-400' : slot.isClass}" 
+      :class="{'bg-orange-400' : slot.isClass , 'shadow-2xl shadow-blue-400' : slot.isSelected}" 
       :disabled="!slot.isClass"
-      :style="slotStyle(slot)">
+      :style="slotStyle(slot)"
+      @click="handleSelect(slot)">
       <div class="absolute inset-0" v-if="slot.isOnline">
         <div class="relative">
           <div class="absolute bg-green-400 p-2 right-1 top-1 rounded-full"></div>
@@ -80,6 +81,9 @@ export default {
     },
     handleRemove(slot){
       this.eventBus.emit("class-creator-remove-slot", {start : slot.startTime, end : slot.endTime})
+    },
+    handleSelect(slot){
+      this.eventBus.emit("class-creator-select-slot", {slot : slot, isSelect : !slot.isSelected})
     }
   },
 

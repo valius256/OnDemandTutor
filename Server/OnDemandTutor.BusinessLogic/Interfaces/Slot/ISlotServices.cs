@@ -15,7 +15,7 @@ public interface ISlotServices
     Task CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
     Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
     Task<bool> DeleteSlotAsync(int id);
-    Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
+    //Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
     Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
     Task<bool> EnrollForSlot(int studentId, int slotId);

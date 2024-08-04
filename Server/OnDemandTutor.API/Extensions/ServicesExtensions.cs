@@ -250,7 +250,7 @@ public static class ServiceExtensions
         {
             RecurringJob.AddOrUpdate<SlotStudentService>(x =>
             x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
-            RecurringJob.AddOrUpdate<SlotService>(x =>
+            RecurringJob.AddOrUpdate<StudentClassService>(x =>
             x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
             RecurringJob.AddOrUpdate<ClassServices>(x =>
                 x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));

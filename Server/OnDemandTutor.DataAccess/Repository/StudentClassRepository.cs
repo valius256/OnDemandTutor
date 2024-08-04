@@ -15,7 +15,19 @@ namespace OnDemandTutor.DataAccess.Repository
         {
 
         }
-
+        public async Task<List<StudentClass>> GetAllStudentClassesThatHaveAtLeastOneDebtSlot()
+        {
+            return await dbSet
+            .Include(sc => sc.Student)
+            .Include(sc => sc.Class)
+                .ThenInclude(c => c.Slots)
+                    .ThenInclude(s => s.SlotStudents)
+            .Where(sc => sc.Class.Slots
+                .Any(s => s.SlotStudents
+                    .Any(ss => ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid
+                        && ss.UserId == sc.StudentId)))
+            .ToListAsync();
+        }
         public async Task<PagedResult<StudentClass>> QueryStudentClass(PagingModel<QueryStudentClassDto> request)
         {
             var query = dbSet.AsQueryable()

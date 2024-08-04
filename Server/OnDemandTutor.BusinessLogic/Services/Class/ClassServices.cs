@@ -105,10 +105,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
             classEntity.TutorId = user.Id;
-
+            classEntity.Status = ClassStatus.NotStart;
             var createdClass = await _unitOfWork.ClassRepository.AddAsync(classEntity);
-            var rs = createdClass.Entity.Adapt<GetClassDtos>();
             await _unitOfWork.SaveChangesAsync();
+            var rs = createdClass.Entity.Adapt<GetClassDtos>();
             return rs;
         }
 
@@ -209,38 +209,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
             // Save all changes in one go
             await _unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task<bool> EnrollCLass(int classId, int studentId)
-        {
-            await ValidateClassForStudent(classId, studentId);
-            var classToEnroll = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
-
-            // Create a new StudentClass entity
-            var studentClass = new Models.Models.StudentClass()
-            {
-                ClassId = classId,
-                StudentId = studentId,
-            };
-
-            var receiverId = new List<int>
-            {
-                studentId,
-                classToEnroll!.TutorId
-            };
-
-            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
-            //{
-            //    Content = $"User {studentId} đã tham gia class: {classToEnroll!.Name} thành công",
-            //    IsViewed = false,
-            //    ReceiverId = receiverId,
-            //});
-            // Add the student to the class
-            classToEnroll.StudentClasses.Add(studentClass);
-            _unitOfWork.ClassRepository.Update(classToEnroll);
-            await _unitOfWork.SaveChangesAsync();
-
-            return true;
         }
 
         public async Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId)

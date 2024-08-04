@@ -97,6 +97,21 @@ export default {
       const day = String(date.getDate()).padStart(2, "0"); // Get the day of the month and pad with leading zero if needed
       return `${year}-${month}-${day}`; // Concatenate the year, month, and day with hyphens
     },
+    toFullSqlDateString(date) {
+      const year = date.getFullYear(); // Get the year (4 digits)
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Get the month (0-11) and pad with leading zero if needed
+      const day = String(date.getDate()).padStart(2, "0"); // Get the day of the month and pad with leading zero if needed
+      const hour = String((date.getHours())).padStart(2, "0")
+      const min = String((date.getMinutes())).padStart(2, "0")
+      const sec = String((date.getSeconds())).padStart(2, "0")
+      return `${year}-${month}-${day} ${hour}:${min}:${sec}`; // Concatenate the year, month, and day with hyphens
+    },
+    toTimeString(date){
+      const hour = String((date.getHours())).padStart(2, "0")
+      const min = String((date.getMinutes())).padStart(2, "0")
+      const sec = String((date.getSeconds())).padStart(2, "0")
+      return `${hour}:${min}:${sec}`; 
+    },
     sqlDateStringToSlashFormat(dateString) {
       const date = new Date(dateString)
       return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`; // Concatenate the year, month, and day with hyphens

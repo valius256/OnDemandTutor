@@ -29,24 +29,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly IAuthServices _authService;
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IUserServices _userServices;
-        private readonly ITransactionServices _transactionServices;
-        private readonly IEmailServices _emailServices;
-        private readonly IStudentClassService _studentClassService;
         private readonly INotificationService _notificationService;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
-            ISlotStudentServices slotStudentServices, ITransactionServices transactionServices, IUserServices userServices,
-            IEmailServices emailServices, IStudentClassService studentClassService, INotificationService notificationService,
+            ISlotStudentServices slotStudentServices, IUserServices userServices,
+            INotificationService notificationService,
             ISlotRepository slotRepository, IAuthServices authService)
         {
             _unitOfWork = unitOfWorkRepository;
             _slotRepository = slotRepository;
             _authService = authService;
             _slotStudentServices = slotStudentServices;
-            _transactionServices = transactionServices;
             _userServices = userServices;
-            _emailServices = emailServices;
-            _studentClassService = studentClassService;
             _notificationService = notificationService;
         }
 
@@ -142,6 +136,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 var mappedSlot = slotDto.Adapt<Models.Models.Slot>();
                 mappedSlot.CreateById = userId;
                 mappedSlot.ClassId = classDto.Id;
+                mappedSlot.SubjectId = classDto.SubjectId;
                 mappedSlot.TeachAddress = classDto.Location;
                 mappedSlot.IsOnline = classDto.Method == "Online" ? true : false;
                 mappedSlot.ClassId = classDto.Id;
@@ -149,11 +144,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
                 await ValidateSlot(mappedSlot);
 
-                var createdSlotEntity = await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
+                await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
                 await _unitOfWork.SaveChangesAsync();
-
-                // Map the created entity back to CreateSlotsDtos and return it
-                var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
             }
         }
         public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user)
@@ -204,97 +196,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 throw new NotFoundException($"Slot with ID {id} not found.");
             }
             return isDeleted;
-        }
-
-        
-
-
-        // improved listOfSlotIds later, cause it foreach all the slotId in same class if have
-        public async Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent()
-        {
-            var notPaidSlotStudents = await _slotStudentServices.GetListSLotStudentByStatus(PaymentStatus.Notpaid);
-            var slotIds = notPaidSlotStudents.Select(l => l.SlotId).Distinct().ToList();
-            foreach (var slotId in slotIds)
-            {
-                var slotTotalList = await GetListOfSlotSameClassBySlotId(slotId);
-                var totalSlots = slotTotalList.Count;
-
-                if (totalSlots == 0) continue;
-
-                var notPaidSlotsCount = slotTotalList.Count(ls =>
-                    ls.SlotStudents.Any(ss => ss.PaymentStatus == PaymentStatus.Notpaid));
-                double notPaidSlotsPercentage = (double)notPaidSlotsCount / totalSlots;
-
-                if (notPaidSlotsPercentage >= 0.20)
-                {
-                    await HandleHighUnpaidSlots(slotId, slotTotalList);
-                }
-                else if (notPaidSlotsPercentage >= 0.15)
-                {
-                    await SendPaymentReminder(slotId, slotTotalList);
-                }
-            }
-        }
-
-        private async Task HandleHighUnpaidSlots(int slotId, List<GetSlotWithSlotStudentDto> slotTotalList)
-        {
-            var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
-            var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-            var classId = slotTotalList.FirstOrDefault()?.ClassId;
-
-            if (classId.HasValue)
-            {
-                var classModel = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(cl => cl.Id == classId);
-                var emailParams = new Dictionary<string, string>
-                {
-                    { "Name", userDto.Email },
-                    { "ClassId", classModel.Name ?? classModel.Id.ToString() }
-                };
-
-                await SendEmail(EmailType.High_Unpaid_Slots_Warning, userDto.Email, emailParams);
-
-                try
-                {
-                    await _slotStudentServices.SoftDeleteSlotStudent(slotId, userDto.Id);
-                    await _studentClassService.DeleteStudentFromStudentClassById(classModel.Id, userDto.Id);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("StudentClass not found"))
-                    {
-                        Console.WriteLine($"StudentClass not found for user {userDto.Id} in slot {slotId}. Skipping to next.");
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-        }
-
-        private async Task SendPaymentReminder(int slotId, List<GetSlotWithSlotStudentDto> slotTotalList)
-        {
-            var slotStudentDto = await _slotStudentServices.GetSlotStudentById(slotId);
-            var userDto = await _userServices.GetProfileAsync(slotStudentDto.UserId, null, null);
-            var classId = slotTotalList.FirstOrDefault()?.ClassId;
-
-            if (classId.HasValue)
-            {
-                var classModel = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(cl => cl.Id == classId);
-                var emailParams = new Dictionary<string, string>
-                {
-                    { "Name", userDto.Email },
-                    { "ClassId", classModel.Name ?? classModel.Id.ToString() }
-                };
-
-                await SendEmail(EmailType.Slot_Payment_Reminder, userDto.Email, emailParams);
-            }
-        }
-
-        private async Task SendEmail(string emailType, string toAddress, Dictionary<string, string> emailParams)
-        {
-            var toAddressList = new List<string> { toAddress };
-            await _emailServices.SendAsync(emailType, toAddressList, new List<string>(), emailParams);
         }
 
 

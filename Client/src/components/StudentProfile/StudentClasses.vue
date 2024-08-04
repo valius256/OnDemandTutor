@@ -8,7 +8,7 @@
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
-            <class-detail-popup :classId="selectedClass"></class-detail-popup>
+            <ClasssDetailPopup :classId="selectedClass"></ClasssDetailPopup>
         </div>
         <generic-popup title="Đánh giá lớp học" v-if="isOpenRatingPopup" :closeFunction="toggleClassRatingPopup">
             <rating-popup :classId="selectedClass" :close="toggleClassRatingPopup" :action="fetchData"></rating-popup>
@@ -19,8 +19,10 @@
 <script>
 import axios from 'axios'
 import ClassList from '../common/ClassList.vue'
+import ClasssDetailPopup from './ClassDetailPopup.vue'
+import GenericPopup from '../common/GenericPopup.vue'
 export default {
-    components: { ClassList },
+    components: { ClassList, ClasssDetailPopup, GenericPopup },
     inject: ['eventBus'],
     name: "StudentClasses",
     data() {
