@@ -78,8 +78,8 @@ namespace OnDemandTutor.API.Controllers
         {
             var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var createdClass = await _classServices.CreateClassAsync(classDto, tutor);
-            await _slotServices.CreateClassSlotAsync(classDto.Slots, createdClass, tutor.Id);
-            return CreatedAtAction(nameof(GetClassById), createdClass);
+            await _slotServices.CreateClassSlotAsync(classDto.SlotList, createdClass, tutor.Id);
+            return Ok(createdClass);
         }
 
         [Authorize]

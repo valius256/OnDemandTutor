@@ -9,7 +9,7 @@ namespace OnDemandTutor.Models.Dtos.Class
         public string? Location { get; set; }
         public string? Method { get; set; }
         public int NumberOfStudents { get; set; }
-        public List<CreateClassSlotDto> Slots { get; set; } = new List<CreateClassSlotDto>();
+        public List<CreateClassSlotDto> SlotList { get; set; } = new List<CreateClassSlotDto>();
     }
 }
 

@@ -15,7 +15,6 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Class
         Task<GetClassDtos> UpdateClassAsync(GetClassDtos classDto);
         Task<bool> DeleteClassAsync(int id);
         Task CronForAutoChangeStatusClassAndSlot();
-        Task<bool> EnrollCLass(int classId, int studentId);
         Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId);
         Task ValidateClassForStudent(int classId, int studentId);
     }

@@ -127,17 +127,17 @@ public class VnPayServices : IVnPayServices
         {
             throw new BadRequestException("Payment Error");
         }
-        var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
+        //var slotInClass = await _classServices.GetClassByIdAsync(response.ClassId.Value);
         
         await _transactionServices.CreateTransactionForClassPayment(response.OrderId, response.UserId, response.ClassId.Value, response.Money);
 
-        await _classServices.EnrollCLass(response.ClassId.Value, response.UserId);
+        await _studentClassService.EnrollClass(response.ClassId.Value, response.UserId);
     
-        foreach (var slot in slotInClass.Slots)
-        {
-            await _slotServices.EnrollForSlot(response.UserId, slot.Id);
-            await _slotStudentServices.SlotStudentPaidAsync(slot.Id, response.UserId);
-        }
+        //foreach (var slot in slotInClass.Slots)
+        //{
+        //    await _slotServices.EnrollForSlot(response.UserId, slot.Id);
+        //    await _slotStudentServices.SlotStudentPaidAsync(slot.Id, response.UserId);
+        //}
     }
 
 

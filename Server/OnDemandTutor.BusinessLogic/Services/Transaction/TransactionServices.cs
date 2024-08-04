@@ -114,7 +114,7 @@ public class TransactionServices : ITransactionServices
     {
         var transaction = new Models.Models.Transaction
         {
-            TransactionCode = $"Paid for class{classId}",
+            TransactionCode = $"Deposit_class_{classId}",
             CreatedById = userId,
             Amount = amount,
             CreatedDate = DateTime.UtcNow,

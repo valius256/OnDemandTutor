@@ -57,7 +57,7 @@
             Thời khóa biểu
         </div>
         <hr>
-        <form @submit.prevent="addSlot" class="flex flex-col lg:flex-row lg:place-content-between mt-4 mx-8">
+        <form @submit.prevent="addSlot(true)" class="flex flex-col lg:flex-row lg:place-content-between mt-4 mx-8">
             <div class="flex mb-4">
                 <label for="date" class="block font-bold p-2 w-32">Ngày</label>
                 <input type="date" id="date" v-model="newSlot.date" required
@@ -100,11 +100,16 @@
                 Slot của lớp sẽ có màu cam
             </div>
             <div class="flex gap-4">
-                <button class="py-2 px-10 bg-blue-300 hover:bg-blue-100 rounded-lg text-white font-bold">
+                <button class="py-2 px-10 rounded-lg text-white font-bold" :disabled="!isAbleToCopy()"
+                    :class="{ ' bg-blue-300 hover:bg-blue-100 ': isAbleToCopy(), 'bg-gray-500': !isAbleToCopy() }"
+                    @click.stop="handleCopy">
                     Copy
                     <i class="fa fa-copy"></i>
                 </button>
-                <button class="py-2 px-10 bg-blue-300 hover:bg-blue-100 rounded-lg text-white font-bold">
+                <button class="py-2 px-10 rounded-lg text-white font-bold"
+                    :disabled="copiedSlots.length == 0 || !pickedDay"
+                    :class="{ 'bg-blue-300 hover:bg-blue-100': copiedSlots.length > 0 && pickedDay, 'bg-gray-500': copiedSlots.length == 0 || !pickedDay }"
+                    @click.stop="handlePaste">
                     Dán
                     <i class="fa fa-paste"></i>
                 </button>
@@ -114,7 +119,7 @@
         <time-table :slots="slots" role="tutorCreating" :fetching="getUserSlots" :day-picked="pickedDay"
             :set-picked-day="setPickedDay"></time-table>
         <div class="flex justify-center gap-6">
-            <button v-if="classData == null"
+            <button v-if="classData == null" @click="handleAdd(true)"
                 class="mt-3 hover:bg-blue-200 bg-blue-400 text-white py-3 px-12 rounded-lg text-lg font-bold w-full mx-4 mb-4">
                 Tạo lớp
             </button>
@@ -152,11 +157,14 @@ export default {
             classSlots: [
             ],
             newSlot: {
+                date: null,
                 startTime: null,
                 endTime: null,
-                isClass: true
             },
-            pickedDay: ""
+            pickedDay: "",
+            copiedSlots: [
+
+            ],
         }
     },
     mounted() {
@@ -170,6 +178,13 @@ export default {
         this.eventBus.on("class-creator-remove-slot", (params) => {
             this.removeSlot(params.start, params.end)
         })
+        this.eventBus.on("class-creator-select-slot", (params) => {
+            this.selectSlot(params.slot, params.isSelect)
+        })
+    },
+    beforeUnmount() {
+        this.eventBus.off("class-creator-remove-slot")
+        this.eventBus.off("class-creator-select-slot")
     },
     methods: {
         getData() {
@@ -233,7 +248,7 @@ export default {
                 this.slots.push(slot)
             }
         },
-        addSlot() {
+        addSlot(showMessage) {
             const startHour = this.formatDatetime(this.newSlot.date, this.newSlot.startTime)
             const endHour = this.formatDatetime(this.newSlot.date, this.newSlot.endTime)
             const startTimeDate = new Date(startHour)
@@ -278,15 +293,19 @@ export default {
             const newSlot = {
                 startTime: startHour,
                 endTime: endHour,
-                isClass: true
+                isClass: true,
+                isSelected: false
             }
             this.classSlots.push(newSlot)
             this.classSlots.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
             this.slots.push(newSlot)
-            this.eventBus.emit("open-result-dialog", {
-                message: "Thêm thành công",
-                type: "Success",
-            });
+            if (showMessage) {
+                this.eventBus.emit("open-result-dialog", {
+                    message: "Thêm thành công",
+                    type: "Success",
+                });
+            }
+
         },
         removeSlot(start, end) {
             //console.log(start, end)
@@ -295,6 +314,83 @@ export default {
         },
         setPickedDay(day) {
             this.pickedDay = day
+        },
+        isAbleToCopy() {
+            var selectedList = this.classSlots.filter(s => s.isSelected)
+            return selectedList.length > 0
+        },
+        selectSlot(slot, isSelect) {
+            var slot = this.classSlots.find(s => s.startTime == slot.startTime && s.endTime == slot.endTime)
+            if (slot) {
+                slot.isSelected = isSelect
+            }
+        },
+        handleCopy() {
+            this.copiedSlots = []
+            const selectedSlots = this.classSlots.filter(s => s.isSelected)
+            for (var slot of selectedSlots) {
+                if (!this.copiedSlots.find(s => s.startTime == slot.startTime && s.endTime == slot.endTime)) {
+                    this.copiedSlots.push(slot)
+                }
+            }
+        },
+        handlePaste() {
+            const date = new Date(this.slashDateFormatToSqlDateString(this.pickedDay))
+            const firstSlot = this.copiedSlots.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0]
+            if (firstSlot) {
+                const startDate = new Date(firstSlot.startTime.substring(0, 10))
+                const durationInDay = (date - startDate) / 3600000 / 24
+                for (var slot of this.copiedSlots) {
+                    const slotStartDate = new Date(slot.startTime)
+                    const slotEndDate = new Date(slot.endTime)
+                    slotStartDate.setDate(slotStartDate.getDate() + durationInDay)
+                    this.newSlot.date = this.toSqlDateString(slotStartDate)
+                    this.newSlot.startTime = this.toTimeString(slotStartDate).substring(0,5)
+                    this.newSlot.endTime = this.toTimeString(slotEndDate).substring(0,5)
+                    console.log(this.newSlot)
+                    this.addSlot(false)
+                }
+            }
+
+        },
+        async handleAdd(confirmation) {
+            if (confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn tạo lớp?",
+                    method: this.handleAdd,
+                    params: false
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.post(import.meta.env.VITE_API_URL + '/api/Class', {
+                        name: this.createDto.name,
+                        subjectId : this.createDto.subjectId,
+                        location: this.createDto.teachAddress,
+                        method : this.createDto.isOnline ? "Online"  : "Offline",
+                        numberOfStudents: this.createDto.numberOfStudents,
+                        slotList : this.classSlots
+                    }, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Tạo lớp thành công",
+                        type: "Success"
+                    })
+                    await this.$router.push('/tutor/myclass/list')
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Không thể tạo lớp. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
         }
 
     }

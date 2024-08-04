@@ -188,8 +188,8 @@ export default {
             this.getShifts()
         },
         getSlotsByDay(date) {
-            const dateToCompare = (new Date(this.slashDateFormatToSqlDateString(date)).getDate())
-            return this.slots.filter(s => new Date(s.slot?.startTime ?? s.startTime).getDate() == dateToCompare)
+            const dateToCompare = (this.slashDateFormatToSqlDateString(date))
+            return this.slots.filter(s => (s.slot?.startTime ?? s.startTime).substring(0,10) == dateToCompare)
         },
         compareDateToToday(date) {
             const dateToCompare = (this.slashDateFormatToSqlDateString(date))

@@ -7,6 +7,8 @@ namespace OnDemandTutor.DataAccess.IRepository
     public interface IStudentClassRepository : IGenericRepository<StudentClass>
     {
         Task<PagedResult<StudentClass>> QueryStudentClass(PagingModel<QueryStudentClassDto> request);
+
+        Task<List<StudentClass>> GetAllStudentClassesThatHaveAtLeastOneDebtSlot();
     }
 }
 
