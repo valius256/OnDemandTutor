@@ -4,6 +4,11 @@ namespace OnDemandTutor.Models.Models;
 
 public class ConsultationRequest : BaseEntity
 {
+    public ConsultationRequest()
+    {
+        RequestDate = DateTime.UtcNow;
+    }
+
     public int Id { get; set; }
     public string? Name { get; set; }
     public string Phone { get; set; }
@@ -13,9 +18,4 @@ public class ConsultationRequest : BaseEntity
     public DateTime RequestDate { get; set; }
     public ConsultationRequestStatus Status { get; set; }
     public virtual User? HandleBy { get; set; }
-
-    public ConsultationRequest()
-    {
-        RequestDate = DateTime.UtcNow;
-    }
 }

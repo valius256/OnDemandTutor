@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin;
+﻿using System.Security.Claims;
+using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -49,9 +50,7 @@ using OnDemandTutor.DataAccess.Repository;
 using OnDemandTutor.Models;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.SchedulerJobs;
-using SharedKernel.Api.ServiceCollectionExtensions.OpenApi.OperationFilters;
-using System.Security.Claims;
-
+using Swashbuckle.AspNetCore.Filters;
 
 namespace OnDemandTutor.API.Extensions;
 
@@ -134,37 +133,38 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddFirebaseAuthentication(this IServiceCollection services,
+        IConfiguration configuration)
     {
         var projectId = configuration["Authentication:Audiences"];
 
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.Authority = $"https://session.firebase.google.com/ondemandtutor-a049e";
-            options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidIssuer = $"https://session.firebase.google.com/ondemandtutor-a049e",
-                ValidateAudience = true,
-                ValidAudience = projectId,
-                ValidateLifetime = true,
-                RoleClaimType = ClaimTypes.Role
-            };
-
-
-        });
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = "https://session.firebase.google.com/ondemandtutor-a049e";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = "https://session.firebase.google.com/ondemandtutor-a049e",
+                    ValidateAudience = true,
+                    ValidAudience = projectId,
+                    ValidateLifetime = true,
+                    RoleClaimType = ClaimTypes.Role
+                };
+            });
 
         services.AddAuthorization(options =>
         {
             // base roles
-            options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
+            options.AddPolicy("Customer",
+                policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Customer.ToString()));
             options.AddPolicy("Tutor", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Tutor.ToString()));
-            options.AddPolicy("Operator", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
+            options.AddPolicy("Operator",
+                policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Operator.ToString()));
             options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, RoleStatus.Admin.ToString()));
 
             // comb roles
@@ -176,10 +176,8 @@ public static class ServiceExtensions
 
         services.AddAuthorization(config =>
         {
-            config.AddPolicy("CustomerOrAdmin", policyBuilder =>
-            {
-                policyBuilder.RequireRole("Customer", "Admin");
-            });
+            config.AddPolicy("CustomerOrAdmin",
+                policyBuilder => { policyBuilder.RequireRole("Customer", "Admin"); });
         });
         return services;
     }
@@ -200,7 +198,7 @@ public static class ServiceExtensions
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer",
-                BearerFormat = "JWT",
+                BearerFormat = "JWT"
             });
             options.OperationFilter<SecurityRequirementsOperationFilter>(); // Handles the authorization button
             options.SchemaFilter<DateOnlyDocumentFilter>();
@@ -224,11 +222,11 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddHangFireConfigurations(this IServiceCollection services,
+        IConfiguration configuration)
     {
         // Register Hangfire and configure it
         services.AddHangfire(config =>
-
             config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"),
                 new SqlServerStorageOptions
                 {
@@ -249,9 +247,9 @@ public static class ServiceExtensions
         services.AddHangfireServer(cf =>
         {
             RecurringJob.AddOrUpdate<SlotStudentService>(x =>
-            x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
+                x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
             RecurringJob.AddOrUpdate<SlotService>(x =>
-            x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
+                x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
             RecurringJob.AddOrUpdate<ClassServices>(x =>
                 x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));
         });
@@ -266,6 +264,4 @@ public static class ServiceExtensions
         services.Configure<AppSetting>(configuration.GetSection("SmtpSettings"));
         return services;
     }
-
-
 }

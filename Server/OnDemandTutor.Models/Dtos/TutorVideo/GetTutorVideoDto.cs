@@ -1,14 +1,13 @@
 using OnDemandTutor.Models.Dtos.User;
 
-namespace OnDemandTutor.Models.Dtos.TutorVideo
+namespace OnDemandTutor.Models.Dtos.TutorVideo;
+
+public class GetTutorVideoDto
 {
-    public class GetTutorVideoDto
-    {
-        public int Id { get; set; }
-        public int? TutorId { get; set; }
-        public string VideoUrl { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public DateTime? CreatedDate { get; set; }
-        public GetProfileUserDtos Tutor { get; set; } = default!;
-    }
+    public int Id { get; set; }
+    public int? TutorId { get; set; }
+    public string VideoUrl { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DateTime? CreatedDate { get; set; }
+    public GetProfileUserDtos Tutor { get; set; } = default!;
 }

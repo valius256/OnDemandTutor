@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
         : base(options)
     {
     }
+
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<ConsultationRequest> ConsultationRequests { get; set; }
@@ -31,12 +32,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<StudentClass> StudentClasses { get; set; }
     public DbSet<TutorSubject> TutorSubjects { get; set; }
     public DbSet<RequestWithDraw> RequestWithDraw { get; set; }
-    
-    
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.EnableSensitiveDataLogging();
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new SlotEntityTypeConfiguration());
@@ -58,6 +60,4 @@ public class ApplicationDbContext : DbContext
         // seed 
         modelBuilder.Seed();
     }
-
-
 }

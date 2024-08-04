@@ -22,29 +22,23 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
 
         // Apply filters based on transactionFilterDto
         if (transactionFilter.FromDate != default && transactionFilter.ToDate != default)
-        {
-            transactionQuery = transactionQuery.Where(t => t.CreatedDate >= transactionFilter.FromDate && t.CreatedDate <= transactionFilter.ToDate);
-        }
+            transactionQuery = transactionQuery.Where(t =>
+                t.CreatedDate >= transactionFilter.FromDate && t.CreatedDate <= transactionFilter.ToDate);
 
         if (transactionFilter.MinAmount > 0)
-        {
             transactionQuery = transactionQuery.Where(t => t.Amount >= transactionFilter.MinAmount);
-        }
 
         if (transactionFilter.MaxAmount > 0)
-        {
             transactionQuery = transactionQuery.Where(t => t.Amount <= transactionFilter.MaxAmount);
-        }
 
-        if (transactionFilter.TransactionType != null &&  transactionFilter.TransactionType.Any())
-        {
-            transactionQuery = transactionQuery.Where(t => transactionFilter.TransactionType.Contains(t.TransactionType));
-        }
+        if (transactionFilter.TransactionType != null && transactionFilter.TransactionType.Any())
+            transactionQuery =
+                transactionQuery.Where(t => transactionFilter.TransactionType.Contains(t.TransactionType));
 
 
-        int limit = transactionFilter.Limit.Value > 0 ? transactionFilter.Limit.Value : 10;
-        int page = transactionFilter.Page.Value > 0 ? transactionFilter.Page.Value : 1;
-        int skip = (page - 1) * limit;
+        var limit = transactionFilter.Limit.Value > 0 ? transactionFilter.Limit.Value : 10;
+        var page = transactionFilter.Page.Value > 0 ? transactionFilter.Page.Value : 1;
+        var skip = (page - 1) * limit;
 
         var filteredUsers = await transactionQuery
             .AsNoTracking()
@@ -52,5 +46,4 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
 
         return filteredUsers;
     }
-
 }

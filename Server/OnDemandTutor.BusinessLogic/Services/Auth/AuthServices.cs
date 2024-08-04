@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
@@ -7,8 +8,6 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Authen;
 using OnDemandTutor.Models.Dtos.User;
-using OnDemandTutor.Models.Models;
-using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
@@ -16,14 +15,15 @@ public class AuthServices : IAuthServices
 {
     private readonly IConfiguration _configuration;
     private readonly IFireBaseAuthServices _fireBaseAuthServices;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IJwtProviderServices _jwtProviderServices;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IUserServices _userServices;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     public AuthServices(IUserServices userServices, IUnitOfWorkRepository unitOfWorkRepository,
-        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices, IHttpContextAccessor HttpContextAccessor)
+        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices,
+        IHttpContextAccessor HttpContextAccessor)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _userServices = userServices;
@@ -47,10 +47,7 @@ public class AuthServices : IAuthServices
         if (userId.IsNullOrEmpty()) throw new BadRequestException("Invalid Claims");
 
         var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId!);
-        if (user is null)
-        {
-            throw new NotFoundException("User not found");
-        }
+        if (user is null) throw new NotFoundException("User not found");
         return user;
     }
 
@@ -85,7 +82,9 @@ public class AuthServices : IAuthServices
 
     public async Task<string> GrantRole(GrantRoleDto request)
     {
-        var record = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Email == request.email || l.Id == request.id);
+        var record =
+            await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l =>
+                l.Email == request.email || l.Id == request.id);
 
         record.Role = request.Role;
         _unitOfWorkRepository.UserRepository.Update(record);
@@ -93,31 +92,21 @@ public class AuthServices : IAuthServices
         return record.Role.ToString();
     }
 
-    public async Task<bool> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal,ChangePasswordDto changePasswordDto)
+    public async Task<bool> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordDto changePasswordDto)
     {
         // Retrieve the user's email or ID from claims
         var user = await GetUserProfileByClaim(claimsPrincipal);
-      // var email = user.FindFirst(ClaimTypes.Email)?.Value;
-        if (user is null)
-        {
-            throw new Exception("User email not found in claims.");
-        }
+        // var email = user.FindFirst(ClaimTypes.Email)?.Value;
+        if (user is null) throw new Exception("User email not found in claims.");
 
         // Check if the old password is correct
-        var isOldPasswordCorrect = await _jwtProviderServices.GetForCredentialsAsync(user.Email, changePasswordDto.OldPassword);
-        if (isOldPasswordCorrect is null)
-        {
-            throw new Exception("Old password is incorrect.");
-        }
-        if(changePasswordDto.OldPassword == changePasswordDto.NewPassword)
-        {
+        var isOldPasswordCorrect =
+            await _jwtProviderServices.GetForCredentialsAsync(user.Email, changePasswordDto.OldPassword);
+        if (isOldPasswordCorrect is null) throw new Exception("Old password is incorrect.");
+        if (changePasswordDto.OldPassword == changePasswordDto.NewPassword)
             throw new Exception("New password similar to the old password, please choose another one.");
-        }
         var userEntity = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Email == user.Email);
-        if (userEntity is null)
-        {
-            throw new Exception("User not found.");
-        }
+        if (userEntity is null) throw new Exception("User not found.");
         // Change the password
         if (userEntity is not null)
         {
@@ -126,7 +115,7 @@ public class AuthServices : IAuthServices
             _unitOfWorkRepository.SaveChanges();
             return true;
         }
-     
+
         return false;
     }
 }

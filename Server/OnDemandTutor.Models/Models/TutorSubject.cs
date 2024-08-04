@@ -11,5 +11,4 @@ public class TutorSubject : BaseEntity
     public string? ReasonReject { get; set; }
     public virtual Subject Subject { get; set; }
     public TutorSubjectStatus Status { get; set; }
-
 }

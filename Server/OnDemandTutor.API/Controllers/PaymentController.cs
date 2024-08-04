@@ -11,16 +11,17 @@ using OnDemandTutor.Models.Dtos.Slot;
 
 namespace OnDemandTutor.API.Controllers;
 
-
 [Route("api/[controller]")]
 [ApiController]
 public class PaymentController : BaseController<PaymentController>
 {
-    private readonly IVnPayServices _vnPayServices;
-    private readonly ISlotServices _slotServices;
     private readonly IClassServices _classServices;
-    public PaymentController(ILogger<PaymentController> logger, IVnPayServices vnPayServices, ISlotServices slotServices,
-    IClassServices classServices
+    private readonly ISlotServices _slotServices;
+    private readonly IVnPayServices _vnPayServices;
+
+    public PaymentController(ILogger<PaymentController> logger, IVnPayServices vnPayServices,
+        ISlotServices slotServices,
+        IClassServices classServices
     ) : base(logger)
     {
         _vnPayServices = vnPayServices;
@@ -50,6 +51,7 @@ public class PaymentController : BaseController<PaymentController>
         await _vnPayServices.CreatePaymentForSlotByUserBalance(paymentInfo, HttpContext);
         return Ok();
     }
+
     [Authorize]
     [HttpPost("create-payment-class")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -69,10 +71,7 @@ public class PaymentController : BaseController<PaymentController>
     {
         var response = await _vnPayServices.PaymentExecute(Request.Query);
         var redirectTo = Redirect(response.RedirectResult ?? "");
-        if (redirectTo == null)
-        {
-            return Ok(response);
-        }
+        if (redirectTo == null) return Ok(response);
         return redirectTo;
     }
 
@@ -85,6 +84,4 @@ public class PaymentController : BaseController<PaymentController>
         var paymentUrl = await _vnPayServices.RechargePaymentAsync(request, HttpContext);
         return Ok(paymentUrl);
     }
-
-
 }

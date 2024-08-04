@@ -17,10 +17,7 @@ public class BaseController<T> : ControllerBase
     {
         get
         {
-            if (HttpContext != null && HttpContext.Items["User"] is User user)
-            {
-                return user;
-            }
+            if (HttpContext != null && HttpContext.Items["User"] is User user) return user;
             _logger.LogInformation("Can't get user from HttpContext");
             return null;
         }

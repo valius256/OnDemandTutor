@@ -2,24 +2,21 @@
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 
-namespace OnDemandTutor.Models.Dtos.Class
+namespace OnDemandTutor.Models.Dtos.Class;
+
+public class GetClassDtos
 {
-    public class GetClassDtos
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public int TutorId { get; set; }
-        public int SubjectId { get; set; }
-        public string? Location { get; set; }
-        public string? Method { get; set; }
-        public ClassStatus Status { get; set; }
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public int TutorId { get; set; }
+    public int SubjectId { get; set; }
+    public string? Location { get; set; }
+    public string? Method { get; set; }
+    public ClassStatus Status { get; set; }
 
-        public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();
-        public GetProfileUserDtos Tutor { get; set; } = new GetProfileUserDtos();
+    public GetSubjectDtos Subject { get; set; } = new();
+    public GetProfileUserDtos Tutor { get; set; } = new();
 
-        public DateTime? StartTime { get; set; }
-        public DateTime? EndTime { get; set; }
-
-    }
+    public DateTime? StartTime { get; set; }
+    public DateTime? EndTime { get; set; }
 }
-

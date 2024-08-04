@@ -3,5 +3,5 @@
 public enum ConsultationRequestStatus
 {
     Pending,
-    Solved,
+    Solved
 }

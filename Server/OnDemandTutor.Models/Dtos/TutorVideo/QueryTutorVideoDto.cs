@@ -1,8 +1,6 @@
-﻿
-namespace OnDemandTutor.Models.Dtos.TutorVideo
+﻿namespace OnDemandTutor.Models.Dtos.TutorVideo;
+
+public class QueryTutorVideoDto
 {
-    public class QueryTutorVideoDto
-    {
-        public int? TutorId { get; set; }
-    }
+    public int? TutorId { get; set; }
 }

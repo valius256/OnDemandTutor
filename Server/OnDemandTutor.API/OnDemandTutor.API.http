@@ -1,6 +1,0 @@
-@OnDemandTutor.API_HostAddress = http://localhost:5103
-
-GET {{OnDemandTutor.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

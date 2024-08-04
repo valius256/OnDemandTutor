@@ -1,5 +1,4 @@
-﻿
-using FirebaseAdmin.Auth;
+﻿using FirebaseAdmin.Auth;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,32 +11,30 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
-using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
-using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.User;
 
 public class UserServices : IUserServices
 {
-    private readonly IFireBaseAuthServices _fireBaseAuthServices;
     private readonly IEmailServices _emailServices;
+    private readonly IFireBaseAuthServices _fireBaseAuthServices;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
 
-    public UserServices(IUnitOfWorkRepository unitOfWorkRepository, IFireBaseAuthServices fireBaseAuthServices, IEmailServices emailServices)
+    public UserServices(IUnitOfWorkRepository unitOfWorkRepository, IFireBaseAuthServices fireBaseAuthServices,
+        IEmailServices emailServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _fireBaseAuthServices = fireBaseAuthServices;
         _emailServices = emailServices;
     }
 
-    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor)
+    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request,
+        GetProfileUserDtos? accessor)
     {
         var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
-        {
             userList.Items.ToList().ForEach(u => u.Balance = 0);
-        }
         return userList.Adapt<PagedResult<GetProfileUserDtos>>();
     }
 
@@ -45,11 +42,10 @@ public class UserServices : IUserServices
     {
         var userModel = await GetUserByIdAsync(userId);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
-        {
             userModel.Balance = 0;
-        }
         return userModel.Adapt<GetProfileUserDtos>();
     }
+
     public async Task<GetProfileUserDtos> GetUserByIdAsync(int? userId)
     {
         var userModel =
@@ -57,6 +53,7 @@ public class UserServices : IUserServices
         if (userModel == null) throw new BadRequestException("User not found");
         return userModel.Adapt<GetProfileUserDtos>();
     }
+
     public async Task<GetProfileUserDtos> GetUserByEmailAsync(string email)
     {
         var userModel =
@@ -81,34 +78,28 @@ public class UserServices : IUserServices
         if (userExist != null)
         {
             throw new ModelException("Email", $"{userExist.Email} already exists, try logging in",
-              "This Email is already registered");
-        }
-        else
-        {
-            var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
-            // Hash the password
-            // using var hmac = new HMACSHA512();
-            // var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDtos.Password)));
-            var mappedUser = registerDtos.Adapt<Models.Models.User>();
-            mappedUser.Role = RoleStatus.Customer;
-            mappedUser.FireBaseid = fireBaseAuthId;
-            mappedUser.CreatedDate = DateTime.Now;
-            mappedUser.Balance = 0;
-            if (registerDtos.isTutor)
-            {
-                mappedUser.Role = RoleStatus.Tutor;
-            }
-
-            // mappedUser.Password = passwordHash; // open when present 
-            await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
-
-            await _unitOfWorkRepository.SaveChangesAsync();
-
-            var rs = mappedUser.Adapt<GetProfileUserDtos>();
-
-            return rs;
+                "This Email is already registered");
         }
 
+        var fireBaseAuthId = await _fireBaseAuthServices.RegisterUser(registerDtos);
+        // Hash the password
+        // using var hmac = new HMACSHA512();
+        // var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDtos.Password)));
+        var mappedUser = registerDtos.Adapt<Models.Models.User>();
+        mappedUser.Role = RoleStatus.Customer;
+        mappedUser.FireBaseid = fireBaseAuthId;
+        mappedUser.CreatedDate = DateTime.Now;
+        mappedUser.Balance = 0;
+        if (registerDtos.isTutor) mappedUser.Role = RoleStatus.Tutor;
+
+        // mappedUser.Password = passwordHash; // open when present 
+        await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
+
+        await _unitOfWorkRepository.SaveChangesAsync();
+
+        var rs = mappedUser.Adapt<GetProfileUserDtos>();
+
+        return rs;
     }
 
 
@@ -181,7 +172,8 @@ public class UserServices : IUserServices
 
     public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
     {
-        return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request)).Adapt<PagedResult<TutorSimpleProfileDto>>();
+        return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request))
+            .Adapt<PagedResult<TutorSimpleProfileDto>>();
     }
 
 
@@ -189,17 +181,14 @@ public class UserServices : IUserServices
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
         if (userInDb.IsActive == false)
-        {
             throw new ModelException("Tutor status", $"{userInDb.IsActive} already delete",
                 "This account is already deleted");
-        }
 
         await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == requestDto.userId)
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.IsActive, false)
-                                                    .SetProperty(s => s.RecordStatus, RecordStatus.Inactive)
-                                                    .SetProperty(s => s.TutorStatus, TutorStatus.Banned)
-                                                    .SetProperty(s => s.DeaActiveReason, requestDto.DeaActiveReason)
-
+                .SetProperty(s => s.RecordStatus, RecordStatus.Inactive)
+                .SetProperty(s => s.TutorStatus, TutorStatus.Banned)
+                .SetProperty(s => s.DeaActiveReason, requestDto.DeaActiveReason)
             );
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -207,76 +196,18 @@ public class UserServices : IUserServices
 
     public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDtos user)
     {
-
-        if (requestDto.Id == null || requestDto.Id == 0)
-        {
-            requestDto.Id = user.Id;
-        }
+        if (requestDto.Id == null || requestDto.Id == 0) requestDto.Id = user.Id;
 
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
-        if (userInDb == null)
-        {
-            throw new NotFoundException("User not found.");
-        }
+        if (userInDb == null) throw new NotFoundException("User not found.");
         if (userInDb.Id != requestDto.Id && userInDb.Role < RoleStatus.Operator)
-        {
             throw new BadRequestException("You do not have permission to do this!");
-        }
 
         UpdateUserFields(userInDb, requestDto);
 
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
-    }
-
-    private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto requestDto)
-    {
-        if (!string.IsNullOrEmpty(requestDto.FirstName))
-        {
-            userInDb.FirstName = requestDto.FirstName;
-        }
-        if (!string.IsNullOrEmpty(requestDto.LastName))
-        {
-            userInDb.LastName = requestDto.LastName;
-        }
-        if (!string.IsNullOrEmpty(requestDto.Phone))
-        {
-            userInDb.Phone = requestDto.Phone;
-        }
-        if (!string.IsNullOrEmpty(requestDto.Email))
-        {
-            userInDb.Email = requestDto.Email;
-        }
-        if (!string.IsNullOrEmpty(requestDto.Address))
-        {
-            userInDb.Address = requestDto.Address;
-        }
-        if (!string.IsNullOrEmpty(requestDto.AvatarImageUrl))
-        {
-            userInDb.AvatarImageUrl = requestDto.AvatarImageUrl;
-        }
-        if (requestDto.Dob.HasValue)
-        {
-            userInDb.Dob = requestDto.Dob.Value;
-        }
-        if (requestDto.Sex.HasValue)
-        {
-            userInDb.Sex = requestDto.Sex.Value;
-        }
-        if (requestDto.TutorFeePerHour.HasValue)
-        {
-            userInDb.TutorFeePerHour = requestDto.TutorFeePerHour.Value;
-        }
-        if (!string.IsNullOrEmpty(requestDto.IdCardImageUrl))
-        {
-            userInDb.IdCardImageUrl = requestDto.IdCardImageUrl;
-        }
-        if (!string.IsNullOrEmpty(requestDto.ScheduleDesciption))
-        {
-            userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
-        }
-
     }
 
     public async Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDtos user)
@@ -301,12 +232,10 @@ public class UserServices : IUserServices
             .FirstOrDefaultAsync(ld => ld.Id == userId);
 
         record.Balance += money;
-        
+
         if (record.Balance < 0)
-        {
             throw new ModelException($"{record.Balance}", "The balance cannot be negative",
                 "The balance cannot be negative");
-        }
 
         _unitOfWorkRepository.UserRepository.Update(record);
         await _unitOfWorkRepository.SaveChangesAsync();
@@ -332,13 +261,12 @@ public class UserServices : IUserServices
     public async Task<bool> ActiveAccount(int id)
     {
         await _unitOfWorkRepository.UserRepository.Where(ld => ld.Id == id)
-                                                        .ExecuteUpdateAsync(setter => setter
-                                                            .SetProperty(s => s.IsActive, true)
-                                                            .SetProperty(s => s.TutorStatus, TutorStatus.Un_Verified)
-                                                            .SetProperty(s => s.RecordStatus, RecordStatus.Active)
-                                                            .SetProperty(s => s.DeaActiveReason, String.Empty)
-
-                                                        );
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(s => s.IsActive, true)
+                .SetProperty(s => s.TutorStatus, TutorStatus.Un_Verified)
+                .SetProperty(s => s.RecordStatus, RecordStatus.Active)
+                .SetProperty(s => s.DeaActiveReason, string.Empty)
+            );
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
@@ -346,13 +274,10 @@ public class UserServices : IUserServices
     public async Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus newStatus)
     {
         var oldRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
-        if (oldRecord == null)
-        {
-            throw new ArgumentException("Tutor not found");
-        }
+        if (oldRecord == null) throw new ArgumentException("Tutor not found");
 
         // Validate state transitions
-        bool isValidTransition = false;
+        var isValidTransition = false;
 
         switch (oldRecord.TutorStatus)
         {
@@ -381,16 +306,14 @@ public class UserServices : IUserServices
         }
 
         if (!isValidTransition)
-        {
             throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
-        }
 
         await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, newStatus));
 
         var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
 
-        return new CompareStatusDto()
+        return new CompareStatusDto
         {
             OldStatus = oldRecord.TutorStatus,
             NewStatus = newRecord.TutorStatus
@@ -400,10 +323,7 @@ public class UserServices : IUserServices
     public async Task<bool> RecalculateTutorRating(int tutorId)
     {
         var result = await _unitOfWorkRepository.UserRepository.RecalculateTutorRating(tutorId);
-        if (result)
-        {
-            await _unitOfWorkRepository.SaveChangesAsync();
-        }
+        if (result) await _unitOfWorkRepository.SaveChangesAsync();
         return result;
     }
 
@@ -415,7 +335,9 @@ public class UserServices : IUserServices
 
     public async Task<List<GetSimpleUserDto>> GetAllOperators()
     {
-        var operators = await _unitOfWorkRepository.UserRepository.WhereAsync(u => u.Role == RoleStatus.Operator || u.Role == RoleStatus.Admin);
+        var operators =
+            await _unitOfWorkRepository.UserRepository.WhereAsync(u =>
+                u.Role == RoleStatus.Operator || u.Role == RoleStatus.Admin);
         return operators.Adapt<List<GetSimpleUserDto>>();
     }
 
@@ -424,5 +346,21 @@ public class UserServices : IUserServices
         _unitOfWorkRepository.UserRepository.Update(tutorProfile.Adapt<Models.Models.User>());
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
+    }
+
+    private void UpdateUserFields(Models.Models.User userInDb, UpdateUserDto requestDto)
+    {
+        if (!string.IsNullOrEmpty(requestDto.FirstName)) userInDb.FirstName = requestDto.FirstName;
+        if (!string.IsNullOrEmpty(requestDto.LastName)) userInDb.LastName = requestDto.LastName;
+        if (!string.IsNullOrEmpty(requestDto.Phone)) userInDb.Phone = requestDto.Phone;
+        if (!string.IsNullOrEmpty(requestDto.Email)) userInDb.Email = requestDto.Email;
+        if (!string.IsNullOrEmpty(requestDto.Address)) userInDb.Address = requestDto.Address;
+        if (!string.IsNullOrEmpty(requestDto.AvatarImageUrl)) userInDb.AvatarImageUrl = requestDto.AvatarImageUrl;
+        if (requestDto.Dob.HasValue) userInDb.Dob = requestDto.Dob.Value;
+        if (requestDto.Sex.HasValue) userInDb.Sex = requestDto.Sex.Value;
+        if (requestDto.TutorFeePerHour.HasValue) userInDb.TutorFeePerHour = requestDto.TutorFeePerHour.Value;
+        if (!string.IsNullOrEmpty(requestDto.IdCardImageUrl)) userInDb.IdCardImageUrl = requestDto.IdCardImageUrl;
+        if (!string.IsNullOrEmpty(requestDto.ScheduleDesciption))
+            userInDb.ScheduleDesciption = requestDto.ScheduleDesciption;
     }
 }

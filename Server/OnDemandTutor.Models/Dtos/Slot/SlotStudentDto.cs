@@ -9,6 +9,6 @@ public class SlotStudentDto
     public int UserId { get; set; }
     public PaymentStatus PaymentStatus { get; set; }
     public string Feedback { get; set; }
-    [Range(1, 5)]
-    public decimal? Rating { get; set; }
+
+    [Range(1, 5)] public decimal? Rating { get; set; }
 }

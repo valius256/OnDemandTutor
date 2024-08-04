@@ -12,9 +12,11 @@ namespace OnDemandTutor.API.Controllers;
 [ApiController]
 public class RequestWithDrawController : BaseController<RequestWithDrawController>
 {
-    private readonly IRequestWithDrawServices _requestWithDrawServices;
     private readonly IAuthServices _authServices;
-    public RequestWithDrawController(ILogger<RequestWithDrawController> logger, IRequestWithDrawServices requestWithDrawServices, IAuthServices authServices) : base(logger)
+    private readonly IRequestWithDrawServices _requestWithDrawServices;
+
+    public RequestWithDrawController(ILogger<RequestWithDrawController> logger,
+        IRequestWithDrawServices requestWithDrawServices, IAuthServices authServices) : base(logger)
     {
         _requestWithDrawServices = requestWithDrawServices;
         _authServices = authServices;
@@ -30,13 +32,13 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
         var result = await _requestWithDrawServices.ViewAllRequestWithDraw(request, user);
         return Ok(result);
     }
+
     [Authorize]
     [HttpGet("admin-get-all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(PagedResult<GetRequestWithdrawDto>), 200)]
     public async Task<IActionResult> ViewRequestWithDrawAsAdmin([FromQuery] RequestWithDrawFilterDto request)
     {
-
         var result = await _requestWithDrawServices.ViewAllRequestWithDrawAsAdmin(request);
         return Ok(result);
     }
@@ -63,6 +65,4 @@ public class RequestWithDrawController : BaseController<RequestWithDrawControlle
         var result = await _requestWithDrawServices.ApproveWithDraw(request, user);
         return Ok(result);
     }
-
-
 }

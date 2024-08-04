@@ -1,0 +1,22 @@
+﻿  version: '3.8'
+  
+  services:
+    db:
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      environment:
+        SA_PASSWORD: "12345"
+        ACCEPT_EULA: "Y"
+      ports:
+        - "1433:1433"
+  
+    web:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      image: ondemandtutor-api
+      ports:
+        - "5103:5103"
+      environment:
+        ConnectionStrings__DefaultConnection: "Server=db;Database=OnDemandTutor;User Id=PhatAdmin;Password=Quangphat12aa3;MultipleActiveResultSets=True;TrustServerCertificate=true;"
+      depends_on:
+        - db

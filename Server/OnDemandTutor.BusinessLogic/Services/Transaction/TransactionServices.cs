@@ -1,11 +1,8 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
-using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.DataAccess;
-using OnDemandTutor.DataAccess.ExceptionModels;
-using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
@@ -15,9 +12,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Transaction;
 
 public class TransactionServices : ITransactionServices
 {
-    private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     //public readonly ISlotStudentServices _slotStudentServices;
     private readonly INotificationService _notificationService;
+    private readonly IUnitOfWorkRepository _unitOfWorkRepository;
 
     public TransactionServices(IUnitOfWorkRepository unitOfWorkRepository, INotificationService notificationService)
     {
@@ -30,7 +27,7 @@ public class TransactionServices : ITransactionServices
     {
         var transactionModels = transaction.Adapt<List<Models.Models.Transaction>>();
         await _unitOfWorkRepository.TransactionRepository
-             .AddRangeAsync(transactionModels);
+            .AddRangeAsync(transactionModels);
         var rs = await _unitOfWorkRepository.SaveChangesAsync();
         return rs;
     }
@@ -42,7 +39,7 @@ public class TransactionServices : ITransactionServices
                 .ExecuteUpdateAsync(setter => setter
                     .SetProperty(s => s.Status, PaymentStatus.Paid)
                     .SetProperty(s => s.UpdatedDate, paidTime));
-        
+
         //if (transactionModel == null)
         //{
         //    throw new ModelException("Transaction model", "Not Found", "transaction not exist");
@@ -59,11 +56,14 @@ public class TransactionServices : ITransactionServices
         return model?.Adapt<TransactionDto>();
     }
 
-    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDtos user)
+    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction,
+        GetProfileUserDtos user)
     {
-        var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, user.Id);
+        var listTransactionModel =
+            await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, user.Id);
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
     }
+
     public async Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction)
     {
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, 0);
@@ -130,5 +130,4 @@ public class TransactionServices : ITransactionServices
 
         return transaction.Id;
     }
-
 }

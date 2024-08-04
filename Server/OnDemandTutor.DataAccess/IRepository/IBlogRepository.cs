@@ -2,13 +2,11 @@
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.DataAccess.IRepository
+namespace OnDemandTutor.DataAccess.IRepository;
+
+public interface IBlogRepository : IGenericRepository<Blog>
 {
-    public interface IBlogRepository : IGenericRepository<Blog>
-    {
-        Task<PagedResult<Blog>> GetBlogs(PagingModel<QueryBlogDto> pagingModel);
+    Task<PagedResult<Blog>> GetBlogs(PagingModel<QueryBlogDto> pagingModel);
 
-        Task<Blog?> GetBlogDetail(int id);
-    }
+    Task<Blog?> GetBlogDetail(int id);
 }
-

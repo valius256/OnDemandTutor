@@ -4,7 +4,6 @@ using Google.Cloud.Storage.V1;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
 using OnDemandTutor.Models.Dtos.Upload;
 using OnDemandTutor.Models.Dtos.User;
-using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Services.Upload;
 
@@ -77,6 +76,24 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         return downloadLinksList;
     }
 
+    public async Task<string> UploadVideoAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
+    {
+        try
+        {
+            var contentType = GetContentType(fileName);
+            if (string.IsNullOrEmpty(contentType)) throw new ArgumentException("Invalid video file type");
+            var videoUrl = await UploadMediaToFirebaseStorage(user.FireBaseid, fileName, fileStream, contentType);
+
+
+            return videoUrl;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to upload video: {ex.Message}");
+            throw;
+        }
+    }
+
     private async Task EnsurePublicAccess(StorageClient storage)
     {
         var policy = storage.GetBucketIamPolicy(StorageBucketName);
@@ -116,27 +133,6 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         {
             // Dispose the stream to release resources
             fileStream.Dispose();
-        }
-    }
-
-    public async Task<string> UploadVideoAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
-    {
-        try
-        {
-            var contentType = GetContentType(fileName);
-            if (string.IsNullOrEmpty(contentType))
-            {
-                throw new ArgumentException("Invalid video file type");
-            }
-            var videoUrl = await UploadMediaToFirebaseStorage(user.FireBaseid, fileName, fileStream, contentType);
-
-
-            return videoUrl;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to upload video: {ex.Message}");
-            throw;
         }
     }
 

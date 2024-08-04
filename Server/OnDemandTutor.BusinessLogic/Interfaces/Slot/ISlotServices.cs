@@ -17,5 +17,4 @@ public interface ISlotServices
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
     Task<bool> EnrollForSlot(int studentId, int slotId);
     Task ValidateSlotForStudent(int slotId, int studentId);
-
 }

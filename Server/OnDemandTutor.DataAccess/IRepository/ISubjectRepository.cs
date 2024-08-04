@@ -2,11 +2,9 @@
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.DataAccess.IRepository
-{
-    public interface ISubjectRepository : IGenericRepository<Subject>
-    {
-        Task<PagedResult<Subject>> GetSubjects(PagingModel<QuerySubjectDTO> pagingModel);
-    }
-}
+namespace OnDemandTutor.DataAccess.IRepository;
 
+public interface ISubjectRepository : IGenericRepository<Subject>
+{
+    Task<PagedResult<Subject>> GetSubjects(PagingModel<QuerySubjectDTO> pagingModel);
+}

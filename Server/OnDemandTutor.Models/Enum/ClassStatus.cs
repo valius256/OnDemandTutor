@@ -5,5 +5,5 @@ public enum ClassStatus
     NotStart,
     OnGoing,
     Finished,
-    Disabled,
+    Disabled
 }

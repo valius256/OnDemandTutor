@@ -1,8 +1,8 @@
-﻿using Hangfire;
+﻿using System.Net;
+using System.Security.Authentication;
+using Hangfire;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Helper;
-using System.Net;
-using System.Security.Authentication;
 
 namespace OnDemandTutor.API.Middlesware;
 
@@ -45,7 +45,8 @@ public class ExceptionHandlingMiddleware
             case ModelException modelException:
                 status = HttpStatusCode.BadRequest;
                 title = "Conflict";
-                errors.Add(new ValidationErrorModel(modelException.Message, modelException.PropertyName, modelException.ErrorCode));
+                errors.Add(new ValidationErrorModel(modelException.Message, modelException.PropertyName,
+                    modelException.ErrorCode));
                 break;
             case AuthenticationException authenticationException:
                 status = HttpStatusCode.Unauthorized;
@@ -106,18 +107,14 @@ public class ExceptionHandlingMiddleware
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        (HttpStatusCode status, ApiErrorActionResult response) = GenerateErrorResponse(exception);
+        (var status, var response) = GenerateErrorResponse(exception);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)status;
 
         if (status == HttpStatusCode.InternalServerError)
-        {
             _logger.LogError(exception, nameof(HttpStatusCode.InternalServerError));
-        }
 
         await context.Response.WriteAsync(response.SerializeObject());
     }
-
-
 }

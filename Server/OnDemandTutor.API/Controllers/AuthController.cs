@@ -17,7 +17,8 @@ public class AuthController : BaseController<AuthController>
     private readonly IAuthServices _authServices;
     private readonly IUserServices _userServices;
 
-    public AuthController(IUserServices userService, IAuthServices authServices, ILogger<AuthController> logger) : base(logger)
+    public AuthController(IUserServices userService, IAuthServices authServices, ILogger<AuthController> logger) :
+        base(logger)
     {
         _userServices = userService;
         _authServices = authServices;
@@ -44,7 +45,6 @@ public class AuthController : BaseController<AuthController>
     //{
     //    return await _authService.Login(body);
     //}
-
     [HttpPost("login-firebase")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<AuthenResponseDto>), 200)]
@@ -60,7 +60,6 @@ public class AuthController : BaseController<AuthController>
     public async Task<IApiResult<string>> ForgotPassword(ForgotPasswordRequest request)
     {
         return OKAsync(await _authServices.ForgotPassword(request.Email));
-
     }
 
     [Authorize]

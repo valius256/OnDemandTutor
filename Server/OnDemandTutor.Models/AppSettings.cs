@@ -2,26 +2,23 @@
 
 namespace OnDemandTutor.Models;
 
-public partial class AppSetting
+public class AppSetting
 {
-    [JsonPropertyName("Logging")]
-    public Logging Logging { get; set; }
-    [JsonPropertyName("SmtpSettings")]
-    public SmtpAppSetting SmtpAppSetting { get; set; }
-    [JsonPropertyName("VnPay")]
-    public VnPay VnPay { get; set; }
+    [JsonPropertyName("Logging")] public Logging Logging { get; set; }
+
+    [JsonPropertyName("SmtpSettings")] public SmtpAppSetting SmtpAppSetting { get; set; }
+
+    [JsonPropertyName("VnPay")] public VnPay VnPay { get; set; }
 }
 
-public partial class Logging
+public class Logging
 {
-    [JsonPropertyName("LogLevel")]
-    public LogLevel LogLevel { get; set; }
+    [JsonPropertyName("LogLevel")] public LogLevel LogLevel { get; set; }
 }
 
-public partial class LogLevel
+public class LogLevel
 {
-    [JsonPropertyName("Default")]
-    public string Default { get; set; }
+    [JsonPropertyName("Default")] public string Default { get; set; }
 
     [JsonPropertyName("Microsoft.AspNetCore")]
     public string MicrosoftAspNetCore { get; set; }
@@ -34,6 +31,7 @@ public class SmtpAppSetting
     public string SmtpUserName { get; set; }
     public string SmtpPassword { get; set; }
     public bool EnableSsl { get; set; }
+
     public string AppVerify { get; set; }
     // public string SmtpFromAddress { get; set; }
 }

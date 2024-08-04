@@ -1,7 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos.User
+﻿namespace OnDemandTutor.Models.Dtos.User;
+
+public class GetModelDto
 {
-    public class GetModelDto
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

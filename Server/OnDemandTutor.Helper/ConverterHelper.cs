@@ -1,8 +1,8 @@
-﻿using HtmlAgilityPack;
-using System.Data;
+﻿using System.Data;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace OnDemandTutor.Helper;
 
@@ -79,10 +79,7 @@ public static class ConverterHelper
 
     public static string? ConvertHtmlToPlainText(string html)
     {
-        if (string.IsNullOrWhiteSpace(html))
-        {
-            return string.Empty;
-        }
+        if (string.IsNullOrWhiteSpace(html)) return string.Empty;
 
         var htmlDoc = new HtmlDocument();
         htmlDoc.LoadHtml(html);

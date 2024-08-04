@@ -1,5 +1,4 @@
 using Hangfire;
-using Hangfire.Dashboard;
 using Mapster;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +26,10 @@ internal class Program
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
-               ));
-
+                                 ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+            ));
+        
+        
         // ADD CORS
         builder.Services.AddCors(options => options.AddDefaultPolicy(policyBuilder =>
             policyBuilder.WithOrigins("http://localhost:5173")
@@ -70,7 +71,8 @@ internal class Program
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             if (!dbContext.Database.CanConnect())
-                throw new DatabaseConnectionException($"Cannot connect to the database, current connectionString : {dbContext.Database.GetConnectionString()}");
+                throw new DatabaseConnectionException(
+                    $"Cannot connect to the database, current connectionString : {dbContext.Database.GetConnectionString()}");
         }
 
         // Configure Hangfire
@@ -78,10 +80,9 @@ internal class Program
         {
             DashboardTitle = "OnDemandTutor",
             DarkModeEnabled = true,
-            IsReadOnlyFunc = (DashboardContext context) => false,
+            IsReadOnlyFunc = context => false,
             TimeZoneResolver = new DefaultTimeZoneResolver()
         });
-
 
 
         // Middleware
@@ -108,10 +109,5 @@ internal class Program
 
 
         app.Run();
-
-
     }
-
-
-
 }

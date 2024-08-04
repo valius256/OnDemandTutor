@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.Models.Dtos.Slot;
-using OnDemandTutor.Models.Dtos.WithDrawDto;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers;
@@ -12,14 +11,15 @@ namespace OnDemandTutor.API.Controllers;
 [ApiController]
 public class SlotController : ControllerBase
 {
-    private readonly ISlotServices _slotService;
     private readonly IAuthServices _authServices;
+    private readonly ISlotServices _slotService;
 
     public SlotController(ISlotServices slotService, IAuthServices authServices)
     {
         _slotService = slotService;
         _authServices = authServices;
     }
+
     //[Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<GetSlotsDtos>), 200)]
@@ -27,17 +27,16 @@ public class SlotController : ControllerBase
     {
         var slots = await _slotService.GetSlotsAsync(pagingModel);
         return Ok(slots);
-
     }
-    
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(GetSlotDetailDto), 200)]
     public async Task<IActionResult> GetSlotById(int id)
     {
         var slot = await _slotService.GetSlotByIdAsync(id);
         return Ok(slot);
-
     }
+
     [HttpGet("closest-of-tutor")]
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
     public async Task<IActionResult> GetClosestSlotOfTutor()
@@ -45,8 +44,8 @@ public class SlotController : ControllerBase
         var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
         var slot = await _slotService.GetClosestSlotOfTutor(user);
         return Ok(slot);
-
     }
+
     [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(GetSlotsDtos), 200)]
@@ -55,7 +54,6 @@ public class SlotController : ControllerBase
         var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
         var createdSlot = await _slotService.CreateSlotAsync(slotDto, user);
         return CreatedAtAction(nameof(GetSlotById), new { id = createdSlot.Id }, createdSlot);
-
     }
 
     [Authorize]
@@ -66,7 +64,6 @@ public class SlotController : ControllerBase
         var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
         await _slotService.UpdateSlotAsync(slotDto, user);
         return NoContent();
-
     }
 
     [Authorize]
@@ -75,12 +72,8 @@ public class SlotController : ControllerBase
     public async Task<IActionResult> DeleteSlot(int id)
     {
         var isDeleted = await _slotService.DeleteSlotAsync(id);
-        if (!isDeleted)
-        {
-            return NotFound();
-        }
+        if (!isDeleted) return NotFound();
         return NoContent();
-
     }
 
     [Authorize]
@@ -91,5 +84,4 @@ public class SlotController : ControllerBase
         var result = await _slotService.EnrollForSlot(request.studentId, request.slotId);
         return Ok(result);
     }
-
 }

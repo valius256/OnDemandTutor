@@ -1,16 +1,14 @@
-
 using OnDemandTutor.Models.Dtos.TutorVideo;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.BusinessLogic.Interfaces.TutorVideo
+namespace OnDemandTutor.BusinessLogic.Interfaces.TutorVideo;
+
+public interface ITutorVideoService
 {
-    public interface ITutorVideoService
-    {
-        Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<QueryTutorVideoDto> request);
-        Task<GetTutorVideoDto> GetTutorVideoByIdAsync(int id);
-        Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
-        Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
-        Task<bool> DeleteTutorVideoAsync(int id);
-    }
+    Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<QueryTutorVideoDto> request);
+    Task<GetTutorVideoDto> GetTutorVideoByIdAsync(int id);
+    Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
+    Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
+    Task<bool> DeleteTutorVideoAsync(int id);
 }

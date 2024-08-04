@@ -9,8 +9,9 @@ namespace OnDemandTutor.API.Controllers;
 [ApiController]
 public class UploadController : ControllerBase
 {
-    private readonly IFirebaseUploadServices _firebaseUploadServices;
     private readonly IAuthServices _authServices;
+    private readonly IFirebaseUploadServices _firebaseUploadServices;
+
     public UploadController(IFirebaseUploadServices firebaseUploadServices, IAuthServices authServices)
     {
         _firebaseUploadServices = firebaseUploadServices;
@@ -58,6 +59,4 @@ public class UploadController : ControllerBase
             return Ok(videoUrl);
         }
     }
-
-
 }

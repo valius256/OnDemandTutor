@@ -20,5 +20,5 @@ public class TutorSimpleProfileDto
     public double? Rating { get; set; }
     public decimal? TutorFeePerHour { get; set; }
     public TutorStatus? TutorStatus { get; set; } = Enum.TutorStatus.Un_Verified;
-    public List<GetTutorSubjectWithSubjectDto> TutorSubjects { get; set; } = new List<GetTutorSubjectWithSubjectDto>();
+    public List<GetTutorSubjectWithSubjectDto> TutorSubjects { get; set; } = new();
 }

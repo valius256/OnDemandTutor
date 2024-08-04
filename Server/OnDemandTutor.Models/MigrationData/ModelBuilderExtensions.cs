@@ -2,855 +2,890 @@
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 
-namespace OnDemandTutor.Models.MigrationData
+namespace OnDemandTutor.Models.MigrationData;
+
+public static class ModelBuilderExtensions
 {
-    public static class ModelBuilderExtensions
+    public static void Seed(this ModelBuilder modelBuilder)
     {
-        public static void Seed(this ModelBuilder modelBuilder)
-        {
-            // seed blog 
+        // seed blog 
 
-            #region User
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    FireBaseid = "firebaseid1",
-                    FirstName = "Admin",
-                    LastName = "",
-                    Phone = "0123456789",
-                    Email = "thisisadmin@gmail.com",
-                    Address = "123 Đường Chính",
-                    AvatarImageUrl = "http://example.com/avatar1.png",
-                    Dob = new DateTime(1990, 1, 1),
-                    Role = RoleStatus.Admin,
-                    Balance = 100000000000,
-                    TutorFeePerHour = 80000,
-                    Rating = 4.5,
-                    IdCardImageUrl = "http://example.com/id1.png",
-                    ScheduleDesciption = "Có mặt vào cuối tuần",
-                    Password = "matkhau123",
-                    Sex = Sex.Male,
-                    IsActive = true
-                },
-                new User
-                {
-                    Id = 2,
-                    FireBaseid = "firebaseid2",
-                    FirstName = "Trần",
-                    LastName = "Thị B",
-                    Phone = "0987654321",
-                    Email = "tranthib@example.com",
-                    Address = "456 Đường Phụ",
-                    AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/7de5f02b1fdbfb2a5dc39b4916366176e32c1c9b4fe38e83b644b542847ff5b1?w=1024&h=1024&pmaid=110607675",
-                    Dob = new DateTime(1985, 2, 2),
-                    Role = RoleStatus.Tutor,
-                    Balance = 200.0m,
-                    TutorFeePerHour = 60000,
-                    Rating = 4.7,
-                    IdCardImageUrl = "http://example.com/id2.png",
-                    ScheduleDesciption = "Có mặt vào các ngày trong tuần",
-                    Password = "matkhau123",
-                    Sex = Sex.Female,
-                    TutorStatus = TutorStatus.Verified,
-                    IsActive = true
-                },
-                new User
-                {
-                    Id = 3,
-                    FireBaseid = "firebaseid3",
-                    FirstName = "Lê",
-                    LastName = "Văn C",
-                    Phone = "0122334455",
-                    Email = "levanc@example.com",
-                    Address = "789 Đường Thông",
-                    AvatarImageUrl = "http://example.com/avatar3.png",
-                    Dob = new DateTime(1995, 3, 3),
-                    Role = RoleStatus.Customer,
-                    Balance = 300.0m,
-                    TutorFeePerHour = 70000,
-                    Rating = 4.8,
-                    IdCardImageUrl = "http://example.com/id3.png",
-                    ScheduleDesciption = "Có mặt vào buổi tối",
-                    Password = "matkhau123",
-                    Sex = Sex.Female,
-                    IsActive = true
-                },
-                new User
-                {
-                    Id = 4,
-                    FireBaseid = "firebaseid4",
-                    FirstName = "Phạm",
-                    LastName = "Văn D",
-                    Phone = "0233445566",
-                    Email = "phamvand@example.com",
-                    Address = "101 Đường Phong",
-                    AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/f2a40547791c296c19b1ea354ed8dbd3e327be21637b64ebf612837de36c5e2b?w=1024&h=1024&pmaid=110608381",
-                    Dob = new DateTime(1975, 4, 4),
-                    Role = RoleStatus.Tutor,
-                    Balance = 400.0m,
-                    TutorFeePerHour = 860000,
-                    Rating = 4.9,
-                    IdCardImageUrl = "http://example.com/id4.png",
-                    ScheduleDesciption = "Có mặt vào cuối tuần",
-                    Password = "matkhau123",
-                    Sex = Sex.Male,
-                    TutorStatus = TutorStatus.Verified,
-                    IsActive = true
-                },
-                new User
-                {
-                    Id = 5,
-                    FireBaseid = "firebaseid5",
-                    FirstName = "Đặng",
-                    LastName = "Văn E",
-                    Phone = "0344556677",
-                    Email = "dangvane@example.com",
-                    Address = "202 Đường Sồi",
-                    AvatarImageUrl = "http://example.com/avatar5.png",
-                    Dob = new DateTime(1980, 5, 5),
-                    Role = RoleStatus.Customer,
-                    Balance = 500.0m,
-                    TutorFeePerHour = 960000,
-                    Rating = 5.0,
-                    IdCardImageUrl = "http://example.com/id5.png",
-                    ScheduleDesciption = "Có mặt cả ngày",
-                    Password = "matkhau123",
-                    Sex = Sex.Male,
-                    IsActive = false,
-                },
-                 new User
-                 {
-                     Id = 6,
-                     FireBaseid = "firebaseid6",
-                     FirstName = "Trần",
-                     LastName = "Văn F",
-                     Phone = "0344556877",
-                     Email = "tranvanf@example.com",
-                     Address = "Q9, TPHCM",
-                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/5d5bdfb9faad57c6410f29766fec60bfca7597de07347d3ffe132a28cd36f12c?w=1024&h=1024&pmaid=116002972",
-                     Dob = new DateTime(1975, 5, 5),
-                     Role = RoleStatus.Tutor,
-                     Balance = 50000,
-                     TutorFeePerHour = 60000,
-                     Rating = 4.5,
-                     IdCardImageUrl = "http://example.com/id5.png",
-                     ScheduleDesciption = "T3,T4,T5",
-                     Password = "123456",
-                     Sex = Sex.Male,
-                     IsActive = true,
-                     TutorStatus = TutorStatus.Verified,
-                 },
-                 new User
-                 {
-                     Id = 7,
-                     FireBaseid = "firebaseid7",
-                     FirstName = "Nguyễn",
-                     LastName = "Ngọc G",
-                     Phone = "0344556897",
-                     Email = "nguyenngocg@example.com",
-                     Address = "Q9, TPHCM",
-                     AvatarImageUrl = "https://pfst.cf2.poecdn.net/base/image/d42d563313961baf10ebaf79a634d520a08528c709281d5420424ff5e5c09cb8?w=1024&h=1024&pmaid=112257600",
-                     Dob = new DateTime(1999, 5, 5),
-                     Role = RoleStatus.Tutor,
-                     Balance = 50000,
-                     TutorFeePerHour = 45000,
-                     Rating = 4.9,
-                     IdCardImageUrl = "http://example.com/id5.png",
-                     ScheduleDesciption = "T4,T5,T6,T7",
-                     Password = "123456",
-                     Sex = Sex.Female,
-                     IsActive = true,
-                     TutorStatus = TutorStatus.Un_Verified,
-                 }
-            );
-            #endregion
+        #region User
 
-            #region  Blog
-            var createAt = DateTime.Now;
-            modelBuilder.Entity<Blog>().HasData(
-                new Blog { Id = 1, Title = "Bài Blog Đầu Tiên", Content = "Nội dung của bài blog đầu tiên.", CreateById = 1, CreateAt = createAt },
-                new Blog { Id = 2, Title = "Bài Blog Thứ Hai", Content = "Nội dung của bài blog thứ hai.", CreateById = 2, CreateAt = createAt },
-                new Blog { Id = 3, Title = "Bài Blog Thứ Ba", Content = "Nội dung của bài blog thứ ba.", CreateById = 1, CreateAt = createAt },
-                new Blog { Id = 4, Title = "Bài Blog Thứ Tư", Content = "Nội dung của bài blog thứ tư.", CreateById = 3, CreateAt = createAt },
-                new Blog { Id = 5, Title = "Bài Blog Thứ Năm", Content = "Nội dung của bài blog thứ năm.", CreateById = 2, CreateAt = createAt }
-              );
-            #endregion
+        modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = 1,
+                FireBaseid = "firebaseid1",
+                FirstName = "Admin",
+                LastName = "",
+                Phone = "0123456789",
+                Email = "thisisadmin@gmail.com",
+                Address = "123 Đường Chính",
+                AvatarImageUrl = "http://example.com/avatar1.png",
+                Dob = new DateTime(1990, 1, 1),
+                Role = RoleStatus.Admin,
+                Balance = 100000000000,
+                TutorFeePerHour = 80000,
+                Rating = 4.5,
+                IdCardImageUrl = "http://example.com/id1.png",
+                ScheduleDesciption = "Có mặt vào cuối tuần",
+                Password = "matkhau123",
+                Sex = Sex.Male,
+                IsActive = true
+            },
+            new User
+            {
+                Id = 2,
+                FireBaseid = "firebaseid2",
+                FirstName = "Trần",
+                LastName = "Thị B",
+                Phone = "0987654321",
+                Email = "tranthib@example.com",
+                Address = "456 Đường Phụ",
+                AvatarImageUrl =
+                    "https://pfst.cf2.poecdn.net/base/image/7de5f02b1fdbfb2a5dc39b4916366176e32c1c9b4fe38e83b644b542847ff5b1?w=1024&h=1024&pmaid=110607675",
+                Dob = new DateTime(1985, 2, 2),
+                Role = RoleStatus.Tutor,
+                Balance = 200.0m,
+                TutorFeePerHour = 60000,
+                Rating = 4.7,
+                IdCardImageUrl = "http://example.com/id2.png",
+                ScheduleDesciption = "Có mặt vào các ngày trong tuần",
+                Password = "matkhau123",
+                Sex = Sex.Female,
+                TutorStatus = TutorStatus.Verified,
+                IsActive = true
+            },
+            new User
+            {
+                Id = 3,
+                FireBaseid = "firebaseid3",
+                FirstName = "Lê",
+                LastName = "Văn C",
+                Phone = "0122334455",
+                Email = "levanc@example.com",
+                Address = "789 Đường Thông",
+                AvatarImageUrl = "http://example.com/avatar3.png",
+                Dob = new DateTime(1995, 3, 3),
+                Role = RoleStatus.Customer,
+                Balance = 300.0m,
+                TutorFeePerHour = 70000,
+                Rating = 4.8,
+                IdCardImageUrl = "http://example.com/id3.png",
+                ScheduleDesciption = "Có mặt vào buổi tối",
+                Password = "matkhau123",
+                Sex = Sex.Female,
+                IsActive = true
+            },
+            new User
+            {
+                Id = 4,
+                FireBaseid = "firebaseid4",
+                FirstName = "Phạm",
+                LastName = "Văn D",
+                Phone = "0233445566",
+                Email = "phamvand@example.com",
+                Address = "101 Đường Phong",
+                AvatarImageUrl =
+                    "https://pfst.cf2.poecdn.net/base/image/f2a40547791c296c19b1ea354ed8dbd3e327be21637b64ebf612837de36c5e2b?w=1024&h=1024&pmaid=110608381",
+                Dob = new DateTime(1975, 4, 4),
+                Role = RoleStatus.Tutor,
+                Balance = 400.0m,
+                TutorFeePerHour = 860000,
+                Rating = 4.9,
+                IdCardImageUrl = "http://example.com/id4.png",
+                ScheduleDesciption = "Có mặt vào cuối tuần",
+                Password = "matkhau123",
+                Sex = Sex.Male,
+                TutorStatus = TutorStatus.Verified,
+                IsActive = true
+            },
+            new User
+            {
+                Id = 5,
+                FireBaseid = "firebaseid5",
+                FirstName = "Đặng",
+                LastName = "Văn E",
+                Phone = "0344556677",
+                Email = "dangvane@example.com",
+                Address = "202 Đường Sồi",
+                AvatarImageUrl = "http://example.com/avatar5.png",
+                Dob = new DateTime(1980, 5, 5),
+                Role = RoleStatus.Customer,
+                Balance = 500.0m,
+                TutorFeePerHour = 960000,
+                Rating = 5.0,
+                IdCardImageUrl = "http://example.com/id5.png",
+                ScheduleDesciption = "Có mặt cả ngày",
+                Password = "matkhau123",
+                Sex = Sex.Male,
+                IsActive = false
+            },
+            new User
+            {
+                Id = 6,
+                FireBaseid = "firebaseid6",
+                FirstName = "Trần",
+                LastName = "Văn F",
+                Phone = "0344556877",
+                Email = "tranvanf@example.com",
+                Address = "Q9, TPHCM",
+                AvatarImageUrl =
+                    "https://pfst.cf2.poecdn.net/base/image/5d5bdfb9faad57c6410f29766fec60bfca7597de07347d3ffe132a28cd36f12c?w=1024&h=1024&pmaid=116002972",
+                Dob = new DateTime(1975, 5, 5),
+                Role = RoleStatus.Tutor,
+                Balance = 50000,
+                TutorFeePerHour = 60000,
+                Rating = 4.5,
+                IdCardImageUrl = "http://example.com/id5.png",
+                ScheduleDesciption = "T3,T4,T5",
+                Password = "123456",
+                Sex = Sex.Male,
+                IsActive = true,
+                TutorStatus = TutorStatus.Verified
+            },
+            new User
+            {
+                Id = 7,
+                FireBaseid = "firebaseid7",
+                FirstName = "Nguyễn",
+                LastName = "Ngọc G",
+                Phone = "0344556897",
+                Email = "nguyenngocg@example.com",
+                Address = "Q9, TPHCM",
+                AvatarImageUrl =
+                    "https://pfst.cf2.poecdn.net/base/image/d42d563313961baf10ebaf79a634d520a08528c709281d5420424ff5e5c09cb8?w=1024&h=1024&pmaid=112257600",
+                Dob = new DateTime(1999, 5, 5),
+                Role = RoleStatus.Tutor,
+                Balance = 50000,
+                TutorFeePerHour = 45000,
+                Rating = 4.9,
+                IdCardImageUrl = "http://example.com/id5.png",
+                ScheduleDesciption = "T4,T5,T6,T7",
+                Password = "123456",
+                Sex = Sex.Female,
+                IsActive = true,
+                TutorStatus = TutorStatus.Un_Verified
+            }
+        );
 
-            #region ConsultationRequets 
-            modelBuilder.Entity<ConsultationRequest>().HasData(
-                new ConsultationRequest
-                {
-                    Id = 1,
-                    Name = "Nguyễn Văn A",
-                    Phone = "0123456789",
-                    HandleById = 1,
-                    ConsultationContent = "Tôi cần hỗ trợ đăng ký làm gia sư",
-                    RequestDate = DateTime.UtcNow.Date,
-                    Status = ConsultationRequestStatus.Pending,
-                },
-                new ConsultationRequest
-                {
-                    Id = 2,
-                    Name = "Trần Thị B",
-                    Phone = "0987654321",
-                    HandleById = 2,
-                    ConsultationContent = "Làm thế nào để đặt 1 gia sư",
-                    RequestDate = DateTime.Today,
-                    Status = ConsultationRequestStatus.Solved,
-                },
-                new ConsultationRequest
-                {
-                    Id = 3,
-                    Name = "Lê Văn C",
-                    Phone = "0122334455",
-                    HandleById = 1,
-                    ConsultationContent = "Tôi cần hỗ trợ rút tiền",
-                    RequestDate = DateTime.UtcNow.AddDays(-3),
-                    Status = ConsultationRequestStatus.Pending,
+        #endregion
 
-                },
-                new ConsultationRequest
-                {
-                    Id = 4,
-                    Name = "Phạm Thị D",
-                    Phone = "0233445566",
-                    HandleById = 2,
-                    ConsultationContent = "Web có cho mở lớp trên đây không?",
-                    RequestDate = DateTime.UtcNow.AddDays(-5),
-                    Status = ConsultationRequestStatus.Solved,
-                },
-                new ConsultationRequest
-                {
-                    Id = 5,
-                    Name = "Đặng Văn E",
-                    Phone = "0344556677",
-                    HandleById = 1,
-                    ConsultationContent = "Nội dung tư vấn cho yêu cầu 5.",
-                    RequestDate = DateTime.UtcNow.AddDays(-7),
-                    Status = ConsultationRequestStatus.Pending,
-                }
-              );
+        #region Blog
 
+        var createAt = DateTime.Now;
+        modelBuilder.Entity<Blog>().HasData(
+            new Blog
+            {
+                Id = 1, Title = "Bài Blog Đầu Tiên", Content = "Nội dung của bài blog đầu tiên.", CreateById = 1,
+                CreateAt = createAt
+            },
+            new Blog
+            {
+                Id = 2, Title = "Bài Blog Thứ Hai", Content = "Nội dung của bài blog thứ hai.", CreateById = 2,
+                CreateAt = createAt
+            },
+            new Blog
+            {
+                Id = 3, Title = "Bài Blog Thứ Ba", Content = "Nội dung của bài blog thứ ba.", CreateById = 1,
+                CreateAt = createAt
+            },
+            new Blog
+            {
+                Id = 4, Title = "Bài Blog Thứ Tư", Content = "Nội dung của bài blog thứ tư.", CreateById = 3,
+                CreateAt = createAt
+            },
+            new Blog
+            {
+                Id = 5, Title = "Bài Blog Thứ Năm", Content = "Nội dung của bài blog thứ năm.", CreateById = 2,
+                CreateAt = createAt
+            }
+        );
 
-            #endregion
+        #endregion
 
-            #region  FAQ
-            modelBuilder.Entity<FAQ>().HasData(
-                new FAQ
-                {
-                    Id = 1,
-                    Question = "OnDemandTutor là gì?",
-                    Answer = "Là 1 website kết nối giữa học viên và người dạy kèm theo yêu cầu. Học viên có thể tìm được gia sư phù hợp và đúng " +
+        #region ConsultationRequets
+
+        modelBuilder.Entity<ConsultationRequest>().HasData(
+            new ConsultationRequest
+            {
+                Id = 1,
+                Name = "Nguyễn Văn A",
+                Phone = "0123456789",
+                HandleById = 1,
+                ConsultationContent = "Tôi cần hỗ trợ đăng ký làm gia sư",
+                RequestDate = DateTime.UtcNow.Date,
+                Status = ConsultationRequestStatus.Pending
+            },
+            new ConsultationRequest
+            {
+                Id = 2,
+                Name = "Trần Thị B",
+                Phone = "0987654321",
+                HandleById = 2,
+                ConsultationContent = "Làm thế nào để đặt 1 gia sư",
+                RequestDate = DateTime.Today,
+                Status = ConsultationRequestStatus.Solved
+            },
+            new ConsultationRequest
+            {
+                Id = 3,
+                Name = "Lê Văn C",
+                Phone = "0122334455",
+                HandleById = 1,
+                ConsultationContent = "Tôi cần hỗ trợ rút tiền",
+                RequestDate = DateTime.UtcNow.AddDays(-3),
+                Status = ConsultationRequestStatus.Pending
+            },
+            new ConsultationRequest
+            {
+                Id = 4,
+                Name = "Phạm Thị D",
+                Phone = "0233445566",
+                HandleById = 2,
+                ConsultationContent = "Web có cho mở lớp trên đây không?",
+                RequestDate = DateTime.UtcNow.AddDays(-5),
+                Status = ConsultationRequestStatus.Solved
+            },
+            new ConsultationRequest
+            {
+                Id = 5,
+                Name = "Đặng Văn E",
+                Phone = "0344556677",
+                HandleById = 1,
+                ConsultationContent = "Nội dung tư vấn cho yêu cầu 5.",
+                RequestDate = DateTime.UtcNow.AddDays(-7),
+                Status = ConsultationRequestStatus.Pending
+            }
+        );
+
+        #endregion
+
+        #region FAQ
+
+        modelBuilder.Entity<FAQ>().HasData(
+            new FAQ
+            {
+                Id = 1,
+                Question = "OnDemandTutor là gì?",
+                Answer =
+                    "Là 1 website kết nối giữa học viên và người dạy kèm theo yêu cầu. Học viên có thể tìm được gia sư phù hợp và đúng " +
                     "yêu cầu của mình để giải quyết các vấn đề học tập của mình. Gia sư có thể lên website và quảng bá dịch vụ dạy học của mình để nhiều " +
                     "học viên biết tới mình hơn",
-                    CreateById = 1,
-                    CreateAt = createAt
-                },
-                new FAQ
-                {
-                    Id = 2,
-                    Question = "Làm thế nào để trờ thành gia sư?",
-                    Answer = "Như đã hướng dẫn tại trang chủ. Đầu tiên bạn cần ấn vào nút đăng ký và chọn 'Gia sư'. Sau đó điền các thông tin cần thiết. " +
+                CreateById = 1,
+                CreateAt = createAt
+            },
+            new FAQ
+            {
+                Id = 2,
+                Question = "Làm thế nào để trờ thành gia sư?",
+                Answer =
+                    "Như đã hướng dẫn tại trang chủ. Đầu tiên bạn cần ấn vào nút đăng ký và chọn 'Gia sư'. Sau đó điền các thông tin cần thiết. " +
                     "Chúng tôi sẽ yêu cầu bạn tải lên ảnh giấy tờ tuy thân để xác minh danh tính của bạn và từ đó bạn có thể hoạt động trên website này. Quá " +
                     "trình xem xét thường không quá 48h.",
-                    CreateById = 2,
-                    CreateAt = createAt.AddDays(-1)
-                },
-                new FAQ
-                {
-                    Id = 3,
-                    Question = "Đặt 1 gia sư như thế nào?",
-                    Answer = "Tìm 1 gia sư theo yêu cầu của bạn, sau đó vô trang của họ. Tại đây bạn sẽ thấy các khung giờ mà gia sư đã tạo sẵn và bạn có thể " +
+                CreateById = 2,
+                CreateAt = createAt.AddDays(-1)
+            },
+            new FAQ
+            {
+                Id = 3,
+                Question = "Đặt 1 gia sư như thế nào?",
+                Answer =
+                    "Tìm 1 gia sư theo yêu cầu của bạn, sau đó vô trang của họ. Tại đây bạn sẽ thấy các khung giờ mà gia sư đã tạo sẵn và bạn có thể " +
                     "nhấn vào để đặt những khung giờ này. Bạn sẽ được yêu cầu trả trước phí thuê gia sư để tránh tình trạng nhiễu loạn.",
-                    CreateById = 1,
-                    CreateAt = createAt.AddDays(-2)
-                },
-                new FAQ
-                {
-                    Id = 4,
-                    Question = "Tôi có thể tham gia 1 lớp nào đó của gia sư không?",
-                    Answer = "Có, bạn có thể tham gia 1 lớp. Gia sư có thể tạo lớp trên nền tảng và mở cho mọi người đăng ký học trước khi nó bắt đầu. " +
+                CreateById = 1,
+                CreateAt = createAt.AddDays(-2)
+            },
+            new FAQ
+            {
+                Id = 4,
+                Question = "Tôi có thể tham gia 1 lớp nào đó của gia sư không?",
+                Answer =
+                    "Có, bạn có thể tham gia 1 lớp. Gia sư có thể tạo lớp trên nền tảng và mở cho mọi người đăng ký học trước khi nó bắt đầu. " +
                     "Ban sẽ được yêu cầu thanh toán tiền cọc trước khi có thể tham gia lớp này.",
-                    CreateById = 2,
-                    CreateAt = createAt.AddDays(-3)
-                },
-                new FAQ
-                {
-                    Id = 5,
-                    Question = "Thanh toán trên OnDemandTutor như thế nào?",
-                    Answer = "Các giao dịch trên OnDemandTutor sẽ được thực hiện trên ví của người dùng trên hệ thống. Bạn có thể nạp tiền vào ví sẵn để trả " +
+                CreateById = 2,
+                CreateAt = createAt.AddDays(-3)
+            },
+            new FAQ
+            {
+                Id = 5,
+                Question = "Thanh toán trên OnDemandTutor như thế nào?",
+                Answer =
+                    "Các giao dịch trên OnDemandTutor sẽ được thực hiện trên ví của người dùng trên hệ thống. Bạn có thể nạp tiền vào ví sẵn để trả " +
                     "cho các yêu cầu đặt lịch hoặc trả cọc. Nền tảng chúng tôi chấp nhận thanh toán bằng cổng VnPay. Bạn có thể rút tiền ra khi có nhu cầu. Tiền" +
                     "sẽ được rút ra bằng cách chuyển lại vào tài khoản ngân hàng của bạn.",
-                    CreateById = 1,
-                    CreateAt = createAt.AddDays(-4)
-                }
-            );
+                CreateById = 1,
+                CreateAt = createAt.AddDays(-4)
+            }
+        );
 
+        #endregion
 
-            #endregion
+        #region Notifications
 
-            #region Notifications
-            modelBuilder.Entity<Notification>().HasData(
-                new Notification
-                {
-                    Id = 1,
-                    Content = "Nhận được tin nhắn mới",
-                    ReceiverId = 1,
-                    RefUrl = "/messages/1",
-                    RefImageUrl = null,
-                    IsViewed = true
-                },
-                new Notification
-                {
-                    Id = 2,
-                    Content = "Nhắc nhở cuộc họp",
-                    ReceiverId = 2,
-                    RefUrl = "/events/5",
-                    RefImageUrl = null,
-                    IsViewed = true
-                },
-                new Notification
-                {
-                    Id = 3,
-                    Content = "Đã nhận được thanh toán",
-                    ReceiverId = 1,
-                    RefUrl = "/payments/123",
-                    RefImageUrl = null,
-                    IsViewed = true
-                },
-                new Notification
-                {
-                    Id = 4,
-                    Content = "Bài viết mới được xuất bản",
-                    ReceiverId = 2,
-                    RefUrl = "/articles/45",
-                    RefImageUrl = "/images/articles/45.jpg",
-                    IsViewed = false
-                },
-                new Notification
-                {
-                    Id = 5,
-                    Content = "Cập nhật tài khoản",
-                    ReceiverId = 1,
-                    RefUrl = "/account/settings",
-                    RefImageUrl = null,
-                    IsViewed = false
-                }
-            );
-            #endregion
+        modelBuilder.Entity<Notification>().HasData(
+            new Notification
+            {
+                Id = 1,
+                Content = "Nhận được tin nhắn mới",
+                ReceiverId = 1,
+                RefUrl = "/messages/1",
+                RefImageUrl = null,
+                IsViewed = true
+            },
+            new Notification
+            {
+                Id = 2,
+                Content = "Nhắc nhở cuộc họp",
+                ReceiverId = 2,
+                RefUrl = "/events/5",
+                RefImageUrl = null,
+                IsViewed = true
+            },
+            new Notification
+            {
+                Id = 3,
+                Content = "Đã nhận được thanh toán",
+                ReceiverId = 1,
+                RefUrl = "/payments/123",
+                RefImageUrl = null,
+                IsViewed = true
+            },
+            new Notification
+            {
+                Id = 4,
+                Content = "Bài viết mới được xuất bản",
+                ReceiverId = 2,
+                RefUrl = "/articles/45",
+                RefImageUrl = "/images/articles/45.jpg",
+                IsViewed = false
+            },
+            new Notification
+            {
+                Id = 5,
+                Content = "Cập nhật tài khoản",
+                ReceiverId = 1,
+                RefUrl = "/account/settings",
+                RefImageUrl = null,
+                IsViewed = false
+            }
+        );
 
-            #region Slot
-            modelBuilder.Entity<Slot>().HasData(
-                new Slot
-                {
-                    Id = 1,
-                    StartTime = new DateTime(2024, 7, 20, 18, 0, 0),
-                    EndTime = new DateTime(2024, 7, 20, 19, 30, 0),
-                    CreateById = 2,
-                    TeachAddress = "123 Đường Chính",
-                    ClassId = 1,
-                    SubjectId = 1,
-                    IsOnline = false,
-                    NumberOfStudents = 5,
-                    ActualEndTime = DateTime.Today
-                },
-                new Slot
-                {
-                    Id = 2,
-                    StartTime = new DateTime(2024, 7, 17, 7, 0, 0),
-                    EndTime = new DateTime(2024, 7, 17, 8, 30, 0),
-                    CreateById = 2,
-                    TeachAddress = "456 Đường Elm",
-                    ClassId = 2,
-                    SubjectId = 2,
-                    IsOnline = true,
-                    NumberOfStudents = 3,
-                    ActualEndTime = DateTime.Now.AddHours(4).AddMinutes(30)
-                },
-                new Slot
-                {
-                    Id = 3,
-                    StartTime = new DateTime(2024, 7, 16, 9, 0, 0),
-                    EndTime = new DateTime(2024, 7, 16, 10, 30, 0),
-                    CreateById = 2,
-                    TeachAddress = "789 Đường Oak",
-                    ClassId = 1,
-                    SubjectId = 3,
-                    IsOnline = false,
-                    NumberOfStudents = 7,
-                    ActualEndTime = DateTime.Today
-                },
-                new Slot
-                {
-                    Id = 4,
-                    StartTime = new DateTime(2024, 7, 17, 9, 0, 0),
-                    EndTime = new DateTime(2024, 7, 17, 10, 30, 0),
-                    CreateById = 2,
-                    TeachAddress = "101 Đường Pine",
-                    ClassId = null,
-                    SubjectId = 4,
-                    IsOnline = true,
-                    NumberOfStudents = 2,
-                    ActualEndTime = DateTime.Today
-                },
-                new Slot
-                {
-                    Id = 5,
-                    StartTime = new DateTime(2024, 7, 19, 8, 0, 0),
-                    EndTime = new DateTime(2024, 7, 19, 10, 0, 0),
-                    CreateById = 6,
-                    TeachAddress = "Q9,TPHCM",
-                    ClassId = null,
-                    SubjectId = 5,
-                    IsOnline = true,
-                    NumberOfStudents = 4,
-                    ActualEndTime = DateTime.Today
-                },
-                new Slot
-                {
-                    Id = 6,
-                    StartTime = new DateTime(2024, 7, 20, 8, 0, 0),
-                    EndTime = new DateTime(2024, 7, 20, 10, 0, 0),
-                    CreateById = 6,
-                    TeachAddress = "Biên Hòa, Đồng Nai",
-                    ClassId = 3,
-                    SubjectId = 3,
-                    IsOnline = false,
-                    NumberOfStudents = 5,
-                },
-                new Slot
-                {
-                    Id = 7,
-                    StartTime = new DateTime(2024, 7, 21, 13, 0, 0),
-                    EndTime = new DateTime(2024, 7, 21, 14, 30, 0),
-                    CreateById = 6,
-                    TeachAddress = "Biên Hòa, Đồng Nai",
-                    ClassId = 3,
-                    SubjectId = 3,
-                    IsOnline = false,
-                    NumberOfStudents = 5,
-                },
-                 new Slot
-                 {
-                     Id = 8,
-                     StartTime = new DateTime(2024, 7, 23, 8, 0, 0),
-                     EndTime = new DateTime(2024, 7, 23, 10, 0, 0),
-                     CreateById = 6,
-                     TeachAddress = "Biên Hòa, Đồng Nai",
-                     ClassId = 3,
-                     SubjectId = 3,
-                     IsOnline = false,
-                     NumberOfStudents = 5,
-                 },
-                new Slot
-                {
-                    Id = 9,
-                    StartTime = new DateTime(2024, 7, 25, 13, 0, 0),
-                    EndTime = new DateTime(2024, 7, 25, 14, 30, 0),
-                    CreateById = 6,
-                    TeachAddress = "Biên Hòa, Đồng Nai",
-                    ClassId = 3,
-                    SubjectId = 3,
-                    IsOnline = false,
-                    NumberOfStudents = 5,
-                },
-                new Slot
-                {
-                    Id = 10,
-                    StartTime = new DateTime(2024, 7, 15, 14, 0, 0),
-                    EndTime = new DateTime(2024, 7, 15, 16, 0, 0),
-                    CreateById = 4,
-                    TeachAddress = "meet.google.com",
-                    ClassId = null,
-                    IsOnline = true,
-                    NumberOfStudents = 1,
-                },
-                new Slot
-                {
-                    Id = 11,
-                    StartTime = new DateTime(2024, 7, 17, 14, 0, 0),
-                    EndTime = new DateTime(2024, 7, 17, 16, 0, 0),
-                    CreateById = 4,
-                    TeachAddress = "meet.google.com",
-                    ClassId = null,
-                    IsOnline = true,
-                    NumberOfStudents = 1,
-                },
-                new Slot
-                {
-                    Id = 12,
-                    StartTime = new DateTime(2024, 7, 20, 14, 0, 0),
-                    EndTime = new DateTime(2024, 7, 20, 16, 0, 0),
-                    CreateById = 4,
-                    TeachAddress = "meet.google.com",
-                    ClassId = null,
-                    IsOnline = true,
-                    NumberOfStudents = 1,
-                }
-            );
+        #endregion
 
-            #endregion
+        #region Slot
 
-            #region Subject
+        modelBuilder.Entity<Slot>().HasData(
+            new Slot
+            {
+                Id = 1,
+                StartTime = new DateTime(2024, 7, 20, 18, 0, 0),
+                EndTime = new DateTime(2024, 7, 20, 19, 30, 0),
+                CreateById = 2,
+                TeachAddress = "123 Đường Chính",
+                ClassId = 1,
+                SubjectId = 1,
+                IsOnline = false,
+                NumberOfStudents = 5,
+                ActualEndTime = DateTime.Today
+            },
+            new Slot
+            {
+                Id = 2,
+                StartTime = new DateTime(2024, 7, 17, 7, 0, 0),
+                EndTime = new DateTime(2024, 7, 17, 8, 30, 0),
+                CreateById = 2,
+                TeachAddress = "456 Đường Elm",
+                ClassId = 2,
+                SubjectId = 2,
+                IsOnline = true,
+                NumberOfStudents = 3,
+                ActualEndTime = DateTime.Now.AddHours(4).AddMinutes(30)
+            },
+            new Slot
+            {
+                Id = 3,
+                StartTime = new DateTime(2024, 7, 16, 9, 0, 0),
+                EndTime = new DateTime(2024, 7, 16, 10, 30, 0),
+                CreateById = 2,
+                TeachAddress = "789 Đường Oak",
+                ClassId = 1,
+                SubjectId = 3,
+                IsOnline = false,
+                NumberOfStudents = 7,
+                ActualEndTime = DateTime.Today
+            },
+            new Slot
+            {
+                Id = 4,
+                StartTime = new DateTime(2024, 7, 17, 9, 0, 0),
+                EndTime = new DateTime(2024, 7, 17, 10, 30, 0),
+                CreateById = 2,
+                TeachAddress = "101 Đường Pine",
+                ClassId = null,
+                SubjectId = 4,
+                IsOnline = true,
+                NumberOfStudents = 2,
+                ActualEndTime = DateTime.Today
+            },
+            new Slot
+            {
+                Id = 5,
+                StartTime = new DateTime(2024, 7, 19, 8, 0, 0),
+                EndTime = new DateTime(2024, 7, 19, 10, 0, 0),
+                CreateById = 6,
+                TeachAddress = "Q9,TPHCM",
+                ClassId = null,
+                SubjectId = 5,
+                IsOnline = true,
+                NumberOfStudents = 4,
+                ActualEndTime = DateTime.Today
+            },
+            new Slot
+            {
+                Id = 6,
+                StartTime = new DateTime(2024, 7, 20, 8, 0, 0),
+                EndTime = new DateTime(2024, 7, 20, 10, 0, 0),
+                CreateById = 6,
+                TeachAddress = "Biên Hòa, Đồng Nai",
+                ClassId = 3,
+                SubjectId = 3,
+                IsOnline = false,
+                NumberOfStudents = 5
+            },
+            new Slot
+            {
+                Id = 7,
+                StartTime = new DateTime(2024, 7, 21, 13, 0, 0),
+                EndTime = new DateTime(2024, 7, 21, 14, 30, 0),
+                CreateById = 6,
+                TeachAddress = "Biên Hòa, Đồng Nai",
+                ClassId = 3,
+                SubjectId = 3,
+                IsOnline = false,
+                NumberOfStudents = 5
+            },
+            new Slot
+            {
+                Id = 8,
+                StartTime = new DateTime(2024, 7, 23, 8, 0, 0),
+                EndTime = new DateTime(2024, 7, 23, 10, 0, 0),
+                CreateById = 6,
+                TeachAddress = "Biên Hòa, Đồng Nai",
+                ClassId = 3,
+                SubjectId = 3,
+                IsOnline = false,
+                NumberOfStudents = 5
+            },
+            new Slot
+            {
+                Id = 9,
+                StartTime = new DateTime(2024, 7, 25, 13, 0, 0),
+                EndTime = new DateTime(2024, 7, 25, 14, 30, 0),
+                CreateById = 6,
+                TeachAddress = "Biên Hòa, Đồng Nai",
+                ClassId = 3,
+                SubjectId = 3,
+                IsOnline = false,
+                NumberOfStudents = 5
+            },
+            new Slot
+            {
+                Id = 10,
+                StartTime = new DateTime(2024, 7, 15, 14, 0, 0),
+                EndTime = new DateTime(2024, 7, 15, 16, 0, 0),
+                CreateById = 4,
+                TeachAddress = "meet.google.com",
+                ClassId = null,
+                IsOnline = true,
+                NumberOfStudents = 1
+            },
+            new Slot
+            {
+                Id = 11,
+                StartTime = new DateTime(2024, 7, 17, 14, 0, 0),
+                EndTime = new DateTime(2024, 7, 17, 16, 0, 0),
+                CreateById = 4,
+                TeachAddress = "meet.google.com",
+                ClassId = null,
+                IsOnline = true,
+                NumberOfStudents = 1
+            },
+            new Slot
+            {
+                Id = 12,
+                StartTime = new DateTime(2024, 7, 20, 14, 0, 0),
+                EndTime = new DateTime(2024, 7, 20, 16, 0, 0),
+                CreateById = 4,
+                TeachAddress = "meet.google.com",
+                ClassId = null,
+                IsOnline = true,
+                NumberOfStudents = 1
+            }
+        );
 
-            modelBuilder.Entity<Subject>().HasData(
-                new Subject
-                {
-                    Id = 1,
-                    Name = "Toán",
-                    SubjectType = "Khoa học tự nhiên",
-                    CreateById = 1,
-                    Description = "Nền tảng của các môn khoa học tự nhiên",
-                    CreateAt = createAt,
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 2,
-                    Name = "Tiếng Anh",
-                    SubjectType = "Ngôn ngữ",
-                    CreateById = 2,
-                    Description = "Nghệ thuật ngôn ngữ Anh",
-                    CreateAt = createAt.AddDays(-1),
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 3,
-                    Name = "Vật lý",
-                    SubjectType = "Khoa học tự nhiên",
-                    CreateById = 1,
-                    Description = "Khoa học nghiên cứu về vật chất và năng lượng",
-                    CreateAt = createAt.AddDays(-2),
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 4,
-                    Name = "Lịch sử",
-                    SubjectType = "Khoa học xã hội",
-                    CreateById = 2,
-                    Description = "Học về những sự kiện trong quá khứ",
-                    CreateAt = createAt.AddDays(-3),
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 5,
-                    Name = "Khoa học máy tính",
-                    SubjectType = "Khoa học",
-                    CreateById = 1,
-                    Description = "Học hỏi về khoa học bên trong 1 chiếc máy tính",
-                    CreateAt = createAt.AddDays(-4),
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 6,
-                    Name = "Piano, Organ",
-                    SubjectType = "Năng khiếu",
-                    CreateById = 1,
-                    Description = "Học đàn piano hoặc organ căn bản hoặc nâng cao",
-                    CreateAt = createAt.AddDays(-4),
-                    IsEnable = true,
-                },
-                new Subject
-                {
-                    Id = 7,
-                    Name = "Vẽ chân dung",
-                    SubjectType = "Năng khiếu",
-                    CreateById = 1,
-                    Description = "Học vẽ chân dung, nâng cao tay nghề",
-                    CreateAt = createAt.AddDays(-4),
-                    IsEnable = false,
-                }
-            );
+        #endregion
 
-            #endregion
+        #region Subject
 
-            #region Transactions
+        modelBuilder.Entity<Subject>().HasData(
+            new Subject
+            {
+                Id = 1,
+                Name = "Toán",
+                SubjectType = "Khoa học tự nhiên",
+                CreateById = 1,
+                Description = "Nền tảng của các môn khoa học tự nhiên",
+                CreateAt = createAt,
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 2,
+                Name = "Tiếng Anh",
+                SubjectType = "Ngôn ngữ",
+                CreateById = 2,
+                Description = "Nghệ thuật ngôn ngữ Anh",
+                CreateAt = createAt.AddDays(-1),
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 3,
+                Name = "Vật lý",
+                SubjectType = "Khoa học tự nhiên",
+                CreateById = 1,
+                Description = "Khoa học nghiên cứu về vật chất và năng lượng",
+                CreateAt = createAt.AddDays(-2),
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 4,
+                Name = "Lịch sử",
+                SubjectType = "Khoa học xã hội",
+                CreateById = 2,
+                Description = "Học về những sự kiện trong quá khứ",
+                CreateAt = createAt.AddDays(-3),
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 5,
+                Name = "Khoa học máy tính",
+                SubjectType = "Khoa học",
+                CreateById = 1,
+                Description = "Học hỏi về khoa học bên trong 1 chiếc máy tính",
+                CreateAt = createAt.AddDays(-4),
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 6,
+                Name = "Piano, Organ",
+                SubjectType = "Năng khiếu",
+                CreateById = 1,
+                Description = "Học đàn piano hoặc organ căn bản hoặc nâng cao",
+                CreateAt = createAt.AddDays(-4),
+                IsEnable = true
+            },
+            new Subject
+            {
+                Id = 7,
+                Name = "Vẽ chân dung",
+                SubjectType = "Năng khiếu",
+                CreateById = 1,
+                Description = "Học vẽ chân dung, nâng cao tay nghề",
+                CreateAt = createAt.AddDays(-4),
+                IsEnable = false
+            }
+        );
 
-            modelBuilder.Entity<Transaction>().HasData(
-                new Transaction
-                {
-                    Id = 1,
-                    TransactionCode = "GDT001",
-                    PaymentMethod = "Thẻ tín dụng",
-                    Amount = 100.00m,
-                    CreatedDate = DateTime.Now,
-                    Status = PaymentStatus.Paid,
-                    Notes = "Thanh toán cho buổi học gia sư",
-                    SlotId = 1,
-                    CreatedById = 1
-                },
-                new Transaction
-                {
-                    Id = 2,
-                    TransactionCode = "GDT002",
-                    PaymentMethod = "PayPal",
-                    Amount = 50.00m,
-                    CreatedDate = DateTime.Now.AddDays(-1),
-                    Status = PaymentStatus.Paid,
-                    Notes = "Thanh toán cho lớp học trực tuyến",
-                    SlotId = 2,
-                    CreatedById = 2
-                },
-                new Transaction
-                {
-                    Id = 3,
-                    TransactionCode = "GDT003",
-                    PaymentMethod = "Chuyển khoản ngân hàng",
-                    Amount = 75.00m,
-                    CreatedDate = DateTime.Now.AddDays(-2),
-                    Status = PaymentStatus.Paid,
-                    Notes = "Thanh toán cho buổi học gia sư",
-                    SlotId = 3,
-                    CreatedById = 1
-                },
-                new Transaction
-                {
-                    Id = 4,
-                    TransactionCode = "GDT004",
-                    PaymentMethod = "Thẻ tín dụng",
-                    Amount = 120.00m,
-                    CreatedDate = DateTime.Now.AddDays(-3),
-                    Status = PaymentStatus.Paid,
-                    Notes = "Thanh toán cho lớp học trực tuyến",
-                    SlotId = 4,
-                    CreatedById = 2
-                },
-                new Transaction
-                {
-                    Id = 5,
-                    TransactionCode = "GDT005",
-                    PaymentMethod = "PayPal",
-                    Amount = 90.00m,
-                    CreatedDate = DateTime.Now.AddDays(-4),
-                    Status = PaymentStatus.Paid,
-                    Notes = "Thanh toán cho buổi học gia sư",
-                    SlotId = 5,
-                    CreatedById = 1
-                }
-            );
+        #endregion
 
-            #endregion
+        #region Transactions
 
-            #region TutorDegree
+        modelBuilder.Entity<Transaction>().HasData(
+            new Transaction
+            {
+                Id = 1,
+                TransactionCode = "GDT001",
+                PaymentMethod = "Thẻ tín dụng",
+                Amount = 100.00m,
+                CreatedDate = DateTime.Now,
+                Status = PaymentStatus.Paid,
+                Notes = "Thanh toán cho buổi học gia sư",
+                SlotId = 1,
+                CreatedById = 1
+            },
+            new Transaction
+            {
+                Id = 2,
+                TransactionCode = "GDT002",
+                PaymentMethod = "PayPal",
+                Amount = 50.00m,
+                CreatedDate = DateTime.Now.AddDays(-1),
+                Status = PaymentStatus.Paid,
+                Notes = "Thanh toán cho lớp học trực tuyến",
+                SlotId = 2,
+                CreatedById = 2
+            },
+            new Transaction
+            {
+                Id = 3,
+                TransactionCode = "GDT003",
+                PaymentMethod = "Chuyển khoản ngân hàng",
+                Amount = 75.00m,
+                CreatedDate = DateTime.Now.AddDays(-2),
+                Status = PaymentStatus.Paid,
+                Notes = "Thanh toán cho buổi học gia sư",
+                SlotId = 3,
+                CreatedById = 1
+            },
+            new Transaction
+            {
+                Id = 4,
+                TransactionCode = "GDT004",
+                PaymentMethod = "Thẻ tín dụng",
+                Amount = 120.00m,
+                CreatedDate = DateTime.Now.AddDays(-3),
+                Status = PaymentStatus.Paid,
+                Notes = "Thanh toán cho lớp học trực tuyến",
+                SlotId = 4,
+                CreatedById = 2
+            },
+            new Transaction
+            {
+                Id = 5,
+                TransactionCode = "GDT005",
+                PaymentMethod = "PayPal",
+                Amount = 90.00m,
+                CreatedDate = DateTime.Now.AddDays(-4),
+                Status = PaymentStatus.Paid,
+                Notes = "Thanh toán cho buổi học gia sư",
+                SlotId = 5,
+                CreatedById = 1
+            }
+        );
 
-            modelBuilder.Entity<TutorDegree>().HasData(
-                new TutorDegree
-                {
-                    Id = 1,
-                    TutorId = 1,
-                    DegreeImgUrl = "https://images2.thanhnien.vn/zoom/686_429/Uploaded/quannt/2022_07_08/bang-gia-1463.jpg",
-                    Description = "Cử nhân Toán học",
-                    SubjectId = 1,
-                    DegreeNumber = "12345",
-                    IssuranceDate = new DateOnly(2023, 5, 15),
-                    TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
-                },
-                new TutorDegree
-                {
-                    Id = 2,
-                    TutorId = 2,
-                    DegreeImgUrl = "https://cdn.cmp.edu.vn/wp-content/uploads/2024/03/thac-si-tien-si-la-gi-1.jpg",
-                    Description = "Thạc sĩ Văn học Anh",
-                    SubjectId = 2,
-                    DegreeNumber = "54321",
-                    IssuranceDate = new DateOnly(2022, 9, 30),
-                    TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
-                },
-                new TutorDegree
-                {
-                    Id = 3,
-                    TutorId = 1,
-                    DegreeImgUrl = "https://baoxinviec.org/wp-content/uploads/2021/08/tien-si-y-hoc-600x416.jpg",
-                    Description = "Tiến sĩ Vật lý",
-                    SubjectId = 3,
-                    DegreeNumber = "98765",
-                    IssuranceDate = new DateOnly(2024, 2, 10),
-                    TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
-                },
-                new TutorDegree
-                {
-                    Id = 4,
-                    TutorId = 2,
-                    DegreeImgUrl = "https://lambangdaihocgiare.com.vn/wp-content/uploads/2019/01/ba%CC%86%CC%80ng-tie%CC%82%CC%81n-si%CC%83-1024x701.jpg",
-                    Description = "Cử nhân Lịch sử",
-                    SubjectId = 4,
-                    DegreeNumber = "24680",
-                    IssuranceDate = new DateOnly(2021, 12, 5),
-                    TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
-                },
-                new TutorDegree
-                {
-                    Id = 5,
-                    TutorId = 1,
-                    DegreeImgUrl = "https://file3.qdnd.vn/data/images/0/2023/12/02/upload_2324/untitled-2.jpg?dpi=150&quality=100&w=870",
-                    Description = "Thạc sĩ Khoa học Máy tính",
-                    SubjectId = 5,
-                    DegreeNumber = "13579",
-                    IssuranceDate = new DateOnly(2023, 8, 20),
-                    TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
-                }
-            );
+        #endregion
 
-            #endregion
+        #region TutorDegree
 
-            #region TutorVideo
+        modelBuilder.Entity<TutorDegree>().HasData(
+            new TutorDegree
+            {
+                Id = 1,
+                TutorId = 1,
+                DegreeImgUrl = "https://images2.thanhnien.vn/zoom/686_429/Uploaded/quannt/2022_07_08/bang-gia-1463.jpg",
+                Description = "Cử nhân Toán học",
+                SubjectId = 1,
+                DegreeNumber = "12345",
+                IssuranceDate = new DateOnly(2023, 5, 15),
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
+            },
+            new TutorDegree
+            {
+                Id = 2,
+                TutorId = 2,
+                DegreeImgUrl = "https://cdn.cmp.edu.vn/wp-content/uploads/2024/03/thac-si-tien-si-la-gi-1.jpg",
+                Description = "Thạc sĩ Văn học Anh",
+                SubjectId = 2,
+                DegreeNumber = "54321",
+                IssuranceDate = new DateOnly(2022, 9, 30),
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
+            },
+            new TutorDegree
+            {
+                Id = 3,
+                TutorId = 1,
+                DegreeImgUrl = "https://baoxinviec.org/wp-content/uploads/2021/08/tien-si-y-hoc-600x416.jpg",
+                Description = "Tiến sĩ Vật lý",
+                SubjectId = 3,
+                DegreeNumber = "98765",
+                IssuranceDate = new DateOnly(2024, 2, 10),
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
+            },
+            new TutorDegree
+            {
+                Id = 4,
+                TutorId = 2,
+                DegreeImgUrl =
+                    "https://lambangdaihocgiare.com.vn/wp-content/uploads/2019/01/ba%CC%86%CC%80ng-tie%CC%82%CC%81n-si%CC%83-1024x701.jpg",
+                Description = "Cử nhân Lịch sử",
+                SubjectId = 4,
+                DegreeNumber = "24680",
+                IssuranceDate = new DateOnly(2021, 12, 5),
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Approved
+            },
+            new TutorDegree
+            {
+                Id = 5,
+                TutorId = 1,
+                DegreeImgUrl =
+                    "https://file3.qdnd.vn/data/images/0/2023/12/02/upload_2324/untitled-2.jpg?dpi=150&quality=100&w=870",
+                Description = "Thạc sĩ Khoa học Máy tính",
+                SubjectId = 5,
+                DegreeNumber = "13579",
+                IssuranceDate = new DateOnly(2023, 8, 20),
+                TutorSubjectStatus = TutorSubjectDegreeStatus.Pending
+            }
+        );
 
-            modelBuilder.Entity<TutorVideo>().HasData(
-                new TutorVideo
-                {
-                    Id = 1,
-                    TutorId = 1,
-                    VideoUrl = "https://example.com/video1.mp4",
-                    Description = "Giới thiệu về Toán học",
-                },
-                new TutorVideo
-                {
-                    Id = 2,
-                    TutorId = 2,
-                    VideoUrl = "https://example.com/video2.mp4",
-                    Description = "Phân tích Văn học Anh",
-                },
-                new TutorVideo
-                {
-                    Id = 3,
-                    TutorId = 1,
-                    VideoUrl = "https://example.com/video3.mp4",
-                    Description = "Những kiến thức cơ bản về Vật lý",
-                },
-                new TutorVideo
-                {
-                    Id = 4,
-                    TutorId = 2,
-                    VideoUrl = "https://example.com/video4.mp4",
-                    Description = "Tổng quan về các sự kiện Lịch sử",
-                },
-                new TutorVideo
-                {
-                    Id = 5,
-                    TutorId = 1,
-                    VideoUrl = "https://example.com/video5.mp4",
-                    Description = "Giới thiệu về Lập trình",
-                }
-            );
+        #endregion
 
-            #endregion
+        #region TutorVideo
 
-            #region SlotStudent
+        modelBuilder.Entity<TutorVideo>().HasData(
+            new TutorVideo
+            {
+                Id = 1,
+                TutorId = 1,
+                VideoUrl = "https://example.com/video1.mp4",
+                Description = "Giới thiệu về Toán học"
+            },
+            new TutorVideo
+            {
+                Id = 2,
+                TutorId = 2,
+                VideoUrl = "https://example.com/video2.mp4",
+                Description = "Phân tích Văn học Anh"
+            },
+            new TutorVideo
+            {
+                Id = 3,
+                TutorId = 1,
+                VideoUrl = "https://example.com/video3.mp4",
+                Description = "Những kiến thức cơ bản về Vật lý"
+            },
+            new TutorVideo
+            {
+                Id = 4,
+                TutorId = 2,
+                VideoUrl = "https://example.com/video4.mp4",
+                Description = "Tổng quan về các sự kiện Lịch sử"
+            },
+            new TutorVideo
+            {
+                Id = 5,
+                TutorId = 1,
+                VideoUrl = "https://example.com/video5.mp4",
+                Description = "Giới thiệu về Lập trình"
+            }
+        );
 
-            modelBuilder.Entity<SlotStudent>().HasData(
-                new SlotStudent { Id = 1, SlotId = 4, UserId = 3, Feedback = "Phản hồi về buổi học của anh John." },
-                new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
-                new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
-                new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
+        #endregion
+
+        #region SlotStudent
+
+        modelBuilder.Entity<SlotStudent>().HasData(
+            new SlotStudent { Id = 1, SlotId = 4, UserId = 3, Feedback = "Phản hồi về buổi học của anh John." },
+            new SlotStudent { Id = 2, SlotId = 4, UserId = 5, Feedback = "Phản hồi về buổi học của Jane." },
+            new SlotStudent { Id = 3, SlotId = 5, UserId = 3, Feedback = "Phản hồi về buổi học của Alice." },
+            new SlotStudent { Id = 4, SlotId = 5, UserId = 5, Feedback = "Phản hồi về buổi học của Bob." }
 
             // Thêm nếu cần
-            );
+        );
 
-            #endregion
+        #endregion
 
-            #region Class
+        #region Class
 
-            modelBuilder.Entity<Class>().HasData(
-                new Class
-                {
-                    Id = 1,
-                    Name = "Nhập môn toán cao cấp",
-                    TutorId = 2, // Thay bằng TutorId đã có
-                    SubjectId = 1, // Thay bằng SubjectId đã có
-                    Location = "meet.google.com",
-                    Method = "Online",
-                    Status = ClassStatus.OnGoing
+        modelBuilder.Entity<Class>().HasData(
+            new Class
+            {
+                Id = 1,
+                Name = "Nhập môn toán cao cấp",
+                TutorId = 2, // Thay bằng TutorId đã có
+                SubjectId = 1, // Thay bằng SubjectId đã có
+                Location = "meet.google.com",
+                Method = "Online",
+                Status = ClassStatus.OnGoing
+            },
+            new Class
+            {
+                Id = 2,
+                Name = "Luyên thi IELTS 7+",
+                TutorId = 4, // Thay bằng TutorId đã có
+                SubjectId = 2, // Thay bằng SubjectId đã có
+                Location = "Gò vấp, TPHCM",
+                Method = "Online",
+                Status = ClassStatus.NotStart
+            },
+            new Class
+            {
+                Id = 3,
+                Name = "Luyện thi Vật lý 9+ THPTQG",
+                TutorId = 6, // Thay bằng TutorId đã có
+                SubjectId = 3, // Thay bằng SubjectId đã có
+                Location = "meet.google.com",
+                Method = "Online",
+                Status = ClassStatus.NotStart
+            },
+            new Class
+            {
+                Id = 4,
+                Name = "Bí quyết học môn Lịch sử",
+                TutorId = 4, // Thay bằng TutorId đã có
+                SubjectId = 4, // Thay bằng SubjectId đã có
+                Location = "Q9, TPHCM",
+                Method = "Offline",
+                Status = ClassStatus.Disabled
+            },
+            new Class
+            {
+                Id = 5,
+                Name = "Học thêm hóa 12",
+                TutorId = 2, // Thay bằng TutorId đã có
+                SubjectId = 5, // Thay bằng SubjectId đã có
+                Location = "Thủ Đức, TPHCM",
+                Method = "Offline",
+                Status = ClassStatus.Finished
+            }
+        );
+        ;
 
-                },
-                new Class
-                {
-                    Id = 2,
-                    Name = "Luyên thi IELTS 7+",
-                    TutorId = 4, // Thay bằng TutorId đã có
-                    SubjectId = 2, // Thay bằng SubjectId đã có
-                    Location = "Gò vấp, TPHCM",
-                    Method = "Online",
-                    Status = ClassStatus.NotStart
+        #endregion
 
-                },
-                new Class
-                {
-                    Id = 3,
-                    Name = "Luyện thi Vật lý 9+ THPTQG",
-                    TutorId = 6, // Thay bằng TutorId đã có
-                    SubjectId = 3, // Thay bằng SubjectId đã có
-                    Location = "meet.google.com",
-                    Method = "Online",
-                    Status = ClassStatus.NotStart
-                },
-                new Class
-                {
-                    Id = 4,
-                    Name = "Bí quyết học môn Lịch sử",
-                    TutorId = 4, // Thay bằng TutorId đã có
-                    SubjectId = 4, // Thay bằng SubjectId đã có
-                    Location = "Q9, TPHCM",
-                    Method = "Offline",
-                    Status = ClassStatus.Disabled
-                },
-                new Class
-                {
-                    Id = 5,
-                    Name = "Học thêm hóa 12",
-                    TutorId = 2, // Thay bằng TutorId đã có
-                    SubjectId = 5, // Thay bằng SubjectId đã có
-                    Location = "Thủ Đức, TPHCM",
-                    Method = "Offline",
-                    Status = ClassStatus.Finished
-                }
-            ); ;
+        #region StudentClass
 
-            #endregion
+        modelBuilder.Entity<StudentClass>().HasData(
+            new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5 },
+            new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
+            new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
+            new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4 },
+            new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 },
+            new StudentClass { Id = 6, StudentId = 3, ClassId = 5, Rating = 4 }
+        );
 
-            #region StudentClass
+        #endregion
 
-            modelBuilder.Entity<StudentClass>().HasData(
-                new StudentClass { Id = 1, StudentId = 3, ClassId = 1, Rating = 5 },
-                new StudentClass { Id = 2, StudentId = 5, ClassId = 1, Rating = 2 },
-                new StudentClass { Id = 3, StudentId = 3, ClassId = 2, Rating = 3 },
-                new StudentClass { Id = 4, StudentId = 5, ClassId = 2, Rating = 4 },
-                new StudentClass { Id = 5, StudentId = 3, ClassId = 3, Rating = 4 },
-                new StudentClass { Id = 6, StudentId = 3, ClassId = 5, Rating = 4 }
-            );
+        #region TutorSubject
 
-            #endregion
+        modelBuilder.Entity<TutorSubject>().HasData(
+            new TutorSubject { Id = 1, UserId = 2, SubjectId = 1 },
+            new TutorSubject { Id = 2, UserId = 2, SubjectId = 2 },
+            new TutorSubject { Id = 3, UserId = 4, SubjectId = 3 },
+            new TutorSubject { Id = 4, UserId = 4, SubjectId = 1 },
+            new TutorSubject { Id = 5, UserId = 4, SubjectId = 4 }
+        );
 
-            #region TutorSubject
-            modelBuilder.Entity<TutorSubject>().HasData(
-                new TutorSubject { Id = 1, UserId = 2, SubjectId = 1 },
-                new TutorSubject { Id = 2, UserId = 2, SubjectId = 2 },
-                new TutorSubject { Id = 3, UserId = 4, SubjectId = 3 },
-                new TutorSubject { Id = 4, UserId = 4, SubjectId = 1 },
-                new TutorSubject { Id = 5, UserId = 4, SubjectId = 4 }
+        #endregion
 
-            );
+        #region EmailTemplate
 
-
-            #endregion
-
-            #region EmailTemplate
-            modelBuilder.Entity<EmailTemplate>().HasData(
-
-              new EmailTemplate
-              {
-                  Id = 1,
-                  Name = "Welcome_Email",
-                  Status = true,
-                  Body = "Chào mừng bạn đến với OnDemandTutor! Kính gửi [Name], cảm ơn bạn đã tham gia cùng chúng tôi.",
-                  Params = "[Name]",
-                  Subject = "Welcome to OnDemandTutor!",
-                  Description = "Email này được gửi để chào đón người dùng mới."
-              },
+        modelBuilder.Entity<EmailTemplate>().HasData(
+            new EmailTemplate
+            {
+                Id = 1,
+                Name = "Welcome_Email",
+                Status = true,
+                Body = "Chào mừng bạn đến với OnDemandTutor! Kính gửi [Name], cảm ơn bạn đã tham gia cùng chúng tôi.",
+                Params = "[Name]",
+                Subject = "Welcome to OnDemandTutor!",
+                Description = "Email này được gửi để chào đón người dùng mới."
+            },
             new EmailTemplate
             {
                 Id = 2,
@@ -876,7 +911,8 @@ namespace OnDemandTutor.Models.MigrationData
                 Id = 4,
                 Name = "Feedback_Request",
                 Status = true,
-                Body = "Xin chào [Name], chúng tôi rất mong muốn nghe ý kiến phản hồi của bạn về dịch vụ của chúng tôi.",
+                Body =
+                    "Xin chào [Name], chúng tôi rất mong muốn nghe ý kiến phản hồi của bạn về dịch vụ của chúng tôi.",
                 Params = "[Name]",
                 Subject = "Feedback Request",
                 Description = "Email này yêu cầu người dùng cho ý kiến về trải nghiệm của họ."
@@ -891,13 +927,13 @@ namespace OnDemandTutor.Models.MigrationData
                 Subject = "Account Activation",
                 Description = "Email này chứa hướng dẫn để kích hoạt tài khoản người dùng."
             },
-             new EmailTemplate
-             {
-                 Id = 6,
-                 Name = "TutorRegistrationApproval",
-                 Status = true,
-                 Subject = "Your Tutor Registration Approval Status",
-                 Body = @"
+            new EmailTemplate
+            {
+                Id = 6,
+                Name = "TutorRegistrationApproval",
+                Status = true,
+                Subject = "Your Tutor Registration Approval Status",
+                Body = @"
                             <!DOCTYPE html>
                     <html lang=""""vi"""">
                     <head>
@@ -949,17 +985,16 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
             ",
-                 Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
-                 Description = "Email template for notifying tutors about their registration approval status."
-             },
-
-              new EmailTemplate
-              {
-                  Id = 7,
-                  Name = "Request_Withdraw_Notification",
-                  Status = true,
-                  Subject = "Withdrawal Request Received",
-                  Body = @"
+                Params = "[TutorName], [ApprovalStatus], [RejectionReason]",
+                Description = "Email template for notifying tutors about their registration approval status."
+            },
+            new EmailTemplate
+            {
+                Id = 7,
+                Name = "Request_Withdraw_Notification",
+                Status = true,
+                Subject = "Withdrawal Request Received",
+                Body = @"
                     <!DOCTYPE html>
                     <html lang=""en"">
                     <head>
@@ -1012,16 +1047,16 @@ namespace OnDemandTutor.Models.MigrationData
                     </body>
                     </html>
                 ",
-                  Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
-                  Description = "Email template for notifying users about their withdrawal request."
-              },
-              new EmailTemplate
-              {
-                  Id = 8,
-                  Name = "WithDraw_Approval_Notification",
-                  Status = true,
-                  Subject = "Withdrawal Request Status Update",
-                  Body = @"
+                Params = "[UserName],[Amount],[BankAccountNumber],[BankName],[Reason]",
+                Description = "Email template for notifying users about their withdrawal request."
+            },
+            new EmailTemplate
+            {
+                Id = 8,
+                Name = "WithDraw_Approval_Notification",
+                Status = true,
+                Subject = "Withdrawal Request Status Update",
+                Body = @"
         <!DOCTYPE html>
         <html lang=""en"">
         <head>
@@ -1073,9 +1108,9 @@ namespace OnDemandTutor.Models.MigrationData
         </body>
         </html>
     ",
-                  Params = "[UserName], [Status], [Amount],[Reply]",
-                  Description = "Email template for notifying users about the status of their withdrawal request."
-              },
+                Params = "[UserName], [Status], [Amount],[Reply]",
+                Description = "Email template for notifying users about the status of their withdrawal request."
+            },
             new EmailTemplate
             {
                 Id = 9,
@@ -1118,75 +1153,75 @@ The OnDemandTutor Team",
                 DeletedDate = DateTime.Now,
                 RecordStatus = 0
             }
-            );
+        );
 
-            #endregion
+        #endregion
 
-            #region RequestWithDraw
-            modelBuilder.Entity<RequestWithDraw>().HasData(
-                new RequestWithDraw
-                {
-                    Id = 1,
-                    UserId = 2, // User with Id = 2 (Trần Thị B)
-                    Amount = 100.0m,
-                    BankAccountNumber = "123456789",
-                    BankName = "Example Bank",
-                    Description = "Withdrawal for tutoring services",
-                    OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
-                    Reply = "Withdrawal processed successfully",
-                    Status = WithDrawStatus.Success
-                },
-                new RequestWithDraw
-                {
-                    Id = 2,
-                    UserId = 4, // User with Id = 4 (Phạm Văn D)
-                    Amount = 150.0m,
-                    BankAccountNumber = "987654321",
-                    BankName = "Another Bank",
-                    Description = "Withdrawal for teaching materials",
-                    OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
-                    Reply = "Withdrawal approved",
-                    Status = WithDrawStatus.Success
-                },
-                new RequestWithDraw
-                {
-                    Id = 3,
-                    UserId = 3, // User with Id = 3 (Lê Văn C)
-                    Amount = 200.0m,
-                    BankAccountNumber = "555555555",
-                    BankName = "Bank C",
-                    Description = "Withdrawal for consultation services",
-                    OperatorId = 2, // Assuming Operator with Id = 2 (Trần Thị B)
-                    Reply = "Withdrawal pending",
-                    Status = WithDrawStatus.Pending
-                },
-                new RequestWithDraw
-                {
-                    Id = 4,
-                    UserId = 1, // User with Id = 1 (Nguyễn Văn A)
-                    Amount = 300.0m,
-                    BankAccountNumber = "111111111",
-                    BankName = "Bank A",
-                    Description = "Withdrawal for administrative purposes",
-                    OperatorId = 3, // Assuming Operator with Id = 3 (Lê Văn C)
-                    Reply = "Withdrawal under review",
-                    Status = WithDrawStatus.Pending
-                },
-                new RequestWithDraw
-                {
-                    Id = 5,
-                    UserId = 5, // User with Id = 5 (Đặng Văn E)
-                    Amount = 250.0m,
-                    BankAccountNumber = "999999999",
-                    BankName = "Bank E",
-                    Description = "Withdrawal for customer support",
-                    OperatorId = 4, // Assuming Operator with Id = 4 (Phạm Văn D)
-                    Reply = "Withdrawal processed",
-                    Status = WithDrawStatus.Pending
-                }
-            );
-            #endregion
+        #region RequestWithDraw
 
-        }
+        modelBuilder.Entity<RequestWithDraw>().HasData(
+            new RequestWithDraw
+            {
+                Id = 1,
+                UserId = 2, // User with Id = 2 (Trần Thị B)
+                Amount = 100.0m,
+                BankAccountNumber = "123456789",
+                BankName = "Example Bank",
+                Description = "Withdrawal for tutoring services",
+                OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
+                Reply = "Withdrawal processed successfully",
+                Status = WithDrawStatus.Success
+            },
+            new RequestWithDraw
+            {
+                Id = 2,
+                UserId = 4, // User with Id = 4 (Phạm Văn D)
+                Amount = 150.0m,
+                BankAccountNumber = "987654321",
+                BankName = "Another Bank",
+                Description = "Withdrawal for teaching materials",
+                OperatorId = 1, // Assuming Operator with Id = 1 (Nguyễn Văn A)
+                Reply = "Withdrawal approved",
+                Status = WithDrawStatus.Success
+            },
+            new RequestWithDraw
+            {
+                Id = 3,
+                UserId = 3, // User with Id = 3 (Lê Văn C)
+                Amount = 200.0m,
+                BankAccountNumber = "555555555",
+                BankName = "Bank C",
+                Description = "Withdrawal for consultation services",
+                OperatorId = 2, // Assuming Operator with Id = 2 (Trần Thị B)
+                Reply = "Withdrawal pending",
+                Status = WithDrawStatus.Pending
+            },
+            new RequestWithDraw
+            {
+                Id = 4,
+                UserId = 1, // User with Id = 1 (Nguyễn Văn A)
+                Amount = 300.0m,
+                BankAccountNumber = "111111111",
+                BankName = "Bank A",
+                Description = "Withdrawal for administrative purposes",
+                OperatorId = 3, // Assuming Operator with Id = 3 (Lê Văn C)
+                Reply = "Withdrawal under review",
+                Status = WithDrawStatus.Pending
+            },
+            new RequestWithDraw
+            {
+                Id = 5,
+                UserId = 5, // User with Id = 5 (Đặng Văn E)
+                Amount = 250.0m,
+                BankAccountNumber = "999999999",
+                BankName = "Bank E",
+                Description = "Withdrawal for customer support",
+                OperatorId = 4, // Assuming Operator with Id = 4 (Phạm Văn D)
+                Reply = "Withdrawal processed",
+                Status = WithDrawStatus.Pending
+            }
+        );
+
+        #endregion
     }
 }

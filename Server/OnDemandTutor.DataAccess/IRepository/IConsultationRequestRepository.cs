@@ -2,11 +2,9 @@
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.DataAccess.IRepository
-{
-    public interface IConsultationRequestRepository : IGenericRepository<ConsultationRequest>
-    {
-        Task<PagedResult<ConsultationRequest>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request);
-    }
-}
+namespace OnDemandTutor.DataAccess.IRepository;
 
+public interface IConsultationRequestRepository : IGenericRepository<ConsultationRequest>
+{
+    Task<PagedResult<ConsultationRequest>> ViewAllConsultationsRequestAsync(ConsultationRequestFilterDto request);
+}

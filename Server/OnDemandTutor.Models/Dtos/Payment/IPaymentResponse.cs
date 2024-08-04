@@ -16,5 +16,4 @@ public interface IPaymentResponse
     public string PaymentMethod { get; set; }
     public string? returnUrl { get; set; }
     public string VnPayResponseCode { get; set; }
-
 }

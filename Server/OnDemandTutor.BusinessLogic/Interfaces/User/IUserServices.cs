@@ -3,7 +3,6 @@ using OnDemandTutor.Models.Dtos.Register;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Paging;
-using System.Security.Claims;
 
 namespace OnDemandTutor.BusinessLogic.Interfaces.User;
 
@@ -38,5 +37,4 @@ public interface IUserServices
 
     Task<List<GetSimpleUserDto>> GetAllOperators();
     Task<bool> UpdateTutorRating(GetProfileUserDtos tutorProfile);
-
 }

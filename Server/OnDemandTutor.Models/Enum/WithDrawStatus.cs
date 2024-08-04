@@ -4,5 +4,5 @@ public enum WithDrawStatus
 {
     Pending,
     Success,
-    Failed,
+    Failed
 }

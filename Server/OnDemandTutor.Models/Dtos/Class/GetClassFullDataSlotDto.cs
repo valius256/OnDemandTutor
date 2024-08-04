@@ -8,6 +8,8 @@ namespace OnDemandTutor.Models.Dtos.Class;
 
 public class GetClassFullDataSlotDto
 {
+    public List<GetSimpleSlotDto> Slots = new();
+    public List<GetStudentClassWithStudentDto> StudentClasses = new();
     public int Id { get; set; }
     public string? Name { get; set; }
     public int TutorId { get; set; }
@@ -21,7 +23,4 @@ public class GetClassFullDataSlotDto
 
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
-
-    public List<GetSimpleSlotDto> Slots = new List<GetSimpleSlotDto>();
-    public List<GetStudentClassWithStudentDto> StudentClasses = new List<GetStudentClassWithStudentDto>();
 }

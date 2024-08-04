@@ -1,5 +1,5 @@
-﻿using OnDemandTutor.Models.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Dtos.Register;
 
@@ -11,6 +11,7 @@ public class RegisterDtos
 
     [EmailAddress(ErrorMessage = "The Email format is not valid")]
     public required string Email { get; set; }
+
     public Sex Sex { get; set; }
     public string? Address { get; set; }
     public required string Password { get; set; }
@@ -20,5 +21,4 @@ public class RegisterDtos
 
     public DateTime? Dob { get; set; }
     public bool isTutor { get; set; }
-
 }

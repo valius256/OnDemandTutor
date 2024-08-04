@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FirebaseAdmin" Version="3.0.0" />
-        <PackageReference Include="Mapster" Version="7.4.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+        <PackageReference Include="FirebaseAdmin" Version="3.0.0"/>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj" />
-        <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj" />
+        <ProjectReference Include="..\OnDemandTutor.Helper\OnDemandTutor.Helper.csproj"/>
+        <ProjectReference Include="..\OnDemandTutor.Models\OnDemandTutor.Models.csproj"/>
     </ItemGroup>
 
 </Project>

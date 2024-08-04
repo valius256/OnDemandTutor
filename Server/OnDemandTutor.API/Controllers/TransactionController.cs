@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
-using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Dtos.Transaction;
 
@@ -13,9 +12,11 @@ namespace OnDemandTutor.API.Controllers;
 [ApiController]
 public class TransactionController : BaseController<TransactionController>
 {
-    private readonly ITransactionServices _transactionServices;
     private readonly IAuthServices _authService;
-    public TransactionController(ILogger<TransactionController> logger, ITransactionServices transactionServices, IAuthServices authServices) : base(logger)
+    private readonly ITransactionServices _transactionServices;
+
+    public TransactionController(ILogger<TransactionController> logger, ITransactionServices transactionServices,
+        IAuthServices authServices) : base(logger)
     {
         _authService = authServices;
         _transactionServices = transactionServices;
@@ -30,6 +31,7 @@ public class TransactionController : BaseController<TransactionController>
         var user = await _authService.GetUserProfileByClaim(HttpContext.User);
         return Ok(await _transactionServices.ViewALlTransaction(requestDtos, user));
     }
+
     [Authorize]
     [HttpGet("all-admin")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -38,6 +40,7 @@ public class TransactionController : BaseController<TransactionController>
     {
         return Ok(await _transactionServices.ViewALlTransactionAsAdmmin(requestDtos));
     }
+
     [Authorize]
     [HttpGet("get-by-id")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -47,5 +50,4 @@ public class TransactionController : BaseController<TransactionController>
         var user = await _authService.GetUserProfileByClaim(HttpContext.User);
         return Ok(await _transactionServices.GetTransactionById(id, user));
     }
-
 }

@@ -8,5 +8,4 @@ public class GetProfileTutorDtos : GetProfileUserDtos
     public string? ScheduleDescription { get; set; }
     public TutorSubjectDegreeStatus? TutorSubjectDegreeStatus { get; set; }
     public virtual TutorDegreeDto Degrees { get; set; }
-
 }

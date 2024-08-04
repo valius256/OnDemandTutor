@@ -7,69 +7,70 @@ using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.Models.Dtos.ConsultationRequestDtos;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.API.Controllers
+namespace OnDemandTutor.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ConsultationControllers : BaseController<ConsultationControllers>
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ConsultationControllers : BaseController<ConsultationControllers>
+    private readonly IAuthServices _authServices;
+    private readonly IConsultationRequestService _consultationRequestService;
+
+    public ConsultationControllers(ILogger<ConsultationControllers> logger,
+        IConsultationRequestService consultationRequestService, IAuthServices authServices) : base(logger)
     {
-        private readonly IConsultationRequestService _consultationRequestService;
-        private readonly IAuthServices _authServices;
-        public ConsultationControllers(ILogger<ConsultationControllers> logger, IConsultationRequestService consultationRequestService, IAuthServices authServices) : base(logger)
-        {
-            _consultationRequestService = consultationRequestService;
-            _authServices = authServices;
-        }
+        _consultationRequestService = consultationRequestService;
+        _authServices = authServices;
+    }
 
-        // [AllowAnonymous]
-        [HttpPost("register")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
-        public async Task<ActionResult> RegisterForConsultation([FromBody] RegisterConsultationRequestDto requestDtos)
-        {
-            return Ok(await _consultationRequestService.CreateConsultationRequestAsync(requestDtos));
-        }
+    // [AllowAnonymous]
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(GetConsultationRequestDto), 200)]
+    public async Task<ActionResult> RegisterForConsultation([FromBody] RegisterConsultationRequestDto requestDtos)
+    {
+        return Ok(await _consultationRequestService.CreateConsultationRequestAsync(requestDtos));
+    }
 
 
+    // [AllowAnonymous]
+    [HttpGet("all")]
+    // [Authorize]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<PagedResult<GetConsultationRequestDto>>), 200)]
+    public async Task<IApiResult<PagedResult<GetConsultationRequestDto>>> GetAllConsultationRequest(
+        [FromQuery] ConsultationRequestFilterDto requestDtos)
+    {
+        return OKAsync(await _consultationRequestService.ViewAllConsultationsRequestAsync(requestDtos));
+    }
 
-        // [AllowAnonymous]
-        [HttpGet("all")]
-        // [Authorize]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IApiResult<PagedResult<GetConsultationRequestDto>>), 200)]
-        public async Task<IApiResult<PagedResult<GetConsultationRequestDto>>> GetAllConsultationRequest([FromQuery] ConsultationRequestFilterDto requestDtos)
-        {
-            return OKAsync(await _consultationRequestService.ViewAllConsultationsRequestAsync(requestDtos));
-        }
-
-        // [Authorize]
-        [HttpGet("get-by-id")]
-        [Authorize]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IApiResult<GetConsultationRequestDto>), 200)]
-        public async Task<IApiResult<GetConsultationRequestDto>> GetAllConsultationRequest(int id)
-        {
-            return OKAsync(await _consultationRequestService.GetConsultationRequestByIdAsync(id));
-        }
+    // [Authorize]
+    [HttpGet("get-by-id")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(IApiResult<GetConsultationRequestDto>), 200)]
+    public async Task<IApiResult<GetConsultationRequestDto>> GetAllConsultationRequest(int id)
+    {
+        return OKAsync(await _consultationRequestService.GetConsultationRequestByIdAsync(id));
+    }
 
 
-        [Authorize]
-        [HttpPatch("Handle")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(bool), 200)]
-        public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDto requestDto)
-        {
-            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
-            return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(user, requestDto));
-        }
+    [Authorize]
+    [HttpPatch("Handle")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(bool), 200)]
+    public async Task<IApiResult<bool>> HandleConsultationRequest([FromBody] HandleConsultationRequestDto requestDto)
+    {
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        return OKAsync(await _consultationRequestService.HandleConsultationRequestAsync(user, requestDto));
+    }
 
-        [HttpDelete("delete")]
-        [Authorize]//[Authorize(Roles = "Operator, Admin")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(bool), 200)]
-        public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery] int id)
-        {
-            return OKAsync(await _consultationRequestService.DeleteConsultationRequestAsync(id));
-        }
+    [HttpDelete("delete")]
+    [Authorize] //[Authorize(Roles = "Operator, Admin")]
+    [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+    [ProducesResponseType(typeof(bool), 200)]
+    public async Task<IApiResult<bool>> DeleteConsultationRequest([FromQuery] int id)
+    {
+        return OKAsync(await _consultationRequestService.DeleteConsultationRequestAsync(id));
     }
 }

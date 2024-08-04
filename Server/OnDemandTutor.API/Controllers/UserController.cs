@@ -1,12 +1,9 @@
-﻿using System.Reactive;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
 using OnDemandTutor.API.Models;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
-using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
-using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
@@ -16,9 +13,11 @@ namespace OnDemandTutor.API.Controllers;
 [ApiController]
 public class UserController : BaseController<UserController>
 {
-    private readonly IUserServices _userService;
     private readonly IAuthServices _authServices;
-    public UserController(ILogger<UserController> logger, IUserServices userService, IAuthServices authServices) : base(logger)
+    private readonly IUserServices _userService;
+
+    public UserController(ILogger<UserController> logger, IUserServices userService, IAuthServices authServices) :
+        base(logger)
     {
         _userService = userService;
         _authServices = authServices;
@@ -32,7 +31,7 @@ public class UserController : BaseController<UserController>
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetAllUsersAsync(request, user);
-       
+
         return OKAsync(result);
     }
 
@@ -44,7 +43,7 @@ public class UserController : BaseController<UserController>
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetProfileAsync(userId, null, user);
-        
+
         return OKAsync(result);
     }
 
@@ -81,7 +80,7 @@ public class UserController : BaseController<UserController>
 
 
     /// <summary>
-    ///    update user profile 
+    ///     update user profile
     /// </summary>
     /// if the fe don;t place Id in UpdateUserDto.Id it will take the id from the Claims when login scf
     /// <param Name="body"></param>
@@ -113,23 +112,21 @@ public class UserController : BaseController<UserController>
     [HttpGet("view-tutor-list")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<TutorSimpleProfileDto>>), 200)]
-    public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList([FromQuery]
-        TutorFilterDto request)
+    public async Task<IApiResult<PagedResult<TutorSimpleProfileDto>>> ViewTutorList([FromQuery] TutorFilterDto request)
     {
         return OKAsync(await _userService.ViewTutorListAsync(request));
-
     }
 
     [AllowAnonymous]
     [HttpGet("outstanding-tutors")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<PagedResult<GetOutstandingTutorDto>>), 200)]
-    public async Task<IApiResult<PagedResult<GetOutstandingTutorDto>>> GetOutstandingTutor([FromQuery]
-        int limit = 10, [FromQuery] int page = 1)
+    public async Task<IApiResult<PagedResult<GetOutstandingTutorDto>>> GetOutstandingTutor([FromQuery] int limit = 10,
+        [FromQuery] int page = 1)
     {
         return OKAsync(await _userService.GetOutstandingTutor(limit, page));
-
     }
+
     [Authorize]
     [HttpGet("all-operators")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
@@ -137,13 +134,12 @@ public class UserController : BaseController<UserController>
     public async Task<IApiResult<List<GetSimpleUserDto>>> GetAllOperators()
     {
         return OKAsync(await _userService.GetAllOperators());
-
     }
+
     /// <summary>
-    ///    update tutor status to Banned 
+    ///     update tutor status to Banned
     /// </summary>
-    /// <param ></param>
-    /// 
+    /// <param></param>
     /// <returns>boolean</returns>
     [Authorize]
     [HttpPost("remove-tutor")]

@@ -6,5 +6,4 @@ public class CompareStatusDto
 {
     public TutorStatus? OldStatus { get; set; }
     public TutorStatus? NewStatus { get; set; }
-
 }

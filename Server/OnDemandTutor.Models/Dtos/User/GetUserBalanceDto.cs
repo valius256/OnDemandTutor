@@ -1,8 +1,7 @@
-﻿namespace OnDemandTutor.Models.Dtos.User
+﻿namespace OnDemandTutor.Models.Dtos.User;
+
+public class GetUserBalanceDto
 {
-    public class GetUserBalanceDto
-    {
-        public int Id { get; set; }
-        public decimal? Balance { get; set; }
-    }
+    public int Id { get; set; }
+    public decimal? Balance { get; set; }
 }

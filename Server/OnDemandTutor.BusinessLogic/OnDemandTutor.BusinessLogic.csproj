@@ -7,52 +7,52 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FirebaseAdmin" Version="3.0.0" />
-        <PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
-        <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-        <PackageReference Include="Google.Cloud.Firestore" Version="3.7.0" />
-        <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-        <PackageReference Include="LinqKit" Version="1.3.0" />
-        <PackageReference Include="Mapster" Version="7.4.0" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-        <PackageReference Include="MimeKit" Version="4.7.1" />
+        <PackageReference Include="FirebaseAdmin" Version="3.0.0"/>
+        <PackageReference Include="FirebaseDatabase.net" Version="4.2.0"/>
+        <PackageReference Include="FirebaseStorage.net" Version="1.0.3"/>
+        <PackageReference Include="Google.Cloud.Firestore" Version="3.7.0"/>
+        <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0"/>
+        <PackageReference Include="LinqKit" Version="1.3.0"/>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0"/>
+        <PackageReference Include="MimeKit" Version="4.7.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj" />
+        <ProjectReference Include="..\OnDemandTutor.DataAccess\OnDemandTutor.DataAccess.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Services\Blog\" />
-        <Folder Include="Services\Subject\" />
-        <Folder Include="Interfaces\Subject\" />
-        <Folder Include="Interfaces\Blog\" />
-        <Folder Include="Services\Class\" />
-        <Folder Include="Interfaces\Class\" />
-        <Folder Include="Interfaces\ConsultationRequest\" />
-        <Folder Include="Services\ConsultationRequest\" />
-        <Folder Include="Services\FAQ\" />
-        <Folder Include="Interfaces\FAQ\" />
-        <Folder Include="Interfaces\Notification\" />
-        <Folder Include="Services\Notification\" />
-        <Folder Include="Interfaces\StudentClass\" />
-        <Folder Include="Services\StudentClass\" />
+        <Folder Include="Services\Blog\"/>
+        <Folder Include="Services\Subject\"/>
+        <Folder Include="Interfaces\Subject\"/>
+        <Folder Include="Interfaces\Blog\"/>
+        <Folder Include="Services\Class\"/>
+        <Folder Include="Interfaces\Class\"/>
+        <Folder Include="Interfaces\ConsultationRequest\"/>
+        <Folder Include="Services\ConsultationRequest\"/>
+        <Folder Include="Services\FAQ\"/>
+        <Folder Include="Interfaces\FAQ\"/>
+        <Folder Include="Interfaces\Notification\"/>
+        <Folder Include="Services\Notification\"/>
+        <Folder Include="Interfaces\StudentClass\"/>
+        <Folder Include="Services\StudentClass\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Services\Blog\" />
-      <None Remove="Services\Subject\" />
-      <None Remove="Interfaces\Subject\" />
-      <None Remove="Interfaces\Blog\" />
-      <None Remove="Services\Class\" />
-      <None Remove="Interfaces\Class\" />
-      <None Remove="Interfaces\ConsultationRequest\" />
-      <None Remove="Services\ConsultationRequest\" />
-      <None Remove="Services\FAQ\" />
-      <None Remove="Interfaces\FAQ\" />
-      <None Remove="Interfaces\Notification\" />
-      <None Remove="Services\Notification\" />
-      <None Remove="Interfaces\StudentClass\" />
-      <None Remove="Services\StudentClass\" />
+        <None Remove="Services\Blog\"/>
+        <None Remove="Services\Subject\"/>
+        <None Remove="Interfaces\Subject\"/>
+        <None Remove="Interfaces\Blog\"/>
+        <None Remove="Services\Class\"/>
+        <None Remove="Interfaces\Class\"/>
+        <None Remove="Interfaces\ConsultationRequest\"/>
+        <None Remove="Services\ConsultationRequest\"/>
+        <None Remove="Services\FAQ\"/>
+        <None Remove="Interfaces\FAQ\"/>
+        <None Remove="Interfaces\Notification\"/>
+        <None Remove="Services\Notification\"/>
+        <None Remove="Interfaces\StudentClass\"/>
+        <None Remove="Services\StudentClass\"/>
     </ItemGroup>
 </Project>

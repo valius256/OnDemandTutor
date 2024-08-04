@@ -22,7 +22,5 @@ public class StudentClassEntityTypeConfiguration : IEntityTypeConfiguration<Stud
             .WithMany(s => s.StudentClasses)
             .HasForeignKey(sc => sc.StudentId)
             .OnDelete(DeleteBehavior.Restrict);
-
-
     }
 }

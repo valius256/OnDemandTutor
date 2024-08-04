@@ -47,7 +47,6 @@ public class FirebaseAuthServices : IFireBaseAuthServices
         }
         catch (FirebaseAuthException ex)
         {
-
             return null;
         }
     }
@@ -90,5 +89,4 @@ public class FirebaseAuthServices : IFireBaseAuthServices
             .CreateSessionCookieAsync(idToken, options);
         return sessionCookie;
     }
-    
 }

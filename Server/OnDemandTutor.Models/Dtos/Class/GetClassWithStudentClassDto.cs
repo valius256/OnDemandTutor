@@ -1,18 +1,11 @@
-﻿
-using OnDemandTutor.Models.Dtos.Slot;
-using OnDemandTutor.Models.Dtos.StudentClass;
-using OnDemandTutor.Models.Dtos.Subject;
-using OnDemandTutor.Models.Dtos.User;
-using OnDemandTutor.Models.Enum;
+﻿using OnDemandTutor.Models.Dtos.StudentClass;
 
-namespace OnDemandTutor.Models.Dtos.Class
+namespace OnDemandTutor.Models.Dtos.Class;
+
+public class GetClassWithStudentClassDto
 {
-    public class GetClassWithStudentClassDto
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public int TutorId { get; set; }
-
-        public List<GetStudentClassWithStudentDto> StudentClasses = new List<GetStudentClassWithStudentDto>();
-    }
+    public List<GetStudentClassWithStudentDto> StudentClasses = new();
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public int TutorId { get; set; }
 }

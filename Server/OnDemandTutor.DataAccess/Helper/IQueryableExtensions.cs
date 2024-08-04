@@ -1,8 +1,8 @@
-﻿using Mapster;
+﻿using System.Linq.Expressions;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using OnDemandTutor.Helper;
 using OnDemandTutor.Models.Paging;
-using System.Linq.Expressions;
 
 namespace OnDemandTutor.DataAccess.Helper;
 
@@ -70,11 +70,11 @@ public static class IQueryableExtensions
         {
             items = await query.ToListAsync();
         }
+
         result.Items = items;
 
         return result;
     }
-
 
 
     public static async Task<PagedResult<TEntity>> ToPagingAsync<TEntity>(

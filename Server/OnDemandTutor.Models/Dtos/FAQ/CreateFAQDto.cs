@@ -1,8 +1,7 @@
-namespace OnDemandTutor.Models.Dtos.FAQ
+namespace OnDemandTutor.Models.Dtos.FAQ;
+
+public class CreateFAQDto
 {
-    public class CreateFAQDto
-    {
-        public string Question { get; set; }
-        public string? Answer { get; set; }
-    }
+    public string Question { get; set; }
+    public string? Answer { get; set; }
 }

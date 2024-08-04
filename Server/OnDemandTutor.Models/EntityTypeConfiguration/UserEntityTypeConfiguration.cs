@@ -91,6 +91,5 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
             .WithOne(u => u.HandleBy)
             .HasForeignKey(u => u.HandleById)
             .OnDelete(DeleteBehavior.Restrict);
-
     }
 }

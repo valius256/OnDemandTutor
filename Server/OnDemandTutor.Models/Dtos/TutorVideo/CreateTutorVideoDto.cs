@@ -1,8 +1,7 @@
-namespace OnDemandTutor.Models.Dtos.TutorVideo
+namespace OnDemandTutor.Models.Dtos.TutorVideo;
+
+public class CreateTutorVideoDto
 {
-    public class CreateTutorVideoDto
-    {
-        public string VideoUrl { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-    }
+    public string VideoUrl { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 }

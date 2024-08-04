@@ -13,4 +13,3 @@ public class TutorRegistrationDtos
     public int TutorDegreeId { get; set; }
     public string? RejectReason { get; set; }
 }
-

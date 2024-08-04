@@ -16,5 +16,4 @@ public class VnPayResponse : IPaymentResponse
     public string? returnUrl { get; set; }
     public string OrderDescription { get; set; }
     public string VnPayResponseCode { get; set; }
-
 }

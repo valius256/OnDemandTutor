@@ -1,16 +1,14 @@
-﻿
-using OnDemandTutor.Models.Dtos.User;
+﻿using OnDemandTutor.Models.Dtos.User;
 
-namespace OnDemandTutor.Models.Dtos.StudentClass
+namespace OnDemandTutor.Models.Dtos.StudentClass;
+
+public class GetStudentClassWithStudentDto
 {
-    public class GetStudentClassWithStudentDto
-    {
-        public int Id { get; set; }
-        public int StudentId { get; set; }
-        public int ClassId { get; set; }
-        public int? Rating { get; set; }
-        public string? Feedback { get; set; }
+    public int Id { get; set; }
+    public int StudentId { get; set; }
+    public int ClassId { get; set; }
+    public int? Rating { get; set; }
+    public string? Feedback { get; set; }
 
-        public GetProfileUserDtos Student { get; set; } = default!;
-    }
+    public GetProfileUserDtos Student { get; set; } = default!;
 }

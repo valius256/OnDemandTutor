@@ -4,5 +4,4 @@ namespace OnDemandTutor.BusinessLogic;
 
 public class ItemHub : Hub
 {
-
 }

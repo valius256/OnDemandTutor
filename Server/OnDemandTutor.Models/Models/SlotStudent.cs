@@ -1,5 +1,5 @@
-﻿using OnDemandTutor.Models.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using OnDemandTutor.Models.Enum;
 
 namespace OnDemandTutor.Models.Models;
 
@@ -14,7 +14,6 @@ public class SlotStudent : BaseEntity
 
     public PaymentStatus PaymentStatus { get; set; }
     public string? Feedback { get; set; }
-    [Range(1, 5)]
-    public decimal? Rating { get; set; }
-}
 
+    [Range(1, 5)] public decimal? Rating { get; set; }
+}

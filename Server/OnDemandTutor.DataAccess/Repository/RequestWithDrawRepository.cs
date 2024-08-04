@@ -15,7 +15,8 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
     {
     }
 
-    public async Task<PagedResult<RequestWithDraw>> GetAllRequestWithDraws(RequestWithDrawFilterDto request, int userId = 0)
+    public async Task<PagedResult<RequestWithDraw>> GetAllRequestWithDraws(RequestWithDrawFilterDto request,
+        int userId = 0)
     {
         var queryFilter = dbSet
             .Include(rq => rq.Operator)
@@ -23,34 +24,22 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
             .AsQueryable();
 
         if (userId != 0)
-        {
             queryFilter = queryFilter.Where(ld => ld.UserId == userId);
-        }
         else
-        {
             queryFilter = queryFilter.Where(ld => ld.Status == WithDrawStatus.Pending);
-        }
 
         if (request.FromDate != null && request.ToDate != null)
-        {
-            queryFilter = queryFilter.Where(ld => ld.CreatedDate >= request.FromDate && ld.CreatedDate <= request.ToDate);
-        }
+            queryFilter =
+                queryFilter.Where(ld => ld.CreatedDate >= request.FromDate && ld.CreatedDate <= request.ToDate);
 
-        if (request.MinAmount > 0)
-        {
-            queryFilter = queryFilter.Where(t => t.Amount >= request.MinAmount);
-        }
+        if (request.MinAmount > 0) queryFilter = queryFilter.Where(t => t.Amount >= request.MinAmount);
 
-        if (request.MaxAmount > 0)
-        {
-            queryFilter = queryFilter.Where(t => t.Amount <= request.MaxAmount);
-        }
+        if (request.MaxAmount > 0) queryFilter = queryFilter.Where(t => t.Amount <= request.MaxAmount);
 
 
-
-        int limit = request.Limit > 0 ? request.Limit : 10;
-        int page = request.Page > 0 ? request.Page : 1;
-        int skip = (page - 1) * limit;
+        var limit = request.Limit > 0 ? request.Limit : 10;
+        var page = request.Page > 0 ? request.Page : 1;
+        var skip = (page - 1) * limit;
         //queryFilter = queryFilter.Skip(skip).Take(limit);
 
         var filteredUsers = await queryFilter
@@ -58,6 +47,5 @@ public class RequestWithDrawRepository : GenericRepository<RequestWithDraw>, IRe
             .ToNewPagingAsync(page, limit);
 
         return filteredUsers;
-
     }
 }

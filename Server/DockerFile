@@ -1,28 +1,32 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 5103
 
-
+# Install the required library
+RUN apt-get update && apt-get install -y \
+    libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/* 
+    
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION = Release
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
 COPY ["OnDemandTutor.API/OnDemandTutor.API.csproj", "OnDemandTutor.API/"]
-COPY ["OnDemandTutor.API/OnDemandTutor.BusinessLogic.csproj", "OnDemandTutor.BusinessLogic/"]
-COPY ["OnDemandTutor.API/OnDemandTutor.DataAccess.csproj", "OnDemandTutor.DataAccess/"]
-COPY ["OnDemandTutor.API/OnDemandTutor.Helper.csproj", "OnDemandTutor.Helper/"]
-COPY ["OnDemandTutor.API/OnDemandTutor.Models.csproj", "OnDemandTutor.Models/"]
-COPY ["OnDemandTutor.API/OnDemandTutor.SchedulerJobs.csproj", "OnDemandTutor.SchedulerJobs/"]
+COPY ["OnDemandTutor.BusinessLogic/OnDemandTutor.BusinessLogic.csproj", "OnDemandTutor.BusinessLogic/"]
+COPY ["OnDemandTutor.DataAccess/OnDemandTutor.DataAccess.csproj", "OnDemandTutor.DataAccess/"]
+COPY ["OnDemandTutor.Helper/OnDemandTutor.Helper.csproj", "OnDemandTutor.Helper/"]
+COPY ["OnDemandTutor.Models/OnDemandTutor.Models.csproj", "OnDemandTutor.Models/"]
+COPY ["OnDemandTutor.SchedulerJobs/OnDemandTutor.SchedulerJobs.csproj", "OnDemandTutor.SchedulerJobs/"]
 
 RUN dotnet restore "OnDemandTutor.API/OnDemandTutor.API.csproj"
 
 COPY . .
 
-WORKDIR "src/OnDemandTutor.API"
+WORKDIR /src/OnDemandTutor.API
 RUN dotnet build "OnDemandTutor.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build as publish
-ARG BUILD_CONFIGURATION = Release
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "OnDemandTutor.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final 

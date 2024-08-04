@@ -10,7 +10,8 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 public interface ISlotStudentServices
 {
-    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user);
+    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto,
+        GetProfileUserDtos? user);
 
     Task<List<GetSlotStudentDetailDto>> GetSimpleStudentSlotOfStudent(int studentId);
     Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto);

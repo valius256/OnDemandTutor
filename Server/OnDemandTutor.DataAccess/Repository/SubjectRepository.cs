@@ -6,73 +6,56 @@ using OnDemandTutor.Models.Dtos.Subject;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
-namespace OnDemandTutor.DataAccess.Repository
+namespace OnDemandTutor.DataAccess.Repository;
+
+public class SubjectRepository : GenericRepository<Subject>, ISubjectRepository
 {
-    public class SubjectRepository : GenericRepository<Subject>, ISubjectRepository
+    public SubjectRepository(ApplicationDbContext context) : base(context)
     {
-        public SubjectRepository(ApplicationDbContext context) : base(context)
+    }
+
+    public async Task<PagedResult<Subject>> GetSubjects(PagingModel<QuerySubjectDTO> pagingModel)
+    {
+        var subjectQuery = dbSet
+            .Include(s => s.CreateBy)
+            .AsQueryable();
+
+        if (pagingModel.Filter != null)
         {
-        }
+            if (pagingModel.Filter.Name != null)
+                subjectQuery = subjectQuery.Where(s => s.Name.Contains(pagingModel.Filter.Name));
 
-        public async Task<PagedResult<Subject>> GetSubjects(PagingModel<QuerySubjectDTO> pagingModel)
-        {
+            if (pagingModel.Filter.Type != null)
+                subjectQuery = subjectQuery.Where(s => s.SubjectType.Contains(pagingModel.Filter.Type));
 
-            var subjectQuery = dbSet
-                .Include(s => s.CreateBy)
-                .AsQueryable();
+            if (pagingModel.Filter.Description != null)
+                subjectQuery = subjectQuery.Where(s => s.Description.Contains(pagingModel.Filter.Description));
 
-            if (pagingModel.Filter != null)
+            if (pagingModel.Filter.Status != null)
             {
-                if (pagingModel.Filter.Name != null)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.Name.Contains(pagingModel.Filter.Name));
-                }
-
-                if (pagingModel.Filter.Type != null)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.SubjectType.Contains(pagingModel.Filter.Type));
-                }
-
-                if (pagingModel.Filter.Description != null)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.Description.Contains(pagingModel.Filter.Description));
-                }
-
-                if (pagingModel.Filter.Status != null)
-                {
-                    bool isEnable = pagingModel.Filter.Status.Equals("Enabled", StringComparison.OrdinalIgnoreCase);
-                    subjectQuery = subjectQuery.Where(s => s.IsEnable == isEnable);
-                }
-
-                if (pagingModel.Filter.CreateFrom.HasValue)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.CreatedDate >= pagingModel.Filter.CreateFrom.Value);
-                }
-
-                if (pagingModel.Filter.CreateTo.HasValue)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.CreatedDate <= pagingModel.Filter.CreateTo.Value);
-                }
-
-                if (pagingModel.Filter.UpdateFrom.HasValue)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.UpdatedDate >= pagingModel.Filter.UpdateFrom.Value);
-                }
-
-                if (pagingModel.Filter.UpdateTo.HasValue)
-                {
-                    subjectQuery = subjectQuery.Where(s => s.UpdatedDate <= pagingModel.Filter.UpdateTo.Value);
-                }
+                var isEnable = pagingModel.Filter.Status.Equals("Enabled", StringComparison.OrdinalIgnoreCase);
+                subjectQuery = subjectQuery.Where(s => s.IsEnable == isEnable);
             }
 
+            if (pagingModel.Filter.CreateFrom.HasValue)
+                subjectQuery = subjectQuery.Where(s => s.CreatedDate >= pagingModel.Filter.CreateFrom.Value);
 
-            int limit = pagingModel.Limit > 0 ? pagingModel.Limit : 10;
-            int page = pagingModel.Page > 0 ? pagingModel.Page : 1;
+            if (pagingModel.Filter.CreateTo.HasValue)
+                subjectQuery = subjectQuery.Where(s => s.CreatedDate <= pagingModel.Filter.CreateTo.Value);
 
-            var pagedResult = await subjectQuery.ToNewPagingAsync(page, limit);
+            if (pagingModel.Filter.UpdateFrom.HasValue)
+                subjectQuery = subjectQuery.Where(s => s.UpdatedDate >= pagingModel.Filter.UpdateFrom.Value);
 
-            return pagedResult;
+            if (pagingModel.Filter.UpdateTo.HasValue)
+                subjectQuery = subjectQuery.Where(s => s.UpdatedDate <= pagingModel.Filter.UpdateTo.Value);
         }
+
+
+        var limit = pagingModel.Limit > 0 ? pagingModel.Limit : 10;
+        var page = pagingModel.Page > 0 ? pagingModel.Page : 1;
+
+        var pagedResult = await subjectQuery.ToNewPagingAsync(page, limit);
+
+        return pagedResult;
     }
 }
-
