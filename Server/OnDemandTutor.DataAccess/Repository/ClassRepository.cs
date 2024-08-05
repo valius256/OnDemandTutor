@@ -133,6 +133,7 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(c => c.Slots)
                 .Include(c => c.StudentClasses)
                     .ThenInclude(sc => sc.Student)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 

@@ -6,6 +6,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
 using OnDemandTutor.Models.Dtos.Class;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.API.Controllers
@@ -17,14 +18,12 @@ namespace OnDemandTutor.API.Controllers
         private readonly IClassServices _classServices;
         private readonly IAuthServices _authServices;
         private readonly IStudentClassService _studentClassService;
-        private readonly ISlotServices _slotServices;
 
-        public ClassController(IClassServices classServices, IAuthServices authServices, IStudentClassService studentClassService, ISlotServices slotServices)
+        public ClassController(IClassServices classServices, IAuthServices authServices, IStudentClassService studentClassService)
         {
             _classServices = classServices;
             _authServices = authServices;
             _studentClassService = studentClassService;
-            _slotServices = slotServices;
         }
 
 
@@ -78,25 +77,17 @@ namespace OnDemandTutor.API.Controllers
         {
             var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var createdClass = await _classServices.CreateClassAsync(classDto, tutor);
-            await _slotServices.CreateClassSlotAsync(classDto.SlotList, createdClass, tutor.Id);
             return Ok(createdClass);
         }
 
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         [ProducesResponseType(typeof(GetClassDtos), 200)]
-        public async Task<IActionResult> UpdateClass(int id, [FromBody] GetClassDtos classDto)
+        public async Task<IActionResult> UpdateClass([FromBody] UpdateClassDto classDto)
         {
-            if (id != classDto.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-            var updatedClass = await _classServices.UpdateClassAsync(classDto);
-            if (updatedClass == null)
-            {
-                return NotFound();
-            }
+            var tutor = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var updatedClass = await _classServices.UpdateClassAsync(classDto, tutor);
             return NoContent();
         }
 

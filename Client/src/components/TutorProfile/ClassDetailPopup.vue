@@ -1,7 +1,24 @@
 <template>
-  
+
   <div class="py-4 px-8 relative" v-if="this.class">
-    <div class="font-bold text-3xl">{{ this.class.name }}</div>
+    <div class="flex justify-center gap-8">
+      <button @click="openEditMode" v-if="!editMode"
+        class="py-2 px-16 bg-blue-500 hover:bg-blue-200 rounded-lg font-bold text-white">
+        Chỉnh sửa
+      </button>
+      <button @click="handleUpdate(true)" v-if="editMode" class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
+        Xác nhận
+      </button>
+      <button @click="closeEditMode" v-if="editMode"
+        class="py-2 px-16 bg-red-400 hover:bg-red-200 rounded-lg font-bold text-white">
+        Hủy bỏ
+      </button>
+      <button class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
+        Hủy lớp
+      </button>
+    </div>
+    <div v-if="!editMode" class="font-bold text-3xl">{{ this.class.name }}</div>
+    <input v-else class="w-full font-bold text-3xl border-b focus:outline-none" v-model="editDto.name">
     <div class="mt-4 flex flex-col md:flex-row md:place-content-between gap-4">
       <div>
         <div class="flex">
@@ -19,19 +36,27 @@
         </div>
         <div class="mt-2">
           <span class="">Môn học :</span>
-          <span class="font-bold ml-4">{{ this.class.subject.name }}</span>
+          <span v-if="!editMode" class="font-bold ml-4">{{ this.class.subject.name }}</span>
+          <select v-else class="border-b font-bold ml-4 focus:outline-none" v-model="this.editDto.subjectId">
+            <option v-for="subject in subjects" :key="subject" :value="subject.id">{{ subject.name }}</option>
+          </select>
         </div>
       </div>
       <div>
         <div>
           <span class="">Địa điểm :</span>
-          <span class="font-bold ml-3">{{ this.class.location }}</span>
+          <span v-if="!editMode" class="font-bold ml-3">{{ this.class.location }}</span>
+          <input v-else class="font-bold ml-3 border-b focus:outline-none" v-model="editDto.location">
         </div>
         <div class="mt-2">
           <span class="">Hình thức :</span>
-          <span :class="getMethodStyle(this.class.method)">
+          <span v-if="!editMode" :class="getMethodStyle(this.class.method)">
             {{ this.class.method }}
           </span>
+          <select v-else class="border-b font-bold ml-4 focus:outline-none" v-model="this.editDto.method">
+            <option value="Offline">Offline</option>
+            <option value="Online">Online</option>
+          </select>
         </div>
         <div class="mt-2">
           <span class="">Trạng thái :</span>
@@ -39,28 +64,25 @@
             {{ getStatusDisplay(this.class.status) }}
           </span>
         </div>
+        <div class="mt-2">
+          <span class="">Số lượng học sinh :</span>
+          <span v-if="!editMode" class="font-bold ml-3">{{ this.class.numberOfStudents }}</span>
+          <input v-else type="number" class="w-16 font-bold ml-3 border-b focus:outline-none" v-model="editDto.numberOfStudents">
+        </div>
       </div>
     </div>
     <hr class="mt-4" />
     <div class="font-bold my-4">Thời khóa biểu :</div>
-    <time-table
-      :slots="this.slots"
-      :fetching="getUserSlots"
-      :view-detail="openSlotDetailPopup"
-      :role="'tutor'"
-    />
+    <time-table v-if="!editMode" :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" role="tutor" />
+    <slot-creating-manager v-else :setClassSlot="setNewClassSlots" :slots="allSlots" :fetching="getAllUserSlots" />
+
     <hr class="mt-4" />
     <div class="font-bold my-4">Các buổi học :</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
-        v-for="(slot, index) in this.slots"
-        :key="index"
-        class="p-2 border-4 shadow-md mb-2 rounded-lg"
-        :class="{
-          'border-blue-300':
-            this.compareDate(new Date(slot.endTime), new Date()) < 0,
-        }"
-      >
+    <div v-if="!editMode" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-for="(slot, index) in this.slots" :key="index" class="p-2 border-4 shadow-md mb-2 rounded-lg" :class="{
+    'border-blue-300':
+      this.compareDate(new Date(slot.endTime), new Date()) < 0,
+  }">
         <div class="font-bold text-center text-xl">Buổi {{ index + 1 }}</div>
         <hr />
         <div class="flex flex-col gap-2">
@@ -79,9 +101,7 @@
             </div>
             <div class="text-sm mt-1">
               <span class="font-bold">Hình thức :</span>
-              <span
-                :class="getMethodStyle(slot.isOnline ? 'Online' : 'Offline')"
-              >
+              <span :class="getMethodStyle(slot.isOnline ? 'Online' : 'Offline')">
                 {{ slot.isOnline ? "Online" : "Offline" }}
               </span>
             </div>
@@ -90,21 +110,14 @@
               <span class="ml-4">{{ calcDuration(slot) }} tiếng</span>
             </div>
           </div>
-          <button
-            @click="openSlotDetailPopup(slot)"
-            class="p-1 bg-blue-300 font-bold text-white rounded-lg"
-          >
+          <button @click="openSlotDetailPopup(slot)" class="p-1 bg-blue-300 font-bold text-white rounded-lg">
             Xem chi tiết
           </button>
         </div>
       </div>
     </div>
-    <generic-popup
-      v-if="isOpenSlotDetailPopup"
-      title="Chi tiết buổi học"
-      :closeFunction="closeSlotDetailPopup"
-      :notOverflow="true"
-    >
+    <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
+      :notOverflow="true">
       <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
     </generic-popup>
   </div>
@@ -115,12 +128,14 @@ import axios from "axios";
 import TimeTable from "../StudentProfile/TimeTable.vue";
 import GenericPopup from "../common/GenericPopup.vue";
 import SlotDetailPopup from "./SlotDetailPopup.vue";
+import SlotCreatingManager from './SlotCreatingManager.vue';
 
 export default {
   components: {
     TimeTable,
     GenericPopup,
     SlotDetailPopup,
+    SlotCreatingManager,
   },
   name: "ClassDetailPopup",
   props: ["classId", "close"],
@@ -128,11 +143,60 @@ export default {
     return {
       class: null,
       slots: [],
+      allSlots: [],
+      newClassSlots: [],
       selectingSlot: null,
       isOpenSlotDetailPopup: false,
+      editMode: false,
+      subjects: [],
+      editDto: {
+        name: "",
+        location: "",
+        subjectId: 0,
+        method: "",
+        numberOfStudents : 1
+      }
     };
   },
   methods: {
+    async fetchSubjects() {
+      try {
+        const response = await axios.get(
+          import.meta.env.VITE_API_URL + "/api/TutorSubject",
+          {
+            params: {
+              "Filter.TutorId": this.class.tutorId,
+              Status: 3,
+            },
+            headers: {
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        );
+
+        // Map the response to the desired structure
+        this.subjects = response.data.items.map((item) => ({
+          id: item.subject.id,
+          name: item.subject.name,
+        }));
+      } catch (error) {
+        console.error("Error fetching subjects:", error);
+      }
+    },
+    setNewClassSlots(newClassSlots) {
+      this.newClassSlots = newClassSlots
+    },
+    openEditMode() {
+      this.editMode = true
+      this.editDto.name = this.class.name
+      this.editDto.subjectId = this.class.subjectId
+      this.editDto.method = this.class.method
+      this.editDto.location = this.class.location
+      this.editDto.numberOfStudents = this.class.numberOfStudents
+    },
+    closeEditMode() {
+      this.editMode = false
+    },
     handleClose() {
       this.close(0);
     },
@@ -188,9 +252,8 @@ export default {
     },
     async getUserSlots() {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/Slot?Filter.ClassId=${
-          this.classId
-        }&Sorts[column]=startTime&Sorts[isDesc]=true`,
+        `${import.meta.env.VITE_API_URL}/api/Slot?Filter.ClassId=${this.classId
+        }`,
         {
           headers: {
             Authorization: "Bearer " + localStorage.token,
@@ -201,6 +264,19 @@ export default {
         this.slots = response.data.items;
       }
     },
+    async getAllUserSlots() {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/Slot?Filter.UserId=${this.class.tutorId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.token,
+          },
+        }
+      );
+      if (response.data.items) {
+        this.allSlots = response.data.items;
+      }
+    },
     openSlotDetailPopup(slot) {
       this.selectingSlot = slot;
       this.isOpenSlotDetailPopup = true;
@@ -208,9 +284,53 @@ export default {
     closeSlotDetailPopup() {
       this.isOpenSlotDetailPopup = false;
     },
+    async handleUpdate(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn cập nhật lớp?",
+          method: this.handleUpdate,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.put(import.meta.env.VITE_API_URL + '/api/Class', {
+            id : this.class.id,
+            name: this.editDto.name,
+            subjectId: this.editDto.subjectId,
+            location: this.editDto.location,
+            method: this.editDto.method ? "Online" : "Offline",
+            numberOfStudents: this.editDto.numberOfStudents,
+            newClassSlots: this.newClassSlots
+          }, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Cập nhật lớp thành công",
+            type: "Success"
+          })
+          this.eventBus.emit("close-loading-popup")
+          this.closeEditMode()
+          await this.refresh()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("close-loading-popup")
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể cập nhật lớp. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+      }
+    },
     async refresh() {
       await this.getClassDetail();
       await this.getUserSlots();
+      await this.getAllUserSlots()
+      await this.fetchSubjects();
     },
   },
   mounted() {

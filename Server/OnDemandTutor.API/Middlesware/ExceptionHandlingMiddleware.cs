@@ -42,6 +42,11 @@ public class ExceptionHandlingMiddleware
                 title = "Bad Request";
                 errors.Add(new ValidationErrorModel(badRequestException.Message));
                 break;
+            case ForbiddenException forbiddenException:
+                status = HttpStatusCode.Forbidden;
+                title = "Forbidden";
+                errors.Add(new ValidationErrorModel(forbiddenException.Message));
+                break;
             case ModelException modelException:
                 status = HttpStatusCode.BadRequest;
                 title = "Conflict";
