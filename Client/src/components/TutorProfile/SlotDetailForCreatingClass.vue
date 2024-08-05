@@ -4,7 +4,7 @@
     <button @click="handleClickDay" class="absolute inset-0 hover:bg-slate-50" 
     :class="{'bg-slate-200' : day == dayPicked}"></button>
     <button v-for="slot in slots" :key="slot.id" class="rounded-lg absolute w-full text-white text-center bg-gray-400 flex justify-center items-center" 
-      :class="{'bg-orange-400' : slot.isClass , 'shadow-2xl shadow-blue-400' : slot.isSelected}" 
+      :class="{'bg-orange-400' : slot.isClass , 'shadow-xl shadow-blue-400 border-b-4 border-l-4 border-orange-800' : slot.isSelected}" 
       :disabled="!slot.isClass"
       :style="slotStyle(slot)"
       @click="handleSelect(slot)">

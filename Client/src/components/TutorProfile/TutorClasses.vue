@@ -14,7 +14,7 @@
      <class-list :currentUser="user" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{page : currentPage, total: totalPage}"></class-list>
     </div>
     <div v-else>
-      <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
+      <button class="ml-8 mt-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
         Trở về
       </button>
       <class-detail-popup :classId="selectedClass"></class-detail-popup>

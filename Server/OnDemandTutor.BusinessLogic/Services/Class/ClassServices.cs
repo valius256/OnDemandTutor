@@ -8,8 +8,10 @@ using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
+using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
@@ -19,12 +21,14 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         private readonly IUnitOfWorkRepository _unitOfWork;
         private readonly INotificationService _notificationService;
         private readonly ISlotStudentServices _slotStudentServices;
+        private readonly ISlotServices _slotServices;
 
-        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, ISlotStudentServices slotStudentServices)
+        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, ISlotStudentServices slotStudentServices, ISlotServices slotServices)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
             _slotStudentServices = slotStudentServices;
+            _slotServices = slotServices;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -109,28 +113,56 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             var createdClass = await _unitOfWork.ClassRepository.AddAsync(classEntity);
             await _unitOfWork.SaveChangesAsync();
             var rs = createdClass.Entity.Adapt<GetClassDtos>();
+            await _slotServices.CreateClassSlotAsync(classDto.SlotList, rs, user.Id);
             return rs;
         }
 
-        public async Task<GetClassDtos> UpdateClassAsync(GetClassDtos classDto)
+        public async Task<GetClassDtos> UpdateClassAsync(UpdateClassDto classDto, GetProfileUserDtos user)
         {
-            var classEntity = classDto.Adapt<Models.Models.Class>();
-            var updatedClass = _unitOfWork.ClassRepository.Update(classEntity);
+            var existClass = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(c => c.Id == classDto.Id);
+            if (existClass == null) 
+            {
+                throw new NotFoundException("Class not found");
+            }
+            if (user.Id != existClass.TutorId)
+            {
+                throw new ForbiddenException("You have no permission to edit this class");
+            }
+            if (existClass.Status == ClassStatus.Finished)
+            {
+                throw new BadRequestException("Class is unable to edit");
+            }
+            var listOfStudentInClass = await GetAllStudentInClassWithClassId(existClass.Id);
+            if (classDto.NumberOfStudents < listOfStudentInClass.Count)
+            {
+                throw new BadRequestException("Cannot update number of students which is smaller than the current number of students in the class");
+            }
 
-            var receiverIds = new List<int>();
-            var listOfStudentInClass = await GetAllStudentInClassWithClassId(updatedClass.Entity.Id);
-            var listOfStudentInClassId = listOfStudentInClass.Select(ld => ld.StudentId).ToList();
-
-            receiverIds.Add(classDto.TutorId);
-            receiverIds.AddRange(listOfStudentInClassId);
-            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
-            //{
-            //    Content = $"this class {classDto.Id} has been update",
-            //    IsViewed = false,
-            //    ReceiverId = receiverIds
-            //});
+            // Map the changes to the existing class entity
+            classDto.Adapt(existClass);
+            _unitOfWork.ClassRepository.Update(existClass);
             await _unitOfWork.SaveChangesAsync();
-            return updatedClass.Entity.Adapt<GetClassDtos>();
+
+            //Update slots
+            var classDetail = await GetClassByIdAsync(existClass.Id);
+            await _slotServices.UpdateSlotsOfClass(classDetail.Adapt<Models.Models.Class>());
+            var createdSlots = await _slotServices.CreateClassSlotAsync(classDto.NewClassSlots, classDetail.Adapt<GetClassDtos>(), classDetail.TutorId);
+            foreach (var studentClass in listOfStudentInClass)
+            {
+                foreach(var slot in createdSlots)
+                {
+                    await _slotStudentServices.CreateSlotStudentIfNotExists(slot.Id , studentClass.StudentId);
+                }
+            }
+
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            {
+                Content = $"Lớp {classDetail.Name} của bạn có sự thay đổi, vui lòng kiểm tra lại",
+                ReceiverIds = listOfStudentInClass.Select(sc => sc.StudentId).ToList(),
+                RefImageUrl = classDetail.Tutor.AvatarImageUrl,
+                RefUrl = "/student/myclass"
+            }) ;
+            return classDetail.Adapt<GetClassDtos>();
         }
 
         public async Task<bool> DeleteClassAsync(int id)
@@ -213,7 +245,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
         public async Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId)
         {
-            return await _unitOfWork.StudentClassRepository.Where(sc => sc.ClassId == classId).ToListAsync();
+            return await _unitOfWork.StudentClassRepository.Where(sc => sc.ClassId == classId).AsNoTracking().ToListAsync();
         }
 
         public async Task ValidateClassForStudent(int classId, int studentId)
@@ -238,6 +270,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             }
 
         }
+
     }
 
 }

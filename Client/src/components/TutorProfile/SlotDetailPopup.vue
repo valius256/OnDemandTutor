@@ -81,7 +81,8 @@
                 <th class="max-w-[16rem] min-w-[16rem] ">Học sinh</th>
                 <th class="max-w-[8rem] min-w-[8rem] ">Email</th>
                 <th class="max-w-[8rem] min-w-[8rem] ">SDT</th>
-                <th class="max-w-[16rem] min-w-[16rem] ">Đánh giá</th>
+                <th v-if="!slot.class" class="max-w-[16rem] min-w-[16rem] ">Đánh giá</th>
+                <th v-if="slot.class" class="max-w-[16rem] min-w-[16rem] ">Thanh toán</th>
               </tr>
             </thead>
             <tbody class="">
@@ -96,10 +97,14 @@
                 </td>
                 <td class="p-2">{{ student.user.email }}</td>
                 <td class="p-2">{{ student.user.phone }}</td>
-                <td class="w-48 text-wrap">
+                <td v-if="!slot.class" class="w-48 text-wrap">
                   <star-rating class="flex justify-center" :star-size="20" :rating="student.rating"
                     :round-start-rating="false" :read-only="true" />
                   {{ student.feedback }}
+                </td>
+                <td v-if="slot.class" class="font-bold"
+                :class="{'text-red-400' : student.paymentStatus == 0,'text-blue-400' : student.paymentStatus == 1}">
+                  {{student.paymentStatus == 1 ? "Đã thanh toán" : "Chưa thanh toán"}}
                 </td>
               </tr>
 
@@ -238,8 +243,8 @@ export default {
       const startTime = new Date(this.slot.startTime)
       const endTime = new Date(this.slot.endTime)
       this.editingDate = this.toSqlDateString(startTime)
-      this.editingStartHour = `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2,'0')}`
-      this.editingEndHour = `${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2,'0')}`
+      this.editingStartHour = `${startTime.getHours().toString().padStart(2,'0')}:${startTime.getMinutes().toString().padStart(2,'0')}`
+      this.editingEndHour = `${endTime.getHours().toString().padStart(2,'0')}:${endTime.getMinutes().toString().padStart(2,'0')}`
       console.log(this.editingEndHour)
       this.editDto.startTime = this.formatDatetime(this.editingDate, this.editingStartHour)
       this.editDto.endTime = this.formatDatetime(this.editingDate, this.editingEndHour)

@@ -12,7 +12,7 @@ public interface ISlotServices
     Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
     Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user);
 
-    Task CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
+    Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
     Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
     Task<bool> DeleteSlotAsync(int id);
     //Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
@@ -20,5 +20,7 @@ public interface ISlotServices
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
     Task<bool> EnrollForSlot(int studentId, int slotId);
     Task ValidateSlotForStudent(int slotId, int studentId);
+
+    Task UpdateSlotsOfClass(Models.Models.Class classModel);
 
 }

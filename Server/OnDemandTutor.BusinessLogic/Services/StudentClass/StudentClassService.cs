@@ -260,7 +260,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 {
                     var studentSlot = slot.SlotStudents.FirstOrDefault(s => s.SlotId == slot.Id && s.UserId == studentClass.StudentId);
                     if (studentSlot == null) continue;
-                    if (studentSlot.PaymentStatus == PaymentStatus.Notpaid) deptSlots++;
+                    if (studentSlot.PaymentStatus == PaymentStatus.Notpaid && slot.SlotStatus == SlotStatus.Finished) deptSlots++;
                 }
 
                 if (totalSlots == 0) continue;
@@ -293,6 +293,14 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             }
             await DeleteStudentClass(studentClass.Class.Id, studentClass.Student.Id);
 
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            {
+                Content = $"Bạn đã bị xóa khỏi lớp '{studentClass.Class.Name}' do chưa trả tiền quá 20% slot học. Vui lòng trả tiền học đầy đủ để tình trạng như vậy sẽ không còn xảy ra",
+                ReceiverIds = new List<int> { studentClass.StudentId },
+                RefUrl = "/student/myclass/list",
+                RefImageUrl = studentClass.Class.Tutor.AvatarImageUrl
+            });
+
         }
 
 
@@ -304,7 +312,15 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
                 { "ClassId", studentClass.Class.Name ?? studentClass.Class.Id.ToString() }
             };
 
-            await SendEmail(EmailType.Slot_Payment_Reminder, studentClass.Student.Email, emailParams);          
+            await SendEmail(EmailType.Slot_Payment_Reminder, studentClass.Student.Email, emailParams);
+
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            {
+                Content = $"[Cảnh báo] Bạn đã chưa trả tiền 15% trong tổng số slot của lớp '{studentClass.Class.Name}'. Nếu không trả tiền quá 20% slot học, bạn sẽ bị xóa khỏi lớp và không thề hoàn tác.",
+                ReceiverIds = new List<int> { studentClass.StudentId },
+                RefUrl = "/student/myclass/list",
+                RefImageUrl = studentClass.Class.Tutor.AvatarImageUrl
+            });
         }
 
         private async Task SendEmail(string emailType, string toAddress, Dictionary<string, string> emailParams)

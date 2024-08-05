@@ -129,8 +129,9 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
             return createdSlotDto;
         }
-        public async Task CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId)
+        public async Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId )
         {
+            var results = new List<Models.Models.Slot>();
             foreach (var slotDto in slotDtos)
             {
                 var mappedSlot = slotDto.Adapt<Models.Models.Slot>();
@@ -144,9 +145,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
                 await ValidateSlot(mappedSlot);
 
-                await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
+                var slot = await _unitOfWork.SlotRepository.AddAsync(mappedSlot);
                 await _unitOfWork.SaveChangesAsync();
+                results.Add(slot.Entity);
             }
+            return results;
         }
         public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user)
         {
@@ -158,7 +161,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 throw new NotFoundException($"Slot with ID {slotDto.Id} not found.");
             }
-
+            if (user.Id != existingSlotEntity.CreateById)
+            {
+                throw new ForbiddenException("You have no permission to edit this slot");
+            }
             // Adapt the incoming DTO to the existing entity
             existingSlotEntity = slotDto.Adapt(existingSlotEntity);
             await ValidateSlot(existingSlotEntity);
@@ -185,6 +191,22 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             // Return the updated DTO
             return updatedSlotEntity.Entity.Adapt<GetSlotsDtos>();
+        }
+
+        public async Task UpdateSlotsOfClass(Models.Models.Class classModel)
+        {
+            foreach (var slot in classModel.Slots)
+            {
+                if (slot.SlotStatus == SlotStatus.NotYet)
+                {
+                    slot.SubjectId = classModel.SubjectId;
+                    slot.IsOnline = classModel.Method == "Online" ? true : false;
+                    slot.TeachAddress = classModel.Location;
+                    _unitOfWork.SlotRepository.Update(slot);
+                }
+            }
+            await _unitOfWork.SaveChangesAsync();
+
         }
         public async Task<bool> DeleteSlotAsync(int id)
         {

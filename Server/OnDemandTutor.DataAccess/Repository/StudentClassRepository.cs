@@ -20,12 +20,14 @@ namespace OnDemandTutor.DataAccess.Repository
             return await dbSet
             .Include(sc => sc.Student)
             .Include(sc => sc.Class)
+                .ThenInclude(sc => sc.Tutor)
+            .Include(sc => sc.Class)
                 .ThenInclude(c => c.Slots)
                     .ThenInclude(s => s.SlotStudents)
             .Where(sc => sc.Class.Slots
                 .Any(s => s.SlotStudents
                     .Any(ss => ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid
-                        && ss.UserId == sc.StudentId)))
+                        && ss.UserId == sc.StudentId) && s.SlotStatus == Models.Enum.SlotStatus.Finished))
             .ToListAsync();
         }
         public async Task<PagedResult<StudentClass>> QueryStudentClass(PagingModel<QueryStudentClassDto> request)

@@ -199,6 +199,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.role)
         this.refresh()
     }
 }
