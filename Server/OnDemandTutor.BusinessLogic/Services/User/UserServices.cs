@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
+using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
@@ -22,13 +23,15 @@ public class UserServices : IUserServices
 {
     private readonly IFireBaseAuthServices _fireBaseAuthServices;
     private readonly IEmailServices _emailServices;
+    private readonly INotificationService _notificationService;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
 
-    public UserServices(IUnitOfWorkRepository unitOfWorkRepository, IFireBaseAuthServices fireBaseAuthServices, IEmailServices emailServices)
+    public UserServices(IUnitOfWorkRepository unitOfWorkRepository, IFireBaseAuthServices fireBaseAuthServices, IEmailServices emailServices, INotificationService notificationService)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _fireBaseAuthServices = fireBaseAuthServices;
         _emailServices = emailServices;
+        _notificationService = notificationService;
     }
 
     public async Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor)
@@ -97,15 +100,31 @@ public class UserServices : IUserServices
             if (registerDtos.isTutor)
             {
                 mappedUser.Role = RoleStatus.Tutor;
+               
+
+                
             }
 
             // mappedUser.Password = passwordHash; // open when present 
-            await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
+            var addedUser = await _unitOfWorkRepository.UserRepository.AddAsync(mappedUser);
 
             await _unitOfWorkRepository.SaveChangesAsync();
 
-            var rs = mappedUser.Adapt<GetProfileUserDtos>();
-
+            var rs = addedUser.Entity.Adapt<GetProfileUserDtos>();
+            if (registerDtos.isTutor)
+            {
+                await _notificationService.CreateNotificationAsync(new Models.Dtos.Notification.CreateNotificationDto
+                {
+                    Content = "Bạn đã đăng kí thành công! Nhưng để tài khoản có thể hoạt động thì bạn cần hoàn chỉnh hồ sơ. Click vào đây để thực hiện",
+                    ReceiverIds = new List<int> { rs.Id },
+                    RefUrl = "/tutor/profile",
+                    RefImageUrl = "/src/assets/logo.png"
+                });
+                await _emailServices.SendEmailAsync(new List<string> { mappedUser.Email }, new List<string>(),
+                   "Chào mừng đến với OnDemandTutor",
+                   "<h1>Chúc mừng bạn đã đăng ký thành công</h1>Gửi " + mappedUser.FirstName + " " + mappedUser.LastName + " yêu dấu!.<br>Chỉ còn bước cuối cùng để tài khoản bạn có thể hoạt động được trên nền tảng, đó là hoàn chỉnh hồ sơ và đăng ảnh giấy tờ tùy thân nên. Hãy vô mục profile cá nhân của mình để thực hiện nhé!<br>Một lần nữa cảm ơn bạn vì đã tham gia cùng chúng tôi!",
+                   true, true);
+            }
             return rs;
         }
 
@@ -343,9 +362,9 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus newStatus)
+    public async Task<CompareStatusDto> ChangeTutorStatus(ChangeStatusDto request)
     {
-        var oldRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
+        var oldRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == request.Id);
         if (oldRecord == null)
         {
             throw new ArgumentException("Tutor not found");
@@ -353,27 +372,48 @@ public class UserServices : IUserServices
 
         // Validate state transitions
         bool isValidTransition = false;
-
+        string noti_message = "";
         switch (oldRecord.TutorStatus)
         {
             case TutorStatus.Un_Verified:
-                if (newStatus == TutorStatus.Sent_Verification_Requested)
+                if (request.Status == TutorStatus.Sent_Verification_Requested)
+                {
+                    noti_message = "Yêu cầu xác mình của bạn đã được gửi đi. Chúng tôi sẽ phản hồi trong vòng 48h!";
                     isValidTransition = true;
+                }
                 break;
 
             case TutorStatus.Sent_Verification_Requested:
-                if (newStatus == TutorStatus.Verified || newStatus == TutorStatus.Verification_Request_Rejected)
+                if (request.Status == TutorStatus.Verified || request.Status == TutorStatus.Verification_Request_Rejected)
+                {
+                    if (request.Status == TutorStatus.Verified)
+                    {
+                        noti_message = "Tài khoản của bạn đã được xác minh thành công! Giờ đây bạn có thể hoạt động trên nền tảng và truy cập được các tính năng của gia sư! Chúc bạn mọi sự tốt đẹp";
+                    } else
+                    {
+                        noti_message = "Tài khoản của bạn đã bị từ chối yêu xác minh. Lý do : '" + request.Reason + "'. Bạn có thể hoàn chỉnh và gửi lại yêu cầu";
+                    }
                     isValidTransition = true;
+                }
                 break;
 
             case TutorStatus.Verification_Request_Rejected:
-                if (newStatus == TutorStatus.Un_Verified)
+                if (request.Status == TutorStatus.Sent_Verification_Requested)
+                {
+                    noti_message = "Yêu cầu xác mình của bạn đã được gửi đi. Chúng tôi sẽ phản hồi trong vòng 48h!";
                     isValidTransition = true;
+                }
                 break;
 
             case TutorStatus.Verified:
-                if (newStatus == TutorStatus.Banned || newStatus == TutorStatus.Un_Verified)
+                if (request.Status == TutorStatus.Banned || request.Status == TutorStatus.Un_Verified)
+                {
+                    if (request.Status == TutorStatus.Un_Verified)
+                    {
+                        noti_message = "Bạn cần xác minh lại tài khoản để có thể tiếp tục hoạt động. Lý do : '" +request.Reason + '"';
+                    } 
                     isValidTransition = true;
+                }
                 break;
 
             case TutorStatus.Banned:
@@ -382,13 +422,21 @@ public class UserServices : IUserServices
 
         if (!isValidTransition)
         {
-            throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {newStatus}");
+            throw new BadRequestException($"Invalid status transition from {oldRecord.TutorStatus} to {request.Status}");
         }
 
-        await _unitOfWorkRepository.UserRepository.Where(u => u.Id == id)
-            .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, newStatus));
+        await _unitOfWorkRepository.UserRepository.Where(u => u.Id == request.Id)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, request.Status));
 
-        var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id);
+        var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == request.Id);
+
+        await _notificationService.CreateNotificationAsync(new Models.Dtos.Notification.CreateNotificationDto
+        {
+            Content = noti_message,
+            ReceiverIds = new List<int> { newRecord.Id },
+            RefUrl = "/tutor/profile",
+            RefImageUrl = "/src/assets/logo.png"
+        });
 
         return new CompareStatusDto()
         {

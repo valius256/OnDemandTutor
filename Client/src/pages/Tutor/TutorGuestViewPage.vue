@@ -4,8 +4,10 @@
       v-if="user.tutorStatus == 1 && currentUser.role > 1">
       <div>Tài khoản gia sư này cần được xác thực</div>
       <div class="flex gap-3">
-        <button @click="handleApprove(true)" class="bg-green-400 hover:bg-green-200 text-white font-bold px-4 py-2 rounded-lg">Xác thực</button>
-        <button @click="handleApprove(false)" class="bg-red-400 hover:bg-red-200 text-white font-bold px-4 py-2 rounded-lg">Từ chối</button>
+        <button @click="handleApprove(true)"
+          class="bg-green-400 hover:bg-green-200 text-white font-bold px-4 py-2 rounded-lg">Xác thực</button>
+        <button @click="toggleOpenRejectPopup()"
+          class="bg-red-400 hover:bg-red-200 text-white font-bold px-4 py-2 rounded-lg">Từ chối</button>
       </div>
     </div>
     <div class="py-8 bg-slate-200 flex justify-center gap-8">
@@ -21,12 +23,17 @@
       <schedule :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/schedule'">
       </schedule>
       <subject :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/subject'"></subject>
-      <video-list :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/videos'"></video-list>
+      <video-list :id="viewingId" :tutor="user"
+        v-if="$route.path == '/tutor-guest/' + viewingId + '/videos'"></video-list>
       <classes :id="viewingId" :tutor="user" v-if="$route.path == '/tutor-guest/' + viewingId + '/class'"></classes>
       <!-- <tutor-classes :id="viewingId"
           v-if="$route.path == '/tutor/myclass' + viewingId"
         ></tutor-classes> -->
     </div>
+    <generic-popup v-if="isOpenRejectPopup" :closeFunction="toggleOpenRejectPopup" title="Lý do từ chối xác thực">
+      <reject-verification-reason-popup :id="user.id" :action="handleAfterReject"
+        :close="toggleOpenRejectPopup"></reject-verification-reason-popup>
+    </generic-popup>
   </div>
 </template>
 
@@ -38,9 +45,12 @@ import Schedule from "../../components/TutorGuestView/Schedule.vue";
 import Subject from "../../components/TutorGuestView/Subject.vue";
 import Classes from "../../components/TutorGuestView/Classes.vue";
 import VideoList from '../../components/TutorGuestView/VideoList.vue';
+import GenericPopup from '../../components/common/GenericPopup.vue'
+import RejectVerificationReasonPopup from '../../components/Operators/RejectVerificationReasonPopup.vue'
+
 export default {
   name: "ProfilePage",
-  inject : ['eventBus'],
+  inject: ['eventBus'],
   components: {
     Profile,
     Schedule,
@@ -49,12 +59,15 @@ export default {
     Classes,
     Navbar,
     VideoList,
+    GenericPopup, 
+    RejectVerificationReasonPopup
   },
   data() {
     return {
       user: null,
       viewingId: 0,
       currentUser: null,
+      isOpenRejectPopup: false,
     };
   },
   methods: {
@@ -92,6 +105,12 @@ export default {
         })
       }
       this.eventBus.emit("close-loading-popup")
+    },
+    toggleOpenRejectPopup() {
+      this.isOpenRejectPopup = !this.isOpenRejectPopup
+    },
+    handleAfterReject() {
+      this.$router.push('/admin/accounts/tutors/registration')
     }
   },
   mounted() {
