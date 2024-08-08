@@ -129,7 +129,7 @@ public static class ServiceExtensions
         services.AddHttpClient<IJwtProviderServices, JwtProviderServices>((sp, client) =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            client.BaseAddress = new Uri(configuration["Authentication:TokenUri"]);
+            client.BaseAddress = new Uri(configuration["Authentication:TokenUri"] ?? "");
         });
         return services;
     }
@@ -248,12 +248,33 @@ public static class ServiceExtensions
 
         services.AddHangfireServer(cf =>
         {
-            RecurringJob.AddOrUpdate<SlotStudentService>(x =>
-            x.CronJobForAutoDereasedMoneyAfterSlotStart(), Cron.Hourly());
-            RecurringJob.AddOrUpdate<StudentClassService>(x =>
-            x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(), Cron.Hourly);
-            RecurringJob.AddOrUpdate<ClassServices>(x =>
-                x.CronForAutoChangeStatusClassAndSlot(), Cron.Hourly(3));
+            // Schedule the SlotStudentService job to run at 5 minutes past the hour
+            RecurringJob.AddOrUpdate<SlotStudentService>(
+                "SlotStudentServiceJob",
+                x => x.CronJobForAutoDereasedMoneyAfterSlotStart(),
+                "5 * * * *"
+            );
+
+            // Schedule the StudentClassService job to run at 10 minutes past the hour
+            RecurringJob.AddOrUpdate<StudentClassService>(
+                "StudentClassServiceJob",
+                x => x.CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent(),
+                "10 * * * *"
+            );
+
+            // Schedule the ClassServices job to run at 15 minutes past the hour
+            RecurringJob.AddOrUpdate<ClassServices>(
+                "ClassServicesJob",
+                x => x.CronForAutoChangeStatusClassAndSlot(),
+                "15 * * * *"
+            );
+
+            // Schedule the SlotService job to run at 20 minutes past the hour
+            RecurringJob.AddOrUpdate<SlotService>(
+                "SlotServiceJob",
+                x => x.CronJobForTransferringMoneyToTutor(),
+                "20 * * * *"
+            );
         });
 
 

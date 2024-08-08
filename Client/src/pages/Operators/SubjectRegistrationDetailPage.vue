@@ -160,7 +160,7 @@ export default {
                         subjectId : this.tutor.subject.id,
                         status : 3
                     }
-                    await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject/' + this.tutor.id, request, {
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject', request, {
                         headers: {
                             "Authorization": "Bearer " + localStorage.token
                         }

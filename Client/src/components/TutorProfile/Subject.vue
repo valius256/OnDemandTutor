@@ -18,8 +18,8 @@
         <h3 class="text-2xl font-extrabold text-gray-800 mb-4">{{ selectedSubject.subject.name }}</h3>
         <div class="text-gray-600">Ngày đăng kí: {{ formatDate(selectedSubject.createdDate) }}</div>
         <div class="text-gray-600">Mô tả: {{ selectedSubject.description || "Không có mô tả" }}</div>
-        <div class="text-gray-600">Trạng thái: {{ getStatus(selectedSubject.status) }}</div>
-        <div v-if="selectedSubject.status === 2" class="text-red-500">
+        <div :class="getStatusStyle(selectedSubject.status)">Trạng thái: {{ getStatus(selectedSubject.status) }}</div>
+        <div v-if="selectedSubject.status === 2" class="text-red-500 font-bold">
           Lý do từ chối: {{ selectedSubject.reasonReject || "Không có lý do" }}
         </div>
         <div class="text-gray-800 font-semibold">Bằng cấp:</div>
@@ -288,6 +288,21 @@ export default {
           return "Đã được chấp nhận";
         default:
           return "Không xác định";
+      }
+    },
+    getStatusStyle(status) {
+      const css = "font-bold "
+      switch (status) {
+        case 0:
+          return css + "text-gray-400";
+        case 1:
+          return css + "text-black";
+        case 2:
+          return css + "text-red-400";
+        case 3:
+          return css + "text-green-400";
+        default:
+          return css + "text-gray-500";
       }
     },
     getMillisecondsFromMinDate(date) {

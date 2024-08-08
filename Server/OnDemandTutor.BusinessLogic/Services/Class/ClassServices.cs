@@ -180,66 +180,59 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
         public async Task CronForAutoChangeStatusClassAndSlot()
         {
-            var classesToUpdate = await _unitOfWork.ClassRepository
-                .WhereAsync(cl => cl.Status == ClassStatus.NotStart || cl.Status == ClassStatus.OnGoing);
-            var slotsToUpdate = await _unitOfWork.SlotRepository
-                .WhereAsync(sl => sl.SlotStatus == SlotStatus.NotYet || sl.SlotStatus == SlotStatus.OnGoing);
-
-            foreach (var slot in slotsToUpdate)
+            var onGoingSlots = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>() {
+                Filter = new QuerySlotDto()
+                {
+                    IsAboutToEnd = true,
+                    SlotStatus = SlotStatus.OnGoing
+                },
+                Page = 1,
+                Limit = int.MaxValue
+            });
+            var notStartedSlot = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>()
             {
-                if (slot.StartTime <= DateTime.Now && slot.SlotStatus == SlotStatus.NotYet)
+                Filter = new QuerySlotDto()
                 {
-                    slot.SlotStatus = SlotStatus.OnGoing;
-                }
+                    IsAboutToStart = true,
+                    SlotStatus = SlotStatus.NotYet
+                },
+                Page = 1,
+                Limit = int.MaxValue
+            });
 
-                if (slot.EndTime <= DateTime.Now && slot.SlotStatus == SlotStatus.OnGoing)
+            foreach (var slot in onGoingSlots.Items)
+            {
+                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.Finished });
+                if (slot.ClassId != null)
                 {
-                    slot.SlotStatus = SlotStatus.Finished;
+                    await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
                 }
             }
-
-            // Update slots in bulk
-            _unitOfWork.SlotRepository.UpdateRange(slotsToUpdate);
-
-            foreach (var classModel in classesToUpdate)
+            foreach (var slot in notStartedSlot.Items)
             {
-                bool allSlotsFinished = true;
-
-                foreach (var slot in classModel.Slots.ToList())
+                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.OnGoing });
+                if(slot.ClassId != null)
                 {
-                    if (slot.StartTime <= DateTime.Now && slot.SlotStatus == SlotStatus.NotYet)
-                    {
-                        slot.SlotStatus = SlotStatus.OnGoing;
-                    }
-
-                    if (slot.EndTime <= DateTime.Now && slot.SlotStatus == SlotStatus.OnGoing)
-                    {
-                        slot.SlotStatus = SlotStatus.Finished;
-                    }
-
-                    if (slot.SlotStatus != SlotStatus.Finished)
-                    {
-                        allSlotsFinished = false;
-                    }
-                }
-
-                // Update class status
-                if (classModel.Status == ClassStatus.NotStart &&
-                    classModel.Slots.Any(sl => sl.SlotStatus == SlotStatus.OnGoing))
-                {
-                    classModel.Status = ClassStatus.OnGoing;
-                }
-
-                if (allSlotsFinished && classModel.Status == ClassStatus.OnGoing)
-                {
-                    classModel.Status = ClassStatus.Finished;
+                    await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
                 }
             }
+        }
 
-            // Update classes in bulk
-            _unitOfWork.ClassRepository.UpdateRange(classesToUpdate);
+        private async Task UpdateStatusOfClassDueToSlotChange(int classId)
+        {
+            var classDetail = await GetClassByIdAsync(classId);
+            //Avoid update navigators
+            var classModel = await _unitOfWork.ClassRepository.FindAsync(classId);
 
-            // Save all changes in one go
+            if (classDetail.Slots.All(s => s.SlotStatus == SlotStatus.Finished))
+            {
+                classModel.Status = ClassStatus.Finished;
+            }
+            if (classDetail.Slots.Any(s => s.SlotStatus == SlotStatus.OnGoing))
+            {
+                classModel.Status = ClassStatus.OnGoing;
+            }
+            _unitOfWork.ClassRepository.Update(classModel);
             await _unitOfWork.SaveChangesAsync();
         }
 

@@ -14,6 +14,7 @@ using OnDemandTutor.Models.Dtos.SlotStudent;
 using OnDemandTutor.Models.Dtos.StudentSlot;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
 using System.Globalization;
 
@@ -76,7 +77,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudents = await _unitOfWorkRepository.SlotStudentRepository.GetStudentsSlotWithStudentBySlotId(slotId);
         return slotStudents.Adapt<List<GetSlotStudentWithDetailStudentDto>>();
     }
-    public async Task<bool> SlotStudentPaidAsync(int slotId, int studentId)
+    public async Task<bool> SlotStudentPaidAsync(int slotId, int studentId, decimal value)
     {
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
@@ -87,6 +88,7 @@ public class SlotStudentService : ISlotStudentServices
         }
 
         slotStudent.PaymentStatus = PaymentStatus.Paid;
+        slotStudent.PaidValue = value;
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -108,7 +110,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotstudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
         if (slotstudent == null)
         {
-            throw new Exception("Slot Student not found");
+            throw new NotFoundException("Slot Student not found");
         }
 
         // studentClass.RecordStatus = RecordStatus.Deleted;
@@ -146,6 +148,8 @@ public class SlotStudentService : ISlotStudentServices
                 UserId = studentId,
                 SlotId = slotId,
                 PaymentStatus = PaymentStatus.Notpaid,
+                PaidValue = 0,
+                IsTransferred = false,
             };
             await _unitOfWorkRepository.SlotStudentRepository.AddAsync(newSlotStudentModel);
             await _unitOfWorkRepository.SaveChangesAsync();
@@ -219,9 +223,44 @@ public class SlotStudentService : ISlotStudentServices
                     RefUrl = "/student/schedule"
                     
                 });
-                await SlotStudentPaidAsync(slotStudent.SlotId, slotStudent.UserId);
+                await SlotStudentPaidAsync(slotStudent.SlotId, slotStudent.UserId, amountToDecrease);
             }           
         }
         
+    }
+
+    public async Task LeaveSlot(int slotId, GetProfileUserDtos user)
+    {
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.GetSlotStudentBySlotIdAndStudentId(slotId, user.Id);
+        if (slotStudent == null)
+        {
+            throw new NotFoundException("Slot of this student is not found");
+        }
+        if (slotStudent.Slot.SlotStatus == SlotStatus.OnGoing || slotStudent.Slot.SlotStatus == SlotStatus.Cancelled)
+        {
+            throw new BadRequestException("You can only leave the slot that has not started yet!");
+        }
+        await SoftDeleteSlotStudent(slotId, user.Id);
+        if (slotStudent.Slot.SlotStatus  == SlotStatus.Cancelled)
+        {
+            await Refund(slotId, user.Id);
+        }
+    }
+
+    public async Task Refund(int slotId, int userId)
+    {
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.GetSlotStudentBySlotIdAndStudentId(slotId, userId);
+        if (slotStudent == null)
+        {
+            throw new NotFoundException("Slot of this student is not found");
+        }
+        if (slotStudent.Slot.SlotStatus != SlotStatus.Cancelled || slotStudent.PaymentStatus == PaymentStatus.Notpaid)
+        {
+            throw new BadRequestException("Slot must be not paid and slot is cancelled in order to refund");
+        }
+
+        var tutor = await _userServices.GetProfileAsync(slotStudent.Slot.CreateById, null, null);
+        var cost = tutor.TutorFeePerHour * (decimal)(slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
+        await _userServices.UpdateBalanceAsync(userId, cost);
     }
 }

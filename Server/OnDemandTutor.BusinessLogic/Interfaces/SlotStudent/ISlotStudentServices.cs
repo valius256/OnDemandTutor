@@ -18,7 +18,7 @@ public interface ISlotStudentServices
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotPaged(int slotId, int page, int limit);
     Task<List<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId);
-    Task<bool> SlotStudentPaidAsync(int slotId, int studentId);
+    Task<bool> SlotStudentPaidAsync(int slotId, int studentId, decimal value);
     Task<SlotStudentDto> GetSlotStudentById(int slotId);
     Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status);
     Task<bool> SoftDeleteSlotStudent(int slotId, int studentId);
@@ -28,5 +28,6 @@ public interface ISlotStudentServices
     Task<bool> CreateSlotStudentIfNotExists(int slotId, int studentId);
 
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
-    //Task<PagedResult<GetSlotStudentDetailDto>?> GetSlotWithStudentOfTutors(PagingModel<QueryRatingDto> queryDto);
+    Task LeaveSlot(int slotId, GetProfileUserDtos user);
+    Task Refund(int slotId, int userId);
 }

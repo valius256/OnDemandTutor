@@ -88,7 +88,7 @@ public class VnPayServices : IVnPayServices
 
             if (response.SlotId != null && response.ClassId == null && response.SlotId.Count == 1)
             {
-                await HandleSingleSlotPayment(response);
+                await HandleSingleSlotPayment(response, response.Money);
                 // await _userServices.UpdateBalanceAsync(response.UserId, 0, response.Money);
             }
             else if (response.ClassId != null)
@@ -111,14 +111,14 @@ public class VnPayServices : IVnPayServices
     }
 
 
-    private async Task HandleSingleSlotPayment(IPaymentResponse response)
+    private async Task HandleSingleSlotPayment(IPaymentResponse response, decimal money)
     {
         if (response.SlotId == null)
         {
             throw new BadRequestException("Payment Error");
         }
         await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());     
-        await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId);
+        await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId, money);
     }
 
     private async Task HandleClassPayment(IPaymentResponse response)
@@ -235,7 +235,7 @@ public class VnPayServices : IVnPayServices
         await _transactionServices.CreateTransactionDb(transactionDto);
         await _slotServices.EnrollForSlot(user.Id, slot.Id);
         await _userServices.UpdateBalanceAsync(user.Id, -slotCost);
-        await _slotStudentServices.SlotStudentPaidAsync(slot.Id, user.Id);
+        await _slotStudentServices.SlotStudentPaidAsync(slot.Id, user.Id, slotCost);
 
     }
 

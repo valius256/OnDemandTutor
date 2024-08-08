@@ -79,23 +79,23 @@ namespace OnDemandTutor.API.Controllers
         }
 
        
-        [Authorize]
-        [HttpPost("{slotId}/{studentId}/pay")]
-        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(204)]
-        public async Task<IActionResult> SlotStudentPaid(int slotId, int studentId)
-        {
-            var result = await _slotStudentService.SlotStudentPaidAsync(slotId, studentId);
+        //[Authorize]
+        //[HttpPost("{slotId}/{studentId}/pay")]
+        //[ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        //[ProducesResponseType(204)]
+        //public async Task<IActionResult> SlotStudentPaid(int slotId, int studentId)
+        //{
+        //    var result = await _slotStudentService.SlotStudentPaidAsync(slotId, studentId);
 
-            if (result)
-            {
-                return NoContent();
-            }
+        //    if (result)
+        //    {
+        //        return NoContent();
+        //    }
 
-            // If SlotStudentPaidAsync fails in a way other than throwing an exception
-            // handle it by returning a BadRequest with a generic message.
-            return BadRequest("Payment failed.");
-        }
+        //    // If SlotStudentPaidAsync fails in a way other than throwing an exception
+        //    // handle it by returning a BadRequest with a generic message.
+        //    return BadRequest("Payment failed.");
+        //}
 
         [Authorize]
         [HttpPut("feedback-rating")]

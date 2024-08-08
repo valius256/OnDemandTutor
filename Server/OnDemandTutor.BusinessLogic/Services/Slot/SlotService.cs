@@ -15,10 +15,12 @@ using OnDemandTutor.Models;
 using OnDemandTutor.Models.Dtos.Class;
 using OnDemandTutor.Models.Dtos.Notification;
 using OnDemandTutor.Models.Dtos.Slot;
+using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
+using System.Globalization;
 
 namespace OnDemandTutor.BusinessLogic.Services.Slot
 {
@@ -30,10 +32,11 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IUserServices _userServices;
         private readonly INotificationService _notificationService;
+        private readonly ITransactionServices _transactionServices;
 
         public SlotService(IUnitOfWorkRepository unitOfWorkRepository,
             ISlotStudentServices slotStudentServices, IUserServices userServices,
-            INotificationService notificationService,
+            INotificationService notificationService, ITransactionServices transactionServices,
             ISlotRepository slotRepository, IAuthServices authService)
         {
             _unitOfWork = unitOfWorkRepository;
@@ -42,6 +45,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             _slotStudentServices = slotStudentServices;
             _userServices = userServices;
             _notificationService = notificationService;
+            _transactionServices = transactionServices;
         }
 
 
@@ -129,7 +133,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var createdSlotDto = createdSlotEntity.Entity.Adapt<GetSlotsDtos>();
             return createdSlotDto;
         }
-        public async Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId )
+        public async Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId)
         {
             var results = new List<Models.Models.Slot>();
             foreach (var slotDto in slotDtos)
@@ -180,7 +184,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _unitOfWork.SaveChangesAsync();
 
             //Send noti to students
-            var studentsOfSlot = await _slotStudentServices.GetSlotStudentsOfSlotAsync(slotDto.Id); 
+            var studentsOfSlot = await _slotStudentServices.GetSlotStudentsOfSlotAsync(slotDto.Id);
             await _notificationService.CreateNotificationAsync(new CreateNotificationDto
             {
                 Content = $"Slot bạn đã đăng ký học đã có sự thay đổi, vui lòng kiểm tra",
@@ -255,7 +259,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _notificationService.CreateNotificationAsync(new CreateNotificationDto
             {
                 Content = $"1 học viên đã đăng ký slot {slot.StartTime} đến {slot.EndTime} của bạn.",
-                ReceiverIds = new List<int> { slot.CreateById},
+                ReceiverIds = new List<int> { slot.CreateById },
                 RefImageUrl = student.AvatarImageUrl,
                 RefUrl = "/tutor/schedule"
             });
@@ -263,11 +267,53 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             return true;
         }
 
-        //public async Task<List<GetSlotWithSlotStudentDto>> GetListSlotOfStudentByStudentId(int studentId)
-        //{
-        //    return await _slotRepository.GetSlotWithSlotStudentByStudentId(studentId);
-        //}
-
+        public async Task CronJobForTransferringMoneyToTutor()
+        {
+            var slots = await _unitOfWork.SlotRepository.GetFinishedSlotsToTransfer();
+            foreach ( var slot in slots )
+            {
+                await Transfer(slot.Id);
+            }
+        }
+        private async Task Transfer(int slotId)
+        {
+            var slot = await GetSlotByIdAsync(slotId);
+            var slotStudents = await _slotStudentServices.GetSlotStudentsOfSlotAsync(slotId);
+            var isFull = true;
+            decimal totalAmount = 0;
+            List<TransactionDto> transactions = new List<TransactionDto>();
+            foreach (var slotStudent in slotStudents)
+            {
+                if (slotStudent.PaymentStatus == PaymentStatus.Paid)
+                {
+                    await _userServices.UpdateBalanceAsync(slot.CreateById, slotStudent.PaidValue);
+                    transactions.Add(new TransactionDto
+                    {
+                        TransactionCode = $"HP_Slot_{slot.Id}_Tutor_{slot.CreateById}_{DateTime.Now.Ticks}",
+                        Amount = slotStudent.PaidValue,
+                        CreatedById = slot.CreateById,
+                        CreatedDate = DateTime.Now,
+                        Notes = $"Thanh toán slot {slot.Subject.Name} lúc {slot.StartTime} từ học sinh {slotStudent.User.FirstName ?? ""} {slotStudent.User.LastName ?? ""}",
+                        PaymentMethod = "Internal",
+                        Status = PaymentStatus.Paid,
+                        TransactionType = TransactionType.Receive_money
+                    });
+                    totalAmount += slotStudent.PaidValue;
+                } else if (isFull)
+                {
+                    isFull = false;
+                }
+            }
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                Content = $"Bạn đã nhận được {totalAmount.ToString("C0", CultureInfo.CreateSpecificCulture("vi-VN"))} từ buổi học {slot.Subject.Name} lúc {slot.StartTime}. " +
+                $"{(isFull ? "Tuy nhiên vẫn còn 1 số học viên chưa thanh toán, bạn có thể nhắc nhở họ" : "Mọi người đã thanh toán đầy đủ")}",
+                RefUrl = "/tutor/schedule",
+                ReceiverIds = new List<int> { slot.CreateById },
+                RefImageUrl = "/src/assets/logo.png"
+            });
+            await _transactionServices.CreateTransactionDb(transactions);
+        }
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OnDemandTutor.Models.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnDemandTutor.Models.Dtos.Slot
 {
@@ -12,6 +13,10 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public DateTime? Start { get; set; }
 
         public DateTime? End { get; set; }
+
+        public SlotStatus? SlotStatus { get; set; }
+        public bool? IsAboutToStart { get; set; }
+        public bool? IsAboutToEnd { get; set; }
 
     }
 }

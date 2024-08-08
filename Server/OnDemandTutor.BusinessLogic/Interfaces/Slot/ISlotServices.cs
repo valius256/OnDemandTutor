@@ -23,4 +23,5 @@ public interface ISlotServices
 
     Task UpdateSlotsOfClass(Models.Models.Class classModel);
 
+
 }
