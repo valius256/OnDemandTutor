@@ -117,8 +117,7 @@
           <tr>
             <td>Date of Birth</td>
             <td>
-              <input class="w-full rounded border border-gray-200 p-1" type="date"
-              v-model="editDto.dob" />
+              <input class="w-full rounded border border-gray-200 p-1" type="date" v-model="editDto.dob" />
             </td>
           </tr>
           <tr>
@@ -154,6 +153,24 @@
         </tbody>
       </table>
     </div>
+    <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
+      Giấy tờ tùy thân
+    </div>
+    <div class="flex flex-col md:flex-row gap-4 mx-6" v-if="user">
+      <div class="flex flex-col gap-2">
+        <button class="p-2 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg" @click="uploadIdCardImage">
+          Cập nhật giấy tờ tùy thân
+        </button>
+        <button v-if="this.fileIdCard" class="p-2 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg" @click="handleUpdateIdCardImage(true)">
+          Xác nhận
+        </button>
+      </div>
+      <div v-if="imageIdCardBase64 || user.idCardImageUrl">
+        <img :src="imageIdCardBase64 ?? user.idCardImageUrl" class="rounded-lg border-gray-300" />
+      </div>
+    </div>
+    <input type="file" class="hidden" ref="fileIdCardInput" accept="image/*" @change="onFileIdCardChange">
+    <hr class="mt-8">
     <previous-feedback :tutorId="id" />
   </div>
 </template>
@@ -183,7 +200,9 @@ export default {
       },
       editMode: false,
       imageBase64: null,
+      imageIdCardBase64: null,
       file: null,
+      fileIdCard: null,
       currentUser: null,
     };
   },
@@ -196,7 +215,7 @@ export default {
       this.editDto.firstName = this.user.firstName;
       this.editDto.lastName = this.user.lastName;
       this.editDto.phone = this.user.phone;
-      this.editDto.dob = this.user.dob.substring(0,10);
+      this.editDto.dob = this.user.dob.substring(0, 10);
       this.editDto.address = this.user.address;
       this.editDto.gender =
         this.user.sex == "Male" ? 1 : this.user.sex == "Female" ? 0 : 2;
@@ -334,10 +353,16 @@ export default {
     async uploadImage() {
       this.$refs.fileInput.click();
     },
+    async uploadIdCardImage() {
+      this.$refs.fileIdCardInput.click();
+    },
     onFileChange(event) {
       this.file = event.target.files[0];
-      console.log(this.file);
       this.convertToBase64();
+    },
+    onFileIdCardChange(event) {
+      this.fileIdCard = event.target.files[0];
+      this.convertToIdCardBase64();
     },
     async handleChangeAvatar(confirmation) {
       if (confirmation) {
@@ -354,10 +379,7 @@ export default {
           if (this.file) {
           }
           const fileName =
-            "Avartar_of_" +
-            this.user.id +
-            "_" +
-            this.getMillisecondsFromMinDate(new Date());
+            "Avartar_of_" + this.user.id + "_" + this.getMillisecondsFromMinDate(new Date());
           const formData = new FormData();
           formData.append("file", this.file);
           const response = await axios.post(
@@ -401,6 +423,76 @@ export default {
         this.eventBus.emit("close-loading-popup");
       }
     },
+    async handleUpdateIdCardImage(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn cập nhật giấy tờ tùy thân chứ?",
+          method: this.handleUpdateIdCardImage,
+          params: false,
+        });
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ...",
+        });
+        try {
+          if (this.fileIdCard) {
+            const fileName = "Identification_" + this.user.id + "_" + this.getMillisecondsFromMinDate(new Date());
+            const formData = new FormData();
+            formData.append("file", this.fileIdCard);
+            const response = await axios.post(
+              import.meta.env.VITE_API_URL +
+              "/api/Upload/upload-image?fileName=" +
+              fileName,
+              formData,
+              {
+                headers: {
+                  Authorization: "Bearer " + localStorage.token,
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            const request = {
+              id: this.user.id,
+              firstName: this.user.firstName,
+              lastName: this.user.lastName,
+              address: this.user.address,
+              phone: this.user.phone,
+              sex: this.user.gender,
+              dob: this.user.dob,
+              tutorFeePerHour: this.user.tutorFeePerHour,
+              scheduleDesciption: this.user.scheduleDescription,
+              idCardImageUrl : response.data
+            };
+            this.eventBus.emit("open-loading-popup", {
+              message: "Vui lòng chờ...",
+            });
+            await axios.post(
+              import.meta.env.VITE_API_URL + "/api/User/update-profile",
+              request,
+              {
+                headers: {
+                  Authorization: "Bearer " + localStorage.token,
+                },
+              }
+            );
+            await this.refresh();
+            this.fileIdCard = null;
+            this.eventBus.emit("open-result-dialog", {
+              message: "Cập nhật thành công",
+              type: "Success",
+            });
+          }
+
+        } catch (e) {
+          console.log(e);
+          this.eventBus.emit("open-result-dialog", {
+            message: "Đã xảy ra sự cố. Vui lòng thử lại sau",
+            type: "Error",
+          });
+        }
+        this.eventBus.emit("close-loading-popup");
+      }
+    },
     getMillisecondsFromMinDate(date) {
       // The minimum date value is January 1, 1970, 00:00:00 UTC
       const minDate = new Date(0);
@@ -414,6 +506,15 @@ export default {
       };
 
       reader.readAsDataURL(this.file);
+    },
+    convertToIdCardBase64() {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        this.imageIdCardBase64 = event.target.result;
+      };
+
+      reader.readAsDataURL(this.fileIdCard);
     },
   },
   mounted() {

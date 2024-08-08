@@ -5,8 +5,8 @@
       <profile :id="user.id" v-if="$route.path == '/tutor/profile'"></profile>
       <schedule :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/schedule'"></schedule>
       <subject :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/subject'"></subject>
-      <tutor-classes :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass/list'"></tutor-classes>
       <class-creator :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass/create'"></class-creator>
+      <tutor-classes :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/myclass/list'"></tutor-classes>
       <payment :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/payment'"></payment>
       <Videos :currentUser="user" v-if="$route.path == '/tutor/videos'"></Videos>
       <withdraw-request :id="user.id" :currentUser="user" v-if="$route.path == '/tutor/withdraw'"></withdraw-request>

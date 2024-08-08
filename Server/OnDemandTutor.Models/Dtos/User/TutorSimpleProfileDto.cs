@@ -10,7 +10,7 @@ public class TutorSimpleProfileDto
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public DateTime Dob { get; set; }
-    public DateTime JoiningDate { get; set; }
+    public DateTime CreatedDate { get; set; }
     public string? AvatarImageUrl { get; set; }
     public string? Address { get; set; }
     public Sex Sex { get; set; }

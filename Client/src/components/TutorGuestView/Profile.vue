@@ -44,20 +44,21 @@
             currency: "VND",
         }) }} / giờ</span>
                     </div>
+                    <div class="flex flex-col">
+                        <span class="font-medium text-gray-600">Mô tả lịch trình</span>
+                        <span>{{ tutor.scheduleDesciption }}</span>
+                    </div>
                 </div>
             </div>
             <div class="bg-white shadow-md rounded-lg p-6 w-full mt-8" v-if="currentUser && currentUser.role > 1">
                 <h2 class="text-2xl font-semibold mb-4">Giấy tờ tùy thân</h2>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="flex flex-col">
-                        <span class="font-medium text-gray-600">Họ</span>
-                        <span>{{ tutor.firstName }}</span>
-                    </div>
-
+                <div class="grid grid-cols-3 gap-4" v-if="tutor.idCardImageUrl">
+                    <img :src="tutor.idCardImageUrl">
                 </div>
             </div>
             <previous-feedback :tutorId="tutor.id"/>
         </div>
+
     </div>
 </template>
 
@@ -72,7 +73,7 @@ export default {
     props: ['tutor'],
     components: { StarRating,PreviousFeedback },
     data() {
-        return {         
+         return {         
             currentUser: null,
         }
     },
@@ -80,26 +81,6 @@ export default {
         async refresh() {
             this.currentUser = await this.getUserFromToken()
             this.feedbackMode = 0;
-        },
-        async getUserSlots() {
-            const column = "startTime"; // Example column name
-            const isDesc = true; // Example sort order
-
-            try {
-                const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL
-                    }/api/Slot?Filter.UserId=${this.tutor.id}&Sorts[column]=${column}&Sorts[isDesc]=${isDesc}`
-                );
-                console.log(response.data); // Log the response data for debugging
-                if (response.data && response.data.items) {
-                    this.slots = response.data.items;
-                } else {
-                    this.slots = []; // Ensure slots is an array even if the response is empty
-                }
-            } catch (error) {
-                console.error("Error fetching user slots:", error);
-                this.slots = []; // Handle errors by setting slots to an empty array
-            }
         },
 
 

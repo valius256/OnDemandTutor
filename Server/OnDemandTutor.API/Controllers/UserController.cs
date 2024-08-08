@@ -178,6 +178,6 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(typeof(IApiResult<CompareStatusDto>), 200)]
     public async Task<IApiResult<CompareStatusDto>> ChangeStatusTutor([FromBody] ChangeStatusDto request)
     {
-        return OKAsync(await _userService.ChangeTutorStatus(request.Id, request.Status));
+        return OKAsync(await _userService.ChangeTutorStatus(request));
     }
 }

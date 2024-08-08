@@ -32,7 +32,7 @@ public interface IUserServices
     Task<bool> UpdateBalanceAsync(int userId, decimal money);
     Task<bool> DeaActiveAccountAsync(DeaActiveAccountDto request);
     Task<bool> ActiveAccount(int id);
-    Task<CompareStatusDto> ChangeTutorStatus(int id, TutorStatus status);
+    Task<CompareStatusDto> ChangeTutorStatus(ChangeStatusDto request);
     Task<bool> RecalculateTutorRating(int tutorId);
     Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
 

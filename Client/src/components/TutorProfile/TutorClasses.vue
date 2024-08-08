@@ -1,23 +1,33 @@
 <template>
   <div class="">
     <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-      Lớp học bạn đã tạo
+        Lớp học bạn đã tạo
+      </div>
+    <div v-if="currentUser.tutorStatus == 3">
+      <div class="flex justify-center">
+        <button @click="this.$router.push('/tutor/myclass/create')"
+          class="font-bold bg-blue-400 text-white rounded-lg hover:bg-blue-200 px-12 py-2">
+          Tạo lớp mới
+        </button>
+      </div>
+      <hr class="mt-4">
+      <div class="px-8 py-2" v-if="!isOpenClassDetailPopup">
+        <class-list :currentUser="user" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes"
+          :toggleClassDetailPopup="toggleClassDetailPopup"
+          :pageModel="{ page: currentPage, total: totalPage }"></class-list>
+      </div>
+      <div v-else>
+        <button class="ml-8 mt-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
+          Trở về
+        </button>
+        <class-detail-popup :classId="selectedClass"></class-detail-popup>
+      </div>
     </div>
-    <div class="flex justify-center">
-      <button @click="this.$router.push('/tutor/myclass/create')"
-        class="font-bold bg-blue-400 text-white rounded-lg hover:bg-blue-200 px-12 py-2">
-        Tạo lớp mới
-      </button>
-    </div>
-    <hr class="mt-4">
-    <div class="px-8 py-2" v-if="!isOpenClassDetailPopup">
-     <class-list :currentUser="user" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{page : currentPage, total: totalPage}"></class-list>
-    </div>
-    <div v-else>
-      <button class="ml-8 mt-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
-        Trở về
-      </button>
-      <class-detail-popup :classId="selectedClass"></class-detail-popup>
+    <div v-else class="p-8">
+      <div class="p-8 bg-red-200 rounded-lg text-center font-bold">
+        Bạn cần xác thực tài khoản để sử dụng tính năng này
+
+      </div>
     </div>
   </div>
 </template>
@@ -30,13 +40,13 @@ import ClassList from '../common/ClassList.vue';
 export default {
   components: { GenericPopup, ClassDetailPopup, ClassList },
   name: "TutorClasses",
+  props: ['id','currentUser'],
   data() {
     return {
       totalPage: 100,
       pageSize: 10,
       currentPage: 1,
       selectedClass: 0,
-      currentUser : null,
       isOpenClassDetailPopup: false,
       classes: [],
     };

@@ -202,15 +202,14 @@ export default {
         },
         async getUserSlots(from, to) {
             if (!this.isGuest) {
-
-                let queryString = ""
-                if (from != null) {
-                    queryString += "&From=" + from
-                }
-                if (to != null) {
-                    queryString += "&To=" + to
-                }
-                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students?ClassId=' + this.classId + queryString, {
+                //let queryString = ""
+                // if (from != null) {
+                //     queryString += "&From=" + from
+                // }
+                // if (to != null) {
+                //     queryString += "&To=" + to
+                // }
+                const response = await axios.get(import.meta.env.VITE_API_URL + '/api/SlotStudent/get-slots-of-students?ClassId=' + this.classId + '&From=1990-01-01&To=3000-01-01', {
                     headers: {
                         'Authorization': "Bearer " + localStorage.token
                     }

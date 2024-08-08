@@ -6,5 +6,7 @@ namespace OnDemandTutor.Models.Dtos.User
     {
         public int Id { get; set; }
         public TutorStatus Status { get; set; }
+
+        public string? Reason { get; set; }
     }
 }

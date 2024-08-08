@@ -26,13 +26,13 @@
                     <td>{{ tutor.id }}</td>
                     <td><button @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')" class="w-32 break-words font-bold underline text-blue-400">{{ tutor.fullName }}</button>
                     </td>
-                    <td><img :src="tutor.avatar" class="w-24 h-24"></td>
+                    <td><img :src="tutor.avatarImageUrl" class="w-24 h-24"></td>
                     <td class="break-all">{{ tutor.email }}</td>
                     <td>{{ tutor.phone }}</td>
-                    <td>{{ this.beautifyDatetime(tutor.joiningDate) }}</td>
+                    <td>{{ this.beautifyDatetime(tutor.createdDate) }}</td>
                     <td class="flex flex-col gap-2">
                         <button class="text-white rounded-lg bg-blue-500 hover:bg-blue-200 font-bold text-lg p-2"
-                            @click="handleAccept(tutor.id)">
+                            @click="this.$router.push('/tutor-guest/' + tutor.id + '/profile')">
                             Chi Tiết
                         </button>
                         <button class="text-white rounded-lg bg-lime-500 hover:bg-lime-200 font-bold text-lg p-2"
