@@ -54,10 +54,20 @@ namespace OnDemandTutor.API.Controllers
             return CreatedAtAction(nameof(GetTutorSubjectById), new {Id = createdTutorSubject.Id} , createdTutorSubject);
         }
         [Authorize]
-        [HttpPut]
-        [ProducesResponseType(typeof(UpdateTutorSubjectDto), 200)]
+        [HttpPut("status")]
+        [ProducesResponseType(typeof(UpdateTutorSubjectStatusDto), 200)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        public async Task<IActionResult> UpdateTutorSubject([FromBody] UpdateTutorSubjectDto tutorSubjectDto)
+        public async Task<IActionResult> UpdateTutorSubject([FromBody] UpdateTutorSubjectStatusDto tutorSubjectDto)
+        {
+            await _tutorSubjectService.UpdateTutorSubjectStatusAsync(tutorSubjectDto);
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPut]
+        [ProducesResponseType(typeof(UpdateTutorSubjectStatusDto), 200)]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        public async Task<IActionResult> UpdateTutorSubjectStatus([FromBody] UpdateTutorSubjectDto tutorSubjectDto)
         {
             await _tutorSubjectService.UpdateTutorSubjectAsync(tutorSubjectDto);
             return NoContent();

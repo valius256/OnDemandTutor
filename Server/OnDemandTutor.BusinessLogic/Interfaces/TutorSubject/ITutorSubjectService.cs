@@ -9,7 +9,8 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.TutorSubject
         Task<PagedResult<GetTutorSubjectWithUserAndSubjectDto>> GetTutorSubjectsAsync(PagingModel<QueryTutorSubjectDto> request);
         Task<GetTutorSubjectDetailDto> GetTutorSubjectByIdAsync(int id);
         Task<GetTutorSubjectDetailDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto, GetProfileUserDtos user);
-        Task<UpdateTutorSubjectDto> UpdateTutorSubjectAsync(UpdateTutorSubjectDto tutorSubjectDto);
+        Task UpdateTutorSubjectStatusAsync(UpdateTutorSubjectStatusDto tutorSubjectDto);
+        Task UpdateTutorSubjectAsync(UpdateTutorSubjectDto tutorSubjectDto);
         Task<bool> DeleteTutorSubjectAsync(int id);
     }
 }

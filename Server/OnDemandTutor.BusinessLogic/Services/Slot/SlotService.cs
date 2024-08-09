@@ -298,6 +298,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                         Status = PaymentStatus.Paid,
                         TransactionType = TransactionType.Receive_money
                     });
+                    await _slotStudentServices.SetTransferred(slotStudent.Id);
                     totalAmount += slotStudent.PaidValue;
                 } else if (isFull)
                 {
@@ -307,7 +308,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _notificationService.CreateNotificationAsync(new CreateNotificationDto
             {
                 Content = $"Bạn đã nhận được {totalAmount.ToString("C0", CultureInfo.CreateSpecificCulture("vi-VN"))} từ buổi học {slot.Subject.Name} lúc {slot.StartTime}. " +
-                $"{(isFull ? "Tuy nhiên vẫn còn 1 số học viên chưa thanh toán, bạn có thể nhắc nhở họ" : "Mọi người đã thanh toán đầy đủ")}",
+                $"{(isFull ? "Mọi người đã thanh toán đầy đủ" : "Tuy nhiên vẫn còn 1 số học viên chưa thanh toán, bạn có thể nhắc nhở họ")}",
                 RefUrl = "/tutor/schedule",
                 ReceiverIds = new List<int> { slot.CreateById },
                 RefImageUrl = "/src/assets/logo.png"

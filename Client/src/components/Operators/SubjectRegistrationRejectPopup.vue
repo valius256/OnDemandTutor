@@ -46,7 +46,7 @@ export default {
                         reasonReject : this.reason,
                         status : 2
                     }
-                    await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject', request, {
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject/status', request, {
                         headers: {
                             "Authorization": "Bearer " + localStorage.token
                         }

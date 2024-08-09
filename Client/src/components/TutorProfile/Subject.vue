@@ -16,22 +16,96 @@
 
       <div v-if="selectedSubject" class="bg-white shadow-lg rounded-lg p-6 space-y-4">
         <h3 class="text-2xl font-extrabold text-gray-800 mb-4">{{ selectedSubject.subject.name }}</h3>
-        <div class="text-gray-600">Ngày đăng kí: {{ formatDate(selectedSubject.createdDate) }}</div>
-        <div class="text-gray-600">Mô tả: {{ selectedSubject.description || "Không có mô tả" }}</div>
-        <div :class="getStatusStyle(selectedSubject.status)">Trạng thái: {{ getStatus(selectedSubject.status) }}</div>
-        <div v-if="selectedSubject.status === 2" class="text-red-500 font-bold">
-          Lý do từ chối: {{ selectedSubject.reasonReject || "Không có lý do" }}
+        <div class="text-gray-600 flex gap-2">
+          Ngày đăng kí:
+          <div>{{ formatDate(selectedSubject.createdDate) }}</div>
+        </div>
+        <div class="text-gray-600 flex gap-2">
+          <div class="w-24">Mô tả:</div>
+          <div v-if="editingSubject != selectedSubject.id">
+            {{ selectedSubject.description || "Không có mô tả" }}
+          </div>
+          <textarea v-else class="w-full border-b focus:outline-none" v-model="selectedSubject.description"></textarea>
+        </div>
+        <div>
+          Trạng thái:
+          <span :class="getStatusStyle(selectedSubject.status)">{{ getStatus(selectedSubject.status) }}</span>
+        </div>
+        <div v-if="selectedSubject.status === 2">
+          Lý do từ chối:
+          <span class="text-red-500 font-bold">
+            {{ selectedSubject.reasonReject || "Không có lý do" }}
+          </span>
         </div>
         <div class="text-gray-800 font-semibold">Bằng cấp:</div>
         <div class="flex flex-col gap-2">
-          <div v-for="degree in selectedSubject.degrees" :key="degree.id" class="flex gap-8">
-            <img :src="degree.degreeImgUrl" class="w-1/3 object-cover rounded-lg border border-gray-200" />
-            <div>
-              <span class="font-bold">Tên bằng cấp : </span> {{ degree.tutorDegreeName }}<br>
-              <span class="font-bold">Số bằng cấp : </span> {{ degree.degreeNumber }}<br>
-              <span class="font-bold">Ngày cấp : </span> {{ degree.issuranceDate }}
+          <div v-for="(degree, index) in selectedSubject.degrees" :key="degree.id">
+            <div v-if="editingSubject == selectedSubject.id" class="flex justify-end gap-4">
+              <button @click="openFileDialogForUpdate(degree.id)"
+                class="font-bold text-white rounded-lg px-4 py-1 bg-blue-400 hover:bg-blue-200">
+                Cập nhật ảnh
+              </button>
+              <button @click="removeADegree(index)"
+                class="font-bold text-white rounded-lg px-4 py-1 bg-red-500 hover:bg-red-200">
+                Xóa bằng cấp
+              </button>
             </div>
+            <div class="flex gap-8">
+              <img :src="degree.degreeImgUrl" class="w-1/3 object-cover rounded-lg border border-gray-200" />
+              <div>
+                <div class="flex gap-2">
+                  <span class="w-32 font-bold">Tên bằng cấp : </span>
+                  <span v-if="editingSubject != selectedSubject.id">{{ degree.tutorDegreeName }}</span>
+                  <input v-else class="border-b focus:outline-none" v-model="degree.tutorDegreeName">
+                </div>
+                <div class="flex gap-2">
+                  <span class="w-32 font-bold">Số bằng cấp : </span>
+                  <span v-if="editingSubject != selectedSubject.id">{{ degree.degreeNumber }}</span>
+                  <input v-else class="border-b focus:outline-none" v-model="degree.degreeNumber">
+                </div>
+                <div class="flex gap-2">
+                  <span class="w-32 font-bold">Ngày cấp : </span>
+                  <span v-if="editingSubject != selectedSubject.id">{{ degree.issuranceDate }}</span>
+                  <input v-else type="date" class="border-b focus:outline-none" v-model="degree.issuranceDate">
+                </div>
+              </div>
+              <input type="file" :ref="'fileUpdateInput' + degree.id"
+                @change="handleQualificationUpdateUpload($event, degree.id)" class="hidden" accept="image/*" />
+            </div>
+            <hr class="mt-2">
           </div>
+
+          <input type="file" ref="fileAddInput" multiple @change="handleQualificationUpdateUpload" class="hidden"
+            accept="image/*" />
+          <button class="bg-blue-500 hover:bg-blue-300 py-2 rounded-lg font-bold text-white my-4"
+            v-if="editingSubject == selectedSubject.id" @click="openFileDialogForAddMore">
+            Thêm bằng khác
+          </button>
+        </div>
+        <div class="flex justify-end gap-4" v-if="selectedSubject.status < 3">
+          <button class="font-bold text-white px-4 py-2 bg-yellow-400 hover:bg-yellow-200 rounded-lg"
+            v-if="selectedSubject.status == 2">
+            Gửi lại yêu cầu
+          </button>
+          <button class="font-bold text-white px-4 py-2 bg-blue-400 hover:bg-blue-200 rounded-lg"
+            @click="editingSubject = selectedSubject.id" v-if="editingSubject != selectedSubject.id">
+            Chỉnh sửa
+          </button>
+          <button v-if="editingSubject == selectedSubject.id" @click="updateSubject(true)"
+            class="font-bold text-white px-4 py-2 bg-green-400 hover:bg-green-200 rounded-lg">
+            Xác nhận
+          </button>
+          <button class="font-bold text-white px-4 py-2 bg-red-400 hover:bg-red-200 rounded-lg"
+            @click="editingSubject = 0" v-if="editingSubject == selectedSubject.id">
+            Hủy bỏ
+          </button>
+          <button class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg">Xóa</button>
+        </div>
+
+        <div v-if="selectedSubject.status === 3" class="flex justify-end gap-4">
+          <button class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg">
+            Không còn dậy môn này nữa
+          </button>
         </div>
       </div>
 
@@ -109,11 +183,18 @@ export default {
         video: null,
         description: "",
       },
+      editingSubject: 0,
       qualificationPreview: [],
       videoPreview: null,
     };
   },
   methods: {
+    openFileDialogForUpdate(id) {
+      this.$refs['fileUpdateInput' + id][0].click(); // Trigger the file input click event for the specific degree
+    },
+    openFileDialogForAddMore() {
+      this.$refs.fileAddInput.click()
+    },
     async fetchSubjects() {
       try {
         const response = await axios.get(
@@ -188,6 +269,31 @@ export default {
       );
       console.log(this.newSubject.qualification)
       console.log(this.qualificationPreview)
+    },
+    handleQualificationUpdateUpload(event, updateId) {
+      const files = event.target.files;
+      if (files.length > 10) {
+        alert("Bạn chỉ có thể tải lên tối đa 10 ảnh.");
+        return;
+      }
+      if (updateId) {
+        const degreeIndex = this.selectedSubject.degrees.findIndex(d => d.id = updateId)
+        if (degreeIndex >= 0) {
+          this.selectedSubject.degrees[degreeIndex].degreeImgUrl = URL.createObjectURL(files[0])
+          this.selectedSubject.degrees[degreeIndex].newImgFile = files[0]
+        }
+      } else {
+        for (var file of files) {
+          this.selectedSubject.degrees.push({
+            tutorDegreeName: "",
+            degreeNumber: "",
+            issuranceDate: null,
+            degreeImgUrl: URL.createObjectURL(file),
+            newImgFile: file
+          })
+        }
+
+      }
     },
     handleVideoUpload(event) {
       const file = event.target.files[0];
@@ -272,6 +378,64 @@ export default {
       }
       this.eventBus.emit("close-loading-popup")
     },
+    async updateSubject(option) {
+      if (option) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn xóa yêu cầu tư vấn này?",
+          method: this.updateSubject,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          for (const degree of this.selectedSubject.degrees) {
+            if (degree.newImgFile) {
+              const formData = new FormData();
+              formData.append("file", degree.newImgFile);
+              const fileName = "Degree_of_" + this.currentUser.id + "_" + this.getMillisecondsFromMinDate(new Date());
+              const uploadDegree = await axios.post(
+                import.meta.env.VITE_API_URL + "/api/Upload/upload-image?fileName=" + fileName,
+                formData,
+                {
+                  headers: {
+                    Authorization: "Bearer " + localStorage.token,
+                    "Content-Type": "multipart/form-data",
+                  },
+                })
+              degree.degreeImgUrl = uploadDegree.data
+            }
+          }
+          await axios.put(
+            import.meta.env.VITE_API_URL + "/api/TutorSubject",
+            {
+              id: this.selectedSubject.id,
+              description: this.selectedSubject.description,
+              degrees: this.selectedSubject.degrees
+            },
+            {
+              headers: {
+                Authorization: "Bearer " + localStorage.token,
+              },
+            }
+          );
+          this.eventBus.emit("open-result-dialog", {
+            message: "Gửi thành công",
+            type: "Success"
+          })
+          this.editingSubject = 0
+          await this.getSubjects();
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể gửi yêu cầu. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    },
     formatDate(dateString) {
       const date = new Date(dateString);
       return date.toLocaleDateString();
@@ -310,10 +474,19 @@ export default {
       const minDate = new Date(0);
       return date.getTime() - minDate.getTime();
     },
+    async getSubjects() {
+      await this.fetchSubjects();
+      await this.fetchAllSubjects();
+
+      this.subjects = this.subjects.filter(s => !this.tutorSubjects.find(ts => ts.id == s.id))
+    },
+    removeADegree(index) {
+      this.selectedSubject.degrees.splice(index, 1)
+
+    },
   },
   mounted() {
-    this.fetchSubjects();
-    this.fetchAllSubjects();
+    this.getSubjects()
   },
 };
 </script>

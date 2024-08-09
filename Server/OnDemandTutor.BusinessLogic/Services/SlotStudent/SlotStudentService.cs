@@ -263,4 +263,16 @@ public class SlotStudentService : ISlotStudentServices
         var cost = tutor.TutorFeePerHour * (decimal)(slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
         await _userServices.UpdateBalanceAsync(userId, cost);
     }
+
+    public async Task SetTransferred(int id)
+    {
+        var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(ss => ss.Id == id);
+        if (slotStudent == null)
+        {
+            throw new NotFoundException("Slot student not found");
+        }
+        slotStudent.IsTransferred = true;
+        _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);
+        await _unitOfWorkRepository.SaveChangesAsync();
+    }
 }

@@ -30,4 +30,6 @@ public interface ISlotStudentServices
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
     Task LeaveSlot(int slotId, GetProfileUserDtos user);
     Task Refund(int slotId, int userId);
+
+    Task SetTransferred(int id);
 }

@@ -64,8 +64,6 @@ export default {
                     {
                         params: {
                             "Filter.TutorName": `${this.tutor.firstName ?? ""} ${this.tutor.lastName ?? ""}`,
-                            "Sorts[column]": "string",
-                            "Sorts[isDesc]": true,
                         },
                         headers: {
                             Authorization: "Bearer " + localStorage.token,

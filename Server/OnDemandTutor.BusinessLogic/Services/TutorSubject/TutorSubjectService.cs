@@ -69,7 +69,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             return createdTutorSubjectEntity.Entity.Adapt<GetTutorSubjectDetailDto>();
         }
 
-        public async Task<UpdateTutorSubjectDto> UpdateTutorSubjectAsync(UpdateTutorSubjectDto tutorSubjectDto)
+        public async Task UpdateTutorSubjectStatusAsync(UpdateTutorSubjectStatusDto tutorSubjectDto)
         {
             var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == tutorSubjectDto.Id);
             if (existingTutorSubjectEntity == null)
@@ -103,9 +103,22 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
                 ReceiverIds = new List<int> { tutorSubjectDetail.UserId },
                 RefImageUrl = "/src/assets/logo.png"
             });
-            return updatedTutorSubjectEntity.Adapt<UpdateTutorSubjectDto>();
         }
+        public async Task UpdateTutorSubjectAsync(UpdateTutorSubjectDto tutorSubjectDto)
+        {
+             var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == tutorSubjectDto.Id);
+            if (existingTutorSubjectEntity == null)
+            {
+                throw new NotFoundException($"TutorSubject with ID {tutorSubjectDto.Id} not found.");
+            }
 
+            existingTutorSubjectEntity.Description = tutorSubjectDto.Description;
+            var updatedTutorSubjectEntity = _unitOfWork.TutorSubjectRepository.Update(existingTutorSubjectEntity);
+            await _unitOfWork.SaveChangesAsync();
+
+            var tutorSubjectDetail = await GetTutorSubjectByIdAsync(tutorSubjectDto.Id);
+            await _tutorDegreeService.UpsertTutorDegreeAsync(tutorSubjectDto.Degrees, tutorSubjectDetail.Degrees, tutorSubjectDetail.UserId, tutorSubjectDetail.SubjectId);
+        }
         public async Task<bool> DeleteTutorSubjectAsync(int id)
         {
             var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == id);

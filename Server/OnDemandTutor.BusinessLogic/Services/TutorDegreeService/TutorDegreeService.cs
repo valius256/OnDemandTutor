@@ -5,6 +5,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.TutorDegree;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.TutorDegree;
+using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Paging;
 
 namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
@@ -12,15 +13,10 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
     public class TutorDegreeService : ITutorDegreeService
     {
         private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-        private readonly IAuthServices _authService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public TutorDegreeService(IUnitOfWorkRepository unitOfWorkRepository, IAuthServices authService, IHttpContextAccessor HttpContextAccessor)
+        public TutorDegreeService(IUnitOfWorkRepository unitOfWorkRepository)
         {
             _unitOfWorkRepository = unitOfWorkRepository;
-            _authService = authService;
-            _httpContextAccessor = HttpContextAccessor;
         }
 
         public async Task<PagedResult<GetTutorDegreeDto>> GetTutorDegreesAsync(PagingModel<GetTutorDegreeDto> request)
@@ -52,35 +48,46 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
             return createdTutorDegree.Entity.Adapt<GetTutorDegreeDto>();
         }
 
-        public async Task<UpdateTutorDegreeDto> UpdateTutorDegreeAsync(UpdateTutorDegreeDto tutorDegreeDto)
+        public async Task UpsertTutorDegreeAsync(List<UpdateTutorDegreeDto> newDegreeDtos, List<GetTutorDegreeDto> oldTutorDegreeDtos , int userId, int subjectId)
         {
-            // Retrieve the existing tutor degree entity from the database
-            var existingTutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.FirstOrDefaultAsync(td => td.Id == tutorDegreeDto.Id);
-
-            // Check if the entity is null
-            if (existingTutorDegree == null)
+            foreach (var tutorDegree in newDegreeDtos)
             {
-                throw new NotFoundException($"TutorDegree with ID {tutorDegreeDto.Id} not found.");
+                // Retrieve the existing tutor degree entity from the database
+                var existingTutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.FirstOrDefaultAsync(td => td.Id == tutorDegree.Id);
+
+                // Check if the entity is null
+                if (existingTutorDegree == null)
+                {
+                    var createDto = tutorDegree.Adapt<CreateTutorDegreeDto>();
+                    createDto.TutorId = userId;
+                    createDto.SubjectId = subjectId;
+
+                    await CreateTutorDegreeAsync(createDto);
+                    continue;
+                }
+
+                // Adapt the incoming DTO to the existing entity
+                existingTutorDegree = tutorDegree.Adapt(existingTutorDegree);
+
+                // Set the updated fields
+                existingTutorDegree.UpdatedById = userId; // Assuming there is an UpdatedById property
+                existingTutorDegree.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
+
+                // Update the entity in the database
+                var updatedTutorDegree = _unitOfWorkRepository.TutorDegreeRepository.Update(existingTutorDegree);
             }
-
-            // Get the current user from the authentication service
-            var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
-
-            // Adapt the incoming DTO to the existing entity
-            existingTutorDegree = tutorDegreeDto.Adapt(existingTutorDegree);
-
-            // Set the updated fields
-            existingTutorDegree.UpdatedById = user.Id; // Assuming there is an UpdatedById property
-            existingTutorDegree.UpdatedDate = DateTime.Now; // Assuming there is an UpdatedDate property
-
-            // Update the entity in the database
-            var updatedTutorDegree = _unitOfWorkRepository.TutorDegreeRepository.Update(existingTutorDegree);
-
             // Save the changes
             await _unitOfWorkRepository.SaveChangesAsync();
 
-            // Return the updated DTO
-            return updatedTutorDegree.Entity.Adapt<UpdateTutorDegreeDto>();
+            //Delete the unused degrees
+            foreach (var tutorDegree in oldTutorDegreeDtos)
+            {
+                if (!newDegreeDtos.Any(d => d.Id == tutorDegree.Id))
+                {
+                    await DeleteTutorDegreeAsync(tutorDegree.Id);
+                }
+            }
+
         }
 
         public async Task<bool> DeleteTutorDegreeAsync(int id)
