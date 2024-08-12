@@ -8,7 +8,12 @@
         <div v-if="tutorSubjects.length === 0" class="text-gray-500">Bạn chưa có môn học nào.</div>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="tutorSubject in tutorSubjects" :key="tutorSubject.id" @click="selectSubject(tutorSubject)"
-            class="cursor-pointer p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition duration-300 ease-in-out transform hover:scale-105">
+            class="cursor-pointer p-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105" :class="{
+      'bg-gray-100 hover:bg-gray-200': tutorSubject.status == 0,
+      'bg-gray-200 hover:bg-gray-300': tutorSubject.status == 1,
+      'bg-red-300 hover:bg-red-400': tutorSubject.status == 2,
+      'bg-blue-200 hover:bg-blue-300': tutorSubject.status == 3,
+    }">
             <div class="text-xl font-semibold text-gray-800">{{ tutorSubject.subject.name }}</div>
           </div>
         </div>
@@ -84,7 +89,7 @@
         </div>
         <div class="flex justify-end gap-4" v-if="selectedSubject.status < 3">
           <button class="font-bold text-white px-4 py-2 bg-yellow-400 hover:bg-yellow-200 rounded-lg"
-            v-if="selectedSubject.status == 2">
+            @click="handleResubmit(true)" v-if="selectedSubject.status == 2">
             Gửi lại yêu cầu
           </button>
           <button class="font-bold text-white px-4 py-2 bg-blue-400 hover:bg-blue-200 rounded-lg"
@@ -99,11 +104,15 @@
             @click="editingSubject = 0" v-if="editingSubject == selectedSubject.id">
             Hủy bỏ
           </button>
-          <button class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg">Xóa</button>
+          <button class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg"
+            @click="handleDeleteDegree(true)">
+            Xóa
+          </button>
         </div>
 
         <div v-if="selectedSubject.status === 3" class="flex justify-end gap-4">
-          <button class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg">
+          <button @click="handleDeleteDegree(true)"
+            class="font-bold text-white px-4 py-2 bg-red-500 hover:bg-blue-200 rounded-lg">
             Không còn dậy môn này nữa
           </button>
         </div>
@@ -201,9 +210,7 @@ export default {
           import.meta.env.VITE_API_URL + "/api/TutorSubject",
           {
             params: {
-              "Filter.TutorName": `${this.currentUser.firstName ?? ""} ${this.currentUser.lastName ?? ""}`,
-              "Sorts[column]": "string",
-              "Sorts[isDesc]": true,
+              "Filter.TutorId": this.currentUser.id
             },
             headers: {
               Authorization: "Bearer " + localStorage.token,
@@ -368,7 +375,7 @@ export default {
           message: "Gửi thành công",
           type: "Success"
         })
-        await this.fetchSubjects();
+        await this.getSubjects();
       } catch (error) {
         console.error("Error registering subject:", error);
         this.eventBus.emit("open-result-dialog", {
@@ -477,13 +484,87 @@ export default {
     async getSubjects() {
       await this.fetchSubjects();
       await this.fetchAllSubjects();
-
-      this.subjects = this.subjects.filter(s => !this.tutorSubjects.find(ts => ts.id == s.id))
+      console.log(this.subjects)
+      console.log(this.tutorSubjects)
+      this.subjects = this.subjects.filter(s => !this.tutorSubjects.some(ts => ts.subjectId === s.id));
     },
     removeADegree(index) {
       this.selectedSubject.degrees.splice(index, 1)
-
     },
+    async handleResubmit(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn nộp lại yêu cầu đăng ký này?",
+          method: this.handleResubmit,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.put(import.meta.env.VITE_API_URL + '/api/TutorSubject/status', {
+            id: this.selectedSubject.id,
+            userId: this.currentUser.id,
+            subjectId: this.selectedSubject.subjectId,
+            status: 0,
+            reasonReject: ""
+          }, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Gửi thành công",
+            type: "Success"
+          })
+          this.editingSubject = 0
+          await this.getSubjects();
+          await this.fetchTutorSubjectDetail(this.selectedSubject.id)
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể gửi yêu cầu. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    },
+    async handleDeleteDegree(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn xóa môn học này?",
+          method: this.handleDeleteDegree,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.delete(import.meta.env.VITE_API_URL + '/api/TutorSubject/' + this.selectedSubject.id, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Xóa thành công",
+            type: "Success"
+          })
+          this.selectedSubject = null;
+          this.editingSubject = 0;
+          await this.getSubjects()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể xóa được. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    }
   },
   mounted() {
     this.getSubjects()

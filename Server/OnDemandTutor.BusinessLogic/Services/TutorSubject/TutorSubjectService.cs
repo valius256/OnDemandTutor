@@ -88,6 +88,10 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             {
                 message = $"Chúc mừng, môn học {tutorSubjectDetail.Subject.Name} mà bạn đăng ký đã được chấp thuận. Giờ đây bạn có thể dạy học, tạo lớp cho môn này trên nền tảng!";
             }
+            if (tutorSubjectDto.Status == Models.Enum.TutorSubjectStatus.Pending)
+            {
+                message = $"Bạn đã đăng ký lại môn {tutorSubjectDetail.Subject.Name}. Chúng tôi sẽ xem xét trong vòng 48h";
+            }
             if (tutorSubjectDto.Status == Models.Enum.TutorSubjectStatus.Rejected)
             {
                 message = $"Môn học {tutorSubjectDetail.Subject.Name} mà bạn đăng ký đã bị từ chối. Hãy xem chi tiết tại đây!";

@@ -149,7 +149,7 @@ export default {
           {
             params: {
               "Filter.TutorName": tutorName,
-              Status: 3,
+              "Filter.Status" : 3,
             },
             headers: {
               Authorization: "Bearer " + localStorage.token,

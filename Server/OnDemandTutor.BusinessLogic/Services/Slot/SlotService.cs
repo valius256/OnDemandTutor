@@ -214,13 +214,33 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         }
         public async Task<bool> DeleteSlotAsync(int id)
         {
+            var slotDetail = await GetSlotByIdAsync(id);
+            if (slotDetail.SlotStatus != SlotStatus.Cancelled)
+            {
+                throw new BadRequestException("Slot must be cancelled in order to delete pernamently");
+            }
+            foreach (var slot in slotDetail.SlotStudents)
+            {
+                await _slotStudentServices.SoftDeleteSlotStudent(slot.SlotId, slot.UserId);
+                if (slotDetail.ClassId == null)
+                {
+                    await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+                    {
+                        Content = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã bị gia sư xóa. Bạn sẽ được hoàn lại {slot.PaidValue.ToString("C0", CultureInfo.CreateSpecificCulture("vi-VN"))}",
+                        RefImageUrl = slotDetail.CreatedBy.AvatarImageUrl,
+                        RefUrl = "/student/schedule",
+                        ReceiverIds = new List<int> { slot.UserId }
+                    });
+                }
+
+                if (slot.PaymentStatus == PaymentStatus.Paid)
+                {
+                    await _slotStudentServices.Refund(slot.SlotId, slot.UserId);
+                }
+            }
+
             var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
             await _unitOfWork.SaveChangesAsync();
-
-            if (!isDeleted)
-            {
-                throw new NotFoundException($"Slot with ID {id} not found.");
-            }
             return isDeleted;
         }
 
@@ -238,6 +258,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             slotInDb.SlotStatus = updateSlotStatusDto.Status;
             _unitOfWork.SlotRepository.Update(slotInDb);
             await _unitOfWork.SaveChangesAsync();
+
+            //Notification
+            var slotDetail = await GetSlotByIdAsync(updateSlotStatusDto.Id);
+            if (updateSlotStatusDto.Status == SlotStatus.Cancelled)
+            {
+                await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+                {
+                    Content = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã bị hủy, bạn có thể thoát khỏi buổi học này để được hoàn lại tiền",
+                    RefImageUrl = slotDetail.CreatedBy.AvatarImageUrl,
+                    RefUrl = "/student/schedule",
+                    ReceiverIds = slotDetail.SlotStudents.Select(ss => ss.UserId).ToList()
+                });
+            }
         }
 
         public async Task<bool> EnrollForSlot(int studentId, int slotId)

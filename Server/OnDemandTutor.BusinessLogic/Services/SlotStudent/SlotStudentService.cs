@@ -104,7 +104,6 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ss => ss.PaymentStatus == status).ToListAsync();
         return slotStudentModel.Adapt<List<GetStudentSlotDto>>();
     }
-
     public async Task<bool> SoftDeleteSlotStudent(int slotId, int studentId)
     {
         var slotstudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
@@ -113,15 +112,6 @@ public class SlotStudentService : ISlotStudentServices
             throw new NotFoundException("Slot Student not found");
         }
 
-        // studentClass.RecordStatus = RecordStatus.Deleted;
-        // _unitOfWorkRepository.SlotStudentRepository.Update(studentClass);
-
-        //await _notificationService.CreateNotificationAsync(new NotificationCreateDto()
-        //{
-        //    Content = $"this slot with slot Id{slotId} and studentId{studentId} has been deleted  ",
-        //    IsViewed = true,
-        //    ReceiverId = slotstudent.UserId,
-        //});
         _unitOfWorkRepository.SlotStudentRepository.Remove(slotstudent);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -254,9 +244,10 @@ public class SlotStudentService : ISlotStudentServices
         {
             throw new NotFoundException("Slot of this student is not found");
         }
+        //Ignore this check if the isCheckStatus is false
         if (slotStudent.Slot.SlotStatus != SlotStatus.Cancelled || slotStudent.PaymentStatus == PaymentStatus.Notpaid)
         {
-            throw new BadRequestException("Slot must be not paid and slot is cancelled in order to refund");
+            throw new BadRequestException("Slot must be paid or slot is cancelled in order to refund");
         }
 
         var tutor = await _userServices.GetProfileAsync(slotStudent.Slot.CreateById, null, null);
