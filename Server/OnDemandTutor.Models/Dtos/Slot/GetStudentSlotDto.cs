@@ -10,5 +10,6 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public PaymentStatus PaymentStatus { get; set; }
         public decimal? Rating { get; set; }
         public string? Feedback { get; set; }
+        public decimal PaidValue { get; set; } = 0;
     }
 }

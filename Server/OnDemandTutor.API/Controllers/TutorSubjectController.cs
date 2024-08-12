@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnDemandTutor.API.Middlesware;
+using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.TutorSubject;
+using OnDemandTutor.BusinessLogic.Services.Auth;
 using OnDemandTutor.Models.Dtos.TutorSubject;
 using OnDemandTutor.Models.Paging;
 
@@ -11,10 +14,12 @@ namespace OnDemandTutor.API.Controllers
     public class TutorSubjectController : ControllerBase
     {
         private readonly ITutorSubjectService _tutorSubjectService;
+        private readonly IAuthServices _authServices;
 
-        public TutorSubjectController(ITutorSubjectService tutorSubjectService)
+        public TutorSubjectController(ITutorSubjectService tutorSubjectService, IAuthServices authServices)
         {
             _tutorSubjectService = tutorSubjectService;
+            _authServices = authServices;
         }
 
         [HttpGet]
@@ -38,30 +43,33 @@ namespace OnDemandTutor.API.Controllers
             }
             return Ok(tutorSubject);
         }
-
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(GetTutorSubjectDetailDto), 201)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
         public async Task<IActionResult> CreateTutorSubject([FromBody] CreateTutorSubjectDto tutorSubjectDto)
         {
-            var createdTutorSubject = await _tutorSubjectService.CreateTutorSubjectAsync(tutorSubjectDto);
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            var createdTutorSubject = await _tutorSubjectService.CreateTutorSubjectAsync(tutorSubjectDto, user);
             return CreatedAtAction(nameof(GetTutorSubjectById), new {Id = createdTutorSubject.Id} , createdTutorSubject);
         }
-
-        [HttpPut("{id}")]
-        [ProducesResponseType(typeof(UpdateTutorSubjectDto), 200)]
+        [Authorize]
+        [HttpPut("status")]
+        [ProducesResponseType(typeof(UpdateTutorSubjectStatusDto), 200)]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        public async Task<IActionResult> UpdateTutorSubject(int id, [FromBody] UpdateTutorSubjectDto tutorSubjectDto)
+        public async Task<IActionResult> UpdateTutorSubject([FromBody] UpdateTutorSubjectStatusDto tutorSubjectDto)
         {
-            if (id != tutorSubjectDto.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-            var updatedTutorSubject = await _tutorSubjectService.UpdateTutorSubjectAsync(tutorSubjectDto);
-            if (updatedTutorSubject == null)
-            {
-                return NotFound();
-            }
+            await _tutorSubjectService.UpdateTutorSubjectStatusAsync(tutorSubjectDto);
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPut]
+        [ProducesResponseType(typeof(UpdateTutorSubjectStatusDto), 200)]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        public async Task<IActionResult> UpdateTutorSubjectStatus([FromBody] UpdateTutorSubjectDto tutorSubjectDto)
+        {
+            await _tutorSubjectService.UpdateTutorSubjectAsync(tutorSubjectDto);
             return NoContent();
         }
 

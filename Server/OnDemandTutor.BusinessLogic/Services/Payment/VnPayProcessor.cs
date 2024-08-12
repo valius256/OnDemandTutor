@@ -29,7 +29,7 @@ public class VnPayProcessor : IPaymentProcessor
             ClassId = response.ClassId,
             SlotId = response.SlotId,
             IsRechargePayment = response.IsRechargePayment,
-            Money = response.Money,
+            Money = response.Money / 100,
             PaymentMethod = response.PaymentMethod,
             OrderDescription = response.OrderDescription,
             VnPayResponseCode = response.VnPayResponseCode,

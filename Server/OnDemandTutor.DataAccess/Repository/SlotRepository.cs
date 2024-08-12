@@ -40,6 +40,18 @@ namespace OnDemandTutor.DataAccess.Repository
                 {
                     query = query.Where(s => s.EndTime <= request.Filter.End);
                 }
+                if (request.Filter.SlotStatus.HasValue)
+                {
+                    query = query.Where(s => s.SlotStatus == request.Filter.SlotStatus);
+                }
+                if (request.Filter.IsAboutToStart.HasValue)
+                {
+                    query = query.Where(s => s.StartTime <= DateTime.Now.AddHours(1));
+                }
+                if (request.Filter.IsAboutToEnd.HasValue)
+                {
+                    query = query.Where(s => s.EndTime <= DateTime.Now.AddHours(-1));
+                }
             }
             // Apply filtering if necessary
 
@@ -89,7 +101,13 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Take(1)
                 .FirstOrDefaultAsync(s => s.CreateById == tutorId);
         }
-
+        public async Task<List<Slot>> GetFinishedSlotsToTransfer()
+        {
+            return await dbSet.AsQueryable()
+                .Include(s => s.SlotStudents)
+                .Where(s => s.EndTime <= DateTime.Now.AddHours(-3) && s.SlotStudents.Any(ss => !ss.IsTransferred && ss.PaymentStatus == Models.Enum.PaymentStatus.Paid))
+                .ToListAsync();
+        }
     }
 }
 

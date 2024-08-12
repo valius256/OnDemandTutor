@@ -12,9 +12,13 @@ public class SlotStudentEntityTypeConfiguration : IEntityTypeConfiguration<SlotS
         builder.HasKey(ss => ss.Id);
         builder.Property(ss => ss.Id).ValueGeneratedOnAdd();
         builder.Property(ss => ss.PaymentStatus).HasDefaultValue(PaymentStatus.Notpaid);
+        builder.Property(ss => ss.IsTransferred).HasDefaultValue(false);
         builder.Property(ss => ss.Rating)
             .HasColumnType("decimal(18,2)") 
             .IsRequired(false);
+        builder.Property(ss => ss.PaidValue)
+            .HasColumnType("decimal(18,2)")
+            .HasDefaultValue(0);
         builder.Property(ss => ss.Feedback).IsRequired(false);
         builder.HasOne(ss => ss.Slot)
             .WithMany(s => s.SlotStudents)

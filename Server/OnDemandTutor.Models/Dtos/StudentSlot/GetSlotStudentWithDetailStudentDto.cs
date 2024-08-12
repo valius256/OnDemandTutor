@@ -15,5 +15,9 @@ namespace OnDemandTutor.Models.Dtos.StudentSlot
         public PaymentStatus PaymentStatus { get; set; }
         public decimal? Rating { get; set; }
         public string? Feedback { get; set; }
+
+        public decimal PaidValue { get; set; } = 0;
+        public bool IsTransferred { get; set; } = false;
+
     }
 }
