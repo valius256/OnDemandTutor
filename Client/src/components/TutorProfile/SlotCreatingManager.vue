@@ -59,14 +59,13 @@
             </div>
         </div>
 
-        <time-table :slots="existedSlots" role="tutorCreating" :fetching="getUserSlots" :day-picked="pickedDay"
+        <time-table :slots="[...slots,...existedSlots]" role="tutorCreating" :fetching="getUserSlots" :day-picked="pickedDay"
             :set-picked-day="setPickedDay"></time-table>
     </div>
 </template>
 
 <script>
 import TimeTable from '../StudentProfile/TimeTable.vue';
-import axios from 'axios';
 
 export default {
     name: "SlotCreatingManager",
@@ -91,20 +90,6 @@ export default {
 
             ]
         }
-    },
-    mounted(){    
-        this.existedSlots = this.slots
-        
-        this.eventBus.on("class-creator-remove-slot", (params) => {
-            this.removeSlot(params.start, params.end)
-        })
-        this.eventBus.on("class-creator-select-slot", (params) => {
-            this.selectSlot(params.slot, params.isSelect)
-        })
-    },
-    beforeUnmount() {
-        this.eventBus.off("class-creator-remove-slot")
-        this.eventBus.off("class-creator-select-slot")
     },
     methods : {
         async getUserSlots(){
@@ -231,7 +216,26 @@ export default {
                 this.existedSlots.push(slot)
             }
         },
-    }
+        setup(){
+            //this.existedSlots = this.slots
+            // console.log(this.slots)
+            // console.log(this.existedSlots)
+        }
+    },
+    mounted(){    
+        this.eventBus.on("class-creator-remove-slot", (params) => {
+            this.removeSlot(params.start, params.end)
+        })
+        this.eventBus.on("class-creator-select-slot", (params) => {
+            this.selectSlot(params.slot, params.isSelect)
+        })
+
+        this.setup()
+    },
+    beforeUnmount() {
+        this.eventBus.off("class-creator-remove-slot")
+        this.eventBus.off("class-creator-select-slot")
+    },
 }
 </script>
 

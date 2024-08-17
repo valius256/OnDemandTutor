@@ -14,10 +14,11 @@ public interface ISlotServices
 
     Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
     Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
-    Task<bool> DeleteSlotAsync(int id);
+    Task DeleteSlotAsync(int id);
     //Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
     Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
+    Task ToggleSlotCancellation(int slotId, GetProfileUserDtos user);
     Task<bool> EnrollForSlot(int studentId, int slotId);
     Task ValidateSlotForStudent(int slotId, int studentId);
 

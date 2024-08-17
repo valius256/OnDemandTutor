@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using MimeKit.Tnef;
 using OnDemandTutor.BusinessLogic.Interfaces.Auth;
 using OnDemandTutor.BusinessLogic.Interfaces.Mail;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
@@ -89,7 +90,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 throw new BadRequestException($"Slot duration is maximum 4 hours");
             }
-            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slot.CreateById).ToListAsync();
+            var tutorAllSlot = await _slotRepository.Where(sl => sl.CreateById == slot.CreateById && sl.RecordStatus != RecordStatus.Deleted).ToListAsync();
             foreach (var existSlot in tutorAllSlot)
             {
                 if (slot.Id == existSlot.Id) continue;
@@ -212,7 +213,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             await _unitOfWork.SaveChangesAsync();
 
         }
-        public async Task<bool> DeleteSlotAsync(int id)
+        public async Task DeleteSlotAsync(int id)
         {
             var slotDetail = await GetSlotByIdAsync(id);
             if (slotDetail.SlotStatus != SlotStatus.Cancelled)
@@ -221,7 +222,6 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
             foreach (var slot in slotDetail.SlotStudents)
             {
-                await _slotStudentServices.SoftDeleteSlotStudent(slot.SlotId, slot.UserId);
                 if (slotDetail.ClassId == null)
                 {
                     await _notificationService.CreateNotificationAsync(new CreateNotificationDto
@@ -237,11 +237,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 {
                     await _slotStudentServices.Refund(slot.SlotId, slot.UserId);
                 }
+                await _slotStudentServices.SoftDeleteSlotStudent(slot.SlotId, slot.UserId);
             }
-
-            var isDeleted = await _unitOfWork.SlotRepository.DeleteSlotAsync(id);
+            var existedSlot = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == id);
+            existedSlot.RecordStatus = RecordStatus.Deleted;
+            existedSlot.DeletedDate = DateTime.Now;
             await _unitOfWork.SaveChangesAsync();
-            return isDeleted;
         }
 
 
@@ -250,6 +251,24 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var classId = await _slotRepository.Where(sl => sl.Id == slotId).Select(l => l.ClassId).FirstOrDefaultAsync();
             var listSlotWithSameClass = await _slotRepository.Where(sl => sl.ClassId == classId).ToListAsync();
             return listSlotWithSameClass.Adapt<List<GetSlotWithSlotStudentDto>>();
+        }
+        public async Task ToggleSlotCancellation(int slotId, GetProfileUserDtos user)
+        {
+            var slotInDb = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
+            if (slotInDb == null)
+            {
+                throw new NotFoundException("Slot not found");
+            }
+            if (slotInDb.CreateById != user.Id)
+            {
+                throw new ForbiddenException("This slot does not belong to this tutor");
+            }
+            if ((slotInDb.SlotStatus != SlotStatus.Cancelled && slotInDb.SlotStatus != SlotStatus.NotYet) || slotInDb.StartTime <= DateTime.Now)
+            {
+                throw new BadRequestException("This slot is happened, so it is no longer can be changed");
+            }
+            SlotStatus newStatus = slotInDb.SlotStatus == SlotStatus.Cancelled ? SlotStatus.NotYet : SlotStatus.Cancelled;
+            await UpdateSlotStatusAsync(new UpdateSlotStatusDto { Id = slotId, Status = newStatus });
         }
 
         public async Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto)
@@ -261,16 +280,24 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
 
             //Notification
             var slotDetail = await GetSlotByIdAsync(updateSlotStatusDto.Id);
+            var message = "";
             if (updateSlotStatusDto.Status == SlotStatus.Cancelled)
+            {
+                message = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã bị hủy, bạn có thể thoát khỏi buổi học này để được hoàn lại tiền.";
+            } else if (updateSlotStatusDto.Status == SlotStatus.NotYet)
+            {
+                message = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã được mở lại";
+            }
+            if (message != "")
             {
                 await _notificationService.CreateNotificationAsync(new CreateNotificationDto
                 {
-                    Content = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã bị hủy, bạn có thể thoát khỏi buổi học này để được hoàn lại tiền",
+                    Content = message,
                     RefImageUrl = slotDetail.CreatedBy.AvatarImageUrl,
                     RefUrl = "/student/schedule",
                     ReceiverIds = slotDetail.SlotStudents.Select(ss => ss.UserId).ToList()
                 });
-            }
+            }      
         }
 
         public async Task<bool> EnrollForSlot(int studentId, int slotId)

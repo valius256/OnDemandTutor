@@ -54,7 +54,7 @@ export default {
             this.isOpenNoti = !this.isOpenNoti
         },
         handleClickOutside(event) {
-            if (!this.$refs.notificationWrapper.contains(event.target)) {
+            if (!this.$refs.notificationWrapper?.contains(event.target)) {
                 this.isOpenNoti = false;
             }
         },

@@ -34,16 +34,6 @@ export default {
         getStatusDisplay(status) {
             let css = "px-4 py-1 text-white font-bold rounded-lg text-center";
             switch (status) {
-                case "Active":
-                    return {
-                        css: css + " bg-green-500",
-                        display: "Đang diễn ra",
-                    };
-                case "Pending":
-                    return {
-                        css: css + " bg-gray-500",
-                        display: "Chờ gia sư",
-                    };
                 case "Finished":
                     return {
                         css: css + " bg-blue-500",
@@ -85,7 +75,11 @@ export default {
             try {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL
-                    }/api/Slot?Filter.UserId=${userId}&Page=1&Limit=100`,
+                    }/api/Slot?Filter.UserId=${userId}
+                    &Filter.SlotStatus=0
+                    &Filter.SlotStatus=1
+                    &Filter.SlotStatus=3
+                    &Page=1&Limit=100`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.token}`,

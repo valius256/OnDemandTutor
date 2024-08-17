@@ -1,8 +1,8 @@
 <template>
     <div class="">
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200">
-                Trình tạo lớp học
-            </div>
+            Trình tạo lớp học
+        </div>
         <div v-if="currentUser.tutorStatus == 3">
 
             <div class="flex justify-end mr-4">
@@ -107,18 +107,16 @@ export default {
         }
     },
     mounted() {
-        this.route = useRoute();
-        this.classId = this.route.params.id;
-        if (this.classId != 0) {
-            this.getData()
-        }
-        this.fetchSubjects()
-
+        this.setup()
     },
     methods: {
-        getData() {
-            //This will remove later
-
+        async setup() {
+            this.route = useRoute();
+            this.classId = this.route.params.id;
+            if (this.classId != 0) {
+                await this.getUserSlots()
+            }
+            await this.fetchSubjects()
         },
         getStatusStyle(status) {
             let css = "text-center font-bold text-white rounded-lg"
@@ -139,7 +137,7 @@ export default {
                     {
                         params: {
                             "Filter.TutorId": this.id,
-                            "Filter.Status" : 3,
+                            "Filter.Status": 3,
                         },
                         headers: {
                             Authorization: "Bearer " + localStorage.token,

@@ -117,11 +117,6 @@ public class SlotStudentService : ISlotStudentServices
         return true;
     }
 
-    public Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, double rate, string feedback)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<SlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
     {
         var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ld => ld.UserId == studentId).ToListAsync();
@@ -226,15 +221,15 @@ public class SlotStudentService : ISlotStudentServices
         {
             throw new NotFoundException("Slot of this student is not found");
         }
-        if (slotStudent.Slot.SlotStatus == SlotStatus.OnGoing || slotStudent.Slot.SlotStatus == SlotStatus.Cancelled)
+        if (slotStudent.Slot.SlotStatus == SlotStatus.OnGoing || slotStudent.Slot.SlotStatus == SlotStatus.Finished)
         {
             throw new BadRequestException("You can only leave the slot that has not started yet!");
         }
-        await SoftDeleteSlotStudent(slotId, user.Id);
-        if (slotStudent.Slot.SlotStatus  == SlotStatus.Cancelled)
+        if (slotStudent.Slot.SlotStatus  == SlotStatus.Cancelled && slotStudent.PaymentStatus == PaymentStatus.Paid)
         {
             await Refund(slotId, user.Id);
         }
+        await SoftDeleteSlotStudent(slotId, user.Id);
     }
 
     public async Task Refund(int slotId, int userId)

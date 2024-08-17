@@ -98,9 +98,9 @@
             </div>
             <span class="text-center text-red-500 font-bold text-xl">
                 {{ (calcDuration() * slot.slot.createdBy.tutorFeePerHour).toLocaleString('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                }) }}
+        style: 'currency',
+        currency: 'VND',
+    }) }}
             </span>
             <div class="italic text-center">
                 Vui lòng chọn phương thức thanh toán
@@ -120,12 +120,20 @@
                     <span class="text-center">Thanh toán bằng VnPay</span>
                 </div>
                 <button @click="handlePay"
-                    class="p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Thanh toán ngay</button>
+                    class="p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Thanh toán
+                    ngay</button>
             </div>
         </div>
+        <button @click="handleLeave(true)"
+            v-if="!isAboutToPay && this.compareDate(new Date(slot.slot.startTime), new Date()) > 0 && !slot.slot.class && !this.checkEnrollSlot()"
+            class="w-full p-2 rounded-lg bg-red-500 hover:bg-red-300 font-bold text-white">
+            Rời buổi học
+        </button>
         <button @click="isAboutToPay = true"
             v-if="!isAboutToPay && this.compareDate(new Date(slot.slot.startTime), new Date()) > 0 && slot.paymentStatus == -2 && !slot.slot.class && this.checkEnrollSlot()"
-            class="w-full p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">Đặt ngay</button>
+            class="w-full p-2 rounded-lg bg-blue-400 hover:bg-blue-200 font-bold text-white">
+            Đặt ngay
+        </button>
         <div class="flex flex-col justify-center mt-2"
             v-if="new Date(slot.slot.endTime) < new Date() && !slot.slot.class && !slot.rating && slot.paymentStatus >= 0">
             <div class="text-sm italic text-center">Bạn đã hoàn tất buổi học này. Hãy để lại feedback về gia sư nhé!
@@ -346,7 +354,41 @@ export default {
                 style: bg, display: display
             };
         },
-
+        async handleLeave(confirmation) {
+            if (confirmation) {
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn muốn rời buổi học này?" + (this.slot.slot.slotStatus == 2 ? 
+                    " Bạn sẽ được hoàn tiền vì gia sư đã chủ động hủy buổi học này" : "Bạn sẽ không được hoàn tiền."),
+                    method: this.handleLeave,
+                    params: false
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/SlotStudent/' + this.slot.slot.id + '/leave',{
+                    }, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Rời buổi học thành công",
+                        type: "Success"
+                    })
+                    await this.action()
+                    this.close()
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Không thể thực hiện. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
+        }
     },
     mounted() {
         this.fetchBalance()

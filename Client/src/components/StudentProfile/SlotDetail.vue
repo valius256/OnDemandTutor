@@ -67,7 +67,9 @@ export default {
     },
     getSlotStyle(slot) {
       let bg = "";
-      if (slot.paymentStatus == 0 && this.compareDate(new Date(slot.slot.startTime), new Date()) < 0) {
+      if (slot.slot.slotStatus == 2) {
+        bg = "bg-black";
+      } else if (slot.paymentStatus == 0 && this.compareDate(new Date(slot.slot.startTime), new Date()) < 0) {
         bg = "bg-red-400";
       } else if (slot.paymentStatus == 1 && this.compareDate(new Date(slot.slot.endTime), new Date()) < 0) {
         bg = "bg-green-300";

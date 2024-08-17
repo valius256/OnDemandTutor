@@ -12,7 +12,7 @@
       </div>
       <hr class="mt-4">
       <div class="px-8 py-2" v-if="!isOpenClassDetailPopup">
-        <class-list :currentUser="user" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes"
+        <class-list :currentUser="currentUser" :handlePageChange="handlePageChange" :movePage="movePage" :classes="classes"
           :toggleClassDetailPopup="toggleClassDetailPopup"
           :pageModel="{ page: currentPage, total: totalPage }"></class-list>
       </div>

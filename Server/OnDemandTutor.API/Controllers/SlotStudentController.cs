@@ -105,14 +105,19 @@ namespace OnDemandTutor.API.Controllers
         {
             var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var result = await _slotStudentService.UpdateSlotStudentAsync(slotId, user.Id, updateDto.Rate, updateDto.Feedback);
+            return NoContent();
+        }
 
-            if (result)
-            {
-                return NoContent();
-            }
 
-            // This line will never be reached if the method handles all cases correctly.
-            return BadRequest("Update failed.");
+        [Authorize]
+        [HttpPut("{slotId}/leave")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> LeaveSlot([FromRoute] int slotId)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            await _slotStudentService.LeaveSlot(slotId, user);
+            return NoContent();
         }
     }
 }

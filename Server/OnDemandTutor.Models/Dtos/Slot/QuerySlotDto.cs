@@ -14,7 +14,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
 
         public DateTime? End { get; set; }
 
-        public SlotStatus? SlotStatus { get; set; }
+        public List<SlotStatus> SlotStatus { get; set; } = new List<SlotStatus>();
         public bool? IsAboutToStart { get; set; }
         public bool? IsAboutToEnd { get; set; }
 

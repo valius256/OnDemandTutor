@@ -66,7 +66,10 @@ export default {
     },
     getSlotStyle(slot) {
       let bg = "";
-      if (
+      if (slot.slotStatus == 2){
+        bg = "bg-black";
+      }
+      else if (
         this.compareDate(new Date(slot.endTime), new Date()) < 0
       ) {
         bg = "bg-green-300";

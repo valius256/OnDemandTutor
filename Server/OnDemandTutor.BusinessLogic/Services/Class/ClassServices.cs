@@ -180,38 +180,30 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
 
         public async Task CronForAutoChangeStatusClassAndSlot()
         {
-            var onGoingSlots = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>() {
-                Filter = new QuerySlotDto()
-                {
-                    IsAboutToEnd = true,
-                    SlotStatus = SlotStatus.OnGoing
-                },
-                Page = 1,
-                Limit = int.MaxValue
-            });
-            var notStartedSlot = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>()
+            var slots = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>()
             {
                 Filter = new QuerySlotDto()
                 {
-                    IsAboutToStart = true,
-                    SlotStatus = SlotStatus.NotYet
+                    IsAboutToEnd = true,
+                    SlotStatus = new List<SlotStatus> { SlotStatus.OnGoing, SlotStatus.NotYet }
                 },
                 Page = 1,
                 Limit = int.MaxValue
             });
 
-            foreach (var slot in onGoingSlots.Items)
+            foreach (var slot in slots.Items)
             {
-                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.Finished });
-                if (slot.ClassId != null)
+                SlotStatus newStatus;
+                if (slot.SlotStatus == SlotStatus.OnGoing)
                 {
-                    await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
+                    newStatus = SlotStatus.Finished;
                 }
-            }
-            foreach (var slot in notStartedSlot.Items)
-            {
-                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.OnGoing });
-                if(slot.ClassId != null)
+                else
+                {
+                    newStatus = SlotStatus.OnGoing;
+                }
+                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = newStatus });
+                if (slot.ClassId != null)
                 {
                     await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
                 }
