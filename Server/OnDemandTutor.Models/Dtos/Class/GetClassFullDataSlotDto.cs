@@ -18,7 +18,7 @@ public class GetClassFullDataSlotDto
     public ClassStatus Status { get; set; }
 
     public GetSubjectDtos Subject { get; set; } = default!;
-    public GetProfileUserDtos Tutor { get; set; } = default!;
+    public GetProfileUserDto Tutor { get; set; } = default!;
 
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }

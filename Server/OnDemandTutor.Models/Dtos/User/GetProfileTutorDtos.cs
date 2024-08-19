@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.User;
 
-public class GetProfileTutorDtos : GetProfileUserDtos
+public class GetProfileTutorDtos : GetProfileUserDto
 {
     public string? IdCardImageUrl { get; set; }
     public string? ScheduleDescription { get; set; }

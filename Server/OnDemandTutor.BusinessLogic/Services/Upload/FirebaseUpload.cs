@@ -16,7 +16,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
     private readonly string StorageBucketName = "ondemandtutor-a049e.appspot.com";
 
 
-    public async Task<string> UploadImageAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
+    public async Task<string> UploadImageAsync(GetProfileUserDto user, string fileName, Stream fileStream)
     {
         try
         {
@@ -119,7 +119,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         }
     }
 
-    public async Task<string> UploadVideoAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
+    public async Task<string> UploadVideoAsync(GetProfileUserDto user, string fileName, Stream fileStream)
     {
         try
         {

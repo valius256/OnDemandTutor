@@ -27,8 +27,8 @@ public class UserController : BaseController<UserController>
     // [Authorize]
     [HttpGet("all")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(PagedResult<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<PagedResult<GetProfileUserDtos>>> GetAll([FromQuery] UserFilterDto request)
+    [ProducesResponseType(typeof(PagedResult<GetProfileUserDto>), 200)]
+    public async Task<IApiResult<PagedResult<GetProfileUserDto>>> GetAll([FromQuery] UserFilterDto request)
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetAllUsersAsync(request, user);
@@ -39,8 +39,8 @@ public class UserController : BaseController<UserController>
     //[Authorize]
     [HttpGet("profile")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(GetProfileUserDtos), 200)]
-    public async Task<IApiResult<GetProfileUserDtos>> GetProfile([FromQuery] int userId)
+    [ProducesResponseType(typeof(GetProfileUserDto), 200)]
+    public async Task<IApiResult<GetProfileUserDto>> GetProfile([FromQuery] int userId)
     {
         var user = await _authServices.GetUserByClaimsNotRequired(HttpContext.User);
         var result = await _userService.GetProfileAsync(userId, null, user);

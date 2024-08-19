@@ -9,8 +9,8 @@ public interface ITransactionServices
 {
     Task<int> CreateTransactionDb(List<TransactionDto> transaction);
     Task<int> TransactionPaid(string transactionId, DateTime paidTime);
-    Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDtos user);
-    Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDtos user);
+    Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDto user);
+    Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDto user);
 
     Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction);
     //Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount);

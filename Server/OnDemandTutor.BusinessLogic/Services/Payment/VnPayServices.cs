@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using Google.Api;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ using OnDemandTutor.Models.Dtos.Payment;
 using OnDemandTutor.Models.Dtos.Slot;
 using OnDemandTutor.Models.Dtos.Transaction;
 using OnDemandTutor.Models.Enum;
+using OnDemandTutor.Models.Models;
 
 namespace OnDemandTutor.BusinessLogic.Services.Payment;
 
@@ -64,16 +66,11 @@ public class VnPayServices : IVnPayServices
 
         await _slotServices.ValidateSlotForStudent(slot.Id, student.Id);
 
-        List<int> listSlotId = new List<int> { slot.Id };
-        var tick = DateTime.Now.Ticks.ToString();
         var tutor = await _userServices.GetProfileAsync(slot.CreateById, null, null);
         var slotCost = (tutor.TutorFeePerHour * (decimal)(slot.EndTime - slot.StartTime).TotalHours);
 
+        var tick = DateTime.Now.Ticks.ToString();
         var paymentUrl = CreateVnPayRequest(model, context, new List<int> { slot.Id }, null, slotCost, model.OrderDescription, false, tick, model.ReturnUrl);
-
-        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
-        await _transactionServices.CreateTransactionDb(transactionDto);
-
 
         return paymentUrl;
     }
@@ -119,6 +116,23 @@ public class VnPayServices : IVnPayServices
         }
         await _slotServices.EnrollForSlot(response.UserId, response.SlotId.First());     
         await _slotStudentServices.SlotStudentPaidAsync(response.SlotId.First(), response.UserId, money);
+
+        await _transactionServices.CreateTransactionDb(new List<TransactionDto>
+        {
+            new TransactionDto
+            {
+                TransactionCode = "SlotPayment_" + DateTime.Now.Ticks,
+                CreatedDate = DateTime.Now,
+                Amount = money,
+                SlotId = response.SlotId.First(),
+                PaymentMethod ="Vnpay-bankcode",
+                CreatedById = response.UserId,
+                Notes =  $"Thanh toán cho slot { response.SlotId.First()} bằng phương thức Vnpay",
+                Status = PaymentStatus.Paid,
+                TransactionType = TransactionType.Payment
+            }
+        });
+
     }
 
     private async Task HandleClassPayment(IPaymentResponse response)
@@ -131,7 +145,7 @@ public class VnPayServices : IVnPayServices
         
         await _transactionServices.CreateTransactionForClassPayment(response.OrderId, response.UserId, response.ClassId.Value, response.Money);
 
-        await _studentClassService.EnrollClass(response.ClassId.Value, response.UserId);
+        await _studentClassService.EnrollClass(response.ClassId.Value, response.UserId, response.Money);
     
         //foreach (var slot in slotInClass.Slots)
         //{
@@ -201,11 +215,6 @@ public class VnPayServices : IVnPayServices
         var tick = DateTime.Now.Ticks.ToString();
 
         var paymentUrl = CreateVnPayRequest(model, context, slotIds, classDto.Id, totalAmount, model.OrderDescription, false, tick, model.returnPage);
-
-        var transactionDto = CreateTransactionDto(tick, "Vnpay-bankcode", totalAmount, model.OrderDescription, slotIds, classDto.Id, context);
-
-        await _transactionServices.CreateTransactionDb(transactionDto);
-
         return paymentUrl;
     }
 
@@ -264,35 +273,6 @@ public class VnPayServices : IVnPayServices
 
         var paymentUrl = pay.CreateRequestUrl(_vnPay.BaseUrl, _vnPay.HashSecret);
         return paymentUrl;
-    }
-
-    private List<TransactionDto> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes, List<int> slotIds, int classId, HttpContext context)
-    {
-        var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
-        var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
-        var currUid = context.User.FindFirst(c => c.Type == "id")?.Value;
-
-        var transactionDtos = new List<TransactionDto>();
-
-        foreach (var slotId in slotIds)
-        {
-            var transactionDto = new TransactionDto
-            {
-                TransactionCode = tick,
-                PaymentMethod = paymentMethod,
-                Amount = amount,
-                Notes = notes,
-                SlotId = slotId,
-                ClassId = classId,
-                Status = PaymentStatus.Notpaid,
-                CreatedDate = DateTime.Now,
-                CreatedById = int.Parse(currUid),
-            };
-
-            transactionDtos.Add(transactionDto);
-        }
-
-        return transactionDtos;
     }
     private List<TransactionDto> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes,
         List<int> slotIds, int? classId, HttpContext context, TransactionType transactionType)

@@ -71,10 +71,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetSlotStudent(int slotId, int studentId)
         {
             var slotStudent = await _slotStudentService.GetSlotStudentAsync(slotId, studentId);
-            if (slotStudent == null)
-            {
-                return NotFound();
-            }
             return Ok(slotStudent);
         }
 

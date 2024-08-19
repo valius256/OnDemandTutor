@@ -38,7 +38,7 @@ namespace OnDemandTutor.BusinessLogic.Services
             var subject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == id);
             if (subject == null)
             {
-                throw new NotFoundException($"Subject with ID {id} not found.");
+                throw new DataNotFoundException($"Subject with ID {id} not found.");
             }
             var subjectDto = subject.Adapt<GetSubjectDtos>();
 
@@ -62,7 +62,7 @@ namespace OnDemandTutor.BusinessLogic.Services
             var existingSubject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == subjectGetDto.Id);
             if (existingSubject == null)
             {
-                throw new NotFoundException($"Subject with ID {subjectGetDto.Id} not found.");
+                throw new DataNotFoundException($"Subject with ID {subjectGetDto.Id} not found.");
             }
 
             var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
@@ -80,7 +80,7 @@ namespace OnDemandTutor.BusinessLogic.Services
             var existingSubject = await _unitOfWork.SubjectRepository.FirstOrDefaultAsync(s => s.Id == id);
             if (existingSubject == null)
             {
-                throw new NotFoundException($"Subject with ID {id} not found.");
+                throw new DataNotFoundException($"Subject with ID {id} not found.");
             }
 
             _unitOfWork.SubjectRepository.Remove(existingSubject);

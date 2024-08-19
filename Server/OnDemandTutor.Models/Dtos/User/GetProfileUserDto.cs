@@ -2,7 +2,7 @@
 
 namespace OnDemandTutor.Models.Dtos.User;
 
-public class GetProfileUserDtos
+public class GetProfileUserDto
 {
     public int Id { get; set; }
     public string FireBaseid { get; set; } = string.Empty;

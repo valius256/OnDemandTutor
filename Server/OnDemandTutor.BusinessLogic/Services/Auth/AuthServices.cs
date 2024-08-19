@@ -14,22 +14,19 @@ namespace OnDemandTutor.BusinessLogic.Services.Auth;
 
 public class AuthServices : IAuthServices
 {
-    private readonly IConfiguration _configuration;
     private readonly IFireBaseAuthServices _fireBaseAuthServices;
     private readonly IJwtProviderServices _jwtProviderServices;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
     private readonly IUserServices _userServices;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     public AuthServices(IUserServices userServices, IUnitOfWorkRepository unitOfWorkRepository,
-        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices, IHttpContextAccessor HttpContextAccessor)
+        IJwtProviderServices jwtProviderServices, IFireBaseAuthServices fireBaseAuthServices)
     {
         _unitOfWorkRepository = unitOfWorkRepository;
         _userServices = userServices;
         _jwtProviderServices = jwtProviderServices;
         _fireBaseAuthServices = fireBaseAuthServices;
-        _httpContextAccessor = HttpContextAccessor;
     }
 
     public async Task<AuthenResponseDto> LoginWithFireBase(LoginDtos loginDto)
@@ -39,7 +36,7 @@ public class AuthServices : IAuthServices
         return await _jwtProviderServices.GetForCredentialsAsync(loginDto.Email, loginDto.Password);
     }
 
-    public async Task<GetProfileUserDtos> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal)
+    public async Task<GetProfileUserDto> GetUserProfileByClaim(ClaimsPrincipal claimsPrincipal)
     {
         if (claimsPrincipal.Identities == null) throw new BadRequestException("User not Authenticate");
 
@@ -49,19 +46,19 @@ public class AuthServices : IAuthServices
         var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId!);
         if (user is null)
         {
-            throw new NotFoundException("User not found");
+            throw new DataNotFoundException("User not found");
         }
         return user;
     }
 
-    public async Task<GetProfileUserDtos?> GetUserByClaimsNotRequired(ClaimsPrincipal claimsPrincipal)
+    public async Task<GetProfileUserDto?> GetUserByClaimsNotRequired(ClaimsPrincipal claimsPrincipal)
     {
         if (claimsPrincipal.Identities == null) return null;
 
         var userId = claimsPrincipal.FindFirst(c => c.Type == "user_id")?.Value;
         if (userId.IsNullOrEmpty()) return null;
 
-        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId);
+        var user = await _userServices.GetUserProfileByFireBaseIdAsync(userId!);
         return user;
     }
 

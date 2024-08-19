@@ -8,7 +8,7 @@
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
-            <class-detail-popup :classId="selectedClass"></class-detail-popup>
+            <class-detail-popup :classId="selectedClass" :isGuest="true"></class-detail-popup>
         </div>
     </div>
 </template>

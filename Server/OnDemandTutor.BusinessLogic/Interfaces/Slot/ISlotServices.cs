@@ -8,17 +8,17 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Slot;
 public interface ISlotServices
 {
     Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
-    Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDtos tutor);
+    Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDto tutor);
     Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
-    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user);
+    Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDto user);
 
     Task<List<Models.Models.Slot>> CreateClassSlotAsync(List<CreateClassSlotDto> slotDtos, GetClassDtos classDto, int userId);
-    Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user);
+    Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDto user);
     Task DeleteSlotAsync(int id);
     //Task CronJobForAutoCheckIfStudentDeptIsMoreThan20Percent();
     Task<List<GetSlotWithSlotStudentDto>> GetListOfSlotSameClassBySlotId(int slotId);
     Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto);
-    Task ToggleSlotCancellation(int slotId, GetProfileUserDtos user);
+    Task ToggleSlotCancellation(int slotId, GetProfileUserDto user);
     Task<bool> EnrollForSlot(int studentId, int slotId);
     Task ValidateSlotForStudent(int slotId, int studentId);
 

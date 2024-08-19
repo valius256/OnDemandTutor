@@ -12,4 +12,5 @@ public class StudentClass : BaseEntity
     [Range(1, 5)]
     public int? Rating { get; set; }
     public string? Feedback { get; set; }
+    public decimal? DepositPaid { get; set; }
 }

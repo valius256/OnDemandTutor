@@ -9,14 +9,14 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.User;
 
 public interface IUserServices
 {
-    Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos);
-    Task<GetProfileUserDtos> VerifyLogin(string? email, string? password);
-    Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor);
-    Task<GetProfileUserDtos> GetProfileAsync(int? userId, string? email, GetProfileUserDtos? accessor);
-    Task<GetProfileUserDtos> GetUserByIdAsync(int? userId);
-    Task<GetProfileUserDtos> GetUserByEmailAsync(string email);
-    Task<GetProfileUserDtos> GetUserProfileByIdAsync(int id);
-    Task<GetProfileUserDtos> GetUserProfileByFireBaseIdAsync(string uId);
+    Task<GetProfileUserDto> RegisterUser(RegisterDtos registerDtos);
+    Task<GetProfileUserDto> VerifyLogin(string? email, string? password);
+    Task<PagedResult<GetProfileUserDto>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDto? accessor);
+    Task<GetProfileUserDto> GetProfileAsync(int? userId, string? email, GetProfileUserDto? accessor);
+    Task<GetProfileUserDto> GetUserByIdAsync(int? userId);
+    Task<GetProfileUserDto> GetUserByEmailAsync(string email);
+    Task<GetProfileUserDto> GetUserProfileByIdAsync(int id);
+    Task<GetProfileUserDto> GetUserProfileByFireBaseIdAsync(string uId);
 
     Task<GetUserBalanceDto> GetUserBalanceAsync(int? userId);
     Task<bool> RechargeAccountAsync(int uId, decimal money);
@@ -26,8 +26,8 @@ public interface IUserServices
     Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request);
     Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto);
-    Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDtos user);
-    Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDtos user);
+    Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDto user);
+    Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDto user);
     Task<decimal?> GetBalanceAsync(int userId);
     Task<bool> UpdateBalanceAsync(int userId, decimal money);
     Task<bool> DeaActiveAccountAsync(DeaActiveAccountDto request);
@@ -37,6 +37,6 @@ public interface IUserServices
     Task<PagedResult<GetOutstandingTutorDto>> GetOutstandingTutor(int limit, int page);
 
     Task<List<GetSimpleUserDto>> GetAllOperators();
-    Task<bool> UpdateTutorRating(GetProfileUserDtos tutorProfile);
+    Task<bool> UpdateTutorRating(GetProfileUserDto tutorProfile);
 
 }

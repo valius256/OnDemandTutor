@@ -32,10 +32,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetBlogById(int id)
         {
             var blog = await _blogService.GetBlogByIdAsync(id);
-            if (blog == null)
-            {
-                return NotFound();
-            }
             return Ok(blog);
         }
 
@@ -45,11 +41,6 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateBlog([FromBody] CreateBlogDtos blogDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var createdBlog = await _blogService.CreateBlogAsync(blogDto);
             return CreatedAtAction(nameof(GetBlogById), createdBlog);
         }
@@ -61,25 +52,8 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateBlog(int id, [FromBody] UpdateBlogDtos blogDto)
         {
-            if (id != blogDto.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var updatedBlog = await _blogService.UpdateBlogAsync(blogDto);
-                return Ok(updatedBlog);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            await _blogService.UpdateBlogAsync(blogDto);
+            return NoContent();
         }
 
         [Authorize]
@@ -88,19 +62,8 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteBlog(int id)
         {
-            try
-            {
-                var isDeleted = await _blogService.DeleteBlogAsync(id);
-                if (isDeleted)
-                {
-                    return NoContent();
-                }
-                return NotFound();
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            await _blogService.DeleteBlogAsync(id);
+            return NoContent();
         }
     }
 }

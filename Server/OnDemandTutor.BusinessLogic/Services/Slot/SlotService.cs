@@ -54,7 +54,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         {
             return await _unitOfWork.SlotRepository.GetSlotsAsync(request);
         }
-        public async Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDtos tutor)
+        public async Task<GetSlotsDtos> GetClosestSlotOfTutor(GetProfileUserDto tutor)
         {
             if (tutor.Role != RoleStatus.Tutor)
             {
@@ -67,7 +67,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var slot = await _unitOfWork.SlotRepository.GetSlotByIdAsync(id);
             if (slot is null)
             {
-                throw new NotFoundException("Slot not found");
+                throw new DataNotFoundException("Slot not found");
             }
             return slot;
         }
@@ -105,7 +105,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var slot = await _slotRepository.FirstOrDefaultAsync(s => s.Id == slotId);
             if (slot == null)
             {
-                throw new NotFoundException("Slot not found");
+                throw new DataNotFoundException("Slot not found");
             }
             var listOfStudentSlots = await _slotStudentServices.GetSimpleStudentSlotOfStudent(studentId);
 
@@ -119,7 +119,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 }
             }
         }
-        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDtos user)
+        public async Task<GetSlotsDtos> CreateSlotAsync(CreateSlotsDto slotDto, GetProfileUserDto user)
         {
             // Add the new Slot entity to repository
             var mappedSlot = slotDto.Adapt<Models.Models.Slot>();
@@ -156,7 +156,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             }
             return results;
         }
-        public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDtos user)
+        public async Task<GetSlotsDtos> UpdateSlotAsync(UpdateSlotDto slotDto, GetProfileUserDto user)
         {
             // Retrieve the existing slot entity from the database
             var existingSlotEntity = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == slotDto.Id);
@@ -164,7 +164,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             // Check if the entity is null
             if (existingSlotEntity == null)
             {
-                throw new NotFoundException($"Slot with ID {slotDto.Id} not found.");
+                throw new DataNotFoundException($"Slot with ID {slotDto.Id} not found.");
             }
             if (user.Id != existingSlotEntity.CreateById)
             {
@@ -252,12 +252,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var listSlotWithSameClass = await _slotRepository.Where(sl => sl.ClassId == classId).ToListAsync();
             return listSlotWithSameClass.Adapt<List<GetSlotWithSlotStudentDto>>();
         }
-        public async Task ToggleSlotCancellation(int slotId, GetProfileUserDtos user)
+        public async Task ToggleSlotCancellation(int slotId, GetProfileUserDto user)
         {
             var slotInDb = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(sl => sl.Id == slotId);
             if (slotInDb == null)
             {
-                throw new NotFoundException("Slot not found");
+                throw new DataNotFoundException("Slot not found");
             }
             if (slotInDb.CreateById != user.Id)
             {
@@ -288,7 +288,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             {
                 message = $"Buổi học môn {slotDetail.Subject.Name} lúc {slotDetail.StartTime} đã được mở lại";
             }
-            if (message != "")
+            if (message != "" && slotDetail.ClassId == null)
             {
                 await _notificationService.CreateNotificationAsync(new CreateNotificationDto
                 {

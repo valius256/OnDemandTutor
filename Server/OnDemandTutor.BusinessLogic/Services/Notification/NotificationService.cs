@@ -17,7 +17,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<PagedResult<GetNotificationDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user)
+        public async Task<PagedResult<GetNotificationDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDto user)
         {
             var pagedNotifications = await _unitOfWork.NotificationRepository.GetNotificationByReceiverId(user.Id, page, limit);
             return pagedNotifications.Adapt<PagedResult<GetNotificationDto>>();
@@ -28,7 +28,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             var notification = await _unitOfWork.NotificationRepository.GetNotificationWithReceiverByIdAsync(id);
             if (notification == null)
             {
-                throw new NotFoundException($"Notification with ID {id} not found.");
+                throw new DataNotFoundException($"Notification with ID {id} not found.");
             }
             var notificationDto = notification.Adapt<GetNotificationDto>();
             notificationDto.ReceiverName = notification.Receiver?.LastName; // Assuming User has a Name property
@@ -53,7 +53,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             var existingNotification = await _unitOfWork.NotificationRepository.FirstOrDefaultAsync(n => n.Id == id);
             if (existingNotification == null)
             {
-                throw new NotFoundException($"Notification with ID {id} not found.");
+                throw new DataNotFoundException($"Notification with ID {id} not found.");
             }
             existingNotification.IsViewed = true;
             var updatedNotification = _unitOfWork.NotificationRepository.Update(existingNotification);
@@ -67,7 +67,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Notification
             var existingNotification = await _unitOfWork.NotificationRepository.GetNotificationWithReceiverByIdAsync(id);
             if (existingNotification == null)
             {
-                throw new NotFoundException($"Notification with ID {id} not found.");
+                throw new DataNotFoundException($"Notification with ID {id} not found.");
             }
 
             _unitOfWork.NotificationRepository.Remove(existingNotification);

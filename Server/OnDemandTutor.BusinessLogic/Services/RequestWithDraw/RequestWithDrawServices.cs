@@ -36,7 +36,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         _transactionServices = transactionServices;
     }
 
-    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, GetProfileUserDtos user)
+    public async Task<PagedResult<GetRequestWithdrawDto>> ViewAllRequestWithDraw(RequestWithDrawFilterDto request, GetProfileUserDto user)
     {
         var id = user.Id;
         var requestWithDrawModelList = await
@@ -50,7 +50,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         return requestWithDrawModelList.Adapt<PagedResult<GetRequestWithdrawDto>>();
     }
 
-    public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, GetProfileUserDtos user)
+    public async Task<bool> CreateWithdrawRequest(CreateRequestWithdrawDto request, GetProfileUserDto user)
     {
         var uid = user.Id;
         var userInfo = await _userServices.GetUserByIdAsync(uid);
@@ -94,7 +94,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
         return true;
     }
 
-    public async Task<bool> ApproveWithDraw(ApproveWithDrawDto request, GetProfileUserDtos user)
+    public async Task<bool> ApproveWithDraw(ApproveWithDrawDto request, GetProfileUserDto user)
     {
         var operatorId = user.Id;
         var withdraw = await GetWithdrawRequest(request.Id);

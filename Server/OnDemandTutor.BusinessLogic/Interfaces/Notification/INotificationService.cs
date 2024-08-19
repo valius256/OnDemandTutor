@@ -6,7 +6,7 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Notification
 {
     public interface INotificationService
     {
-        Task<PagedResult<GetNotificationDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDtos user);
+        Task<PagedResult<GetNotificationDto>> GetNotificationsAsync(int page, int limit, GetProfileUserDto user);
         Task<GetNotificationDto> GetNotificationByIdAsync(int id);
         Task CreateNotificationAsync(CreateNotificationDto notificationCreateDto);
         Task<GetNotificationDto> UpdateViewStatus(int id);

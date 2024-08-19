@@ -18,7 +18,7 @@ namespace OnDemandTutor.Models.Dtos.WithDrawDto
         public WithDrawStatus Status { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public GetProfileUserDtos User { get; set; } = new GetProfileUserDtos();
+        public GetProfileUserDto User { get; set; } = new GetProfileUserDto();
         public GetSimpleUserDto? Operator { get; set; } = new GetSimpleUserDto();
     }
 }

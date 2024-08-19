@@ -61,7 +61,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             // Check if the entity is null
             if (consultationRequest == null)
             {
-                throw new NotFoundException($"Consultation request with ID {consultationRequestDto.Id} not found.");
+                throw new DataNotFoundException($"Consultation request with ID {consultationRequestDto.Id} not found.");
             }
 
             // Get the current user from the authentication service
@@ -97,7 +97,7 @@ namespace OnDemandTutor.BusinessLogic.Services.ConsultationRequest
             return true;
         }
 
-        public async Task<bool> HandleConsultationRequestAsync(GetProfileUserDtos user, HandleConsultationRequestDto requestDtos)
+        public async Task<bool> HandleConsultationRequestAsync(GetProfileUserDto user, HandleConsultationRequestDto requestDtos)
         {
             var operatorId = user.Id;
 

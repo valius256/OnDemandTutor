@@ -8,7 +8,7 @@
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
-            <ClasssDetailPopup :classId="selectedClass"></ClasssDetailPopup>
+            <ClasssDetailPopup :classId="selectedClass" :close="toggleClassDetailPopup" :action="fetchData"></ClasssDetailPopup>
         </div>
         <generic-popup title="Đánh giá lớp học" v-if="isOpenRatingPopup" :closeFunction="toggleClassRatingPopup">
             <rating-popup :classId="selectedClass" :close="toggleClassRatingPopup" :action="fetchData"></rating-popup>

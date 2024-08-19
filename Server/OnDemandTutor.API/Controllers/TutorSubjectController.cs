@@ -37,10 +37,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetTutorSubjectById(int id)
         {
             var tutorSubject = await _tutorSubjectService.GetTutorSubjectByIdAsync(id);
-            if (tutorSubject == null)
-            {
-                return NotFound();
-            }
             return Ok(tutorSubject);
         }
         [Authorize]
@@ -79,10 +75,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> DeleteTutorSubject(int id)
         {
             var isDeleted = await _tutorSubjectService.DeleteTutorSubjectAsync(id);
-            if (!isDeleted)
-            {
-                return NotFound();
-            }
             return NoContent();
         }
     }

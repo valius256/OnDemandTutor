@@ -78,7 +78,7 @@ namespace OnDemandTutor.DataAccess.Repository
             int page = pagingModel.Page > 0 ? pagingModel.Page : 1;
             int skip = (page - 1) * limit;
 
-            var pagedResult = await classQuery.ToNewPagingAsync(page, limit);
+            var pagedResult = await classQuery.Where(c => c.RecordStatus != RecordStatus.Deleted).ToNewPagingAsync(page, limit);
 
             return pagedResult;
         }
@@ -90,7 +90,8 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(c => c.Tutor)
                 .Include(c => c.Slots)
                 .Include(c => c.StudentClasses)
-                .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId));
+                .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId))
+                .Where(c => c.RecordStatus != RecordStatus.Deleted);
 
 
 
@@ -108,7 +109,8 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(c => c.Subject)
                 .Include(c => c.Tutor)
                 .Include(c => c.Slots)
-                .Where(c => c.Tutor.Id == tutorId);
+                .Where(c => c.Tutor.Id == tutorId)
+                .Where(c => c.RecordStatus != RecordStatus.Deleted);
 
             limit = limit > 0 ? limit : 10;
             page = page > 0 ? page : 1;
@@ -145,6 +147,7 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(c => c.StudentClasses)
                 .ThenInclude(sc => sc.Student)
                 .Where(c => c.StudentClasses.Any(sc => sc.StudentId == studentId))
+                .Where(c => c.RecordStatus != RecordStatus.Deleted)
                 .ToListAsync();
         }
     }

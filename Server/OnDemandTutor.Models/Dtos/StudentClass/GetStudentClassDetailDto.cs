@@ -12,7 +12,7 @@ namespace OnDemandTutor.Models.Dtos.StudentClass
         public int? Rating { get; set; }
         public string? Feedback { get; set; }
 
-        public GetProfileUserDtos Student { get; set; } = default!;
+        public GetProfileUserDto Student { get; set; } = default!;
         public GetClassDtos Class { get; set; } = default!;
     }
 }

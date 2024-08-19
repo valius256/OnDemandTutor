@@ -10,11 +10,11 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 
 public interface ISlotStudentServices
 {
-    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user);
+    Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDto? user);
 
     Task<List<GetSlotStudentDetailDto>> GetSimpleStudentSlotOfStudent(int studentId);
     Task<PagedResult<GetSlotStudentDetailDto>> GetStudentSlotByTutor(PagingModel<QueryRatingDto> queryRatingDto);
-    Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user);
+    Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDto user);
     Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId);
     Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotPaged(int slotId, int page, int limit);
     Task<List<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotAsync(int slotId);
@@ -28,7 +28,7 @@ public interface ISlotStudentServices
     Task<bool> CreateSlotStudentIfNotExists(int slotId, int studentId);
 
     Task CronJobForAutoDereasedMoneyAfterSlotStart();
-    Task LeaveSlot(int slotId, GetProfileUserDtos user);
+    Task LeaveSlot(int slotId, GetProfileUserDto user);
     Task Refund(int slotId, int userId);
 
     Task SetTransferred(int id);

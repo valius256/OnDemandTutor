@@ -52,14 +52,14 @@ public class TransactionServices : ITransactionServices
         return transactionModel;
     }
 
-    public async Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDtos user)
+    public async Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDto user)
     {
         var model = await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(ts =>
             ts.Id == id && ts.CreatedById == user.Id);
         return model?.Adapt<TransactionDto>();
     }
 
-    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDtos user)
+    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDto user)
     {
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, user.Id);
         return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
@@ -117,7 +117,7 @@ public class TransactionServices : ITransactionServices
             TransactionCode = $"Deposit_class_{classId}",
             CreatedById = userId,
             Amount = amount,
-            CreatedDate = DateTime.UtcNow,
+            CreatedDate = DateTime.Now,
             Status = PaymentStatus.Paid,
             TransactionType = TransactionType.Payment,
             UpdatedById = 0,

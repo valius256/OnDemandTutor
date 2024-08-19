@@ -7,6 +7,7 @@ using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
 using OnDemandTutor.BusinessLogic.Interfaces.StudentClass;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.BusinessLogic.Services.Slot;
 using OnDemandTutor.DataAccess;
@@ -19,7 +20,6 @@ using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
-using static OnDemandTutor.Models.Dtos.Blog.GetBlogDtos;
 
 namespace OnDemandTutor.BusinessLogic.Services.StudentClass
 {
@@ -34,10 +34,11 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
         private readonly ISlotServices _slotServices;
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly IEmailServices _emailServices;
+        private readonly ITransactionServices _transactionServices;
 
         public StudentClassService(IUnitOfWorkRepository unitOfWork, IAuthServices authService,
             IUserServices userServices, IClassServices classServices, INotificationService notificationService, IHttpContextAccessor HttpContextAccessor,
-            ISlotServices slotServices, ISlotStudentServices slotStudentServices, IEmailServices emailServices)
+            ISlotServices slotServices, ISlotStudentServices slotStudentServices, IEmailServices emailServices, ITransactionServices transactionServices)
         {
             _unitOfWork = unitOfWork;
             _authService = authService;
@@ -48,12 +49,9 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             _slotServices = slotServices;
             _slotStudentServices = slotStudentServices;
             _emailServices = emailServices;
+            _transactionServices = transactionServices;
         }
-        //public async Task<PagedResult<GetStudentClassDto>> GetStudentClassesAsync(PagingModel<GetStudentClassDto> pagingModel)
-        //{
-        //    var pagedResult = await _unitOfWork.StudentClassRepository.PagingAsync(pagingModel.Adapt<PagingModel<Models.Models.StudentClass>>());
-        //    return pagedResult.Adapt<PagedResult<GetStudentClassDto>>();
-        //}
+
         public async Task<PagedResult<GetStudentClassDetailDto>> QueryStudentClassAsync(PagingModel<QueryStudentClassDto> querySlotStudentDto)
         {
             var slotStudent =
@@ -93,7 +91,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             // Check if the entity is null
             if (existingStudentClassEntity == null)
             {
-                throw new NotFoundException($"StudentClass with ID {studentClassDto.Id} not found.");
+                throw new DataNotFoundException($"StudentClass with ID {studentClassDto.Id} not found.");
             }
 
             // Retrieve the user profile
@@ -116,31 +114,12 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
         }
 
 
-        public async Task<bool> DeleteStudentClassAsync(int id)
-        {
-            var studentClass = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(sc => sc.Id == id);
-            if (studentClass == null)
-            {
-                throw new Exception("StudentClass not found");
-            }
-            _unitOfWork.StudentClassRepository.Remove(studentClass);
-            await _unitOfWork.SaveChangesAsync();
-
-            //await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
-            //{
-            //    Content = $"Bạn đã bị xóa khỏi lớp {studentClass.ClassId}  ",
-            //    IsViewed = true,
-            //    ReceiverId =new List<int>(studentClass.StudentId),
-            //});
-            return true;
-        }
-
         public async Task<bool> StudentRatingClassAsync(int classId, int studentId, int Rating, string? Feedback)
         {
             var recordInDB = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(st => st.StudentId == studentId && st.ClassId == classId);
             if (recordInDB == null)
             {
-                throw new NotFoundException($"StudentClass has not found");
+                throw new DataNotFoundException($"StudentClass has not found");
             }
 
             // handle for rating in student class
@@ -201,24 +180,25 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             return true;
         }
 
-        public async Task<bool> EnrollClass(int classId, int studentId)
+        public async Task<bool> EnrollClass(int classId, int studentId, decimal depositPaid)
         {
             await _classServices.ValidateClassForStudent(classId, studentId);
             var student = await _userServices.GetProfileAsync(studentId, null, null);
             if (student == null)
             {
-                throw new NotFoundException("Student not found");
+                throw new DataNotFoundException("Student not found");
             }
             var classToEnroll = await _classServices.GetClassByIdAsync(classId);
             if (classToEnroll == null)
             {
-                throw new NotFoundException("Class not found");
+                throw new DataNotFoundException("Class not found");
             }
             // Create a new StudentClass entity
             await _unitOfWork.StudentClassRepository.AddAsync(new Models.Models.StudentClass
             {
                 StudentId = studentId,
-                ClassId = classId
+                ClassId = classId,
+                DepositPaid = depositPaid
             });
             
             // Create Student Slots
@@ -277,6 +257,83 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             }
         }
 
+        public async Task ActivelyLeaveClass(int classId, GetProfileUserDto user)
+        {
+            var classDetail = await _classServices.GetClassByIdAsync(classId);
+            if (classDetail == null) {
+                throw new DataNotFoundException("Class not found");
+            };
+            var studentClass = classDetail.StudentClasses.FirstOrDefault(sc => sc.StudentId == user.Id);
+            if (studentClass == null)
+            {
+                throw new BadRequestException("Student is not belong to this class");
+            }
+            //Delete each slot of the student of this class
+            foreach (var slot in classDetail.Slots)
+            {
+                var slotStudent = await _slotStudentServices.GetSlotStudentAsync(slot.Id, user.Id);
+                if (slotStudent == null) continue;
+                if (slot.SlotStatus == SlotStatus.Cancelled && slot.PaymentStatus == PaymentStatus.Paid)
+                {
+                    await _slotStudentServices.Refund(slot.Id, user.Id);
+                }
+                await _slotStudentServices.SoftDeleteSlotStudent(slot.Id, user.Id);
+            }
+            //Refund the class deposit if meet the requirement
+            if (classDetail.Status == ClassStatus.Disabled)
+            {
+                await RefundDeposit(classId, user.Id);
+            }
+
+            //Notification
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            {
+                Content = $"Thật tiếc khi bạn đã rời khỏi lớp {classDetail!.Name}. Mong gặp lại bạn ở những lần sau",
+                ReceiverIds = new List<int> { user.Id },
+                RefUrl = "/student/myclass",
+                RefImageUrl = "/src/assets/logo.png"
+            });
+            if (classDetail.Status != ClassStatus.Disabled)
+            {
+                await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+                {
+                    Content = $"Một học viên đã rời lớp {classDetail.Name} của bạn.",
+                    ReceiverIds = new List<int> { classDetail.TutorId },
+                    RefUrl = "/tutor/myclass/list",
+                    RefImageUrl = user.AvatarImageUrl
+                });
+            }
+            //Delete at last
+            await DeleteStudentClass(classId, user.Id);
+        }
+
+        public async Task RefundDeposit(int classId, int studentId)
+        {
+            var studentClass = await _unitOfWork.StudentClassRepository.FirstOrDefaultAsync(sc => sc.ClassId == classId && sc.StudentId == studentId);
+            if (studentClass == null)
+            {
+                throw new DataNotFoundException("This student class is not found");
+            }
+            //Most likely not happened
+            if (studentClass.DepositPaid == null)
+            {
+                throw new BadRequestException("This class deposit is not paid by this student yet!");
+            }
+            await _userServices.UpdateBalanceAsync(studentId, studentClass.DepositPaid.Value);
+            var classDetail = await _classServices.GetClassByIdAsync(classId);
+            await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto> { new Models.Dtos.Transaction.TransactionDto
+            {
+                ClassId = classId,
+                CreatedById = studentId,
+                CreatedDate = DateTime.Now,
+                TransactionCode = "RefundDeposit_" + DateTime.Now.Ticks,
+                Notes = "Hoàn trả tiền cọc lớp " + classDetail.Name,
+                Amount = studentClass.DepositPaid.Value,
+                PaymentMethod = "Internal",
+                Status = PaymentStatus.Paid,
+                TransactionType = TransactionType.Receive_money,
+            } });
+        }
         private async Task HandleHighUnpaidSlots(Models.Models.StudentClass studentClass)
         {
             var emailParams = new Dictionary<string, string>
@@ -328,6 +385,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             var toAddressList = new List<string> { toAddress };
             await _emailServices.SendAsync(emailType, toAddressList, new List<string>(), emailParams);
         }
+
 
     }
 }
