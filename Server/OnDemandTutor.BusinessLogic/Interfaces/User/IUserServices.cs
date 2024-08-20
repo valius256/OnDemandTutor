@@ -23,7 +23,6 @@ public interface IUserServices
     Task<bool> DeleteUserAsync(string? email);
 
     Task<bool> SyncUserAsync(List<ExportedUserRecord> listUserFireData);
-    Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList();
     Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request);
     Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto);
     Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDto user);

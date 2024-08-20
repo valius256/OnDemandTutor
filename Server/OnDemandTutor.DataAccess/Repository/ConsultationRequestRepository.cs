@@ -26,7 +26,7 @@ namespace OnDemandTutor.DataAccess.Repository
             // Apply filters based on request
             if (!string.IsNullOrEmpty(request.Name))
             {
-                consultListQuery = consultListQuery.Where(cs => cs.Name.Contains(request.Name));
+                consultListQuery = consultListQuery.Where(cs => cs.Name != null && cs.Name.Contains(request.Name)) ;
             }
 
             if (!string.IsNullOrEmpty(request.Phone))
@@ -36,7 +36,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
             if (!string.IsNullOrEmpty(request.ConsultationContent))
             {
-                consultListQuery = consultListQuery.Where(cs => cs.ConsultationContent.Contains(request.ConsultationContent));
+                consultListQuery = consultListQuery.Where(cs => cs.ConsultationContent != null && cs.ConsultationContent.Contains(request.ConsultationContent));
             }
 
             if (request.RequestDateFrom.HasValue)

@@ -110,7 +110,7 @@
 
         <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
             :notOverflow="true">
-            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
+            <slot-detail-popup :slot="selectingSlot" :action="refresh" :close="closeSlotDetailPopup" />
         </generic-popup>
         <generic-popup v-if="isOpenRatingPopup" title="Đánh giá lớp học" :closeFunction="toggleIsOpenRatingPopup">
             <rating-popup :classId="this.class.id" :action="refresh" :close="toggleIsOpenRatingPopup"></rating-popup>
@@ -132,7 +132,7 @@ import ClassEnrollPopup from './ClassEnrollPopup.vue'
 export default {
     components: { TimeTable, GenericPopup, SlotDetailPopup, RatingPopup, ClassEnrollPopup },
     name: "ClassDetailPopup",
-    props: ['classId', 'close', 'isGuest','action'],
+    props: ['classId', 'close', 'isGuest', 'action'],
     data() {
         return {
             class: null,
@@ -159,26 +159,31 @@ export default {
             }
         },
         getStatusStyle(status) {
-            let general = "ml-3 rounded-lg px-3 py-1 font-bold"
+            let general = "ml-3 rounded-lg px-3 py-1 font-bold";
             switch (status) {
                 case 0:
-                    return general + " text-blue-400"
+                    return general + " text-blue-400";
                 case 1:
-                    return general + " text-green-400"
+                    return general + " text-green-400";
+                case 3:
+                    return general + " text-red-400";
                 default:
-                    return general + " text-gray-400"
+                    return general + " text-gray-400";
             }
         },
         getStatusDisplay(status) {
+            console.log(status)
             switch (status) {
                 case 0:
-                    return "Sắp bắt đầu"
+                    return "Sắp bắt đầu";
                 case 1:
-                    return "Đang diễn ra"
+                    return "Đang diễn ra";
                 case 2:
-                    return "Đã kết thúc"
+                    return "Đã kết thúc";
+                case 3:
+                    return "Đã hủy";
                 default:
-                    return "Không rõ"
+                    return "Không rõ";
             }
         },
         calcDuration(slot) {

@@ -14,14 +14,12 @@ public class JwtProviderServices : IJwtProviderServices
     private readonly IFireBaseAuthServices _fireBaseAuthServices;
     private readonly HttpClient _httpClient;
     private readonly IUnitOfWorkRepository _unitOfWorkRepository;
-    private readonly IUserServices _userServices;
 
     public JwtProviderServices(HttpClient httpClient, IUnitOfWorkRepository unitOfWorkRepository,
-        IUserServices userServices, IFireBaseAuthServices fireBaseAuthServices)
+         IFireBaseAuthServices fireBaseAuthServices)
     {
         _httpClient = httpClient;
         _unitOfWorkRepository = unitOfWorkRepository;
-        _userServices = userServices;
         _fireBaseAuthServices = fireBaseAuthServices;
     }
 
@@ -129,22 +127,22 @@ public class JwtProviderServices : IJwtProviderServices
 
     public class AuthToken
     {
-        [JsonPropertyName("kind")] public string Kind { get; set; }
+        [JsonPropertyName("kind")] public string Kind { get; set; } = string.Empty;
 
-        [JsonPropertyName("localId")] public string LocalId { get; set; }
+        [JsonPropertyName("localId")] public string LocalId { get; set; } = string.Empty;
 
-        [JsonPropertyName("Email")] public string Email { get; set; }
+        [JsonPropertyName("Email")] public string Email { get; set; } = string.Empty;
 
-        [JsonPropertyName("displayName")] public string DisplayName { get; set; }
+        [JsonPropertyName("displayName")] public string DisplayName { get; set; } = string.Empty;
 
-        [JsonPropertyName("idToken")] public string IdToken { get; set; }
+        [JsonPropertyName("idToken")] public string IdToken { get; set; } = string.Empty;
 
         [JsonPropertyName("registered")] public bool Registered { get; set; }
 
-        [JsonPropertyName("refreshToken")] public string RefreshToken { get; set; }
+        [JsonPropertyName("refreshToken")] public string RefreshToken { get; set; } = string.Empty;
 
         [JsonPropertyName("expiresIn")] public long ExpiresIn { get; set; }
 
-        [JsonPropertyName("role")] public string Role { get; set; }
+        [JsonPropertyName("role")] public string Role { get; set; } = string.Empty;
     }
 }

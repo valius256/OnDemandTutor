@@ -1,6 +1,9 @@
-﻿namespace OnDemandTutor.Models.Dtos.User;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OnDemandTutor.Models.Dtos.User;
 
 public class ChangeAvatarUrlDto
 {
-    public string Url { get; set; }
+    [Required]
+    public required string Url { get; set; }
 }

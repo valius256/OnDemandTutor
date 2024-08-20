@@ -240,6 +240,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
                 await _slotStudentServices.SoftDeleteSlotStudent(slot.SlotId, slot.UserId);
             }
             var existedSlot = await _unitOfWork.SlotRepository.FirstOrDefaultAsync(s => s.Id == id);
+            if (existedSlot == null) throw new DataNotFoundException("Slot not found");
             existedSlot.RecordStatus = RecordStatus.Deleted;
             existedSlot.DeletedDate = DateTime.Now;
             await _unitOfWork.SaveChangesAsync();
@@ -274,6 +275,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
         public async Task UpdateSlotStatusAsync(UpdateSlotStatusDto updateSlotStatusDto)
         {
             var slotInDb = _unitOfWork.SlotRepository.FirstOrDefault(sl => sl.Id == updateSlotStatusDto.Id);
+            if (slotInDb == null) throw new DataNotFoundException("Slot not found");
             slotInDb.SlotStatus = updateSlotStatusDto.Status;
             _unitOfWork.SlotRepository.Update(slotInDb);
             await _unitOfWork.SaveChangesAsync();
@@ -341,13 +343,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Slot
             var slotStudents = await _slotStudentServices.GetSlotStudentsOfSlotAsync(slotId);
             var isFull = true;
             decimal totalAmount = 0;
-            List<TransactionDto> transactions = new List<TransactionDto>();
+            List<GetTransactionDto> transactions = new List<GetTransactionDto>();
             foreach (var slotStudent in slotStudents)
             {
                 if (slotStudent.PaymentStatus == PaymentStatus.Paid)
                 {
                     await _userServices.UpdateBalanceAsync(slot.CreateById, slotStudent.PaidValue);
-                    transactions.Add(new TransactionDto
+                    transactions.Add(new GetTransactionDto
                     {
                         TransactionCode = $"HP_Slot_{slot.Id}_Tutor_{slot.CreateById}_{DateTime.Now.Ticks}",
                         Amount = slotStudent.PaidValue,

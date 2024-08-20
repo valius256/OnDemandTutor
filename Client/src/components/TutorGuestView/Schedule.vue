@@ -79,6 +79,7 @@ export default {
                     &Filter.SlotStatus=0
                     &Filter.SlotStatus=1
                     &Filter.SlotStatus=3
+                    &Filter.ClassId=0
                     &Page=1&Limit=100`,
                     {
                         headers: {

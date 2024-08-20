@@ -160,14 +160,14 @@ public class UserServices : IUserServices
 
     public async Task<bool> RechargeAccountAsync(int uId, decimal money)
     {
-        var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
-        await UpdateBalanceAsync(recordInDb.Id, money);
+        await UpdateBalanceAsync(uId, money);
         return true;
     }
 
     public async Task<bool> DeleteUserAsync(string? email)
     {
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Email == email);
+        if (user == null) throw new DataNotFoundException("User not found");
         _unitOfWorkRepository.UserRepository.Remove(user);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -192,12 +192,6 @@ public class UserServices : IUserServices
     }
 
 
-    public async Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList()
-    {
-        var listTutorWithDegree = await _unitOfWorkRepository.UserRepository.GetUsersListDegreeData();
-        return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
-    }
-
     public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
     {
         return (await _unitOfWorkRepository.UserRepository.ViewTutorListAsync(request)).Adapt<PagedResult<TutorSimpleProfileDto>>();
@@ -207,6 +201,7 @@ public class UserServices : IUserServices
     public async Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto)
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
+        if (userInDb == null) throw new DataNotFoundException("User not found");
         if (userInDb.IsActive == false)
         {
             throw new ModelException("Tutor status", $"{userInDb.IsActive} already delete",
@@ -301,6 +296,7 @@ public class UserServices : IUserServices
     public async Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDto user)
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == user.Id);
+        if (userInDb == null) throw new DataNotFoundException("User not found");
         userInDb.AvatarImageUrl = imageUrl;
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
@@ -311,14 +307,14 @@ public class UserServices : IUserServices
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
-        return record.Balance;
+        return record?.Balance ?? 0;
     }
 
     public async Task<bool> UpdateBalanceAsync(int userId, decimal money)
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
-
+        if (record == null) throw new DataNotFoundException("User not found");
         record.Balance += money;
         
         if (record.Balance < 0)
@@ -429,7 +425,7 @@ public class UserServices : IUserServices
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, request.Status));
 
         var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == request.Id);
-
+        if (newRecord == null) throw new DataNotFoundException("The record was deleted during execution");
         await _notificationService.CreateNotificationAsync(new Models.Dtos.Notification.CreateNotificationDto
         {
             Content = noti_message,

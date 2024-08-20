@@ -7,7 +7,7 @@ public class RegisterDtos
 {
     public string? FirstName { get; set; }
     public required string LastName { get; set; }
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
 
     [EmailAddress(ErrorMessage = "The Email format is not valid")]
     public required string Email { get; set; }

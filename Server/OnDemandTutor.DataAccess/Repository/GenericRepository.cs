@@ -56,17 +56,17 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         return dbSet.MinAsync(selector, cancellationToken);
     }
 
-    public virtual TEntity Find(params object[] keyValues)
+    public virtual TEntity? Find(params object[] keyValues)
     {
         return dbSet.Find(keyValues);
     }
 
-    public virtual ValueTask<TEntity> FindAsync(object[] keyValues, CancellationToken cancellationToken = default)
+    public virtual ValueTask<TEntity?> FindAsync(object[] keyValues, CancellationToken cancellationToken = default)
     {
         return dbSet.FindAsync(keyValues, cancellationToken);
     }
 
-    public virtual ValueTask<TEntity> FindAsync(params object[] keyValues)
+    public virtual ValueTask<TEntity?> FindAsync(params object[] keyValues)
     {
         return dbSet.FindAsync(keyValues);
     }
@@ -81,23 +81,23 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         return dbSet.Where(predicate).ToListAsync();
     }
 
-    public virtual TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+    public virtual TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
     {
         return dbSet.FirstOrDefault(predicate);
     }
 
-    public virtual TEntity FirstOrDefault()
+    public virtual TEntity? FirstOrDefault()
     {
         return dbSet.FirstOrDefault();
     }
 
-    public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+    public virtual Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
         return dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
-    public virtual Task<TEntity> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
+    public virtual Task<TEntity?> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
     {
         return dbSet.FirstOrDefaultAsync(cancellationToken);
     }
@@ -198,36 +198,36 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
             .ToPagingAsync(request.Page, request.Limit, mapping);
     }
 
-    public async Task<PagedResult<T>> ToPagingAsync<T, TEntity>(
-        IQueryable<TEntity> query,
-        int page, int limit)
-    {
-        var result = new PagedResult<T>
-        {
-            Total = await query.CountAsync(),
-            Page = page,
-            Limit = limit
-        };
+    //public async Task<PagedResult<T>> ToPagingAsync<T, TEntity>(
+    //    IQueryable<TEntity> query,
+    //    int page, int limit)
+    //{
+    //    var result = new PagedResult<T>
+    //    {
+    //        Total = await query.CountAsync(),
+    //        Page = page,
+    //        Limit = limit
+    //    };
 
-        List<TEntity> items;
-        if (limit > 0)
-        {
-            var startIndex = page * limit;
-            items = await query
-                .Skip(startIndex < 0 ? 0 : startIndex)
-                .Take(limit)
-                .ToListAsync();
-        }
-        else
-        {
-            items = await query.ToListAsync();
-        }
+    //    List<TEntity> items;
+    //    if (limit > 0)
+    //    {
+    //        var startIndex = page * limit;
+    //        items = await query
+    //            .Skip(startIndex < 0 ? 0 : startIndex)
+    //            .Take(limit)
+    //            .ToListAsync();
+    //    }
+    //    else
+    //    {
+    //        items = await query.ToListAsync();
+    //    }
 
-        // Use Mapster for mapping
-        result.Items = items.Adapt<List<T>>();
+    //    // Use Mapster for mapping
+    //    result.Items = items.Adapt<List<T>>();
 
-        return result;
-    }
+    //    return result;
+    //}
 
     public virtual Task<PagedResult<TEntity>> PagingAsync<T>(PagingModel<T> request,
         Expression<Func<TEntity, bool>> predicate)

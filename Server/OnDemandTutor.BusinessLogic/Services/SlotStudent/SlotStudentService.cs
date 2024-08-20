@@ -59,12 +59,12 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SlotStudentRepository.GetClosestFutureSlot(user.Id);
         return slotStudent.Adapt<GetSlotStudentDetailDto>();
     }
-    public async Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
+    public async Task<GetSlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
     {
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
                 st.SlotId == slotId && st.UserId == studentId);
-        return slotStudent.Adapt<SlotStudentDto>();
+        return slotStudent.Adapt<GetSlotStudentDto>();
     }
 
     public async Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotPaged(int slotId, int page, int limit)
@@ -82,6 +82,10 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
                 st.SlotId == slotId && st.UserId == studentId);
+        if (slotStudent == null)
+        {
+            throw new DataNotFoundException("Slot Student not found");
+        }
         if (slotStudent.PaymentStatus == PaymentStatus.Paid)
         {
             throw new Exception($"this course has already paid by studentId {studentId}");
@@ -93,10 +97,10 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-    public async Task<SlotStudentDto> GetSlotStudentById(int slotId)
+    public async Task<GetSlotStudentDto> GetSlotStudentById(int slotId)
     {
         var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(u => u.SlotId == slotId);
-        return recordInDb.Adapt<SlotStudentDto>();
+        return recordInDb.Adapt<GetSlotStudentDto>();
     }
 
     public async Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status)
@@ -117,10 +121,10 @@ public class SlotStudentService : ISlotStudentServices
         return true;
     }
 
-    public async Task<List<SlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
+    public async Task<List<GetSlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
     {
         var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ld => ld.UserId == studentId).ToListAsync();
-        return slotStudentModel.Adapt<List<SlotStudentDto>>();
+        return slotStudentModel.Adapt<List<GetSlotStudentDto>>();
     }
 
     public async Task<bool> CreateSlotStudentIfNotExists(int slotId, int studentId)
@@ -184,9 +188,9 @@ public class SlotStudentService : ISlotStudentServices
             if (studentBalance - slotCost >= 0)
             {
                 await _userServices.UpdateBalanceAsync(slotStudent.UserId, -slotCost);
-                await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto>
+                await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto>
                 {
-                    new Models.Dtos.Transaction.TransactionDto
+                    new Models.Dtos.Transaction.GetTransactionDto
                     {
                         TransactionCode = DateTime.Now.Ticks + "_" + slotStudent.UserId,
                         Notes = $"AutoPaid_UserId:{slotStudent.UserId}_SlotId:{slotStudent.SlotId}",
@@ -248,12 +252,13 @@ public class SlotStudentService : ISlotStudentServices
         var tutor = await _userServices.GetProfileAsync(slotStudent.Slot.CreateById, null, null);
         var cost = tutor.TutorFeePerHour * (decimal)(slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
         await _userServices.UpdateBalanceAsync(userId, cost);
-        await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto> { new Models.Dtos.Transaction.TransactionDto
+        await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto> { new Models.Dtos.Transaction.GetTransactionDto
         {
             SlotId = slotId,
             CreatedById = userId,
             CreatedDate = DateTime.Now,
             TransactionCode = "Refund_" + DateTime.Now.Ticks,
+            Notes = "Hoàn tiền slot học " + slotId,
             Amount = cost,
             PaymentMethod = "Internal",
             Status = PaymentStatus.Paid,

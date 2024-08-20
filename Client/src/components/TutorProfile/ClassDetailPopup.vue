@@ -14,13 +14,16 @@
         class="py-2 px-16 bg-red-400 hover:bg-red-200 rounded-lg font-bold text-white">
         Hủy bỏ
       </button>
-      <button @click="handleCancel(true)" v-if="this.class.status != 3 && this.class.status != 2" class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
+      <button @click="handleCancel(true)" v-if="this.class.status != 3 && this.class.status != 2"
+        class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
         Hủy lớp
       </button>
-      <button @click="handleCancel(true)" v-if="this.class.status == 3"  class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
+      <button @click="handleCancel(true)" v-if="this.class.status == 3"
+        class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
         Mở lại lớp
       </button>
-      <button @click="handleDelete(true)" v-if="this.class.status == 3" class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
+      <button @click="handleDelete(true)" v-if="this.class.status == 3"
+        class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
         Xóa lớp
       </button>
     </div>
@@ -147,7 +150,7 @@ export default {
     SlotCreatingManager,
   },
   name: "ClassDetailPopup",
-  props: ["classId", "close"],
+  props: ["classId", "close","action"],
   data() {
     return {
       class: null,
@@ -225,11 +228,14 @@ export default {
           return general + " text-blue-400";
         case 1:
           return general + " text-green-400";
+        case 3:
+          return general + " text-red-400";
         default:
           return general + " text-gray-400";
       }
     },
     getStatusDisplay(status) {
+      console.log(status)
       switch (status) {
         case 0:
           return "Sắp bắt đầu";
@@ -237,6 +243,8 @@ export default {
           return "Đang diễn ra";
         case 2:
           return "Đã kết thúc";
+        case 3:
+          return "Đã hủy";
         default:
           return "Không rõ";
       }
@@ -362,6 +370,7 @@ export default {
             message: "Xóa thành công",
             type: "Success"
           })
+          await this.action()
           this.close()
         } catch (e) {
           console.log(e)

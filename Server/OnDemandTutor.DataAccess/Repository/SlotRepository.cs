@@ -22,7 +22,7 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 if (request.Filter.ClassId.HasValue)
                 {
-                    query = query.Where(s => s.ClassId == request.Filter.ClassId);
+                    query = query.Where(s => s.ClassId == (request.Filter.ClassId != 0 ? request.Filter.ClassId : null));
                 }
                 if (request.Filter.UserId.HasValue)
                 {

@@ -2,7 +2,7 @@
 
 public class ValidationErrorModel
 {
-    public ValidationErrorModel(string errorMessage, string propertyName = null, string errorCode = null)
+    public ValidationErrorModel(string errorMessage, string propertyName = "", string errorCode = "")
     {
         PropertyName = propertyName;
         ErrorMessage = errorMessage;

@@ -321,7 +321,7 @@ namespace OnDemandTutor.BusinessLogic.Services.StudentClass
             }
             await _userServices.UpdateBalanceAsync(studentId, studentClass.DepositPaid.Value);
             var classDetail = await _classServices.GetClassByIdAsync(classId);
-            await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto> { new Models.Dtos.Transaction.TransactionDto
+            await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto> { new Models.Dtos.Transaction.GetTransactionDto
             {
                 ClassId = classId,
                 CreatedById = studentId,

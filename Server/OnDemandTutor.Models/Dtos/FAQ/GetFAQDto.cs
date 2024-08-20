@@ -1,11 +1,10 @@
 ﻿using OnDemandTutor.Models.Dtos.User;
 namespace OnDemandTutor.Models.Dtos.FAQ
 {
-    public class FAQDTO
-
+    public class GetFAQDto
     {
         public int Id { get; set; }
-        public string Question { get; set; }
+        public string Question { get; set; } = string.Empty;
         public string? Answer { get; set; }
         //public int CreateById { get; set; } 
         public DateTime? CreatedDate { get; set; }

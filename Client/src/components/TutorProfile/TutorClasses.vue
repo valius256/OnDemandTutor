@@ -20,7 +20,7 @@
         <button class="ml-8 mt-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg" @click="toggleClassDetailPopup">
           Trở về
         </button>
-        <class-detail-popup :classId="selectedClass" :close="toggleClassDetailPopup"></class-detail-popup>
+        <class-detail-popup :classId="selectedClass" :close="toggleClassDetailPopup" :action="fetchData"></class-detail-popup>
       </div>
     </div>
     <div v-else class="p-8">
@@ -91,29 +91,7 @@ export default {
           return general + " bg-gray-400";
       }
     },
-    getStatusStyle(status) {
-      let general = "ml-3 rounded-lg px-3 py-1 font-bold";
-      switch (status) {
-        case 0:
-          return general + " text-blue-400";
-        case 1:
-          return general + " text-green-400";
-        default:
-          return general + " text-gray-400";
-      }
-    },
-    getStatusDisplay(status) {
-      switch (status) {
-        case 0:
-          return "Sắp bắt đầu";
-        case 1:
-          return "Đang diễn ra";
-        case 2:
-          return "Đã kết thúc";
-        default:
-          return "Không rõ";
-      }
-    },
+    
     async handlePageChange() {
       if (this.currentPage > this.totalPage) {
         this.currentPage = this.totalPage;

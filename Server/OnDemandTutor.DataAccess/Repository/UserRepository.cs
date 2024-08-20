@@ -26,7 +26,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         if (!string.IsNullOrEmpty(request.Name))
         {
             userListQuery = userListQuery.Where(ld =>
-                ld.FirstName.Contains(request.Name) || ld.LastName.Contains(request.Name));
+                (ld.FirstName != null && ld.FirstName.Contains(request.Name)) || 
+                (ld.LastName != null && ld.LastName.Contains(request.Name)));
         }
 
         if (request.IsActive.HasValue)
@@ -98,29 +99,6 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         return await dbSet.Include(ld => ld.TutorDegrees)
             .ToListAsync();
     }
-
-    public async Task<List<TutorRegistrationResponseDtos>> GetTutorRegistration(string firebaseId)
-    {
-        var tutorList = await dbSet
-            .Include(u => u.TutorDegrees)
-            .Include(u => u.TutorSubjects)
-            .Where(u => u.Role == RoleStatus.Tutor && u.FireBaseid == firebaseId && u.TutorDegrees.Any(td => td.TutorSubjectStatus == TutorSubjectDegreeStatus.Pending)) // fetch record with pending
-             .Select(u => new TutorRegistrationResponseDtos
-             {
-                 UserName = u.FirstName + " " + u.LastName,
-                 Email = u.Email,
-                 DegreeImgUrl = u.TutorDegrees.FirstOrDefault().DegreeImgUrl,
-                 SubjectDegreeId = u.TutorDegrees.FirstOrDefault().Id,
-                 DegreeNumber = u.TutorDegrees.FirstOrDefault().DegreeNumber,
-                 SubjectId = u.TutorDegrees.FirstOrDefault().SubjectId,
-                 IssuranceDate = u.TutorDegrees.FirstOrDefault().IssuranceDate,
-                 Status = u.TutorDegrees.FirstOrDefault().TutorSubjectStatus
-             })
-             .AsNoTracking()
-            .ToListAsync();
-        return tutorList;
-    }
-
     public async Task<PagedResult<User>> ViewTutorListAsync(TutorFilterDto request)
     {
         var tutorListQuery = dbSet
@@ -132,7 +110,8 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         if (!string.IsNullOrEmpty(request.Name))
         {
             tutorListQuery = tutorListQuery.Where(ld =>
-                ld.FirstName.Contains(request.Name) || ld.LastName.Contains(request.Name));
+                 (ld.FirstName != null && ld.FirstName.Contains(request.Name)) ||
+                (ld.LastName != null && ld.LastName.Contains(request.Name)));
         }
 
         if (!string.IsNullOrEmpty(request.Email))
@@ -147,7 +126,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         if (request.TutorStatus != null && request.TutorStatus.Any())
         {
-            tutorListQuery = tutorListQuery.Where(ld => request.TutorStatus.Contains(ld.TutorStatus.Value));
+            tutorListQuery = tutorListQuery.Where(ld => ld.TutorStatus != null && request.TutorStatus.Contains(ld.TutorStatus.Value));
         }
 
         if (!string.IsNullOrEmpty(request.Phone))
@@ -249,7 +228,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
 
         return pagedResult;
     }
-
+    //Thằng nào viết hàm này ở đây xứng đáng rớt môn
     public async Task<bool> RecalculateTutorRating(int tutorId)
     {
         var tutor = await dbSet
@@ -270,14 +249,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         {
             ratings.AddRange(classEntity.StudentClasses
                 .Where(sc => sc.Rating.HasValue)
-                .Select(sc => Convert.ToDouble(sc.Rating.Value)));
+                .Select(sc => Convert.ToDouble(sc.Rating!.Value)));
         }
 
         foreach (var slot in tutor.Slots)
         {
             ratings.AddRange(slot.SlotStudents
                 .Where(ss => ss.Rating.HasValue)
-                .Select(ss => Convert.ToDouble(ss.Rating.Value)));
+                .Select(ss => Convert.ToDouble(ss.Rating!.Value)));
         }
 
         tutor.Rating = ratings.Count == 0 ? 0 : ratings.Average();

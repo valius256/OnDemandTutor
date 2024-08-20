@@ -39,7 +39,7 @@ export default {
             }
             let queryStr = this.jsonToQueryString(query)
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/?Filter.TutorId=' + this.tutor.id + "&" +  queryStr, {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/?Filter.TutorId=' + this.tutor.id + "&Filter.Status=0&Filter.Status=1&Filter.Status=2&" +  queryStr, {
                 headers: {
                     "Authorization": "Bearer " + localStorage.token
                 }

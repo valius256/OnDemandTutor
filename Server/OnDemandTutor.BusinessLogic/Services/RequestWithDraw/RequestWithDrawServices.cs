@@ -98,7 +98,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
     {
         var operatorId = user.Id;
         var withdraw = await GetWithdrawRequest(request.Id);
-
+        
         ValidateWithdrawRequest(withdraw);
         UpdateWithdrawRequest(withdraw, request, operatorId);
 
@@ -119,12 +119,17 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
     private async Task<Models.Models.RequestWithDraw> GetWithdrawRequest(int requestId)
     {
-        return await _unitOfWorkRepository.RequestWithDrawRepository.FirstOrDefaultAsync(rw => rw.Id == requestId);
+        var withdraw = await _unitOfWorkRepository.RequestWithDrawRepository.FirstOrDefaultAsync(rw => rw.Id == requestId);
+        if (withdraw == null)
+        {
+            throw new DataNotFoundException("Withdraw request not found");
+        }
+        return withdraw;
     }
 
     private void ValidateWithdrawRequest(Models.Models.RequestWithDraw withdraw)
     {
-        if (withdraw == null || withdraw.Status != WithDrawStatus.Pending)
+        if (withdraw.Status != WithDrawStatus.Pending)
         {
             throw new ModelException("Invalid Request Withdraw", "Invalid Request Withdraw, please check your request",
                 "Invalid Request Withdraw");
@@ -150,7 +155,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             {
                 { "UserName", $"{withDrawCreatedBy.FirstName} {withDrawCreatedBy.LastName}" },
                 { "Status", request.Status.ToString() },
-                { "Reply", request.Reply },
+                { "Reply", request.Reply ?? "" },
                 { "Amount", withdraw.Amount.ToString() }
             };
         await _emailServices.SendAsync(EmailType.WithDraw_Approval_Notification, toAddress, new List<string>(), emailParams, false);
@@ -158,7 +163,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
 
     private async Task CreateTransaction(Models.Models.RequestWithDraw withdraw, int operatorId)
     {
-        var transaction = new TransactionDto
+        var transaction = new GetTransactionDto
         {
             TransactionCode = DateTime.Now.Ticks.ToString() + "request_withdraw",
             Amount = withdraw.Amount,
@@ -170,7 +175,7 @@ public class RequestWithDrawServices : IRequestWithDrawServices
             TransactionType = TransactionType.WithDraw
         };
 
-        await _transactionServices.CreateTransactionDb(new List<TransactionDto> { transaction });
+        await _transactionServices.CreateTransactionDb(new List<GetTransactionDto> { transaction });
         _unitOfWorkRepository.SaveChanges();
     }
 

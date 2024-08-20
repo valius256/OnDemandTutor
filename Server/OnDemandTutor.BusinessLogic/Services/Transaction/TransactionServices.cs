@@ -26,7 +26,7 @@ public class TransactionServices : ITransactionServices
         _notificationService = notificationService;
     }
 
-    public async Task<int> CreateTransactionDb(List<TransactionDto> transaction)
+    public async Task<int> CreateTransactionDb(List<GetTransactionDto> transaction)
     {
         var transactionModels = transaction.Adapt<List<Models.Models.Transaction>>();
         await _unitOfWorkRepository.TransactionRepository
@@ -52,22 +52,22 @@ public class TransactionServices : ITransactionServices
         return transactionModel;
     }
 
-    public async Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDto user)
+    public async Task<GetTransactionDto?> GetTransactionById(int id, GetProfileUserDto user)
     {
         var model = await _unitOfWorkRepository.TransactionRepository.FirstOrDefaultAsync(ts =>
             ts.Id == id && ts.CreatedById == user.Id);
-        return model?.Adapt<TransactionDto>();
+        return model?.Adapt<GetTransactionDto>();
     }
 
-    public async Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDto user)
+    public async Task<PagedResult<GetTransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDto user)
     {
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, user.Id);
-        return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
+        return listTransactionModel.Adapt<PagedResult<GetTransactionDto>>();
     }
-    public async Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction)
+    public async Task<PagedResult<GetTransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction)
     {
         var listTransactionModel = await _unitOfWorkRepository.TransactionRepository.ViewALlTransaction(transaction, 0);
-        return listTransactionModel.Adapt<PagedResult<TransactionDto>>();
+        return listTransactionModel.Adapt<PagedResult<GetTransactionDto>>();
     }
     //public async Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount)
     //{
@@ -109,26 +109,5 @@ public class TransactionServices : ITransactionServices
 
     //    return true;
     //}
-
-    public async Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount)
-    {
-        var transaction = new Models.Models.Transaction
-        {
-            TransactionCode = $"Deposit_class_{classId}",
-            CreatedById = userId,
-            Amount = amount,
-            CreatedDate = DateTime.Now,
-            Status = PaymentStatus.Paid,
-            TransactionType = TransactionType.Payment,
-            UpdatedById = 0,
-            PaymentMethod = "VnPay"
-        };
-
-        _unitOfWorkRepository.TransactionRepository.Add(transaction);
-        await _unitOfWorkRepository.SaveChangesAsync();
-
-
-        return transaction.Id;
-    }
 
 }

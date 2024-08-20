@@ -5,46 +5,46 @@ namespace OnDemandTutor.Models;
 public partial class AppSetting
 {
     [JsonPropertyName("Logging")]
-    public Logging Logging { get; set; }
+    public Logging Logging { get; set; } = default!;
     [JsonPropertyName("SmtpSettings")]
-    public SmtpAppSetting SmtpAppSetting { get; set; }
+    public SmtpAppSetting SmtpAppSetting { get; set; } = default!;
     [JsonPropertyName("VnPay")]
-    public VnPay VnPay { get; set; }
+    public VnPay VnPay { get; set; } = default!;
 }
 
 public partial class Logging
 {
     [JsonPropertyName("LogLevel")]
-    public LogLevel LogLevel { get; set; }
+    public LogLevel LogLevel { get; set; } = default!;
 }
 
 public partial class LogLevel
 {
     [JsonPropertyName("Default")]
-    public string Default { get; set; }
+    public string Default { get; set; } = string.Empty;
 
     [JsonPropertyName("Microsoft.AspNetCore")]
-    public string MicrosoftAspNetCore { get; set; }
+    public string MicrosoftAspNetCore { get; set; } = string.Empty;
 }
 
 public class SmtpAppSetting
 {
-    public string SmtpHost { get; set; }
+    public string SmtpHost { get; set; } = string.Empty;
     public int SmtpPort { get; set; }
-    public string SmtpUserName { get; set; }
-    public string SmtpPassword { get; set; }
+    public string SmtpUserName { get; set; } = string.Empty;
+    public string SmtpPassword { get; set; } = string.Empty;
     public bool EnableSsl { get; set; }
-    public string AppVerify { get; set; }
+    public string AppVerify { get; set; } = string.Empty;
     // public string SmtpFromAddress { get; set; }
 }
 
 public class VnPay
 {
-    public string TmnCode { get; set; }
-    public string HashSecret { get; set; }
-    public string BaseUrl { get; set; }
-    public string Command { get; set; }
-    public string CurrCode { get; set; }
-    public string Locale { get; set; }
-    public string Version { get; set; }
+    public string TmnCode { get; set; } = string.Empty;
+    public string HashSecret { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = string.Empty;
+    public string Command { get; set; } = string.Empty;
+    public string CurrCode { get; set; } = string.Empty;
+    public string Locale { get; set; } = string.Empty;
+    public string Version { get; set; } = string.Empty;
 }

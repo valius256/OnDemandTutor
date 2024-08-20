@@ -2,6 +2,6 @@
 
 public class AuthenResponseDto
 {
-    public string code;
-    public string message;
+    public string code = string.Empty;
+    public string message = string.Empty;
 }

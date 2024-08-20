@@ -6,7 +6,7 @@ namespace OnDemandTutor.Models.Dtos.User;
 public class TutorSimpleProfileDto
 {
     public int Id { get; set; }
-    public string FullName { get; set; }
+    public string FullName { get; set; } = string.Empty;
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public DateTime Dob { get; set; }
@@ -14,8 +14,8 @@ public class TutorSimpleProfileDto
     public string? AvatarImageUrl { get; set; }
     public string? Address { get; set; }
     public Sex Sex { get; set; }
-    public List<string> Subject { get; set; }
-    public string ScheduleDesciption { get; set; }
+    public List<string> Subject { get; set; } = new List<string>();
+    public string ScheduleDesciption { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public double? Rating { get; set; }
     public decimal? TutorFeePerHour { get; set; }

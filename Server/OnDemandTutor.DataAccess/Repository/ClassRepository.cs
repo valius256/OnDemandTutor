@@ -71,6 +71,11 @@ namespace OnDemandTutor.DataAccess.Repository
                 {
                     classQuery = classQuery.Where(c => (c.Tutor.FirstName + " " + c.Tutor.LastName).Contains(pagingModel.Filter.UserName));
                 }
+
+                if (pagingModel.Filter.Status.Count > 0)
+                {
+                    classQuery = classQuery.Where(c => pagingModel.Filter.Status.Contains(c.Status));
+                }
             }
 
 

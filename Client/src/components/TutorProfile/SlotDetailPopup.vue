@@ -8,8 +8,8 @@
       <button v-if="isEdit && slot.slotStatus == 0" @click="toggleEditMode"
         class="px-4 py-2 bg-red-400 hover:bg-red-200 font-bold text-white rounded-lg">Hủy bỏ</button>
       <button v-if="slot.slotStatus == 0 && !slot.classId" @click="handleCancel" class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Hủy Slot</button>
-      <button v-if="slot.slotStatus == 2" @click="handleCancel" class="px-4 py-2 bg-green-600 hover:bg-green-300 font-bold text-white rounded-lg">Mở lại Slot</button>
-      <button v-if="slot.slotStatus == 2" @click="handleDelete" class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Xóa Slot</button>
+      <button v-if="slot.slotStatus == 2 && !slot.classId" @click="handleCancel" class="px-4 py-2 bg-green-600 hover:bg-green-300 font-bold text-white rounded-lg">Mở lại Slot</button>
+      <button v-if="slot.slotStatus == 2 && !slot.classId" @click="handleDelete" class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Xóa Slot</button>
     </div>
     <div v-if="!isEdit">
       <div class="flex gap-4 w-full">

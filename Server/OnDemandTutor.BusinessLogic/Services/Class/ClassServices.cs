@@ -4,6 +4,8 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
@@ -23,13 +25,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         private readonly INotificationService _notificationService;
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly ISlotServices _slotServices;
+        private readonly IUserServices _userServices;
+        private readonly ITransactionServices _transactionServices;
 
-        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, ISlotStudentServices slotStudentServices, ISlotServices slotServices)
+        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, 
+            ISlotStudentServices slotStudentServices, ISlotServices slotServices, IUserServices userServices, ITransactionServices transactionServices)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
             _slotStudentServices = slotStudentServices;
             _slotServices = slotServices;
+            _userServices = userServices;
+            _transactionServices = transactionServices;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -178,12 +185,33 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             _unitOfWork.ClassRepository.Update(classEntity);
             await _unitOfWork.SaveChangesAsync();
 
-            //Sending notification
+            //Delete Slots
             var classDetail = await GetClassByIdAsync(id);
             foreach (var slot in classDetail.Slots)
             {
                 await _slotServices.DeleteSlotAsync(slot.Id);
             }
+            //Refund deposit
+            foreach (var studentClass in classDetail.StudentClasses)
+            {
+                if (studentClass.DepositPaid != null)
+                {
+                    await _userServices.UpdateBalanceAsync(studentClass.StudentId, studentClass.DepositPaid.Value);
+                     await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto> { new Models.Dtos.Transaction.GetTransactionDto
+                    {
+                        ClassId = classDetail.Id,
+                        CreatedById = studentClass.StudentId,
+                        CreatedDate = DateTime.Now,
+                        TransactionCode = "RefundDeposit_" + DateTime.Now.Ticks,
+                        Notes = "Hoàn trả tiền cọc lớp " + classDetail.Name,
+                        Amount = studentClass.DepositPaid.Value,
+                        PaymentMethod = "Internal",
+                        Status = PaymentStatus.Paid,
+                        TransactionType = TransactionType.Receive_money,
+                    } });
+                }       
+            }      
+            //Sending notification
             await _notificationService.CreateNotificationAsync(new CreateNotificationDto
             {
                 Content = $"Lớp học {classDetail.Name} đã bị gia sư xóa vĩnh viễn. Bạn sẽ được hoàn lại tiền cọc",
@@ -231,7 +259,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             var classDetail = await GetClassByIdAsync(classId);
             //Avoid update navigators
             var classModel = await _unitOfWork.ClassRepository.FindAsync(classId);
-
+            if (classModel == null)
+            {
+                throw new DataNotFoundException("Class not found");
+            }
             if (classDetail.Slots.All(s => s.SlotStatus == SlotStatus.Finished))
             {
                 classModel.Status = ClassStatus.Finished;

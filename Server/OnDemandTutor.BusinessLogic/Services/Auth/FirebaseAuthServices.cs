@@ -45,7 +45,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
 
             throw new ArgumentException("At least one parameter (uid, Email, or Phone) must be provided.");
         }
-        catch (FirebaseAuthException ex)
+        catch (FirebaseAuthException)
         {
 
             return null;
@@ -57,7 +57,7 @@ public class FirebaseAuthServices : IFireBaseAuthServices
     {
         var user = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
         if (user == null)
-            throw new ModelException(user.ToString(), "not found", "");
+            throw new DataNotFoundException("user with email " + email + "not found");
 
         await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.Uid);
         return true;

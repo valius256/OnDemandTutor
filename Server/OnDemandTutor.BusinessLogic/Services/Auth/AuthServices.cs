@@ -83,7 +83,7 @@ public class AuthServices : IAuthServices
     public async Task<string> GrantRole(GrantRoleDto request)
     {
         var record = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Email == request.email || l.Id == request.id);
-
+        if (record == null) throw new DataNotFoundException("User nto found");
         record.Role = request.Role;
         _unitOfWorkRepository.UserRepository.Update(record);
         await _unitOfWorkRepository.SaveChangesAsync();

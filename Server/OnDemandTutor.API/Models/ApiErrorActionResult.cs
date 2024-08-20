@@ -2,9 +2,9 @@
 
 public class ApiErrorActionResult
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     public int Status { get; set; }
-    public List<ValidationErrorModel> Errors { get; set; }
+    public List<ValidationErrorModel> Errors { get; set; } = new List<ValidationErrorModel>();
 }
 
 public class ValidationErrorModel

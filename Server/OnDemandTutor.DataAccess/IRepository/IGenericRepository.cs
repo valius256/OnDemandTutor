@@ -21,19 +21,19 @@ public interface IGenericRepository<TEntity> where TEntity : class, IBaseEntity
     Task<TResult> MinAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         CancellationToken cancellationToken = default);
 
-    TEntity Find(params object[] keyValues);
+    TEntity? Find(params object[] keyValues);
 
-    ValueTask<TEntity> FindAsync(object[] keyValues, CancellationToken cancellationToken);
+    ValueTask<TEntity?> FindAsync(object[] keyValues, CancellationToken cancellationToken);
 
-    ValueTask<TEntity> FindAsync(params object[] keyValues);
+    ValueTask<TEntity?> FindAsync(params object[] keyValues);
 
-    TEntity FirstOrDefault();
+    TEntity? FirstOrDefault();
 
-    TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
+    TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
 
-    Task<TEntity> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
+    Task<TEntity?> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
-    Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+    Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default);
 
     Task<List<TEntity>> ToListAsync(CancellationToken cancellationToken = default);
@@ -78,9 +78,9 @@ public interface IGenericRepository<TEntity> where TEntity : class, IBaseEntity
 
     Task<PagedResult<T>> PagingAsync<F, T>(PagingModel<F> request, Func<List<TEntity>, List<T>> mapping);
 
-    Task<PagedResult<T>> ToPagingAsync<T, TEntity>(
-        IQueryable<TEntity> query,
-        int page, int limit);
+    //Task<PagedResult<T>> ToPagingAsync<T, TEntity>(
+    //    IQueryable<TEntity> query,
+    //    int page, int limit);
 
     Task<PagedResult<T>> PagingAsync<F, T>(PagingModel<F> request,
         Expression<Func<TEntity, bool>> predicate, Func<List<TEntity>, List<T>> mapping);

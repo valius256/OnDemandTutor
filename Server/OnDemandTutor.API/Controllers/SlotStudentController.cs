@@ -58,7 +58,7 @@ namespace OnDemandTutor.API.Controllers
         //[Authorize]
         [HttpGet("{slotId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IEnumerable<SlotStudentDto>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<GetSlotStudentDto>), 200)]
         public async Task<IActionResult> GetStudentSlotsOfSlot([FromRoute] int slotId, [FromQuery] int page, [FromQuery] int limit)
         {
             var slotStudents = await _slotStudentService.GetSlotStudentsOfSlotPaged(slotId, page, limit);
@@ -67,7 +67,7 @@ namespace OnDemandTutor.API.Controllers
         //[Authorize]
         [HttpGet("{slotId}/{studentId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(SlotStudentDto), 200)]
+        [ProducesResponseType(typeof(GetSlotStudentDto), 200)]
         public async Task<IActionResult> GetSlotStudent(int slotId, int studentId)
         {
             var slotStudent = await _slotStudentService.GetSlotStudentAsync(slotId, studentId);
