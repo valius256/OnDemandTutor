@@ -41,7 +41,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             var blogEntity = await _unitOfWork.BlogRepository.GetBlogDetail(id);
             if (blogEntity == null)
             {
-                throw new NotFoundException($"Blog with ID {id} not found.");
+                throw new DataNotFoundException($"Blog with ID {id} not found.");
             }
             return blogEntity.Adapt<GetBlogDtos>();
         }
@@ -62,7 +62,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             var existingBlogEntity = await _unitOfWork.BlogRepository.FirstOrDefaultAsync(b => b.Id == blogDto.Id);
             if (existingBlogEntity == null)
             {
-                throw new NotFoundException($"Blog with ID {blogDto.Id} not found.");
+                throw new DataNotFoundException($"Blog with ID {blogDto.Id} not found.");
             }
 
             var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
@@ -81,7 +81,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Blog
             var existingBlogEntity = await _unitOfWork.BlogRepository.FirstOrDefaultAsync(b => b.Id == id);
             if (existingBlogEntity == null)
             {
-                throw new NotFoundException($"Blog with ID {id} not found.");
+                throw new DataNotFoundException($"Blog with ID {id} not found.");
             }
             _unitOfWork.BlogRepository.Remove(existingBlogEntity);
             await _unitOfWork.SaveChangesAsync();

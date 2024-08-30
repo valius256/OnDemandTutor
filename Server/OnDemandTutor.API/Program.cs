@@ -94,13 +94,9 @@ internal class Program
         app.UseAuthorization();
 
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHub<ItemHub>("/itemHub");
-            endpoints.MapHangfireDashboard();
-        });
-
+        app.MapControllers();
+        app.MapHub<ItemHub>("/itemHub");
+        app.MapHangfireDashboard();
 
         // Swagger
         app.UseSwagger();

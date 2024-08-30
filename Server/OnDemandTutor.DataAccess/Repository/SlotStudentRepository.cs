@@ -26,9 +26,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
                 .ThenInclude(s => s.Class)
             .Include(ss => ss.User)
             .OrderBy(ss => ss.Slot.StartTime)
-            .Where(s => s.Slot.EndTime > DateTime.Now)
-            .Take(1)
-            .FirstOrDefaultAsync(s => s.User.Id == studentId);
+            .FirstOrDefaultAsync(s => s.User.Id == studentId && s.Slot.EndTime > DateTime.Now && s.Slot.SlotStatus == Models.Enum.SlotStatus.NotYet && s.Slot.RecordStatus != RecordStatus.Deleted);
     }
     public async Task<List<SlotStudent>> GetStudentSlotsAsync(QuerySlotStudentDto request, int? studentId)
     {
@@ -40,8 +38,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
             .Include(ss => ss.Slot)
                 .ThenInclude(s => s.Class)
             .Include(ss => ss.User)
-            .Where(s => s.Slot.EndTime <= request.To)
-            .Where(s => s.Slot.StartTime >= request.From);
+            .Where(s => s.Slot.EndTime <= request.To && s.Slot.StartTime >= request.From && s.Slot.RecordStatus != RecordStatus.Deleted);
 
         if (request.PaymentStatus.HasValue)
         {
@@ -68,7 +65,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
     {
         var query = dbSet.AsQueryable()
             .Include(ss => ss.Slot)
-            .Where(ss => ss.UserId == studentId);
+            .Where(ss => ss.UserId == studentId && ss.Slot.RecordStatus != RecordStatus.Deleted);
 
         return await query.ToListAsync();
     }
@@ -90,7 +87,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
             }
         }
 
-        return await query.ToNewPagingAsync(queryDto.Page > 0 ? queryDto.Page : 1, queryDto.Limit > 0 ? queryDto.Limit : 10);
+        return await query.Where(s => s.Slot.RecordStatus != RecordStatus.Deleted).ToNewPagingAsync(queryDto.Page > 0 ? queryDto.Page : 1, queryDto.Limit > 0 ? queryDto.Limit : 10);
     }
 
     public async Task<PagedResult<SlotStudent>> GetStudentsSlotWithStudentBySlotIdPaged(int slotId, int page, int limit)
@@ -113,7 +110,7 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         var query = dbSet.AsQueryable()
             .Include(ss => ss.Slot).ThenInclude(s => s.CreatedBy)
             .Include(ss => ss.User)
-            .Where(ss => ss.Slot.StartTime <= DateTime.Now.AddHours(1) && ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid);
+            .Where(ss => ss.Slot.RecordStatus != RecordStatus.Deleted && ss.Slot.StartTime <= DateTime.Now.AddHours(1) && ss.PaymentStatus == Models.Enum.PaymentStatus.Notpaid);
 
         return await query.ToListAsync();
     }
@@ -123,6 +120,6 @@ public class SlotStudentRepository : GenericRepository<SlotStudent>, ISlotStuden
         return await dbSet.AsQueryable()
             .Include(ss => ss.Slot)
             .Include(ss => ss.User)
-            .FirstOrDefaultAsync(ss => ss.UserId == studentId && ss.SlotId == slotId);
+            .FirstOrDefaultAsync(ss => ss.Slot.RecordStatus != RecordStatus.Deleted && ss.UserId == studentId && ss.SlotId == slotId);
     }
 }

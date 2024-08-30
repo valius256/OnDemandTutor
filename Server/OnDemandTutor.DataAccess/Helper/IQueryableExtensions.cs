@@ -200,6 +200,10 @@ public static class IQueryableExtensions
                           && method.GetParameters().Length == 2)
             .MakeGenericMethod(typeof(T), type)
             .Invoke(null, new object[] { source, lambda });
+        if (result == null)
+        {
+            throw new ArgumentNullException("Null");
+        }
         return (IOrderedQueryable<T>)result;
     }
 }

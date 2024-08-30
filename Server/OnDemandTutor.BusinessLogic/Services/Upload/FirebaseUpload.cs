@@ -2,7 +2,6 @@
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 using OnDemandTutor.BusinessLogic.Interfaces.Upload;
-using OnDemandTutor.Models.Dtos.Upload;
 using OnDemandTutor.Models.Dtos.User;
 using System.Security.Claims;
 
@@ -10,13 +9,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Upload;
 
 public class FirebaseUploadServices : IFirebaseUploadServices
 {
-    private readonly string ServiceAccountPath =
-        @"D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.API\firebase.json";
+    //private readonly string ServiceAccountPath =
+    //    @"D:\Semester7\SWD392\OnDemandTutor\Server\OnDemandTutor.API\firebase.json";
 
     private readonly string StorageBucketName = "ondemandtutor-a049e.appspot.com";
 
 
-    public async Task<string> UploadImageAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
+    public async Task<string> UploadImageAsync(GetProfileUserDto user, string fileName, Stream fileStream)
     {
         try
         {
@@ -31,53 +30,53 @@ public class FirebaseUploadServices : IFirebaseUploadServices
     }
 
 
-    public async Task<List<DowloadImagesDtos>> DownloadImagesAsync(string uid)
-    {
-        var downloadLinksList = new List<DowloadImagesDtos>();
-        var storage = StorageClient.Create(GoogleCredential.FromFile(ServiceAccountPath));
-        try
-        {
-            // Reference to the folder containing images for the given uid
-            var objects = storage.ListObjects(StorageBucketName, $"images/{uid}/");
+    //public async Task<List<DowloadImagesDtos>> DownloadImagesAsync(string uid)
+    //{
+    //    var downloadLinksList = new List<DowloadImagesDtos>();
+    //    var storage = StorageClient.Create(GoogleCredential.FromFile(ServiceAccountPath));
+    //    try
+    //    {
+    //        // Reference to the folder containing images for the given uid
+    //        var objects = storage.ListObjects(StorageBucketName, $"images/{uid}/");
 
-            var urlSigner = UrlSigner.FromServiceAccountCredential(
-                GoogleCredential.FromFile(ServiceAccountPath).UnderlyingCredential as ServiceAccountCredential);
+    //        var urlSigner = UrlSigner.FromServiceAccountCredential(
+    //            GoogleCredential.FromFile(ServiceAccountPath).UnderlyingCredential as ServiceAccountCredential);
 
 
-            foreach (var obj in objects)
-            {
-                // Extracting the file Name from the full object Name
-                var fileName = obj.Name.Substring(obj.Name.LastIndexOf('/') + 1);
+    //        foreach (var obj in objects)
+    //        {
+    //            // Extracting the file Name from the full object Name
+    //            var fileName = obj.Name.Substring(obj.Name.LastIndexOf('/') + 1);
 
-                // Generate a signed URL for each image
-                var url = urlSigner.Sign(
-                    obj.Bucket,
-                    obj.Name,
-                    TimeSpan.FromDays(7),
-                    HttpMethod.Get);
-                var fetchUrl = storage.GetObjectAsync(obj.Bucket, obj.Name);
+    //            // Generate a signed URL for each image
+    //            var url = urlSigner.Sign(
+    //                obj.Bucket,
+    //                obj.Name,
+    //                TimeSpan.FromDays(7),
+    //                HttpMethod.Get);
+    //            var fetchUrl = storage.GetObjectAsync(obj.Bucket, obj.Name);
 
-                // Create DTO object
-                var dto = new DowloadImagesDtos
-                {
-                    Uid = uid,
-                    Url = url,
-                    FileName = fileName // Assigning the extracted file Name
-                };
+    //            // Create DTO object
+    //            var dto = new DowloadImagesDtos
+    //            {
+    //                Uid = uid,
+    //                Url = url,
+    //                FileName = fileName // Assigning the extracted file Name
+    //            };
 
-                downloadLinksList.Add(dto);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error generating download links: {ex.Message}");
-            // Handle exceptions according to your requirement
-        }
+    //            downloadLinksList.Add(dto);
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine($"Error generating download links: {ex.Message}");
+    //        // Handle exceptions according to your requirement
+    //    }
 
-        return downloadLinksList;
-    }
+    //    return downloadLinksList;
+    //}
 
-    private async Task EnsurePublicAccess(StorageClient storage)
+    private void EnsurePublicAccess(StorageClient storage)
     {
         var policy = storage.GetBucketIamPolicy(StorageBucketName);
         if (!policy.Bindings.Any(b => b.Role == "roles/storage.objectViewer" && b.Members.Contains("allUsers")))
@@ -96,7 +95,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         try
         {
             var storage = StorageClient.Create();
-            await EnsurePublicAccess(storage);
+            EnsurePublicAccess(storage);
 
             var storageFileName = $"images/{uid}/{fileName}";
             await storage.UploadObjectAsync(StorageBucketName, storageFileName, "image/jpeg", fileStream);
@@ -119,7 +118,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         }
     }
 
-    public async Task<string> UploadVideoAsync(GetProfileUserDtos user, string fileName, Stream fileStream)
+    public async Task<string> UploadVideoAsync(GetProfileUserDto user, string fileName, Stream fileStream)
     {
         try
         {
@@ -146,7 +145,7 @@ public class FirebaseUploadServices : IFirebaseUploadServices
         try
         {
             var storage = StorageClient.Create();
-            await EnsurePublicAccess(storage);
+            EnsurePublicAccess(storage);
 
             var storageFileName = $"video/{uid}/{fileName}";
             await storage.UploadObjectAsync(StorageBucketName, storageFileName, contentType, fileStream);
@@ -184,6 +183,6 @@ public class FirebaseUploadServices : IFirebaseUploadServices
             ".mkv" => "video/x-matroska",
             ".webm" => "video/webm",
             _ => null
-        };
+        } ?? string.Empty;
     }
 }

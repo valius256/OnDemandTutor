@@ -11,7 +11,7 @@ namespace OnDemandTutor.Models.Dtos.StudentSlot
         public int Id { get; set; }
         public int SlotId { get; set; }
 
-        public GetProfileUserDtos User { get; set; } = new GetProfileUserDtos();
+        public GetProfileUserDto User { get; set; } = new GetProfileUserDto();
         public PaymentStatus PaymentStatus { get; set; }
         public decimal? Rating { get; set; }
         public string? Feedback { get; set; }

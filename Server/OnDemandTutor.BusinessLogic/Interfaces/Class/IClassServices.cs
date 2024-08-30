@@ -12,12 +12,13 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Class
         Task<PagedResult<GetClassDtos>> GetClassesOfStudent(int studentId, int page, int limit);
         Task<PagedResult<GetClassDtos>> GetClassesOfTutor(int studentId, int page, int limit);
         Task<GetClassFullDataSlotDto> GetClassByIdAsync(int id);
-        Task<GetClassDtos> CreateClassAsync(CreateClassDTO classDto, GetProfileUserDtos user);
-        Task<GetClassDtos> UpdateClassAsync(UpdateClassDto classDto, GetProfileUserDtos user);
+        Task<GetClassDtos> CreateClassAsync(CreateClassDTO classDto, GetProfileUserDto user);
+        Task<GetClassDtos> UpdateClassAsync(UpdateClassDto classDto, GetProfileUserDto user);
         Task<bool> DeleteClassAsync(int id);
         Task CronForAutoChangeStatusClassAndSlot();
-        Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId);
         Task ValidateClassForStudent(int classId, int studentId);
+
+        Task ToggleClassCancellation(int classId, GetProfileUserDto user);
     }
 }
 

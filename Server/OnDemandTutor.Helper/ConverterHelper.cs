@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace OnDemandTutor.Helper;
@@ -12,7 +13,7 @@ public static class ConverterHelper
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         WriteIndented = true,
-        IgnoreNullValues = true
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
     public static string SerializeObject(this object obj)

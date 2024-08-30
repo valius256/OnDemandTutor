@@ -36,7 +36,7 @@ public class SlotStudentService : ISlotStudentServices
         _transactionServices = transactionServices;
 
     }
-    public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDtos? user)
+    public async Task<List<GetSlotStudentDetailDto>> QuerySlotStudent(QuerySlotStudentDto querySlotStudentDto, GetProfileUserDto? user)
     {
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotsAsync(querySlotStudentDto, user?.Id);
@@ -53,18 +53,18 @@ public class SlotStudentService : ISlotStudentServices
             await _unitOfWorkRepository.SlotStudentRepository.GetStudentSlotByTutor(queryRatingDto);
         return slotStudent.Adapt<PagedResult<GetSlotStudentDetailDto>>();
     }
-    public async Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDtos user)
+    public async Task<GetSlotStudentDetailDto> GetClosestFutureSlot(GetProfileUserDto user)
     {
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.GetClosestFutureSlot(user.Id);
         return slotStudent.Adapt<GetSlotStudentDetailDto>();
     }
-    public async Task<SlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
+    public async Task<GetSlotStudentDto> GetSlotStudentAsync(int slotId, int studentId)
     {
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
                 st.SlotId == slotId && st.UserId == studentId);
-        return slotStudent.Adapt<SlotStudentDto>();
+        return slotStudent.Adapt<GetSlotStudentDto>();
     }
 
     public async Task<PagedResult<GetSlotStudentWithDetailStudentDto>> GetSlotStudentsOfSlotPaged(int slotId, int page, int limit)
@@ -82,6 +82,10 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudent =
             await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(st =>
                 st.SlotId == slotId && st.UserId == studentId);
+        if (slotStudent == null)
+        {
+            throw new DataNotFoundException("Slot Student not found");
+        }
         if (slotStudent.PaymentStatus == PaymentStatus.Paid)
         {
             throw new Exception($"this course has already paid by studentId {studentId}");
@@ -93,10 +97,10 @@ public class SlotStudentService : ISlotStudentServices
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
     }
-    public async Task<SlotStudentDto> GetSlotStudentById(int slotId)
+    public async Task<GetSlotStudentDto> GetSlotStudentById(int slotId)
     {
         var recordInDb = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(u => u.SlotId == slotId);
-        return recordInDb.Adapt<SlotStudentDto>();
+        return recordInDb.Adapt<GetSlotStudentDto>();
     }
 
     public async Task<List<GetStudentSlotDto>> GetListSLotStudentByStatus(PaymentStatus status)
@@ -109,7 +113,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotstudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(sc => sc.SlotId == slotId && sc.UserId == studentId);
         if (slotstudent == null)
         {
-            throw new NotFoundException("Slot Student not found");
+            throw new DataNotFoundException("Slot Student not found");
         }
 
         _unitOfWorkRepository.SlotStudentRepository.Remove(slotstudent);
@@ -117,15 +121,10 @@ public class SlotStudentService : ISlotStudentServices
         return true;
     }
 
-    public Task<bool> UpdateSlotStudentAsync(int slotId, int studentId, double rate, string feedback)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<SlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
+    public async Task<List<GetSlotStudentDto>> GetListSlotStudentByStudentId(int studentId)
     {
         var slotStudentModel = await _unitOfWorkRepository.SlotStudentRepository.Where(ld => ld.UserId == studentId).ToListAsync();
-        return slotStudentModel.Adapt<List<SlotStudentDto>>();
+        return slotStudentModel.Adapt<List<GetSlotStudentDto>>();
     }
 
     public async Task<bool> CreateSlotStudentIfNotExists(int slotId, int studentId)
@@ -152,7 +151,7 @@ public class SlotStudentService : ISlotStudentServices
 
         if (slotStudent == null)
         {
-            throw new NotFoundException("Slot Student not found");
+            throw new DataNotFoundException("Slot Student not found");
         }
 
         slotStudent.Rating = rate;
@@ -189,9 +188,9 @@ public class SlotStudentService : ISlotStudentServices
             if (studentBalance - slotCost >= 0)
             {
                 await _userServices.UpdateBalanceAsync(slotStudent.UserId, -slotCost);
-                await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.TransactionDto>
+                await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto>
                 {
-                    new Models.Dtos.Transaction.TransactionDto
+                    new Models.Dtos.Transaction.GetTransactionDto
                     {
                         TransactionCode = DateTime.Now.Ticks + "_" + slotStudent.UserId,
                         Notes = $"AutoPaid_UserId:{slotStudent.UserId}_SlotId:{slotStudent.SlotId}",
@@ -219,22 +218,22 @@ public class SlotStudentService : ISlotStudentServices
         
     }
 
-    public async Task LeaveSlot(int slotId, GetProfileUserDtos user)
+    public async Task LeaveSlot(int slotId, GetProfileUserDto user)
     {
         var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.GetSlotStudentBySlotIdAndStudentId(slotId, user.Id);
         if (slotStudent == null)
         {
-            throw new NotFoundException("Slot of this student is not found");
+            throw new DataNotFoundException("Slot of this student is not found");
         }
-        if (slotStudent.Slot.SlotStatus == SlotStatus.OnGoing || slotStudent.Slot.SlotStatus == SlotStatus.Cancelled)
+        if (slotStudent.Slot.SlotStatus == SlotStatus.OnGoing || slotStudent.Slot.SlotStatus == SlotStatus.Finished)
         {
             throw new BadRequestException("You can only leave the slot that has not started yet!");
         }
-        await SoftDeleteSlotStudent(slotId, user.Id);
-        if (slotStudent.Slot.SlotStatus  == SlotStatus.Cancelled)
+        if (slotStudent.Slot.SlotStatus  == SlotStatus.Cancelled && slotStudent.PaymentStatus == PaymentStatus.Paid)
         {
             await Refund(slotId, user.Id);
         }
+        await SoftDeleteSlotStudent(slotId, user.Id);
     }
 
     public async Task Refund(int slotId, int userId)
@@ -242,7 +241,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.GetSlotStudentBySlotIdAndStudentId(slotId, userId);
         if (slotStudent == null)
         {
-            throw new NotFoundException("Slot of this student is not found");
+            throw new DataNotFoundException("Slot of this student is not found");
         }
         //Ignore this check if the isCheckStatus is false
         if (slotStudent.Slot.SlotStatus != SlotStatus.Cancelled || slotStudent.PaymentStatus == PaymentStatus.Notpaid)
@@ -253,6 +252,18 @@ public class SlotStudentService : ISlotStudentServices
         var tutor = await _userServices.GetProfileAsync(slotStudent.Slot.CreateById, null, null);
         var cost = tutor.TutorFeePerHour * (decimal)(slotStudent.Slot.EndTime - slotStudent.Slot.StartTime).TotalHours;
         await _userServices.UpdateBalanceAsync(userId, cost);
+        await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto> { new Models.Dtos.Transaction.GetTransactionDto
+        {
+            SlotId = slotId,
+            CreatedById = userId,
+            CreatedDate = DateTime.Now,
+            TransactionCode = "Refund_" + DateTime.Now.Ticks,
+            Notes = "Hoàn tiền slot học " + slotId,
+            Amount = cost,
+            PaymentMethod = "Internal",
+            Status = PaymentStatus.Paid,
+            TransactionType = TransactionType.Receive_money,
+        } });
     }
 
     public async Task SetTransferred(int id)
@@ -260,7 +271,7 @@ public class SlotStudentService : ISlotStudentServices
         var slotStudent = await _unitOfWorkRepository.SlotStudentRepository.FirstOrDefaultAsync(ss => ss.Id == id);
         if (slotStudent == null)
         {
-            throw new NotFoundException("Slot student not found");
+            throw new DataNotFoundException("Slot student not found");
         }
         slotStudent.IsTransferred = true;
         _unitOfWorkRepository.SlotStudentRepository.Update(slotStudent);

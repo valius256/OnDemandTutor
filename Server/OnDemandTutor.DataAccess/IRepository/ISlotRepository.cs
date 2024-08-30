@@ -8,8 +8,6 @@ namespace OnDemandTutor.DataAccess.IRepository
     {
         Task<PagedResult<GetSlotsDtos>> GetSlotsAsync(PagingModel<QuerySlotDto> request);
         Task<GetSlotDetailDto> GetSlotByIdAsync(int id);
-        Task<bool> DeleteSlotAsync(int id);
-
         Task<Slot?> GetClosestFutureSlotOfTutor(int tutorId);
 
         Task<List<Slot>> GetFinishedSlotsToTransfer();

@@ -117,8 +117,6 @@ export default {
                 "Filter.Name": this.filterDto.className ?? "",
                 "Filter.UserName": this.filterDto.tutorName,
                 "Filter.Address": this.filterDto.address,
-                Sorts: {
-                },
                 Page: this.currentPage,
                 Limit: this.pageSize
             }
@@ -143,7 +141,7 @@ export default {
             }
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
             const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class?' +
-                queryStr, {
+                queryStr + "&Filter.Status=0&Filter.Status=1&Filter.Status=2", {
                 headers: {
                     "Authorization": "Bearer " + localStorage.token
                 }

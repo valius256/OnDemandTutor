@@ -78,16 +78,16 @@
 <script>
 
 export default {
-    inject : ['eventBus'],
+    inject: ['eventBus'],
     name: "ClassList",
-    props : ['classes','handlePageChange','movePage','currentUser','toggleClassDetailPopup','pageModel'],
+    props: ['classes', 'handlePageChange', 'movePage', 'currentUser', 'toggleClassDetailPopup', 'pageModel', 'toggleClassRatingPopup'],
     data() {
         return {
-            currentPage : 0,
-            selectedClass : 0,
+            currentPage: 0,
+            selectedClass: 0,
         }
     },
-    methods : {
+    methods: {
         getMethodStyle(method) {
             let general = "ml-4 rounded-lg px-3 py-1 text-white font-bold"
             switch (method) {
@@ -109,35 +109,40 @@ export default {
             }
         },
         getStatusStyle(status) {
-            let general = "ml-3 rounded-lg px-3 py-1 font-bold"
+            let general = "ml-3 rounded-lg px-3 py-1 font-bold";
             switch (status) {
                 case 0:
-                    return general + " text-blue-400"
+                    return general + " text-blue-400";
                 case 1:
-                    return general + " text-green-400"
+                    return general + " text-green-400";
+                case 3:
+                    return general + " text-red-400";
                 default:
-                    return general + " text-gray-400"
+                    return general + " text-gray-400";
             }
         },
         getStatusDisplay(status) {
+            console.log(status)
             switch (status) {
                 case 0:
-                    return "Sắp bắt đầu"
+                    return "Sắp bắt đầu";
                 case 1:
-                    return "Đang diễn ra"
+                    return "Đang diễn ra";
                 case 2:
-                    return "Đã kết thúc"
+                    return "Đã kết thúc";
+                case 3:
+                    return "Đã hủy";
                 default:
-                    return "Không rõ"
+                    return "Không rõ";
             }
         },
-        async handleClassPageChange(){
+        async handleClassPageChange() {
             await this.handlePageChange()
             this.currentPage = this.pageModel.page
         }
 
     },
-    mounted(){
+    mounted() {
         this.currentPage = this.pageModel.page
     }
 }

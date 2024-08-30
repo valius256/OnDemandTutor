@@ -80,9 +80,9 @@ public class PaymentController : BaseController<PaymentController>
     [Authorize]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
     [ProducesResponseType(typeof(IApiResult<string>), 200)]
-    public async Task<IActionResult> CreateRecharge([FromBody] RechargeDto request)
+    public IActionResult CreateRecharge([FromBody] RechargeDto request)
     {
-        var paymentUrl = await _vnPayServices.RechargePaymentAsync(request, HttpContext);
+        var paymentUrl = _vnPayServices.RechargePaymentAsync(request, HttpContext);
         return Ok(paymentUrl);
     }
 

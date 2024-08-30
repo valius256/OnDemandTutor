@@ -34,14 +34,14 @@ public class UploadController : ControllerBase
     }
 
 
-    [HttpPost("get-image-list")]
-    [Authorize]
-    public async Task<IActionResult> Load(string fireBaseId)
-    {
-        // Get the URL from Firebase Storage Database
-        var imageUrl = await _firebaseUploadServices.DownloadImagesAsync(fireBaseId);
-        return Ok(imageUrl);
-    }
+    //[HttpPost("get-image-list")]
+    //[Authorize]
+    //public async Task<IActionResult> Load(string fireBaseId)
+    //{
+    //    // Get the URL from Firebase Storage Database
+    //    var imageUrl = await _firebaseUploadServices.DownloadImagesAsync(fireBaseId);
+    //    return Ok(imageUrl);
+    //}
 
     // accept 25 mb file
     [HttpPost("upload-video")]

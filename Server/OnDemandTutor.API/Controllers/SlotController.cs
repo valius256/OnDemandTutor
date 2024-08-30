@@ -70,15 +70,22 @@ public class SlotController : ControllerBase
     }
 
     [Authorize]
+    [HttpPut("{slotId}/cancel")]
+    [ProducesResponseType(typeof(GetSlotsDtos), 200)]
+    public async Task<IActionResult> ToggleSlotCancellation([FromRoute] int slotId)
+    {
+        var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+        await _slotService.ToggleSlotCancellation(slotId,user);
+        return NoContent();
+
+    }
+
+    [Authorize]
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     public async Task<IActionResult> DeleteSlot(int id)
     {
-        var isDeleted = await _slotService.DeleteSlotAsync(id);
-        if (!isDeleted)
-        {
-            return NotFound();
-        }
+        await _slotService.DeleteSlotAsync(id);
         return NoContent();
 
     }

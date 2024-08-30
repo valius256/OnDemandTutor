@@ -4,7 +4,6 @@ namespace OnDemandTutor.Models.Models;
 
 public class Slot : BaseEntity
 {
-    public int Id { get; set; }
     public DateTime StartTime { get; set; }
     public int CreateById { get; set; }
     public DateTime EndTime { get; set; }
@@ -19,9 +18,9 @@ public class Slot : BaseEntity
 
 
     // Navigation properties
-    public virtual Subject Subject { get; set; }
-    public virtual User CreatedBy { get; set; }
+    public virtual Subject Subject { get; set; } = default!;
+    public virtual User CreatedBy { get; set; } = default!;
     public virtual ICollection<SlotStudent> SlotStudents { get; set; } = new List<SlotStudent>();
     public virtual ICollection<Transaction> SlotTransaction { get; set; } = new List<Transaction>();
-    public virtual Class Class { get; set; }
+    public virtual Class Class { get; set; } = default!;
 }

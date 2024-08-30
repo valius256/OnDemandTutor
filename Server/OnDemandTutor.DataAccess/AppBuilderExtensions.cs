@@ -34,8 +34,10 @@ public static class AppBuilderExtensions
             var implementType = implementedTypes.FirstOrDefault(t =>
                 interfaceType.IsAssignableFrom(t) &&
                 t.Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase));
-
-            services.AddTransient(interfaceType, implementType);
+            if (implementType != null)
+            {
+                services.AddTransient(interfaceType, implementType);
+            }
         }
 
         return services;
@@ -51,11 +53,11 @@ public static class AppBuilderExtensions
             .Where(t =>
                 t.IsInterface == genericType.IsInterface &&
                 t != genericType &&
-                ((genericType.IsInterface && t.GetInterfaces().Any(i =>
+                ((genericType.IsInterface && t.GetInterfaces().Any(i => i.Namespace != null &&
                      i.Namespace.Equals(genericType.Namespace, StringComparison.InvariantCultureIgnoreCase) &&
                      i.Name.Equals(genericType.Name, StringComparison.InvariantCultureIgnoreCase) &&
                      baseEntity.IsAssignableFrom(i.GenericTypeArguments.FirstOrDefault())))
-                 || (!genericType.IsInterface &&
+                 || (!genericType.IsInterface && t.BaseType != null && t.BaseType.Namespace != null &&
                      t.BaseType.Namespace.Equals(genericType.Namespace, StringComparison.InvariantCultureIgnoreCase) &&
                      t.BaseType.Name.Equals(genericType.Name, StringComparison.InvariantCultureIgnoreCase) &&
                      baseEntity.IsAssignableFrom(t.BaseType.GenericTypeArguments.FirstOrDefault()))

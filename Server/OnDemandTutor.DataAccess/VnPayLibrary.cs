@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using OnDemandTutor.Models.Dtos.Payment;
 using System.Globalization;
 using System.Net;
@@ -20,9 +21,9 @@ public class VnPayLibrary
 
         foreach (var (key, value) in collection)
         {
-            if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_"))
+            if (!string.IsNullOrEmpty(key) && key.StartsWith("vnp_") && !value.IsNullOrEmpty())
             {
-                vnPay.AddResponseData(key, value);
+                vnPay.AddResponseData(key, value!);
             }
         }
 
@@ -70,8 +71,11 @@ public class VnPayLibrary
                 }
             }
         }
-
-        var checkSignature = vnPay.ValidateSignature(vnpSecureHash, hashSecret);
+        if (vnpSecureHash.IsNullOrEmpty())
+        {
+            throw new ArgumentNullException("vnpSecureHash is null");
+        }
+        var checkSignature = vnPay.ValidateSignature(vnpSecureHash!, hashSecret);
 
         if (!checkSignature)
         {
@@ -87,7 +91,7 @@ public class VnPayLibrary
             PaymentMethod = "VnPay",
             OrderDescription = orderDescription,
             TransactionCode = orderId.ToString(),
-            Token = vnpSecureHash,
+            Token = vnpSecureHash!,
             VnPayResponseCode = vnpResponseCode,
             SlotId = slotIds,
             UserId = userId,
@@ -225,7 +229,7 @@ public class VnPayLibrary
 
 public class VnPayCompare : IComparer<string>
 {
-    public int Compare(string x, string y)
+    public int Compare(string? x, string? y)
     {
         if (x == y) return 0;
         if (x == null) return -1;

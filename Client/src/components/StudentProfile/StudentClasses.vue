@@ -3,12 +3,12 @@
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
             Lớp học bạn đã tham gia
         </div>
-        <class-list v-if="!isOpenClassDetailPopup" :classes="classes" :handlePageChange="handlePageChange" :movePage="movePage" :currentUser="user" :toggleClassDetailPopup="toggleClassDetailPopup" :pageModel="{total : totalPage, page : currentPage}"></class-list>
+        <class-list v-if="!isOpenClassDetailPopup" :classes="classes" :handlePageChange="handlePageChange" :movePage="movePage" :currentUser="user" :toggleClassDetailPopup="toggleClassDetailPopup" :toggleClassRatingPopup="toggleClassRatingPopup" :pageModel="{total : totalPage, page : currentPage}"></class-list>
         <div v-else>
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
-            <ClasssDetailPopup :classId="selectedClass"></ClasssDetailPopup>
+            <ClasssDetailPopup :classId="selectedClass" :close="toggleClassDetailPopup" :action="fetchData"></ClasssDetailPopup>
         </div>
         <generic-popup title="Đánh giá lớp học" v-if="isOpenRatingPopup" :closeFunction="toggleClassRatingPopup">
             <rating-popup :classId="selectedClass" :close="toggleClassRatingPopup" :action="fetchData"></rating-popup>
@@ -21,8 +21,9 @@ import axios from 'axios'
 import ClassList from '../common/ClassList.vue'
 import ClasssDetailPopup from './ClassDetailPopup.vue'
 import GenericPopup from '../common/GenericPopup.vue'
+import RatingPopup from './RatingPopup.vue'
 export default {
-    components: { ClassList, ClasssDetailPopup, GenericPopup },
+    components: { ClassList, ClasssDetailPopup, GenericPopup, RatingPopup },
     inject: ['eventBus'],
     name: "StudentClasses",
     data() {

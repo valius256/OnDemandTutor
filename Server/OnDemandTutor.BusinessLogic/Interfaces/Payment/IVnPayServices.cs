@@ -9,7 +9,7 @@ public interface IVnPayServices
 {
     Task<string> CreatePaymentForSlotUrl(PaySlotDto model, HttpContext context, GetSlotsDtos slot);
     Task<PaymentSlotResponseModel> PaymentExecute(IQueryCollection collections);
-    Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context);
+    string RechargePaymentAsync(RechargeDto model, HttpContext context);
     // Task<bool> ProcessCashbackAsync(CashBackDto cashbackDto, HttpContext context);
     Task<string> CreatePaymentForClassUrl(PayClassDto model, HttpContext context, GetClassFullDataSlotDto classDto);
     Task CreatePaymentForSlotByUserBalance(PaySlotDto model, HttpContext context);

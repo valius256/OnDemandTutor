@@ -33,6 +33,6 @@ public abstract class BaseEntity : BaseEntityEmpty, IBaseEntity
     public void SoftDelete()
     {
         RecordStatus = RecordStatus.Deleted;
-        DeletedDate = DateTime.UtcNow;
+        DeletedDate = DateTime.Now;
     }
 }

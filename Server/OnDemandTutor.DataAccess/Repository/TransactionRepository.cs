@@ -42,12 +42,12 @@ public class TransactionRepository : GenericRepository<Transaction>, ITransactio
         }
 
 
-        int limit = transactionFilter.Limit.Value > 0 ? transactionFilter.Limit.Value : 10;
-        int page = transactionFilter.Page.Value > 0 ? transactionFilter.Page.Value : 1;
-        int skip = (page - 1) * limit;
+        int limit = (transactionFilter.Limit != null && transactionFilter.Limit > 0) ? transactionFilter.Limit.Value : 10;
+        int page = (transactionFilter.Page != null && transactionFilter.Page > 0) ? transactionFilter.Page.Value : 1;
 
         var filteredUsers = await transactionQuery
             .AsNoTracking()
+            .OrderByDescending(t => t.CreatedDate)
             .ToNewPagingAsync(page, limit);
 
         return filteredUsers;

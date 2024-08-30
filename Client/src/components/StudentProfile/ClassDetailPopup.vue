@@ -93,7 +93,7 @@
                 class="p-2 bg-blue-500 hover:bg-blue-300 font-bold rounded-lg text-white">
                 Đánh giá gia sư
             </button>
-            <button v-if="this.class.status != 2 && !isGuest"
+            <button v-if="this.class.status != 2 && !isGuest" @click="handleLeaveClass(true)"
                 class=" p-2 bg-red-500 hover:bg-red-300 font-bold rounded-lg text-white">
                 Rời lớp học
             </button>
@@ -110,7 +110,7 @@
 
         <generic-popup v-if="isOpenSlotDetailPopup" title="Chi tiết buổi học" :closeFunction="closeSlotDetailPopup"
             :notOverflow="true">
-            <slot-detail-popup :slot="selectingSlot" :close="closeSlotDetailPopup" />
+            <slot-detail-popup :slot="selectingSlot" :action="refresh" :close="closeSlotDetailPopup" />
         </generic-popup>
         <generic-popup v-if="isOpenRatingPopup" title="Đánh giá lớp học" :closeFunction="toggleIsOpenRatingPopup">
             <rating-popup :classId="this.class.id" :action="refresh" :close="toggleIsOpenRatingPopup"></rating-popup>
@@ -132,12 +132,12 @@ import ClassEnrollPopup from './ClassEnrollPopup.vue'
 export default {
     components: { TimeTable, GenericPopup, SlotDetailPopup, RatingPopup, ClassEnrollPopup },
     name: "ClassDetailPopup",
-    props: ['classId', 'close', 'isGuest'],
+    props: ['classId', 'close', 'isGuest', 'action'],
     data() {
         return {
             class: null,
             slots: [],
-            user : null,
+            user: null,
             selectingSlot: null,
             isOpenSlotDetailPopup: false,
             isOpenRatingPopup: false,
@@ -159,26 +159,31 @@ export default {
             }
         },
         getStatusStyle(status) {
-            let general = "ml-3 rounded-lg px-3 py-1 font-bold"
+            let general = "ml-3 rounded-lg px-3 py-1 font-bold";
             switch (status) {
                 case 0:
-                    return general + " text-blue-400"
+                    return general + " text-blue-400";
                 case 1:
-                    return general + " text-green-400"
+                    return general + " text-green-400";
+                case 3:
+                    return general + " text-red-400";
                 default:
-                    return general + " text-gray-400"
+                    return general + " text-gray-400";
             }
         },
         getStatusDisplay(status) {
+            console.log(status)
             switch (status) {
                 case 0:
-                    return "Sắp bắt đầu"
+                    return "Sắp bắt đầu";
                 case 1:
-                    return "Đang diễn ra"
+                    return "Đang diễn ra";
                 case 2:
-                    return "Đã kết thúc"
+                    return "Đã kết thúc";
+                case 3:
+                    return "Đã hủy";
                 default:
-                    return "Không rõ"
+                    return "Không rõ";
             }
         },
         calcDuration(slot) {
@@ -194,11 +199,11 @@ export default {
             })
             if (response.data) {
                 this.class = response.data
-                if (this.user != null && this.class.studentClasses.filter(sc => sc.studentId == this.user.id).length > 0){
+                if (this.user != null && this.class.studentClasses.filter(sc => sc.studentId == this.user.id).length > 0) {
                     this.isStudiedThisClass = true;
                 }
             }
-            
+
         },
         async getUserSlots(from, to) {
             if (!this.isGuest) {
@@ -241,7 +246,7 @@ export default {
                     console.log(slot)
                     this.slots.push({
                         slot: {
-                            id : slot.id,
+                            id: slot.id,
                             startTime: slot.startTime,
                             endTime: slot.endTime,
                             teachAddress: slot.teachAddress,
@@ -249,6 +254,7 @@ export default {
                             user: slot.user,
                             createdBy: this.class.tutor,
                             subject: this.class.subject,
+                            numberOfStudents: slot.numberOfStudents,
                             class: this.class
                         },
                         paymentStatus: -1
@@ -263,6 +269,40 @@ export default {
         },
         toggleClassEnrollPopup() {
             this.isOpenEnrollClassPopup = !this.isOpenEnrollClassPopup
+        },
+        async handleLeaveClass(confirmation) {
+            if (confirmation) {
+                const refundMessage = this.class.status != 3 ? "Bạn sẽ không được hoàn tiền cọc và cả những buổi học bạn đã trả trước" : "Vì gia sư đã chủ động hủy lớp. Bạn sẽ được hoàn tiền cọc và các buổi học bạn đã trả trước mà chưa được học"
+                this.eventBus.emit("open-confirmation-popup", {
+                    message: "Bạn có chắc chắn rời khỏi lớp này? " + refundMessage,
+                    method: this.handleLeaveClass,
+                    params: false
+                })
+            } else {
+                this.eventBus.emit("open-loading-popup", {
+                    message: "Vui lòng chờ..."
+                })
+                try {
+                    await axios.put(import.meta.env.VITE_API_URL + '/api/StudentClass/' + this.classId + '/leave', {}, {
+                        headers: {
+                            "Authorization": "Bearer " + localStorage.token
+                        }
+                    })
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Rời thành công",
+                        type: "Success"
+                    })
+                    await this.action()
+                    this.close(0)
+                } catch (e) {
+                    console.log(e)
+                    this.eventBus.emit("open-result-dialog", {
+                        message: "Không thể thực hiện được. Vui lòng thử lại sau",
+                        type: "Error"
+                    })
+                }
+                this.eventBus.emit("close-loading-popup")
+            }
         }
     },
     mounted() {

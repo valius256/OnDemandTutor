@@ -19,7 +19,12 @@ public class VnPayProcessor : IPaymentProcessor
     public IPaymentResponse ProcessPaymentResponse(IQueryCollection collections)
     {
         var pay = new VnPayLibrary();
-        var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
+        var hashSecret = _configuration["Vnpay:HashSecret"];
+        if (hashSecret == null)
+        {
+            throw new ArgumentNullException("Hashsecret is null");
+        }
+        var response = pay.GetFullResponseData(collections, hashSecret);
 
         var rs = new VnPayResponse
         {

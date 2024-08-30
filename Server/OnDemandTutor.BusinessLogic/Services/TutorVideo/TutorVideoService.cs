@@ -31,12 +31,12 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             var tutorVideoEntity = await _unitOfWork.TutorVideoRepository.GetTutorVideoByIdAsync(id);
             if (tutorVideoEntity == null)
             {
-                throw new NotFoundException($"TutorVideo with ID {id} not found.");
+                throw new DataNotFoundException($"TutorVideo with ID {id} not found.");
             }
             return tutorVideoEntity.Adapt<GetTutorVideoDto>();
         }
 
-        public async Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDtos user)
+        public async Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDto user)
         {
             var tutorVideoEntity = tutorVideoDto.Adapt<Models.Models.TutorVideo>();
             tutorVideoEntity.TutorId = user.Id;
@@ -47,7 +47,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             return createdTutorVideoEntity.Entity.Adapt<GetTutorVideoDto>();
         }
 
-        public async Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDtos user)
+        public async Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDto user)
         {
             // Retrieve the existing tutor video entity from the database
             var existingTutorVideoEntity = await _unitOfWork.TutorVideoRepository.FirstOrDefaultAsync(tv => tv.Id == tutorVideoDto.Id);
@@ -55,7 +55,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             // Check if the entity is null
             if (existingTutorVideoEntity == null)
             {
-                throw new NotFoundException($"TutorVideo with ID {tutorVideoDto.Id} not found.");
+                throw new DataNotFoundException($"TutorVideo with ID {tutorVideoDto.Id} not found.");
             }
 
 
@@ -82,7 +82,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorVideo
             var existingTutorVideoEntity = await _unitOfWork.TutorVideoRepository.FirstOrDefaultAsync(tv => tv.Id == id);
             if (existingTutorVideoEntity == null)
             {
-                throw new NotFoundException($"TutorVideo with ID {id} not found.");
+                throw new DataNotFoundException($"TutorVideo with ID {id} not found.");
             }
 
             _unitOfWork.TutorVideoRepository.Remove(existingTutorVideoEntity);

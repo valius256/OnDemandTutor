@@ -14,50 +14,54 @@
             </div>
         </div>
         <div class="flex gap-4 justify-center mt-4 text-2xl mb-6">
-            <button @click="null"
+            <button @click="toggleRechargePopup"
                 class="mr-6 px-6 py-4 font-bold text-white bg-blue-400 hover:bg-blue-200 rounded-lg">Nạp tiền</button>
             <button @click="toggleWithdrawPopup"
                 class="px-6 py-4 font-bold text-white bg-green-400 hover:bg-green-200 rounded-lg">Rút
                 tiền</button>
         </div>
-        <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
-            Các Slot chưa thanh toán
-        </div>
-        <div class="mt-2 flex flex-col gap-2 p-4" v-if="this.unpaidSlots.length > 0">
-            <button @click="toggleOpenSlotDetailPopup(slot)" v-for="slot in unpaidSlots" :key="slot.id" class="bg-slate-100 rounded-lg shadow-md p-4">
-                <div class="flex place-content-between">
-                    <div>
-                        <span class="font-bold mr-2">Bắt đầu :</span>
-                        <span>{{ this.beautifyDatetime(slot.slot.startTime) }}</span>
+        <div v-if="user && user.role == 0">
+            <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 ">
+                Các Slot chưa thanh toán
+            </div>
+            <div class="mt-2 flex flex-col gap-2 p-4" v-if="this.unpaidSlots.length > 0">
+                <button @click="toggleOpenSlotDetailPopup(slot)" v-for="slot in unpaidSlots" :key="slot.id"
+                    class="bg-slate-100 rounded-lg shadow-md p-4">
+                    <div class="flex place-content-between">
+                        <div>
+                            <span class="font-bold mr-2">Bắt đầu :</span>
+                            <span>{{ this.beautifyDatetime(slot.slot.startTime) }}</span>
+                        </div>
+                        <div>
+                            <span class="font-bold mr-2">Kết thúc :</span>
+                            <span>{{ this.beautifyDatetime(slot.slot.endTime) }}</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-bold mr-2">Kết thúc :</span>
-                        <span>{{ this.beautifyDatetime(slot.slot.endTime) }}</span>
-                    </div>
-                </div>
-                <div class="flex place-content-between">
-                    <div>
-                        <span class="font-bold mr-2">Gia sư :</span>
-                        <span>{{ (slot.slot.createdBy.firstName ?? "") + " " + (slot.slot.createdBy.lastName ?? "")
-                            }}</span>
-                    </div>
-                    <div>
-                        <span class="font-bold mr-2">Giá cả :</span>
-                        <span class="p-2 text-red-500 font-bold text-xl">{{ (calcDuration(slot) *
+                    <div class="flex place-content-between">
+                        <div>
+                            <span class="font-bold mr-2">Gia sư :</span>
+                            <span>{{ (slot.slot.createdBy.firstName ?? "") + " " + (slot.slot.createdBy.lastName ?? "")
+                                }}</span>
+                        </div>
+                        <div>
+                            <span class="font-bold mr-2">Giá cả :</span>
+                            <span class="p-2 text-red-500 font-bold text-xl">{{ (calcDuration(slot) *
                         slot.slot.createdBy.tutorFeePerHour).toLocaleString('vi-VN', {
                             style: 'currency',
                             currency: 'VND',
                         }) }}</span>
+                        </div>
                     </div>
-                </div>
-                <div v-if="slot.slot.class" class="flex justify-start">
-                    <span class="font-bold mr-2">Lớp học :</span>
-                    <span>{{ slot.slot.class.name }}</span>
-                </div>
-            </button>
-        </div>
-        <div v-else class="text-center italic">
-            Hiện chưa có Slot nào
+                    <div v-if="slot.slot.class" class="flex justify-start">
+                        <span class="font-bold mr-2">Lớp học :</span>
+                        <span>{{ slot.slot.class.name }}</span>
+                    </div>
+                </button>
+            </div>
+
+            <div v-else class="text-center italic">
+                Hiện chưa có Slot nào
+            </div>
         </div>
         <div class="text-2xl font-bold mb-6 px-6 py-8 bg-slate-200 mt-4">
             Lịch sử giao dịch
@@ -76,10 +80,10 @@
                         <td>{{ transaction.transactionCode }}</td>
                         <td>{{ this.beautifyDatetime(transaction.createdDate) }}</td>
                         <td :class="getAmountStyle(transaction)">
-                            {{  Math.abs(transaction.amount).toLocaleString('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }) }}
+                            {{ Math.abs(transaction.amount).toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                    }) }}
                         </td>
                         <td v-if="transaction.transactionType == 0">Rút tiền</td>
                         <td v-if="transaction.transactionType == 1">Nạp tiền</td>
@@ -112,10 +116,14 @@
             <request-withdraw-popup :close="toggleWithdrawPopup" :action="navigateToPayment"
                 :balance="balance"></request-withdraw-popup>
         </generic-popup>
-        <generic-popup v-if="isOpenSlotDetailPopup" :title="'Chi tiết slot học'" :closeFunction="toggleOpenSlotDetailPopup"
-            :notOverflow="true">
+        <generic-popup v-if="isOpenSlotDetailPopup" :title="'Chi tiết slot học'"
+            :closeFunction="toggleOpenSlotDetailPopup" :notOverflow="true">
             <slot-detail-popup :close="toggleOpenSlotDetailPopup" :action="getUserSlots"
                 :slot="selectedSlot"></slot-detail-popup>
+        </generic-popup>
+        <generic-popup v-if="isOpenRechargePopup" :title="'Nạp tiền'"
+            :closeFunction="toggleRechargePopup" :notOverflow="true">
+            <recharge-popup :close="toggleRechargePopup" :action="fetchUser"></recharge-popup>
         </generic-popup>
     </div>
 
@@ -126,8 +134,9 @@ import axios from 'axios'
 import GenericPopup from '../common/GenericPopup.vue'
 import RequestWithdrawPopup from './RequestWithdrawPopup.vue'
 import SlotDetailPopup from './SlotDetailPopup.vue'
+import RechargePopup from '../TutorProfile/RechargePopup.vue'
 export default {
-    components: { GenericPopup, RequestWithdrawPopup, SlotDetailPopup },
+    components: { GenericPopup, RequestWithdrawPopup, SlotDetailPopup, RechargePopup },
     props: ['id'],
     name: "StudentProfilePayment",
     data() {
@@ -143,9 +152,10 @@ export default {
             unpaidSlots: [
 
             ],
-            selectedSlot : null,
+            selectedSlot: null,
             isOpenWithdrawPopup: false,
-            isOpenSlotDetailPopup : false,
+            isOpenSlotDetailPopup: false,
+            isOpenRechargePopup : false,
         }
     },
     methods: {
@@ -219,6 +229,9 @@ export default {
         toggleWithdrawPopup() {
             this.isOpenWithdrawPopup = !this.isOpenWithdrawPopup
         },
+        toggleRechargePopup() {
+            this.isOpenRechargePopup = !this.isOpenRechargePopup
+        },
         navigateToPayment() {
             this.$router.push('/student/withdraw')
         },
@@ -239,7 +252,7 @@ export default {
                 }
             }
         },
-        toggleOpenSlotDetailPopup(slot){
+        toggleOpenSlotDetailPopup(slot) {
             this.selectedSlot = slot
             this.isOpenSlotDetailPopup = !this.isOpenSlotDetailPopup
         }

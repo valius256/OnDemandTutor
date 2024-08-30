@@ -21,7 +21,7 @@ namespace OnDemandTutor.Models.Dtos.Slot
         public DateTime? ActualEndTime { get; set; }
         public SlotStatus SlotStatus { get; set; }
         public GetSubjectDtos Subject { get; set; } = new GetSubjectDtos();
-        public GetProfileUserDtos CreatedBy { get; set; } = new GetProfileUserDtos();
+        public GetProfileUserDto CreatedBy { get; set; } = new GetProfileUserDto();
         public GetClassDtos Class { get; set; } = new GetClassDtos();
         public ICollection<GetStudentSlotDto> SlotStudents { get; set; } = new List<GetStudentSlotDto>();
 

@@ -34,38 +34,38 @@ public class UserServices : IUserServices
         _notificationService = notificationService;
     }
 
-    public async Task<PagedResult<GetProfileUserDtos>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDtos? accessor)
+    public async Task<PagedResult<GetProfileUserDto>> GetAllUsersAsync(UserFilterDto request, GetProfileUserDto? accessor)
     {
         var userList = await _unitOfWorkRepository.UserRepository.ViewUsersListAsync(request);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
         {
             userList.Items.ToList().ForEach(u => u.Balance = 0);
         }
-        return userList.Adapt<PagedResult<GetProfileUserDtos>>();
+        return userList.Adapt<PagedResult<GetProfileUserDto>>();
     }
 
-    public async Task<GetProfileUserDtos> GetProfileAsync(int? userId, string? userEmail, GetProfileUserDtos? accessor)
+    public async Task<GetProfileUserDto> GetProfileAsync(int? userId, string? userEmail, GetProfileUserDto? accessor)
     {
         var userModel = await GetUserByIdAsync(userId);
         if (accessor == null || (accessor.Role != RoleStatus.Operator && accessor.Role != RoleStatus.Admin))
         {
             userModel.Balance = 0;
         }
-        return userModel.Adapt<GetProfileUserDtos>();
+        return userModel.Adapt<GetProfileUserDto>();
     }
-    public async Task<GetProfileUserDtos> GetUserByIdAsync(int? userId)
+    public async Task<GetProfileUserDto> GetUserByIdAsync(int? userId)
     {
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == userId);
         if (userModel == null) throw new BadRequestException("User not found");
-        return userModel.Adapt<GetProfileUserDtos>();
+        return userModel.Adapt<GetProfileUserDto>();
     }
-    public async Task<GetProfileUserDtos> GetUserByEmailAsync(string email)
+    public async Task<GetProfileUserDto> GetUserByEmailAsync(string email)
     {
         var userModel =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Email == email);
         if (userModel == null) throw new BadRequestException("User not found");
-        return userModel.Adapt<GetProfileUserDtos>();
+        return userModel.Adapt<GetProfileUserDto>();
     }
 
     public async Task<GetUserBalanceDto> GetUserBalanceAsync(int? userId)
@@ -77,7 +77,7 @@ public class UserServices : IUserServices
         return userModel.Adapt<GetUserBalanceDto>();
     }
 
-    public async Task<GetProfileUserDtos> RegisterUser(RegisterDtos registerDtos)
+    public async Task<GetProfileUserDto> RegisterUser(RegisterDtos registerDtos)
     {
         var userExist =
             await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(us => us.Email == registerDtos.Email);
@@ -110,7 +110,7 @@ public class UserServices : IUserServices
 
             await _unitOfWorkRepository.SaveChangesAsync();
 
-            var rs = addedUser.Entity.Adapt<GetProfileUserDtos>();
+            var rs = addedUser.Entity.Adapt<GetProfileUserDto>();
             if (registerDtos.isTutor)
             {
                 await _notificationService.CreateNotificationAsync(new Models.Dtos.Notification.CreateNotificationDto
@@ -131,7 +131,7 @@ public class UserServices : IUserServices
     }
 
 
-    public async Task<GetProfileUserDtos> VerifyLogin(string? email, string? password)
+    public async Task<GetProfileUserDto> VerifyLogin(string? email, string? password)
     {
         if (email.IsNullOrEmpty())
             if (email != null)
@@ -140,34 +140,34 @@ public class UserServices : IUserServices
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u =>
             u.Email == email && u.Password.Equals(password));
 
-        if (user is null) throw new NotFoundException("Wrong Email, Phone number or password");
+        if (user is null) throw new DataNotFoundException("Wrong Email, Phone number or password");
 
-        return user.Adapt<GetProfileUserDtos>();
+        return user.Adapt<GetProfileUserDto>();
     }
 
 
-    public async Task<GetProfileUserDtos> GetUserProfileByIdAsync(int id)
+    public async Task<GetProfileUserDto> GetUserProfileByIdAsync(int id)
     {
         return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == id))
-            .Adapt<GetProfileUserDtos>();
+            .Adapt<GetProfileUserDto>();
     }
 
-    public async Task<GetProfileUserDtos> GetUserProfileByFireBaseIdAsync(string uId)
+    public async Task<GetProfileUserDto> GetUserProfileByFireBaseIdAsync(string uId)
     {
         return (await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.FireBaseid == uId))
-            .Adapt<GetProfileUserDtos>();
+            .Adapt<GetProfileUserDto>();
     }
 
     public async Task<bool> RechargeAccountAsync(int uId, decimal money)
     {
-        var recordInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == uId);
-        await UpdateBalanceAsync(recordInDb.Id, money);
+        await UpdateBalanceAsync(uId, money);
         return true;
     }
 
     public async Task<bool> DeleteUserAsync(string? email)
     {
         var user = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Email == email);
+        if (user == null) throw new DataNotFoundException("User not found");
         _unitOfWorkRepository.UserRepository.Remove(user);
         await _unitOfWorkRepository.SaveChangesAsync();
         return true;
@@ -183,7 +183,7 @@ public class UserServices : IUserServices
 
         // Filter out users that already exist
         var newUsers = usersToSync.Where(u => !existingUserIds.Contains(u.FireBaseid)).ToList();
-
+        newUsers.ForEach(newUser => newUser.Password = string.Empty);
         // Add new users
         if (newUsers.Any()) await _unitOfWorkRepository.UserRepository.AddRangeAsync(newUsers);
 
@@ -191,12 +191,6 @@ public class UserServices : IUserServices
         return true;
     }
 
-
-    public async Task<List<TutorRegistrationRequestDtos>> LoadTutorRegistrationList()
-    {
-        var listTutorWithDegree = await _unitOfWorkRepository.UserRepository.GetUsersListDegreeData();
-        return listTutorWithDegree.Adapt<List<TutorRegistrationRequestDtos>>();
-    }
 
     public async Task<PagedResult<TutorSimpleProfileDto>> ViewTutorListAsync(TutorFilterDto request)
     {
@@ -207,6 +201,7 @@ public class UserServices : IUserServices
     public async Task<bool> DeleteTutorAsync(DeleteTutorDto requestDto)
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(ld => ld.Id == requestDto.userId);
+        if (userInDb == null) throw new DataNotFoundException("User not found");
         if (userInDb.IsActive == false)
         {
             throw new ModelException("Tutor status", $"{userInDb.IsActive} already delete",
@@ -224,7 +219,7 @@ public class UserServices : IUserServices
         return true;
     }
 
-    public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDtos user)
+    public async Task<bool> UpdateProfileAsync(UpdateUserDto requestDto, GetProfileUserDto user)
     {
 
         if (requestDto.Id == null || requestDto.Id == 0)
@@ -235,7 +230,7 @@ public class UserServices : IUserServices
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == requestDto.Id);
         if (userInDb == null)
         {
-            throw new NotFoundException("User not found.");
+            throw new DataNotFoundException("User not found.");
         }
         if (userInDb.Id != requestDto.Id && userInDb.Role < RoleStatus.Operator)
         {
@@ -298,9 +293,10 @@ public class UserServices : IUserServices
 
     }
 
-    public async Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDtos user)
+    public async Task<bool> UpdateAvatarImage(string imageUrl, GetProfileUserDto user)
     {
         var userInDb = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(l => l.Id == user.Id);
+        if (userInDb == null) throw new DataNotFoundException("User not found");
         userInDb.AvatarImageUrl = imageUrl;
         _unitOfWorkRepository.UserRepository.Update(userInDb);
         await _unitOfWorkRepository.SaveChangesAsync();
@@ -311,14 +307,14 @@ public class UserServices : IUserServices
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
-        return record.Balance;
+        return record?.Balance ?? 0;
     }
 
     public async Task<bool> UpdateBalanceAsync(int userId, decimal money)
     {
         var record = await _unitOfWorkRepository.UserRepository
             .FirstOrDefaultAsync(ld => ld.Id == userId);
-
+        if (record == null) throw new DataNotFoundException("User not found");
         record.Balance += money;
         
         if (record.Balance < 0)
@@ -429,7 +425,7 @@ public class UserServices : IUserServices
             .ExecuteUpdateAsync(setter => setter.SetProperty(s => s.TutorStatus, request.Status));
 
         var newRecord = await _unitOfWorkRepository.UserRepository.FirstOrDefaultAsync(u => u.Id == request.Id);
-
+        if (newRecord == null) throw new DataNotFoundException("The record was deleted during execution");
         await _notificationService.CreateNotificationAsync(new Models.Dtos.Notification.CreateNotificationDto
         {
             Content = noti_message,
@@ -467,7 +463,7 @@ public class UserServices : IUserServices
         return operators.Adapt<List<GetSimpleUserDto>>();
     }
 
-    public async Task<bool> UpdateTutorRating(GetProfileUserDtos tutorProfile)
+    public async Task<bool> UpdateTutorRating(GetProfileUserDto tutorProfile)
     {
         _unitOfWorkRepository.UserRepository.Update(tutorProfile.Adapt<Models.Models.User>());
         await _unitOfWorkRepository.SaveChangesAsync();

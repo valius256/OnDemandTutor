@@ -8,7 +8,7 @@
             <button class="ml-8 px-8 py-2 bg-blue-400 font-bold text-white rounded-lg"
                 @click="toggleClassDetailPopup">Trở
                 về</button>
-            <class-detail-popup :classId="selectedClass"></class-detail-popup>
+            <class-detail-popup :classId="selectedClass" :isGuest="true"></class-detail-popup>
         </div>
     </div>
 </template>
@@ -39,7 +39,7 @@ export default {
             }
             let queryStr = this.jsonToQueryString(query)
             //console.log(import.meta.env.VITE_API_URL + '/api/subject?' + this.jsonToQueryString(query))
-            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/?Filter.TutorId=' + this.tutor.id + "&" +  queryStr, {
+            const response = await axios.get(import.meta.env.VITE_API_URL + '/api/Class/?Filter.TutorId=' + this.tutor.id + "&Filter.Status=0&Filter.Status=1&Filter.Status=2&" +  queryStr, {
                 headers: {
                     "Authorization": "Bearer " + localStorage.token
                 }

@@ -24,7 +24,7 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpPost("create")]
-        [ProducesResponseType(typeof(FAQDTO), 200)]
+        [ProducesResponseType(typeof(GetFAQDto), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> CreateFAQ([FromBody] CreateFAQDto FAQDTO)
         {
@@ -37,7 +37,7 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [HttpGet("all")]
-        [ProducesResponseType(typeof(PagedResult<FAQDTO>), 200)]
+        [ProducesResponseType(typeof(PagedResult<GetFAQDto>), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> GetFAQs([FromQuery] PagingModel<QueryFAQDTO> pagingModel)
         {
@@ -50,7 +50,7 @@ namespace OnDemandTutor.API.Controllers
         }
 
         [HttpGet("get-by-id")]
-        [ProducesResponseType(typeof(FAQDTO), 200)]
+        [ProducesResponseType(typeof(GetFAQDto), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> GetFAQById(int id)
         {
@@ -64,7 +64,7 @@ namespace OnDemandTutor.API.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        [ProducesResponseType(typeof(FAQDTO), 200)]
+        [ProducesResponseType(typeof(GetFAQDto), 200)]
         [ProducesResponseType(typeof(ValidationErrorModel), 400)]
         public async Task<IActionResult> UpdateFAQ([FromBody] UpdateFAQDto FAQDTO)
         {

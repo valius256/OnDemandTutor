@@ -34,7 +34,7 @@ namespace OnDemandTutor.DataAccess.Repository
 
                 if (!string.IsNullOrWhiteSpace(pagingModel.Filter.Answer))
                 {
-                    faqQuery = faqQuery.Where(f => f.Answer.Contains(pagingModel.Filter.Answer));
+                    faqQuery = faqQuery.Where(f => f.Answer != null && f.Answer.Contains(pagingModel.Filter.Answer));
                 }
 
                 if (pagingModel.Filter.CreateFrom.HasValue)

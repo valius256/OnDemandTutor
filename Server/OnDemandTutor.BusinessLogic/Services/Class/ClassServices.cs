@@ -4,6 +4,8 @@ using OnDemandTutor.BusinessLogic.Interfaces.Class;
 using OnDemandTutor.BusinessLogic.Interfaces.Notification;
 using OnDemandTutor.BusinessLogic.Interfaces.Slot;
 using OnDemandTutor.BusinessLogic.Interfaces.SlotStudent;
+using OnDemandTutor.BusinessLogic.Interfaces.Transaction;
+using OnDemandTutor.BusinessLogic.Interfaces.User;
 using OnDemandTutor.DataAccess;
 using OnDemandTutor.DataAccess.ExceptionModels;
 using OnDemandTutor.Models.Dtos.Class;
@@ -13,6 +15,7 @@ using OnDemandTutor.Models.Dtos.User;
 using OnDemandTutor.Models.Enum;
 using OnDemandTutor.Models.Models;
 using OnDemandTutor.Models.Paging;
+using System.Globalization;
 
 namespace OnDemandTutor.BusinessLogic.Services.Class
 {
@@ -22,13 +25,18 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
         private readonly INotificationService _notificationService;
         private readonly ISlotStudentServices _slotStudentServices;
         private readonly ISlotServices _slotServices;
+        private readonly IUserServices _userServices;
+        private readonly ITransactionServices _transactionServices;
 
-        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, ISlotStudentServices slotStudentServices, ISlotServices slotServices)
+        public ClassServices(IUnitOfWorkRepository unitOfWork, INotificationService notificationService, 
+            ISlotStudentServices slotStudentServices, ISlotServices slotServices, IUserServices userServices, ITransactionServices transactionServices)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
             _slotStudentServices = slotStudentServices;
             _slotServices = slotServices;
+            _userServices = userServices;
+            _transactionServices = transactionServices;
         }
 
         public async Task<PagedResult<GetClassDtos>> GetClasses(PagingModel<QueryClassDTO> request)
@@ -105,7 +113,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return rs;
         }
 
-        public async Task<GetClassDtos> CreateClassAsync(CreateClassDTO classDto, GetProfileUserDtos user)
+        public async Task<GetClassDtos> CreateClassAsync(CreateClassDTO classDto, GetProfileUserDto user)
         {
             var classEntity = classDto.Adapt<Models.Models.Class>();
             classEntity.TutorId = user.Id;
@@ -117,12 +125,12 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             return rs;
         }
 
-        public async Task<GetClassDtos> UpdateClassAsync(UpdateClassDto classDto, GetProfileUserDtos user)
+        public async Task<GetClassDtos> UpdateClassAsync(UpdateClassDto classDto, GetProfileUserDto user)
         {
             var existClass = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(c => c.Id == classDto.Id);
             if (existClass == null) 
             {
-                throw new NotFoundException("Class not found");
+                throw new DataNotFoundException("Class not found");
             }
             if (user.Id != existClass.TutorId)
             {
@@ -132,7 +140,8 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             {
                 throw new BadRequestException("Class is unable to edit");
             }
-            var listOfStudentInClass = await GetAllStudentInClassWithClassId(existClass.Id);
+            var classDetail = await GetClassByIdAsync(existClass.Id);
+            var listOfStudentInClass = classDetail.StudentClasses;
             if (classDto.NumberOfStudents < listOfStudentInClass.Count)
             {
                 throw new BadRequestException("Cannot update number of students which is smaller than the current number of students in the class");
@@ -144,7 +153,7 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             await _unitOfWork.SaveChangesAsync();
 
             //Update slots
-            var classDetail = await GetClassByIdAsync(existClass.Id);
+            classDetail = await GetClassByIdAsync(existClass.Id); //Re-fetch
             await _slotServices.UpdateSlotsOfClass(classDetail.Adapt<Models.Models.Class>());
             var createdSlots = await _slotServices.CreateClassSlotAsync(classDto.NewClassSlots, classDetail.Adapt<GetClassDtos>(), classDetail.TutorId);
             foreach (var studentClass in listOfStudentInClass)
@@ -172,46 +181,73 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             {
                 throw new Exception("Class not found");
             }
-
-            _unitOfWork.ClassRepository.Remove(classEntity);
+            classEntity.SoftDelete();
+            _unitOfWork.ClassRepository.Update(classEntity);
             await _unitOfWork.SaveChangesAsync();
+
+            //Delete Slots
+            var classDetail = await GetClassByIdAsync(id);
+            foreach (var slot in classDetail.Slots)
+            {
+                await _slotServices.DeleteSlotAsync(slot.Id);
+            }
+            //Refund deposit
+            foreach (var studentClass in classDetail.StudentClasses)
+            {
+                if (studentClass.DepositPaid != null)
+                {
+                    await _userServices.UpdateBalanceAsync(studentClass.StudentId, studentClass.DepositPaid.Value);
+                     await _transactionServices.CreateTransactionDb(new List<Models.Dtos.Transaction.GetTransactionDto> { new Models.Dtos.Transaction.GetTransactionDto
+                    {
+                        ClassId = classDetail.Id,
+                        CreatedById = studentClass.StudentId,
+                        CreatedDate = DateTime.Now,
+                        TransactionCode = "RefundDeposit_" + DateTime.Now.Ticks,
+                        Notes = "Hoàn trả tiền cọc lớp " + classDetail.Name,
+                        Amount = studentClass.DepositPaid.Value,
+                        PaymentMethod = "Internal",
+                        Status = PaymentStatus.Paid,
+                        TransactionType = TransactionType.Receive_money,
+                    } });
+                }       
+            }      
+            //Sending notification
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto
+            {
+                Content = $"Lớp học {classDetail.Name} đã bị gia sư xóa vĩnh viễn. Bạn sẽ được hoàn lại tiền cọc",
+                RefImageUrl = classDetail.Tutor.AvatarImageUrl,
+                RefUrl = "/student/myclass",
+                ReceiverIds = classDetail.StudentClasses.Select(sc => sc.StudentId).ToList()
+            });
             return true;
         }
 
         public async Task CronForAutoChangeStatusClassAndSlot()
         {
-            var onGoingSlots = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>() {
-                Filter = new QuerySlotDto()
-                {
-                    IsAboutToEnd = true,
-                    SlotStatus = SlotStatus.OnGoing
-                },
-                Page = 1,
-                Limit = int.MaxValue
-            });
-            var notStartedSlot = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>()
+            var slots = await _slotServices.GetSlotsAsync(new PagingModel<QuerySlotDto>()
             {
                 Filter = new QuerySlotDto()
                 {
-                    IsAboutToStart = true,
-                    SlotStatus = SlotStatus.NotYet
+                    IsAboutToEnd = true,
+                    SlotStatus = new List<SlotStatus> { SlotStatus.OnGoing, SlotStatus.NotYet }
                 },
                 Page = 1,
                 Limit = int.MaxValue
             });
 
-            foreach (var slot in onGoingSlots.Items)
+            foreach (var slot in slots.Items)
             {
-                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.Finished });
-                if (slot.ClassId != null)
+                SlotStatus newStatus;
+                if (slot.SlotStatus == SlotStatus.OnGoing)
                 {
-                    await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
+                    newStatus = SlotStatus.Finished;
                 }
-            }
-            foreach (var slot in notStartedSlot.Items)
-            {
-                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = SlotStatus.OnGoing });
-                if(slot.ClassId != null)
+                else
+                {
+                    newStatus = SlotStatus.OnGoing;
+                }
+                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto() { Id = slot.Id, Status = newStatus });
+                if (slot.ClassId != null)
                 {
                     await UpdateStatusOfClassDueToSlotChange(slot.ClassId.Value);
                 }
@@ -223,7 +259,10 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             var classDetail = await GetClassByIdAsync(classId);
             //Avoid update navigators
             var classModel = await _unitOfWork.ClassRepository.FindAsync(classId);
-
+            if (classModel == null)
+            {
+                throw new DataNotFoundException("Class not found");
+            }
             if (classDetail.Slots.All(s => s.SlotStatus == SlotStatus.Finished))
             {
                 classModel.Status = ClassStatus.Finished;
@@ -236,18 +275,13 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<List<Models.Models.StudentClass>> GetAllStudentInClassWithClassId(int classId)
-        {
-            return await _unitOfWork.StudentClassRepository.Where(sc => sc.ClassId == classId).AsNoTracking().ToListAsync();
-        }
-
         public async Task ValidateClassForStudent(int classId, int studentId)
         {
             var listOfStudentSlots = await _slotStudentServices.GetSimpleStudentSlotOfStudent(studentId);
             var classDetail = await _unitOfWork.ClassRepository.GetClassWithSlotsByIdAsync(classId);
             if (classDetail == null)
             {
-                throw new NotFoundException("Class not found");
+                throw new DataNotFoundException("Class not found");
             }
             foreach (var classSlot in classDetail.Slots)
             {
@@ -262,6 +296,45 @@ namespace OnDemandTutor.BusinessLogic.Services.Class
                 }
             }
 
+        }
+
+        public async Task ToggleClassCancellation(int classId, GetProfileUserDto user)
+        {
+            var classData = await _unitOfWork.ClassRepository.FirstOrDefaultAsync(c => c.Id == classId)
+                             ?? throw new DataNotFoundException("Class not found");
+
+            if (classData.Status == ClassStatus.Finished)
+            {
+                throw new BadRequestException("Class must be not finished to use this feature");
+            }
+
+            var classDetail = await GetClassByIdAsync(classId);
+            if (classDetail.Slots.FirstOrDefault()?.StartTime < DateTime.Now && classData.Status == ClassStatus.Disabled)
+            {
+                throw new BadRequestException("Class is no longer changeable");
+            }
+
+            classData.Status = classData.Status == ClassStatus.Disabled ? ClassStatus.NotStart : ClassStatus.Disabled;
+            _unitOfWork.ClassRepository.Update(classData);
+            await _unitOfWork.SaveChangesAsync();
+
+            var slotStatus = classData.Status == ClassStatus.Disabled ? SlotStatus.Cancelled : SlotStatus.NotYet;
+            var notificationContent = classData.Status == ClassStatus.Disabled
+                ? $"Lớp {classDetail.Name} đã bị vô hiệu hóa. Bạn có thể rời khỏi lớp này để được hoàn lại tiền cọc"
+                : $"Lớp {classDetail.Name} đã được mở lại và có thể hoạt động như bình thường";
+
+            foreach (var slot in classDetail.Slots)
+            {
+                await _slotServices.UpdateSlotStatusAsync(new UpdateSlotStatusDto { Id = slot.Id, Status = slotStatus });
+            }
+
+            await _notificationService.CreateNotificationAsync(new CreateNotificationDto()
+            {
+                Content = notificationContent,
+                ReceiverIds = classDetail.StudentClasses.Select(sc => sc.StudentId).ToList(),
+                RefUrl = "/student/myclass",
+                RefImageUrl = user.AvatarImageUrl
+            });
         }
 
     }

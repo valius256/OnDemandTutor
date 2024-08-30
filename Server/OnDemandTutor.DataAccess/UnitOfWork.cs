@@ -62,9 +62,6 @@ public class UnitOfWorkRepository : IUnitOfWorkRepository
 
     }
 
-    public IUserRepository Users { get; }
-
-
     public IUserRepository UserRepository { get; }
 
     public ISubjectRepository SubjectRepository { get; }

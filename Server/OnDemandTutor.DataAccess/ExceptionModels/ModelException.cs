@@ -2,7 +2,7 @@
 
 public class ModelException : Exception
 {
-    public ModelException(string? propertyName, string message, string errorCode = null) : base(message)
+    public ModelException(string? propertyName, string message, string errorCode = "") : base(message)
     {
         PropertyName = propertyName;
         ErrorCode = errorCode;

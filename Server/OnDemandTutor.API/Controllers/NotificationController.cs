@@ -63,21 +63,5 @@ namespace OnDemandTutor.API.Controllers
             return Ok(updatedNotification);
         }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteNotification(int id)
-        {
-            try
-            {
-                await _notificationService.DeleteNotificationAsync(id);
-                return NoContent();
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
     }
 }

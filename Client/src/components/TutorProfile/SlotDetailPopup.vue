@@ -1,13 +1,15 @@
 <template>
   <div class="p-4 bg-white rounded-b-lg flex flex-col w-screen lg:w-auto">
-    <div class="flex gap-4 justify-center" v-if="slot.slotStatus == 0">
-      <button v-if="!isEdit" @click="toggleEditMode"
+    <div class="flex gap-4 justify-center">
+      <button v-if="!isEdit && slot.slotStatus == 0" @click="toggleEditMode"
         class="px-4 py-2 bg-blue-400 hover:bg-blue-200 font-bold text-white rounded-lg">Chỉnh sửa</button>
-      <button v-if="isEdit" @click="updateSlot"
+      <button v-if="isEdit && slot.slotStatus == 0" @click="updateSlot"
         class="px-4 py-2 bg-green-400 hover:bg-green-200 font-bold text-white rounded-lg">Xác nhận</button>
-      <button v-if="isEdit" @click="toggleEditMode"
+      <button v-if="isEdit && slot.slotStatus == 0" @click="toggleEditMode"
         class="px-4 py-2 bg-red-400 hover:bg-red-200 font-bold text-white rounded-lg">Hủy bỏ</button>
-      <button class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Hủy Slot</button>
+      <button v-if="slot.slotStatus == 0 && !slot.classId" @click="handleCancel" class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Hủy Slot</button>
+      <button v-if="slot.slotStatus == 2 && !slot.classId" @click="handleCancel" class="px-4 py-2 bg-green-600 hover:bg-green-300 font-bold text-white rounded-lg">Mở lại Slot</button>
+      <button v-if="slot.slotStatus == 2 && !slot.classId" @click="handleDelete" class="px-4 py-2 bg-red-600 hover:bg-red-300 font-bold text-white rounded-lg">Xóa Slot</button>
     </div>
     <div v-if="!isEdit">
       <div class="flex gap-4 w-full">
@@ -103,8 +105,8 @@
                   {{ student.feedback }}
                 </td>
                 <td v-if="slot.class" class="font-bold"
-                :class="{'text-red-400' : student.paymentStatus == 0,'text-blue-400' : student.paymentStatus == 1}">
-                  {{student.paymentStatus == 1 ? "Đã thanh toán" : "Chưa thanh toán"}}
+                  :class="{ 'text-red-400': student.paymentStatus == 0, 'text-blue-400': student.paymentStatus == 1 }">
+                  {{ student.paymentStatus == 1 ? "Đã thanh toán" : "Chưa thanh toán" }}
                 </td>
               </tr>
 
@@ -180,8 +182,8 @@ import StarRating from 'vue-star-rating'
 
 export default {
   name: "SlotDetailPopup",
-  props: ["slot", "close", "tutorId","refresh"],
-  inject : ['eventBus'],
+  props: ["slot", "close", "tutorId", "refresh"],
+  inject: ['eventBus'],
   components: { StarRating },
   data() {
     return {
@@ -214,7 +216,7 @@ export default {
           {
             params: {
               "Filter.TutorId": this.tutorId,
-              Status: 3, Page : 1, Limit : 100
+              Status: 3, Page: 1, Limit: 100
             },
             headers: {
               Authorization: "Bearer " + localStorage.token,
@@ -243,8 +245,8 @@ export default {
       const startTime = new Date(this.slot.startTime)
       const endTime = new Date(this.slot.endTime)
       this.editingDate = this.toSqlDateString(startTime)
-      this.editingStartHour = `${startTime.getHours().toString().padStart(2,'0')}:${startTime.getMinutes().toString().padStart(2,'0')}`
-      this.editingEndHour = `${endTime.getHours().toString().padStart(2,'0')}:${endTime.getMinutes().toString().padStart(2,'0')}`
+      this.editingStartHour = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`
+      this.editingEndHour = `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`
       console.log(this.editingEndHour)
       this.editDto.startTime = this.formatDatetime(this.editingDate, this.editingStartHour)
       this.editDto.endTime = this.formatDatetime(this.editingDate, this.editingEndHour)
@@ -304,7 +306,7 @@ export default {
         bg += "text-green-400";
         display = "Đang diễn ra"
       } else if (slot.slotStatus == 2) {
-        bg += "text-black";
+        bg += "text-red";
         display = "Đã hủy"
       } else if (slot.slotStatus == 3) {
         bg += "text-blue-400";
@@ -341,19 +343,19 @@ export default {
         console.error("Error adding slot:", error);
         var message = error.response.data?.errors[0]?.errorMessage
         let displayMessage = ""
-        if (!message){
+        if (!message) {
           displayMessage = "Có sự cố xảy ra. Vui lòng thử lại sau!"
-        } else if (message.includes("conflict")){
+        } else if (message.includes("conflict")) {
           displayMessage = "Đã trùng lặp với 1 slot trước đó, vui lòng kiểm tra lại"
-        }else if (message.includes("15")){
+        } else if (message.includes("15")) {
           displayMessage = "Slot có thời lượng tối thiểu 15 phút"
-        }else if (message.includes("4")){
+        } else if (message.includes("4")) {
           displayMessage = "Slot có thời lượng tối đa 4 tiếng"
-        }else if (message.includes("smaller")){
+        } else if (message.includes("smaller")) {
           displayMessage = "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc"
-        }else if (message.includes("future")){
+        } else if (message.includes("future")) {
           displayMessage = "Thời gian bắt đầu phải trong tương lai"
-        }else if (message.includes("student")){
+        } else if (message.includes("student")) {
           displayMessage = "Số lượng học sinh hạn mức phải từ 1 đến 100"
         }
         this.eventBus.emit("open-result-dialog", {
@@ -363,6 +365,73 @@ export default {
       }
       this.eventBus.emit("close-loading-popup")
     },
+    async handleCancel(confirmation) {
+      const message = this.slot.slotStatus == 2 ? "Bạn có chắc chắn muốn mở lại buổi học này?" : "Bạn có chắc chắn muốn hủy buổi học này?"
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: message,
+          method: this.handleCancel,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.put(import.meta.env.VITE_API_URL + '/api/Slot/' + this.slot.id + '/cancel', null, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Cập nhật thành công",
+            type: "Success"
+          })
+          await this.refresh()
+          this.close()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể thực hiện. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    },
+    async handleDelete(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn xóa vĩnh viễn slot học này. Toàn bộ tiền học sẽ được trả lại cho các học viên và không thể hoàn tác?",
+          method: this.handleDelete,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.delete(import.meta.env.VITE_API_URL + '/api/Slot/' + this.slot.id, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Xóa thành công",
+            type: "Success"
+          })
+          await this.refresh()
+          this.close()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể thực hiện. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    }
   },
   mounted() {
     this.fetchSubjects()

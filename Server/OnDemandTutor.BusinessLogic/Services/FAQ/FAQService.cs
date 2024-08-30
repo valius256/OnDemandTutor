@@ -26,24 +26,24 @@ public class FAQService : IFAQService
         _notificationService = notificationService;
     }
 
-    public async Task<PagedResult<FAQDTO>> GetFAQsAsync(PagingModel<QueryFAQDTO> request)
+    public async Task<PagedResult<GetFAQDto>> GetFAQsAsync(PagingModel<QueryFAQDTO> request)
     {
         var pagedFAQs = await _unitOfWorkRepository.FAQRepository.GetFAQs(request);
         if (pagedFAQs is null)
         {
-            throw new NotFoundException($"FAQs not found.");
+            throw new DataNotFoundException($"FAQs not found.");
         }
-        return pagedFAQs.Adapt<PagedResult<FAQDTO>>();
+        return pagedFAQs.Adapt<PagedResult<GetFAQDto>>();
     }
 
-    public async Task<FAQDTO> GetFAQByIdAsync(int id)
+    public async Task<GetFAQDto> GetFAQByIdAsync(int id)
     {
         var faqEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == id);
         if (faqEntity == null)
         {
-            throw new NotFoundException($"FAQ with ID {id} not found.");
+            throw new DataNotFoundException($"FAQ with ID {id} not found.");
         }
-        return faqEntity.Adapt<FAQDTO>();
+        return faqEntity.Adapt<GetFAQDto>();
     }
 
     public async Task<CreateFAQDto> CreateFAQAsync(CreateFAQDto faqDto)
@@ -64,7 +64,7 @@ public class FAQService : IFAQService
         var existingFAQEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == faqDto.Id);
         if (existingFAQEntity == null)
         {
-            throw new NotFoundException($"FAQ with ID {faqDto.Id} not found.");
+            throw new DataNotFoundException($"FAQ with ID {faqDto.Id} not found.");
         }
 
         var user = await _authService.GetUserProfileByClaim(_httpContextAccessor.HttpContext.User);
@@ -81,7 +81,7 @@ public class FAQService : IFAQService
         var existingFAQEntity = await _unitOfWorkRepository.FAQRepository.FirstOrDefaultAsync(f => f.Id == id);
         if (existingFAQEntity == null)
         {
-            throw new NotFoundException($"FAQ with ID {id} not found.");
+            throw new DataNotFoundException($"FAQ with ID {id} not found.");
         }
         _unitOfWorkRepository.FAQRepository.Remove(existingFAQEntity);
         await _unitOfWorkRepository.SaveChangesAsync();

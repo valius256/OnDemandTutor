@@ -30,7 +30,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
             var tutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.FirstOrDefaultAsync(td => td.Id == id);
             if (tutorDegree == null)
             {
-                throw new NotFoundException($"TutorDegree with ID {id} not found.");
+                throw new DataNotFoundException($"TutorDegree with ID {id} not found.");
             }
             return tutorDegree.Adapt<GetTutorDegreeDto>();
         }
@@ -95,7 +95,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorDegreeService
             var existingTutorDegree = await _unitOfWorkRepository.TutorDegreeRepository.FirstOrDefaultAsync(td => td.Id == id);
             if (existingTutorDegree == null)
             {
-                throw new NotFoundException($"TutorDegree with ID {id} not found.");
+                throw new DataNotFoundException($"TutorDegree with ID {id} not found.");
             }
 
             _unitOfWorkRepository.TutorDegreeRepository.Remove(existingTutorDegree);

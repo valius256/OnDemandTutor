@@ -22,7 +22,7 @@ namespace OnDemandTutor.DataAccess.Repository
             {
                 if (request.Filter.ClassId.HasValue)
                 {
-                    query = query.Where(s => s.ClassId == request.Filter.ClassId);
+                    query = query.Where(s => s.ClassId == (request.Filter.ClassId != 0 ? request.Filter.ClassId : null));
                 }
                 if (request.Filter.UserId.HasValue)
                 {
@@ -40,9 +40,9 @@ namespace OnDemandTutor.DataAccess.Repository
                 {
                     query = query.Where(s => s.EndTime <= request.Filter.End);
                 }
-                if (request.Filter.SlotStatus.HasValue)
+                if (request.Filter.SlotStatus.Count > 0)
                 {
-                    query = query.Where(s => s.SlotStatus == request.Filter.SlotStatus);
+                    query = query.Where(s => request.Filter.SlotStatus.Contains(s.SlotStatus));
                 }
                 if (request.Filter.IsAboutToStart.HasValue)
                 {
@@ -55,7 +55,7 @@ namespace OnDemandTutor.DataAccess.Repository
             }
             // Apply filtering if necessary
 
-            var results = await query.ToNewPagingAsync(request.Page, request.Limit);
+            var results = await query.Where(s => s.RecordStatus != RecordStatus.Deleted).ToNewPagingAsync(request.Page, request.Limit);
             return results.Adapt<PagedResult<GetSlotsDtos>>();
         }
         public async Task<GetSlotDetailDto> GetSlotByIdAsync(int id)
@@ -66,18 +66,6 @@ namespace OnDemandTutor.DataAccess.Repository
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             return slot.Adapt<GetSlotDetailDto>();
-        }
-        public async Task<bool> DeleteSlotAsync(int id)
-        {
-            var slot = await dbSet.FindAsync(id);
-            if (slot == null)
-            {
-                return false; // Slot not found
-            }
-
-            dbSet.Remove(slot);
-            await context.SaveChangesAsync();
-            return true;
         }
         //public async Task<List<GetSlotWithSlotStudentDto>> GetSlotWithSlotStudentByStudentId(int studentId)
         //{
@@ -97,15 +85,13 @@ namespace OnDemandTutor.DataAccess.Repository
                 .Include(s => s.CreatedBy)
                 .Include(s => s.Class)
                 .OrderBy(s => s.StartTime)
-                .Where(s => s.EndTime > DateTime.Now)
-                .Take(1)
-                .FirstOrDefaultAsync(s => s.CreateById == tutorId);
+                .FirstOrDefaultAsync(s => s.CreateById == tutorId && s.EndTime > DateTime.Now && s.SlotStatus == Models.Enum.SlotStatus.NotYet && s.RecordStatus != RecordStatus.Deleted);
         }
         public async Task<List<Slot>> GetFinishedSlotsToTransfer()
         {
             return await dbSet.AsQueryable()
                 .Include(s => s.SlotStudents)
-                .Where(s => s.EndTime <= DateTime.Now.AddHours(-3) && s.SlotStudents.Any(ss => !ss.IsTransferred && ss.PaymentStatus == Models.Enum.PaymentStatus.Paid))
+                .Where(s => s.RecordStatus != RecordStatus.Deleted && s.EndTime <= DateTime.Now.AddHours(-3) && s.SlotStudents.Any(ss => !ss.IsTransferred && ss.PaymentStatus == Models.Enum.PaymentStatus.Paid))
                 .ToListAsync();
         }
     }

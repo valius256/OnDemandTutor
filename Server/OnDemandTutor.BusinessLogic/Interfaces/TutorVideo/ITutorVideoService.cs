@@ -9,8 +9,8 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.TutorVideo
     {
         Task<PagedResult<GetTutorVideoDto>> GetTutorVideosAsync(PagingModel<QueryTutorVideoDto> request);
         Task<GetTutorVideoDto> GetTutorVideoByIdAsync(int id);
-        Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
-        Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDtos user);
+        Task<GetTutorVideoDto> CreateTutorVideoAsync(CreateTutorVideoDto tutorVideoDto, GetProfileUserDto user);
+        Task<GetTutorVideoDto> UpdateTutorVideoAsync(UpdateTutorVideoDto tutorVideoDto, GetProfileUserDto user);
         Task<bool> DeleteTutorVideoAsync(int id);
     }
 }

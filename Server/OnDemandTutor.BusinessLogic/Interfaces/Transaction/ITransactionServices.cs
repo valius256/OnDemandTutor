@@ -7,13 +7,13 @@ namespace OnDemandTutor.BusinessLogic.Interfaces.Transaction;
 
 public interface ITransactionServices
 {
-    Task<int> CreateTransactionDb(List<TransactionDto> transaction);
+    Task<int> CreateTransactionDb(List<GetTransactionDto> transaction);
     Task<int> TransactionPaid(string transactionId, DateTime paidTime);
-    Task<TransactionDto?> GetTransactionById(int id, GetProfileUserDtos user);
-    Task<PagedResult<TransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDtos user);
+    Task<GetTransactionDto?> GetTransactionById(int id, GetProfileUserDto user);
+    Task<PagedResult<GetTransactionDto>> ViewALlTransaction(TransactionFilterDto transaction, GetProfileUserDto user);
 
-    Task<PagedResult<TransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction);
+    Task<PagedResult<GetTransactionDto>> ViewALlTransactionAsAdmmin(TransactionFilterDto transaction);
     //Task<bool> CreateTransactionForAutoDecreaMoneySlotAsync(int slotId, decimal amount);
     //Task<bool> CreateTransactionForAutoDecreaMoneySlotFailedAsync(int slotId, decimal amount);
-    Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount);
+    //Task<int> CreateTransactionForClassPayment(string orderId, int userId, int classId, decimal amount);
 }

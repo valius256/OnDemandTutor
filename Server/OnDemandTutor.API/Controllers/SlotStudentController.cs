@@ -58,7 +58,7 @@ namespace OnDemandTutor.API.Controllers
         //[Authorize]
         [HttpGet("{slotId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(IEnumerable<SlotStudentDto>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<GetSlotStudentDto>), 200)]
         public async Task<IActionResult> GetStudentSlotsOfSlot([FromRoute] int slotId, [FromQuery] int page, [FromQuery] int limit)
         {
             var slotStudents = await _slotStudentService.GetSlotStudentsOfSlotPaged(slotId, page, limit);
@@ -67,14 +67,10 @@ namespace OnDemandTutor.API.Controllers
         //[Authorize]
         [HttpGet("{slotId}/{studentId}")]
         [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-        [ProducesResponseType(typeof(SlotStudentDto), 200)]
+        [ProducesResponseType(typeof(GetSlotStudentDto), 200)]
         public async Task<IActionResult> GetSlotStudent(int slotId, int studentId)
         {
             var slotStudent = await _slotStudentService.GetSlotStudentAsync(slotId, studentId);
-            if (slotStudent == null)
-            {
-                return NotFound();
-            }
             return Ok(slotStudent);
         }
 
@@ -105,14 +101,19 @@ namespace OnDemandTutor.API.Controllers
         {
             var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var result = await _slotStudentService.UpdateSlotStudentAsync(slotId, user.Id, updateDto.Rate, updateDto.Feedback);
+            return NoContent();
+        }
 
-            if (result)
-            {
-                return NoContent();
-            }
 
-            // This line will never be reached if the method handles all cases correctly.
-            return BadRequest("Update failed.");
+        [Authorize]
+        [HttpPut("{slotId}/leave")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> LeaveSlot([FromRoute] int slotId)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            await _slotStudentService.LeaveSlot(slotId, user);
+            return NoContent();
         }
     }
 }

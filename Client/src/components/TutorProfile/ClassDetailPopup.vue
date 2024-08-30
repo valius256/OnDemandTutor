@@ -6,15 +6,25 @@
         class="py-2 px-16 bg-blue-500 hover:bg-blue-200 rounded-lg font-bold text-white">
         Chỉnh sửa
       </button>
-      <button @click="handleUpdate(true)" v-if="editMode" class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
+      <button @click="handleUpdate(true)" v-if="editMode"
+        class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
         Xác nhận
       </button>
       <button @click="closeEditMode" v-if="editMode"
         class="py-2 px-16 bg-red-400 hover:bg-red-200 rounded-lg font-bold text-white">
         Hủy bỏ
       </button>
-      <button class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
+      <button @click="handleCancel(true)" v-if="this.class.status != 3 && this.class.status != 2"
+        class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
         Hủy lớp
+      </button>
+      <button @click="handleCancel(true)" v-if="this.class.status == 3"
+        class="py-2 px-16 bg-green-500 hover:bg-green-200 rounded-lg font-bold text-white">
+        Mở lại lớp
+      </button>
+      <button @click="handleDelete(true)" v-if="this.class.status == 3"
+        class="py-2 px-16 bg-red-500 hover:bg-red-200 rounded-lg font-bold text-white">
+        Xóa lớp
       </button>
     </div>
     <div v-if="!editMode" class="font-bold text-3xl">{{ this.class.name }}</div>
@@ -67,13 +77,15 @@
         <div class="mt-2">
           <span class="">Số lượng học sinh :</span>
           <span v-if="!editMode" class="font-bold ml-3">{{ this.class.numberOfStudents }}</span>
-          <input v-else type="number" class="w-16 font-bold ml-3 border-b focus:outline-none" v-model="editDto.numberOfStudents">
+          <input v-else type="number" class="w-16 font-bold ml-3 border-b focus:outline-none"
+            v-model="editDto.numberOfStudents">
         </div>
       </div>
     </div>
     <hr class="mt-4" />
     <div class="font-bold my-4">Thời khóa biểu :</div>
-    <time-table v-if="!editMode" :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup" role="tutor" />
+    <time-table v-if="!editMode" :slots="this.slots" :fetching="getUserSlots" :view-detail="openSlotDetailPopup"
+      role="tutor" />
     <slot-creating-manager v-else :setClassSlot="setNewClassSlots" :slots="allSlots" :fetching="getAllUserSlots" />
 
     <hr class="mt-4" />
@@ -138,7 +150,7 @@ export default {
     SlotCreatingManager,
   },
   name: "ClassDetailPopup",
-  props: ["classId", "close"],
+  props: ["classId", "close","action"],
   data() {
     return {
       class: null,
@@ -154,7 +166,7 @@ export default {
         location: "",
         subjectId: 0,
         method: "",
-        numberOfStudents : 1
+        numberOfStudents: 1
       }
     };
   },
@@ -216,11 +228,14 @@ export default {
           return general + " text-blue-400";
         case 1:
           return general + " text-green-400";
+        case 3:
+          return general + " text-red-400";
         default:
           return general + " text-gray-400";
       }
     },
     getStatusDisplay(status) {
+      console.log(status)
       switch (status) {
         case 0:
           return "Sắp bắt đầu";
@@ -228,6 +243,8 @@ export default {
           return "Đang diễn ra";
         case 2:
           return "Đã kết thúc";
+        case 3:
+          return "Đã hủy";
         default:
           return "Không rõ";
       }
@@ -297,7 +314,7 @@ export default {
         })
         try {
           await axios.put(import.meta.env.VITE_API_URL + '/api/Class', {
-            id : this.class.id,
+            id: this.class.id,
             name: this.editDto.name,
             subjectId: this.editDto.subjectId,
             location: this.editDto.location,
@@ -332,6 +349,72 @@ export default {
       await this.getAllUserSlots()
       await this.fetchSubjects();
     },
+    async handleDelete(confirmation) {
+      if (confirmation) {
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn xóa lớp này? Những buổi học chưa diễn ra sẽ được hoàn tiền lại cho các học viên. Tiền đặt cọc lớp cũng sẽ được chuyển lại toàn bộ và hành động này không thể hoàn tác",
+          method: this.handleDelete,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.delete(import.meta.env.VITE_API_URL + '/api/Class/' + this.classId, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Xóa thành công",
+            type: "Success"
+          })
+          await this.action()
+          this.close()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể xóa được. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    },
+    async handleCancel(confirmation) {
+      if (confirmation) {
+        const message = (this.class.status == 3 ? "mở lại" : "hủy")
+        this.eventBus.emit("open-confirmation-popup", {
+          message: "Bạn có chắc chắn muốn " + message + " lớp này?",
+          method: this.handleCancel,
+          params: false
+        })
+      } else {
+        this.eventBus.emit("open-loading-popup", {
+          message: "Vui lòng chờ..."
+        })
+        try {
+          await axios.put(import.meta.env.VITE_API_URL + '/api/Class/' + this.classId + '/toggle-cancellation', {}, {
+            headers: {
+              "Authorization": "Bearer " + localStorage.token
+            }
+          })
+          this.eventBus.emit("open-result-dialog", {
+            message: "Cập nhật thành công",
+            type: "Success"
+          })
+          await this.refresh()
+        } catch (e) {
+          console.log(e)
+          this.eventBus.emit("open-result-dialog", {
+            message: "Không thể thực hiện được. Vui lòng thử lại sau",
+            type: "Error"
+          })
+        }
+        this.eventBus.emit("close-loading-popup")
+      }
+    }
   },
   mounted() {
     this.refresh();

@@ -38,14 +38,14 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             var tutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.GetTutorSubjectById(id);
             if (tutorSubjectEntity == null)
             {
-                throw new NotFoundException($"TutorSubject with ID {id} not found.");
+                throw new DataNotFoundException($"TutorSubject with ID {id} not found.");
             }
             var mappedTutorSubject = tutorSubjectEntity.Adapt<GetTutorSubjectDetailDto>();
             mappedTutorSubject.Degrees = await _tutorDegreeService.GetTutorDegreesByTutorIdAndSubjectId(mappedTutorSubject.UserId, mappedTutorSubject.SubjectId);
             return mappedTutorSubject;
         }
 
-        public async Task<GetTutorSubjectDetailDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto, GetProfileUserDtos user)
+        public async Task<GetTutorSubjectDetailDto> CreateTutorSubjectAsync(CreateTutorSubjectDto tutorSubjectDto, GetProfileUserDto user)
         {
             var tutorSubjectEntity = tutorSubjectDto.Adapt<Models.Models.TutorSubject>();
             tutorSubjectEntity.UserId = user.Id;
@@ -74,7 +74,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == tutorSubjectDto.Id);
             if (existingTutorSubjectEntity == null)
             {
-                throw new NotFoundException($"TutorSubject with ID {tutorSubjectDto.Id} not found.");
+                throw new DataNotFoundException($"TutorSubject with ID {tutorSubjectDto.Id} not found.");
             }
 
             existingTutorSubjectEntity = tutorSubjectDto.Adapt(existingTutorSubjectEntity);
@@ -113,7 +113,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
              var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == tutorSubjectDto.Id);
             if (existingTutorSubjectEntity == null)
             {
-                throw new NotFoundException($"TutorSubject with ID {tutorSubjectDto.Id} not found.");
+                throw new DataNotFoundException($"TutorSubject with ID {tutorSubjectDto.Id} not found.");
             }
 
             existingTutorSubjectEntity.Description = tutorSubjectDto.Description;
@@ -128,7 +128,7 @@ namespace OnDemandTutor.BusinessLogic.Services.TutorSubject
             var existingTutorSubjectEntity = await _unitOfWork.TutorSubjectRepository.FirstOrDefaultAsync(ts => ts.Id == id);
             if (existingTutorSubjectEntity == null)
             {
-                throw new NotFoundException($"TutorSubject with ID {id} not found.");
+                throw new DataNotFoundException($"TutorSubject with ID {id} not found.");
             }
 
             _unitOfWork.TutorSubjectRepository.Remove(existingTutorSubjectEntity);

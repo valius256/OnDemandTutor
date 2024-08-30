@@ -1,4 +1,6 @@
-﻿namespace OnDemandTutor.Models.Dtos.Class
+﻿using OnDemandTutor.Models.Enum;
+
+namespace OnDemandTutor.Models.Dtos.Class
 {
     public class QueryClassDTO
     {
@@ -12,6 +14,8 @@
         public decimal? MinFeePerHour { get; set; }
         public decimal? MaxFeePerHour { get; set; }
         public string? Method { get; set; }
+
+        public List<ClassStatus> Status { get; set; } = new List<ClassStatus>();
     }
 }
 

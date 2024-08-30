@@ -25,8 +25,8 @@ public class AuthController : BaseController<AuthController>
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<GetProfileUserDtos>> Register([FromBody] RegisterDtos body)
+    [ProducesResponseType(typeof(IApiResult<GetProfileUserDto>), 200)]
+    public async Task<IApiResult<GetProfileUserDto>> Register([FromBody] RegisterDtos body)
     {
         return OKAsync(await _userServices.RegisterUser(body));
     }
@@ -66,8 +66,8 @@ public class AuthController : BaseController<AuthController>
     [Authorize]
     [HttpGet("who-am-i")]
     [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
-    [ProducesResponseType(typeof(IApiResult<GetProfileUserDtos>), 200)]
-    public async Task<IApiResult<GetProfileUserDtos>> GetProfile()
+    [ProducesResponseType(typeof(IApiResult<GetProfileUserDto>), 200)]
+    public async Task<IApiResult<GetProfileUserDto>> GetProfile()
     {
         return OKAsync(await _authServices.GetUserProfileByClaim(HttpContext.User));
     }

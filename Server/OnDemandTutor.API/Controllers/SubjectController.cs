@@ -31,10 +31,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetSubjectById(int id)
         {
             var subject = await _subjectService.GetSubjectByIdAsync(id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
             return Ok(subject);
         }
 
@@ -44,11 +40,6 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDtos subjectCreateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var createdSubject = await _subjectService.CreateSubjectAsync(subjectCreateDto);
             return CreatedAtAction(nameof(GetSubjectById), new { Id = createdSubject.Id }, createdSubject);
         }
@@ -60,16 +51,6 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateSubject(int id, [FromBody] UpdateSubjectDtos GetSubjectDtos)
         {
-            if (id != GetSubjectDtos.Id)
-            {
-                return BadRequest("ID mismatch between route parameter and request body.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var updatedSubject = await _subjectService.UpdateSubjectAsync(GetSubjectDtos);
             return Ok(updatedSubject);
         }

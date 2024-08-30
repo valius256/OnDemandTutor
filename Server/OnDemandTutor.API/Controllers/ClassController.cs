@@ -62,10 +62,6 @@ namespace OnDemandTutor.API.Controllers
         public async Task<IActionResult> GetClassById(int id)
         {
             var classDto = await _classServices.GetClassByIdAsync(id);
-            if (classDto == null)
-            {
-                return NotFound();
-            }
             return Ok(classDto);
         }
 
@@ -97,11 +93,7 @@ namespace OnDemandTutor.API.Controllers
         [ProducesResponseType(204)]
         public async Task<IActionResult> DeleteClass(int id)
         {
-            var isDeleted = await _classServices.DeleteClassAsync(id);
-            if (!isDeleted)
-            {
-                return NotFound();
-            }
+            await _classServices.DeleteClassAsync(id);
             return NoContent();
         }
 
@@ -114,6 +106,18 @@ namespace OnDemandTutor.API.Controllers
             var student = await _authServices.GetUserProfileByClaim(HttpContext.User);
             var result = await _studentClassService.StudentRatingClassAsync(request.ClassId, student.Id, request.Rating, request.Feedback);
             return Ok(result);
+        }
+
+
+        [Authorize]
+        [HttpPut("{classId}/toggle-cancellation")]
+        [ProducesResponseType(typeof(ApiErrorActionResult), 400)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> ToggleClassCancellation([FromRoute] int classId)
+        {
+            var user = await _authServices.GetUserProfileByClaim(HttpContext.User);
+            await _classServices.ToggleClassCancellation(classId, user);
+            return Ok();
         }
 
     }
