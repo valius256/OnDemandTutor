@@ -16,11 +16,12 @@
                 <div class="p-4 flex gap-4">
                     <img class="w-24 h-24 rounded-full" :src="studentSlot.user.avatarImageUrl">
                     <div>
-                        <div class="font-bold">{{ (studentSlot.user.firstName ?? "") + " " + (studentSlot.user.lastName ?? "")}}</div>
+                        <div class="font-bold">{{ (studentSlot.user.firstName ?? "") + " " + (studentSlot.user.lastName
+                    ?? "") }}</div>
                         <div class="text-sm italic">
                             Phản hồi về buổi học môn {{ studentSlot.slot.subject.name }}
-                            . Bắt đầu {{ this.beautifyDatetime(studentSlot.slot.startTime)  }}
-                            , Kết thúc {{ this.beautifyDatetime(studentSlot.slot.endTime)  }}
+                            . Bắt đầu {{ this.beautifyDatetime(studentSlot.slot.startTime) }}
+                            , Kết thúc {{ this.beautifyDatetime(studentSlot.slot.endTime) }}
                         </div>
                         <star-rating :star-size="20" :rating="studentSlot.rating" :round-start-rating="false"
                             :read-only="true" />
@@ -39,10 +40,13 @@
                     <div>
                         <div class="font-bold">{{ (studentClass.student.firstName ?? "") + " " +
                     (studentClass.student.lastName ?? "") }}</div>
-                        <star-rating :star-size="20" :rating="studentClass.student.rating" :round-start-rating="false"
+                        <div class="text-sm italic">
+                            Đánh giá về lớp học {{ studentClass.class.name }}
+                        </div>
+                        <star-rating :star-size="20" :rating="studentClass.rating" :round-start-rating="false"
                             :read-only="true" />
-                        <div class="mt-2" v-if="studentClass.student.feedback">
-                            {{ studentClass.student.feedback }}
+                        <div class="mt-2" v-if="studentClass.feedback">
+                            {{ studentClass.feedback }}
                         </div>
                     </div>
                 </div>

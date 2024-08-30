@@ -80,7 +80,7 @@
 export default {
     inject: ['eventBus'],
     name: "ClassList",
-    props: ['classes', 'handlePageChange', 'movePage', 'currentUser', 'toggleClassDetailPopup', 'pageModel'],
+    props: ['classes', 'handlePageChange', 'movePage', 'currentUser', 'toggleClassDetailPopup', 'pageModel', 'toggleClassRatingPopup'],
     data() {
         return {
             currentPage: 0,

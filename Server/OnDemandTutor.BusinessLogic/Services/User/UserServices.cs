@@ -183,7 +183,7 @@ public class UserServices : IUserServices
 
         // Filter out users that already exist
         var newUsers = usersToSync.Where(u => !existingUserIds.Contains(u.FireBaseid)).ToList();
-
+        newUsers.ForEach(newUser => newUser.Password = string.Empty);
         // Add new users
         if (newUsers.Any()) await _unitOfWorkRepository.UserRepository.AddRangeAsync(newUsers);
 

@@ -91,7 +91,7 @@ public class VnPayServices : IVnPayServices
             }
             else
             {
-                await _userServices.RechargeAccountAsync(response.UserId, response.Money);
+                await HandleRecharge(response);
             }
             
             if (response.VnPayResponseCode == "24")
@@ -130,7 +130,21 @@ public class VnPayServices : IVnPayServices
         });
 
     }
-
+    private async Task HandleRecharge(IPaymentResponse response)
+    {
+        await _userServices.RechargeAccountAsync(response.UserId, response.Money);
+        await _transactionServices.CreateTransactionDb(new List<GetTransactionDto> { new GetTransactionDto
+        {
+            Amount = response.Money,
+            CreatedById = response.UserId,
+            CreatedDate = DateTime.Now,
+            Notes = "Nạp tiền tùy chỉnh",
+            PaymentMethod = "Vnpay",
+            Status = PaymentStatus.Paid,
+            TransactionCode = "Recharge_" + DateTime.Now.Ticks,
+            TransactionType = TransactionType.Receive_money,
+        } });
+    }
     private async Task HandleClassPayment(IPaymentResponse response)
     {
         if (response.ClassId == null)
@@ -183,13 +197,10 @@ public class VnPayServices : IVnPayServices
     }
 
 
-    public async Task<string> RechargePaymentAsync(RechargeDto model, HttpContext context)
+    public string RechargePaymentAsync(RechargeDto model, HttpContext context)
     {
         var tick = DateTime.Now.Ticks.ToString();
-        var paymentUrl = CreateVnPayRequest(model, context, null, null, model.Amount, model.Notes, true, tick, model.returnUrl);
-
-        var transactionDto = CreateTransactionDto("Recharge_" + tick, "Vnpay-bankcode", model.Amount, model.Notes, new List<int>(), null, context, TransactionType.Recharge);
-        await _transactionServices.CreateTransactionDb(transactionDto);
+        var paymentUrl = CreateVnPayRequest(model, context, null, null, model.Amount, "Nạp tiền tự do", true, tick, model.returnUrl);     
         return paymentUrl;
     }
 
@@ -248,7 +259,7 @@ public class VnPayServices : IVnPayServices
         }
         
         var tick = DateTime.Now.Ticks.ToString();
-        var transactionDto = CreateTransactionDto("SlotPayment_" + tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
+        var transactionDto = await CreateTransactionDto("SlotPayment_" + tick, "User-Balance", slotCost, model.OrderDescription, listSlotId, null, context, TransactionType.Payment);
         await _transactionServices.CreateTransactionDb(transactionDto);
         await _slotServices.EnrollForSlot(user.Id, slot.Id);
         await _userServices.UpdateBalanceAsync(user.Id, -slotCost);
@@ -282,12 +293,12 @@ public class VnPayServices : IVnPayServices
         var paymentUrl = pay.CreateRequestUrl(_vnPay.BaseUrl, _vnPay.HashSecret);
         return paymentUrl;
     }
-    private List<GetTransactionDto> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes,
+    private async Task<List<GetTransactionDto>> CreateTransactionDto(string tick, string paymentMethod, decimal amount, string? notes,
         List<int> slotIds, int? classId, HttpContext context, TransactionType transactionType)
     {
         var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"] ?? "");
         var timeNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneById);
-        var user = _authServices.GetUserProfileByClaim(context.User);
+        var user = await _authServices.GetUserProfileByClaim(context.User);
 
         var transactionDtos = new List<GetTransactionDto>();
 
